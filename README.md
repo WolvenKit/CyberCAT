@@ -7,6 +7,7 @@ Feel free to copy the code and try if you can come up with a solution.
 If you have questions or ideas feel free to contact me on Discord SirBitesalot#6627
 
 https://github.com/Atvaark/W3SavegameEditor was used as inspiration for LZ4 Handling of the SaveFile.
+
 Dependencies
 --------
 [K4os.Compression.LZ4][0]
