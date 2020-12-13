@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCAT.Core", "CyberCAT.Core\CyberCAT.Core.csproj", "{B9B66C23-5477-40A0-9121-85A6134B74EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCAT.Forms", "CyberCAT.Forms\CyberCAT.Forms.csproj", "{39EC4F4E-FCE0-49E0-A728-1B34C0178603}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B66C23-5477-40A0-9121-85A6134B74EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B66C23-5477-40A0-9121-85A6134B74EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B66C23-5477-40A0-9121-85A6134B74EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B66C23-5477-40A0-9121-85A6134B74EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39EC4F4E-FCE0-49E0-A728-1B34C0178603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39EC4F4E-FCE0-49E0-A728-1B34C0178603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39EC4F4E-FCE0-49E0-A728-1B34C0178603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39EC4F4E-FCE0-49E0-A728-1B34C0178603}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3958705-1E03-4A40-8FF3-35EDF25E6920}
+	EndGlobalSection
+EndGlobal
