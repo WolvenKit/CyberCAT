@@ -23,8 +23,14 @@ namespace CyberCAT.Core.Classes
         byte[] Skipped { get; set; }
         byte[] TrailingFileHeaderContent { get; set; }
         byte[] RestOfContent { get; set; }
+        public LZ4Level compressionLevel { get; set; }
         ChunkedLz4FileTable Table { get; set; }
-
+        public Guid FileGuid { get; set; }
+        public CyberPunkSaveFile()
+        {
+            compressionLevel = LZ4Level.L00_FAST;
+            FileGuid = Guid.NewGuid();
+        }
         public void ReadHeader(Stream input)
         {
             using (var reader = new BinaryReader(input, Encoding.UTF8, true))
@@ -58,6 +64,7 @@ namespace CyberCAT.Core.Classes
             Table = ChunkedLz4FileTable.Read(input, ChunkCount);
             PartialHeaderSize = HeaderSize-(input.Position);
             TrailingFileHeaderContent = new byte[PartialHeaderSize];
+            
             input.Read(TrailingFileHeaderContent);
             input.Position = HeaderSize;
             var data = new byte[HeaderSize + Table.Chunks.Sum(c => c.DecompressedChunkSize)];
@@ -69,44 +76,64 @@ namespace CyberCAT.Core.Classes
             input.Read(buffer, 0, buffer.Length);
             RestOfContent = buffer;
             int index = 0;
-            foreach (var chunk in Table.Chunks)
+            using (var stream = new FileStream($"uncompressed_{FileGuid}.bin", FileMode.Append))
             {
-                File.WriteAllBytes($"chunk_{index}.bin", chunk.DecompressedData);
-                index++;
+                foreach (var chunk in Table.Chunks)
+                {
+                    //File.WriteAllBytes($"chunk_{chunk.ChunkGuid}.bin", chunk.DecompressedData);
+
+                    stream.Write(chunk.DecompressedData, 0, chunk.DecompressedData.Length);
+
+
+                    index++;
+                }
             }
         }
-        public void Compress(string outputFileName)
+        public void CompressFromSingleFile(string inputFileName, string outputFileName)
         {
+            List<byte[]> dataToCompress = new List<byte[]>();
+            
             using (var memoryStream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(memoryStream, Encoding.UTF8))
                 {
+                    using (var stream = File.OpenRead(inputFileName))
+                    {
+                        using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
+                        {
+                            long remainingBytes = reader.BaseStream.Length;
+                            while (remainingBytes >262144)
+                            {
+                                var uncompressedBytes = reader.ReadBytes(262144);
+                                dataToCompress.Add(uncompressedBytes);
+                                remainingBytes = remainingBytes - 262144;
+                            }
+                            var lastBytes = reader.ReadBytes((int)remainingBytes);
+                            dataToCompress.Add(lastBytes);
+
+                        }
+                    }
                     writer.Write(FirstHeaderBytes);
                     writer.Write(Skipped);
                     writer.Write(SecondFileHeaderBytes);
-                    writer.Write(ChunkCount);
+                    writer.Write(dataToCompress.Count);
                     writer.Write(HeaderSize);
                     int offset = HeaderSize;
                     int index = 0;
-                    foreach (var chunk in Table.Chunks)
+                    foreach (var bytesToCompress in dataToCompress)
                     {
-                        var target = new byte[LZ4Codec.MaximumOutputSize(chunk.DecompressedData.Length)];
-                        int actualSize = LZ4Codec.Encode(chunk.DecompressedData, target, LZ4Level.L00_FAST);
+                        var target = new byte[LZ4Codec.MaximumOutputSize(bytesToCompress.Length)];
+                        int actualSize = LZ4Codec.Encode(bytesToCompress, target, compressionLevel);
                         var compressedData = new byte[actualSize];
                         int fakeSize = actualSize + 8;
                         Array.Copy(target, compressedData, actualSize);
-                        Span<byte> outputData = new byte[chunk.DecompressedChunkSize];
+                        Span<byte> outputData = new byte[bytesToCompress.Length];
                         Span<byte> inputData = compressedData;
                         int bytesDecoded = LZ4Codec.Decode(inputData, outputData);
-                        if (bytesDecoded != chunk.DecompressedChunkSize)
-                        {
-                            throw new Exception("Unexpected bytesDecoded");//TODO Remove this when modifications are possible
-                        }
-                        File.WriteAllBytes($"test_Chunk{index}.bin", compressedData);
                         writer.Write(fakeSize);//CompressedChunkSize
                         writer.Write(bytesDecoded);//DecompressedChunkSize
                         offset = offset + fakeSize;
-                        if (index < Table.Chunks.Length-1)
+                        if (index < dataToCompress.Count - 1)
                         {
                             writer.Write(offset);//EndOfChunkOffset
                         }
@@ -117,20 +144,20 @@ namespace CyberCAT.Core.Classes
                         index++;
                     }
                     writer.Write(TrailingFileHeaderContent);
-                    foreach (var chunk in Table.Chunks)
+                    foreach (var bytesToCompress in dataToCompress)
                     {
-                        writer.Write(chunk.Skipped, 0, 4);
-                        var target = new byte[LZ4Codec.MaximumOutputSize(chunk.DecompressedData.Length)];
-                        int actualSize = LZ4Codec.Encode(chunk.DecompressedData, target, LZ4Level.L00_FAST);
+                        writer.Write(Table.Chunks[0].Skipped,0,4);
+                        var target = new byte[LZ4Codec.MaximumOutputSize(bytesToCompress.Length)];
+                        int actualSize = LZ4Codec.Encode(bytesToCompress, target, compressionLevel);
                         var compressedData = new byte[actualSize];
                         int fakeSize = actualSize + 8;
                         Array.Copy(target, compressedData, actualSize);
-                        Span<byte> outputData = new byte[chunk.DecompressedChunkSize];
+                        Span<byte> outputData = new byte[bytesToCompress.Length];
                         Span<byte> inputData = compressedData;
                         int bytesDecoded = LZ4Codec.Decode(inputData, outputData);
-                        if (bytesDecoded != chunk.DecompressedChunkSize)
+                        if (bytesDecoded != bytesToCompress.Length)
                         {
-                            throw new Exception("Unexpected bytesDecoded");//TODO Remove this when modifications are possible
+                            int a = 1;
                         }
                         writer.Write(bytesDecoded);
                         writer.Write(compressedData);
@@ -141,7 +168,7 @@ namespace CyberCAT.Core.Classes
                         memoryStream.Seek(0, SeekOrigin.Begin);
                         memoryStream.CopyTo(fileStream);
                     }
-                }
+                }  
             }
         }
     }

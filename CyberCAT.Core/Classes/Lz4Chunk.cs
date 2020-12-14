@@ -18,7 +18,12 @@ namespace CyberCAT.Core.ChunkedLz4
         public byte[] DecompressedData { get; set; }
 
         public byte[] CompressedData { get; set; }
+        public Guid ChunkGuid { get; set; }
 
+        public Lz4Chunk()
+        {
+            ChunkGuid = Guid.NewGuid();
+        }
         public void Read(Stream inputStream)
         {
             Span<byte> inputData = stackalloc byte[CompressedChunkSize-8];
