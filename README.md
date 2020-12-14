@@ -18,16 +18,16 @@ If this is due to wrong compression or wrong modifications is unknown.
 
 Usage
 --------
-Backup your saves!!
-Paste the path to one of your "sav.dat" files into the checkbox.
-Press "Uncompress"
-In the folder the Program was started from a file with naming scheme like "uncompressed_{guid}.bin" will appear. This is the uncompressed save data.
-Now you can analyze the file and make changes.
-To compress press "Recompress" (WARNING! currently you need to keep the program running between decompressing and compressing because metadata is kept in RAM only!)
-Copy the file back into your save game folder.
-Check if the file can be loaded.
-Optionally:
-If you made changes and the file loaded successfully message me on discord the we can figure out the format of the uncompressed data.
+- Backup your saves!!
+- Paste the path to one of your "sav.dat" files into the checkbox.
+- Press "Uncompress"
+- In the folder the Program was started from a file with naming scheme like "uncompressed_{guid}.bin" will appear. This is the uncompressed save data.
+- Now you can analyze the file and make changes.
+- To compress press "Recompress" (WARNING! currently you need to keep the program running between decompressing and compressing because metadata is kept in RAM only!)
+- Copy the file back into your save game folder.
+- Check if the file can be loaded.
+- Optionally:
+- If you made changes and the file loaded successfully message me on discord the we can figure out the format of the uncompressed data.
 
 Dependencies
 --------
