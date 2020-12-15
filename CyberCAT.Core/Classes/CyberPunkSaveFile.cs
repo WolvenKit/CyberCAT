@@ -1,5 +1,6 @@
 ﻿using CyberCAT.Core.ChunkedLz4;
 using K4os.Compression.LZ4;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,70 +14,62 @@ namespace CyberCAT.Core.Classes
 
     public class CyberPunkSaveFile
     {
-        int ChunkCount { get; set; }
-        int HeaderSize { get; set; }
-        long PartialHeaderSize { get; set; }
-        string FirstFileHeaderMarker { get; set; }
-        byte[] FirstHeaderBytes { get; set; }
-        string SecondFileHeaderMarker { get; set; }
-        byte[] SecondFileHeaderBytes { get; set; }
-        byte[] Skipped { get; set; }
-        byte[] TrailingFileHeaderContent { get; set; }
-        byte[] RestOfContent { get; set; }
+        public SaveFileMetaInformation MetaInformation { get; set; }
         public LZ4Level compressionLevel { get; set; }
         ChunkedLz4FileTable Table { get; set; }
-        public Guid FileGuid { get; set; }
+        
         public CyberPunkSaveFile()
         {
             compressionLevel = LZ4Level.L00_FAST;
-            FileGuid = Guid.NewGuid();
+            MetaInformation = new SaveFileMetaInformation();
+            MetaInformation.FileGuid = Guid.NewGuid();
         }
         public void ReadHeader(Stream input)
         {
             using (var reader = new BinaryReader(input, Encoding.UTF8, true))
             {
                 long resumePosition = reader.BaseStream.Position;
-                FirstFileHeaderMarker = reader.ReadString(4);
+                MetaInformation.FirstFileHeaderMarker = reader.ReadString(4);
                 reader.BaseStream.Position = resumePosition;
-                FirstHeaderBytes = reader.ReadBytes(4);
-                if (FirstFileHeaderMarker != Constants.SaveFile.FIRST_FILE_HEADER_STRING)
+                MetaInformation.FirstHeaderBytes = reader.ReadBytes(4);
+                if (MetaInformation.FirstFileHeaderMarker != Constants.SaveFile.FIRST_FILE_HEADER_STRING)
                 {
                     throw new InvalidOperationException();
                 }
 
                 // Currently Unknown data
-                Skipped = reader.ReadBytes(21);
+                MetaInformation.Skipped = reader.ReadBytes(21);
                 resumePosition = reader.BaseStream.Position;
-                SecondFileHeaderMarker = reader.ReadString(4);
+                MetaInformation.SecondFileHeaderMarker = reader.ReadString(4);
                 reader.BaseStream.Position = resumePosition;
-                SecondFileHeaderBytes = reader.ReadBytes(4);
-                if (SecondFileHeaderMarker != Constants.SaveFile.SECOND_FILE_HEADER_STRING)
+                MetaInformation.SecondFileHeaderBytes = reader.ReadBytes(4);
+                if (MetaInformation.SecondFileHeaderMarker != Constants.SaveFile.SECOND_FILE_HEADER_STRING)
                 {
                     throw new InvalidOperationException();
                 }
-                ChunkCount = reader.ReadInt32();
-                HeaderSize = reader.ReadInt32();
+                MetaInformation.ChunkCount = reader.ReadInt32();
+                MetaInformation.HeaderSize = reader.ReadInt32();
             }
             
         }
         public void Decompress(Stream input)
         {
-            Table = ChunkedLz4FileTable.Read(input, ChunkCount);
-            PartialHeaderSize = HeaderSize-(input.Position);
-            TrailingFileHeaderContent = new byte[PartialHeaderSize];
+            Table = ChunkedLz4FileTable.Read(input, MetaInformation.ChunkCount);
+            MetaInformation.PartialHeaderSize = MetaInformation.HeaderSize - (input.Position);
+            MetaInformation.TrailingFileHeaderContent = new byte[MetaInformation.PartialHeaderSize];
             
-            input.Read(TrailingFileHeaderContent);
-            input.Position = HeaderSize;
-            var data = new byte[HeaderSize + Table.Chunks.Sum(c => c.DecompressedChunkSize)];
+            input.Read(MetaInformation.TrailingFileHeaderContent);
+            input.Position = MetaInformation.HeaderSize;
+            var data = new byte[MetaInformation.HeaderSize + Table.Chunks.Sum(c => c.DecompressedChunkSize)];
             foreach (var chunk in Table.Chunks)
             {
                 chunk.Read(input);
             }
             byte[] buffer = new byte[input.Length - input.Position];
             input.Read(buffer, 0, buffer.Length);
-            RestOfContent = buffer;
+            MetaInformation.RestOfContent = buffer;
             int index = 0;
-            using (var stream = new FileStream($"uncompressed_{FileGuid}.bin", FileMode.Append))
+            using (var stream = new FileStream($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.bin", FileMode.Create))
             {
                 foreach (var chunk in Table.Chunks)
                 {
@@ -88,9 +81,14 @@ namespace CyberCAT.Core.Classes
                     index++;
                 }
             }
+            string json = JsonConvert.SerializeObject(MetaInformation, Formatting.Indented);
+            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.json",json);
+
         }
-        public void CompressFromSingleFile(string inputFileName, string outputFileName)
+        public void CompressFromSingleFile(string inputFileName,string metadataFilePath)
         {
+            string json = File.ReadAllText(metadataFilePath);
+            MetaInformation = JsonConvert.DeserializeObject<SaveFileMetaInformation>(json);
             List<byte[]> dataToCompress = new List<byte[]>();
             
             using (var memoryStream = new MemoryStream())
@@ -113,12 +111,12 @@ namespace CyberCAT.Core.Classes
 
                         }
                     }
-                    writer.Write(FirstHeaderBytes);
-                    writer.Write(Skipped);
-                    writer.Write(SecondFileHeaderBytes);
+                    writer.Write(MetaInformation.FirstHeaderBytes);
+                    writer.Write(MetaInformation.Skipped);
+                    writer.Write(MetaInformation.SecondFileHeaderBytes);
                     writer.Write(dataToCompress.Count);
-                    writer.Write(HeaderSize);
-                    int offset = HeaderSize;
+                    writer.Write(MetaInformation.HeaderSize);
+                    int offset = MetaInformation.HeaderSize;
                     int index = 0;
                     foreach (var bytesToCompress in dataToCompress)
                     {
@@ -143,10 +141,10 @@ namespace CyberCAT.Core.Classes
                         }
                         index++;
                     }
-                    writer.Write(TrailingFileHeaderContent);
+                    writer.Write(MetaInformation.TrailingFileHeaderContent);
                     foreach (var bytesToCompress in dataToCompress)
                     {
-                        writer.Write(Table.Chunks[0].Skipped,0,4);
+                        writer.Write(new byte[] { 52, 90 ,76 ,88 });
                         var target = new byte[LZ4Codec.MaximumOutputSize(bytesToCompress.Length)];
                         int actualSize = LZ4Codec.Encode(bytesToCompress, target, compressionLevel);
                         var compressedData = new byte[actualSize];
@@ -162,8 +160,8 @@ namespace CyberCAT.Core.Classes
                         writer.Write(bytesDecoded);
                         writer.Write(compressedData);
                     }
-                    writer.Write(RestOfContent);
-                    using (var fileStream = File.Create(outputFileName))
+                    writer.Write(MetaInformation.RestOfContent);
+                    using (var fileStream = File.Create($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"))
                     {
                         memoryStream.Seek(0, SeekOrigin.Begin);
                         memoryStream.CopyTo(fileStream);

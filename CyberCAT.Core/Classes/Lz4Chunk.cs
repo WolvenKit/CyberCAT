@@ -26,7 +26,7 @@ namespace CyberCAT.Core.ChunkedLz4
         }
         public void Read(Stream inputStream)
         {
-            Span<byte> inputData = stackalloc byte[CompressedChunkSize-8];
+            Span<byte> inputData = new byte[CompressedChunkSize-8];
             Span<byte> outputData = new byte[DecompressedChunkSize];
             Skipped = new byte[8];
             inputStream.Read(Skipped);
