@@ -1,5 +1,4 @@
 # CyberCAT
-Currently broken!
 --------
 
 CyberPunk 2077 Custimazation Assistant Tool
@@ -13,8 +12,9 @@ Current State
 --------
 The Program can uncompress a save file.
 Some Files can be recompressed generating a files that is the same as the original
-Some files are changed by the compression in way that makes them invalid
-Modifying before recompression always results in an invalid file
+Some files are changed by the compression in a way that makes them invalid (cant be loaded ingame)
+Modifying before recompression always results in an invalid file.
+This Probably means there is a checksum or something else that prevents the game from loading recompressed saves.
 
 Usage
 --------
