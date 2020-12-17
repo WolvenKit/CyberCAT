@@ -1,7 +1,7 @@
 # CyberCAT
 --------
 
-CyberPunk 2077 Custimazation Assistant Tool
+CyberPunk 2077 Customization Assistant Tool
 --------
 The goal is to provide a Tool that can uncompress and decompress Cyberpunk save files.
 **This is mostly a research project for now.**
