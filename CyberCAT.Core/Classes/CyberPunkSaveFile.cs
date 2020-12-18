@@ -17,7 +17,6 @@ namespace CyberCAT.Core.Classes
         public SaveFileMetaInformation MetaInformation { get; set; }
         public LZ4Level compressionLevel { get; set; }
         ChunkedLz4FileTable Table { get; set; }
-        
         public CyberPunkSaveFile()
         {
             compressionLevel = LZ4Level.L00_FAST;
@@ -160,7 +159,9 @@ namespace CyberCAT.Core.Classes
                         writer.Write(bytesDecoded);
                         writer.Write(compressedData);
                     }
-                    writer.Write(MetaInformation.RestOfContent);
+                    writer.Write(MetaInformation.RestOfContent,0,MetaInformation.RestOfContent.Length-8);
+                    writer.Write(offset);
+                    writer.Write(new byte[] { 0x45, 0x4E, 0x4F, 0x44 });
                     using (var fileStream = File.Create($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"))
                     {
                         memoryStream.Seek(0, SeekOrigin.Begin);
