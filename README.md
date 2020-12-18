@@ -1,33 +1,35 @@
 # CyberCAT
-CyberPunk 2077 Custimazation Assistant Tool
 --------
-The Tool can be used to uncompress a save file and to compress an uncompressed file.
-Currently I was not able to make modifications to an uncompressed file and load the recompressed file in game.
-This probably means that I dont understand the uncompressed Format.
-If you have questions or ideas feel free to contact me on Discord SirBitesalot#6627
 
-https://github.com/Atvaark/W3SavegameEditor was used as inspiration for LZ4 Handling of the SaveFile.
+CyberPunk 2077 Customization Assistant Tool
+--------
+The goal is to provide a Tool that can uncompress and decompress Cyberpunk save files.
+**This is mostly a research project for now.**
+
+Ifyou make progress or discover new information or just have quiestions contact me on Discord SirBitesalot#6627 or join us on the CP77 modding Tools Server https://discord.com/invite/Epkq79kd96
 
 Current State
 --------
-The Program can uncompress a save file.
-It can Compress the uncompressed data again.
-The compressed File can be loaded in game.
-Modifications where currently unssuccesful
-If this is due to wrong compression or wrong modifications is unknown.
+- The Program can decompress a save file.
+- Some Files can be recompressed generating a files that is the same as the original
+- Some files are changed by the compression in a way that makes them invalid (cant be loaded ingame)
+- Modifying before recompression always results in an invalid file.
+- This Probably means there is a checksum or something else that prevents the game from loading recompressed saves.
+- The Format of the uncompressed file is not fully understood yet.
+   - https://github.com/Atvaark/W3SavegameEditor could probably be a good starting point as the files seem to similar but not the same. It already provided a starting point for the LZ4 Chunk handling
+- Dont expect to be able to edit your saves until a later point in time.
+
 
 Usage
 --------
-- Backup your saves!!
-- Paste the path to one of your "sav.dat" files into the checkbox.
-- Press "Uncompress"
-- In the folder the Program was started from a file with naming scheme like "uncompressed_{guid}.bin" will appear. This is the uncompressed save data.
-- Now you can analyze the file and make changes.
-- To compress press "Recompress" (WARNING! currently you need to keep the program running between decompressing and compressing because metadata is kept in RAM only!)
-- Copy the file back into your save game folder.
-- Check if the file can be loaded.
-- Optionally:
-- If you made changes and the file loaded successfully message me on discord the we can figure out the format of the uncompressed data.
+**!Backup your saves!**
+- Paste file path of file to decompress or drag file onto textbox.
+- Hit "Uncompress"
+- In the "Output" 2 Files will appear({guid}\_metainf.json and {guid}\_uncompressed.bin)
+- To Recompress Drag the "{guid}\_uncompressed.bin" File onto the textbox titled "Uncompressed File Path"
+- If you changed the name or the paths changed you need to also drag the "{guid}\_metainf.json" if not it gets added automatically
+- Hit "Recompress"
+- Test if it works ingame
 
 Dependencies
 --------
