@@ -14,8 +14,8 @@ namespace CyberCAT.Core.Classes
         private static byte[] MagicNumberTPP = new byte[] { 0x50, 0x50, 0x54, 0x83 };
         private static byte[] MagicNumberFPP = new byte[] { 0x50, 0x50, 0x46, 0x83 };
         int eyeCounter = 0;
-        int mantisCounter = 0;
         bool _containerMode = true;
+        bool panic = false;
         public string Json { get; set; }
         private AppearanceSection _section;
 
@@ -55,7 +55,7 @@ namespace CyberCAT.Core.Classes
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
                     var container = ReadContainer(reader);
-                    if (container.Blocks.Count == 0 && mantisCounter < 1)
+                    if (container.Blocks.Count == 0)
                     {
                         _containerMode = false;
                         bool readBlocks = true;
@@ -72,11 +72,15 @@ namespace CyberCAT.Core.Classes
                             {
                                 _section.Containers[_section.Containers.Count - 1].TrailingBlocks.Add(block);
                             }
+                            if (panic)
+                            {
+                                break;
+                            }
                         }
                     }
-                    else if (container.Blocks.Count == 0 && mantisCounter >= 1)
+                    if (panic)
                     {
-                        break;//Parsing seems to change
+                        break;
                     }
                     else
                     {
@@ -96,6 +100,10 @@ namespace CyberCAT.Core.Classes
             {
                 var block = ReadBlock(reader);
                 result.Blocks.Add(block);
+                if (panic)
+                {
+                    break;
+                }
             }
             return result;
         }
@@ -188,9 +196,10 @@ namespace CyberCAT.Core.Classes
                         {
                             eyeCounter++;
                         }
-                        if (additionalValue.Contains("mantis"))
+                        if (additionalValue=="FPP_Body")
                         {
-                            mantisCounter++;
+                            panic = true;
+                            break;
                         }
                         entry.AdditionalValues.Add(additionalValue);
                     }
@@ -198,6 +207,10 @@ namespace CyberCAT.Core.Classes
                     {
                         break;
                     }
+                }
+                if (panic)
+                {
+                    break;
                 }
 
                 block.Entries.Add(entry);
