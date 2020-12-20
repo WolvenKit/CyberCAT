@@ -83,7 +83,7 @@ namespace CyberCAT.Core.Classes
             }
             return result;
         }
-        public void CompressFromSingleFile(string inputFileName,string metadataFilePath)
+        public void CompressFromSingleFile(string inputFileName, string metadataFilePath, out string recompressedFilePath)
         {
             string json = File.ReadAllText(metadataFilePath);
             MetaInformation = JsonConvert.DeserializeObject<SaveFileMetaInformation>(json);
@@ -161,7 +161,10 @@ namespace CyberCAT.Core.Classes
                     writer.Write(MetaInformation.RestOfContent,0,MetaInformation.RestOfContent.Length-8);
                     writer.Write(offset);
                     writer.Write(new byte[] { 0x45, 0x4E, 0x4F, 0x44 });
-                    using (var fileStream = File.Create($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"))
+
+                    recompressedFilePath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin";
+
+                    using (var fileStream = File.Create(recompressedFilePath))
                     {
                         memoryStream.Seek(0, SeekOrigin.Begin);
                         memoryStream.CopyTo(fileStream);

@@ -52,7 +52,7 @@ namespace CyberCAT.Forms
             {
                 if (File.Exists(metaInformationFilePathTextbox.Text))
                 {
-                    activeSaveFile.CompressFromSingleFile(recompressFilePathTextbox.Text,metaInformationFilePathTextbox.Text);
+                    activeSaveFile.CompressFromSingleFile(recompressFilePathTextbox.Text,metaInformationFilePathTextbox.Text, out _);
                 }
                 else
                 {
