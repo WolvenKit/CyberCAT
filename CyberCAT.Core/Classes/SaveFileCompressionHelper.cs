@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 namespace CyberCAT.Core.Classes
 {
 
-    public class CyberPunkSaveFile
+    public class SaveFileCompressionHelper
     {
         public SaveFileMetaInformation MetaInformation { get; set; }
         public LZ4Level compressionLevel { get; set; }
         ChunkedLz4FileTable Table { get; set; }
-        public CyberPunkSaveFile()
+        public SaveFileCompressionHelper()
         {
             compressionLevel = LZ4Level.L00_FAST;
             MetaInformation = new SaveFileMetaInformation();
             MetaInformation.FileGuid = Guid.NewGuid();
         }
-        public void ReadHeader(Stream input)
+        private void ReadHeader(Stream input)
         {
             using (var reader = new BinaryReader(input, Encoding.UTF8, true))
             {
@@ -51,8 +51,9 @@ namespace CyberCAT.Core.Classes
             }
             
         }
-        public void Decompress(Stream input)
+        public byte[] Decompress(Stream input)
         {
+            ReadHeader(input);
             Table = ChunkedLz4FileTable.Read(input, MetaInformation.ChunkCount);
             MetaInformation.PartialHeaderSize = MetaInformation.HeaderSize - (input.Position);
             MetaInformation.TrailingFileHeaderContent = new byte[MetaInformation.PartialHeaderSize];
@@ -68,21 +69,19 @@ namespace CyberCAT.Core.Classes
             input.Read(buffer, 0, buffer.Length);
             MetaInformation.RestOfContent = buffer;
             int index = 0;
-            using (var stream = new FileStream($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.bin", FileMode.Create))
+            byte[] result;
+            using (var stream = new MemoryStream())
             {
                 foreach (var chunk in Table.Chunks)
                 {
                     //File.WriteAllBytes($"chunk_{chunk.ChunkGuid}.bin", chunk.DecompressedData);
 
                     stream.Write(chunk.DecompressedData, 0, chunk.DecompressedData.Length);
-
-
                     index++;
                 }
+                result = stream.ToArray();
             }
-            string json = JsonConvert.SerializeObject(MetaInformation, Formatting.Indented);
-            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.json",json);
-
+            return result;
         }
         public void CompressFromSingleFile(string inputFileName,string metadataFilePath)
         {

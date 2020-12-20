@@ -60,12 +60,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AppearanceBlockContainer.cs" />
+    <Compile Include="Classes\AppearanceSection.cs" />
+    <Compile Include="Classes\AppearanceSectionParser.cs" />
+    <Compile Include="Classes\AppearanceValueBlock.cs" />
+    <Compile Include="Classes\Flags.cs" />
+    <Compile Include="Classes\SaveFileParser.cs" />
+    <Compile Include="Classes\SaveFile.cs" />
     <Compile Include="Classes\ChunkedLz4FileTable.cs" />
-    <Compile Include="Classes\CyberPunkSaveFile.cs" />
+    <Compile Include="Classes\AppearanceSectionEntry.cs" />
+    <Compile Include="Classes\CyberPunkHairstyle.cs" />
+    <Compile Include="Classes\SaveFileCompressionHelper.cs" />
     <Compile Include="Classes\Lz4Chunk.cs" />
     <Compile Include="Classes\SaveFileMetaInformation.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Enums\SaveFileSectionType.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Interfaces\ISaveFileSection.cs" />
+    <Compile Include="Interfaces\ISectionParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
