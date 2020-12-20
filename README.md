@@ -28,6 +28,7 @@ Usage
 - To Recompress Drag the "{guid}\_decompressed.bin" File onto the textbox titled "Decompressed File Path"
 - If you changed the name or the paths changed you need to also drag the "{guid}\_metainf.json" if not it gets added automatically
 - Hit "Recompress"
+- Copy over "{guid}\_recompressed.bin" into save game folde and rename to sav.dat (did I mention backing up original saves ;))
 - Test if it works ingame
 
 Dependencies
