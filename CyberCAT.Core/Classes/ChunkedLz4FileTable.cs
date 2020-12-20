@@ -14,12 +14,24 @@ namespace CyberCAT.Core.ChunkedLz4
                 Lz4Chunk[] chunks = new Lz4Chunk[chunkCount];
                 for (int i = 0; i < chunkCount; i++)
                 {
-                    chunks[i] = new Lz4Chunk
+                    if (i == 14)
                     {
-                        CompressedChunkSize = reader.ReadInt32(),
-                        DecompressedChunkSize = reader.ReadInt32(),
-                        EndOfChunkOffset = reader.ReadInt32()
-                    };
+                        int a = 0;
+                    }
+                    chunks[i] = new Lz4Chunk();
+                    chunks[i].CompressedChunkSize = reader.ReadInt32();
+                    chunks[i].DecompressedChunkSize = reader.ReadInt32();
+                    if (i < chunkCount - 1)
+                    {
+                        chunks[i].EndOfChunkOffset = reader.ReadInt32();
+                    }
+                    else
+                    {
+                        var resumePosition = reader.BaseStream.Position;
+                        reader.BaseStream.Seek(-8, SeekOrigin.End);
+                        chunks[i].EndOfChunkOffset = reader.ReadInt32();
+                        reader.BaseStream.Position = resumePosition;
+                    }
                 }
 
                 return new ChunkedLz4FileTable

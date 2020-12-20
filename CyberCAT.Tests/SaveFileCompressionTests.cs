@@ -54,7 +54,9 @@ namespace CyberCAT.Tests
             activeSaveFile.CompressFromSingleFile(_binPath, _jsonPath, out var recompressedFilePath);
             _recompressedBinPath = recompressedFilePath;
         }
-        
+        /// <summary>
+        /// Not that it could be possible that this fails due to slight differences in compression setting but still be a valid file
+        /// </summary>
         [Test, Order(3)]
         public void Is_recompressed_equal_to_original()
         {

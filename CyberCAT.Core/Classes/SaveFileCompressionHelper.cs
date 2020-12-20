@@ -135,7 +135,7 @@ namespace CyberCAT.Core.Classes
                         }
                         else
                         {
-                            writer.Write(0);
+                            //writer.Write(0);
                         }
                         index++;
                     }
