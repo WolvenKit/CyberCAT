@@ -11,13 +11,12 @@ Ifyou make progress or discover new information or just have quiestions contact 
 Current State
 --------
 - The Program can decompress a save file.
-- Some Files can be recompressed generating a files that is the same as the original
-- Some files are changed by the compression in a way that makes them invalid (cant be loaded ingame)
-- Modifying before recompression always results in an invalid file.
-- This Probably means there is a checksum or something else that prevents the game from loading recompressed saves.
+- The Program can recompress files
+- The Program can recompress modified files
 - The Format of the uncompressed file is not fully understood yet.
    - https://github.com/Atvaark/W3SavegameEditor could probably be a good starting point as the files seem to similar but not the same. It already provided a starting point for the LZ4 Chunk handling
-- Dont expect to be able to edit your saves until a later point in time.
+- Modification can be done using hex editor of your choice
+- Dont expect to be able to edit your saves easily until a later point in time.
 
 
 Usage
