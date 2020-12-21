@@ -3,7 +3,7 @@
 
 CyberPunk 2077 Customization Assistant Tool
 --------
-The goal is to provide a Tool that can uncompress and decompress Cyberpunk save files.
+The goal is to provide a Tool that can decompress and decompress Cyberpunk save files.
 **This is mostly a research project for now.**
 
 Ifyou make progress or discover new information or just have quiestions contact me on Discord SirBitesalot#6627 or join us on the CP77 modding Tools Server https://discord.com/invite/Epkq79kd96
@@ -23,11 +23,12 @@ Usage
 --------
 **!Backup your saves!**
 - Paste file path of file to decompress or drag file onto textbox.
-- Hit "Uncompress"
-- In the "Output" 2 Files will appear({guid}\_metainf.json and {guid}\_uncompressed.bin)
-- To Recompress Drag the "{guid}\_uncompressed.bin" File onto the textbox titled "Uncompressed File Path"
+- Hit "Decompress"
+- In the "Output" 2 Files will appear({guid}\_metainf.json and {guid}\_decompressed.bin)
+- To Recompress Drag the "{guid}\_decompressed.bin" File onto the textbox titled "Decompressed File Path"
 - If you changed the name or the paths changed you need to also drag the "{guid}\_metainf.json" if not it gets added automatically
 - Hit "Recompress"
+- Copy over "{guid}\_recompressed.bin" into save game folde and rename to sav.dat (did I mention backing up original saves ;))
 - Test if it works ingame
 
 Dependencies
