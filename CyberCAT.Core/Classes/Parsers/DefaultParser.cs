@@ -15,7 +15,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var result = new DefaultRepresentation();
             reader.Skip(4);//skip Id TODO maybe store later
-            result.Blob = reader.ReadBytes(node.Size - 4);
+            result.Blob = new byte[1];//TODO implement when ChildLogic is implemented
             return result;
         }
     }
