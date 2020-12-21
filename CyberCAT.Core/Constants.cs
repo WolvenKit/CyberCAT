@@ -35,5 +35,13 @@ namespace CyberCAT.Core
             public const string MISSING_METAINFO_FILE_TEXT = "Metainfo File not found";
 
         }
+        public static class Parsing
+        {
+            public const string TPP_SECTION_NAME = "TPP";
+        }
+        public static class NodeNames
+        {
+            public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
+        }
     }
 }

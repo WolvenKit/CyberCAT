@@ -42,6 +42,7 @@
             this.loadAppearanceSectionButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.appearanceUncompressedSaveFilePathTextbox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -72,7 +73,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(768, 400);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.Text = "Compression";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // label3
@@ -155,6 +156,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.loadAppearanceSectionButton);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.appearanceUncompressedSaveFilePathTextbox);
@@ -163,12 +165,12 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(768, 400);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.Text = "Experimental";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // loadAppearanceSectionButton
             // 
-            this.loadAppearanceSectionButton.Location = new System.Drawing.Point(447, 23);
+            this.loadAppearanceSectionButton.Location = new System.Drawing.Point(447, 58);
             this.loadAppearanceSectionButton.Name = "loadAppearanceSectionButton";
             this.loadAppearanceSectionButton.Size = new System.Drawing.Size(75, 23);
             this.loadAppearanceSectionButton.TabIndex = 2;
@@ -179,21 +181,30 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 3);
+            this.label4.Location = new System.Drawing.Point(6, 38);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(144, 13);
+            this.label4.Size = new System.Drawing.Size(131, 13);
             this.label4.TabIndex = 1;
-            this.label4.Text = "Uncompressed SaveFilePath";
+            this.label4.Text = "Compressed SaveFilePath";
             // 
             // appearanceUncompressedSaveFilePathTextbox
             // 
             this.appearanceUncompressedSaveFilePathTextbox.AllowDrop = true;
-            this.appearanceUncompressedSaveFilePathTextbox.Location = new System.Drawing.Point(6, 23);
+            this.appearanceUncompressedSaveFilePathTextbox.Location = new System.Drawing.Point(6, 58);
             this.appearanceUncompressedSaveFilePathTextbox.Name = "appearanceUncompressedSaveFilePathTextbox";
             this.appearanceUncompressedSaveFilePathTextbox.Size = new System.Drawing.Size(435, 20);
             this.appearanceUncompressedSaveFilePathTextbox.TabIndex = 0;
             this.appearanceUncompressedSaveFilePathTextbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragDrop);
             this.appearanceUncompressedSaveFilePathTextbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragEnter);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 3);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(229, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Experimental Section to Convert Save to JSON";
             // 
             // Form1
             // 
@@ -228,6 +239,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox appearanceUncompressedSaveFilePathTextbox;
         private System.Windows.Forms.Button loadAppearanceSectionButton;
+        private System.Windows.Forms.Label label5;
     }
 }
 

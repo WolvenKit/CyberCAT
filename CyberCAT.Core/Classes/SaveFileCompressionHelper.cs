@@ -72,6 +72,10 @@ namespace CyberCAT.Core.Classes
             byte[] result;
             using (var stream = new MemoryStream())
             {
+                byte[] header = new byte[3105];
+                input.Position = 0;
+                input.Read(header, 0, 3105);
+                stream.Write(header);
                 foreach (var chunk in Table.Chunks)
                 {
                     //File.WriteAllBytes($"chunk_{chunk.ChunkGuid}.bin", chunk.DecompressedData);
@@ -79,10 +83,17 @@ namespace CyberCAT.Core.Classes
                     stream.Write(chunk.DecompressedData, 0, chunk.DecompressedData.Length);
                     index++;
                 }
+                stream.Write(MetaInformation.RestOfContent);
                 result = stream.ToArray();
             }
             return result;
         }
+        /// <summary>
+        /// Recmopresses from single File only supports files where the blocks and Filesize did not change
+        /// </summary>
+        /// <param name="inputFileName"></param>
+        /// <param name="metadataFilePath"></param>
+        /// <param name="recompressedFilePath"></param>
         public void CompressFromSingleFile(string inputFileName, string metadataFilePath, out string recompressedFilePath)
         {
             string json = File.ReadAllText(metadataFilePath);
@@ -97,7 +108,8 @@ namespace CyberCAT.Core.Classes
                     {
                         using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
                         {
-                            long remainingBytes = reader.BaseStream.Length;
+                            reader.Skip(MetaInformation.HeaderSize);
+                            long remainingBytes = reader.BaseStream.Length-MetaInformation.RestOfContent.Length-MetaInformation.HeaderSize;
                             while (remainingBytes >262144)
                             {
                                 var uncompressedBytes = reader.ReadBytes(262144);
@@ -106,7 +118,7 @@ namespace CyberCAT.Core.Classes
                             }
                             var lastBytes = reader.ReadBytes((int)remainingBytes);
                             dataToCompress.Add(lastBytes);
-
+                            reader.Skip((int)(reader.BaseStream.Length - reader.BaseStream.Position));
                         }
                     }
                     writer.Write(MetaInformation.FirstHeaderBytes);

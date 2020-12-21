@@ -142,21 +142,15 @@ namespace CyberCAT.Forms
 
         private void loadAppearanceSectionButton_Click(object sender, EventArgs e)
         {
-            SaveFileParser parser = new SaveFileParser();
+            var saveFile = new SaveFile();
             var fileBytes = File.ReadAllBytes(appearanceUncompressedSaveFilePathTextbox.Text);
-            using(var stream = new MemoryStream(fileBytes))
+            using (var stream = new MemoryStream(fileBytes))
             {
-                var results = parser.Parse(stream);
-                int index = 0;
-                foreach (var json in results)
-                {
-                    File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{Path.GetFileName(appearanceUncompressedSaveFilePathTextbox.Text)}json_{index}.json",json);
-                    index++;
-                }
+                saveFile.Load(stream);
+                File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
-               
+            MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json");
 
-            
         }
     }
 }

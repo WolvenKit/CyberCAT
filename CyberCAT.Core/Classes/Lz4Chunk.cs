@@ -30,7 +30,6 @@ namespace CyberCAT.Core.ChunkedLz4
             Span<byte> outputData = new byte[DecompressedChunkSize];
             Skipped = new byte[8];
             inputStream.Read(Skipped);
-            //inputStream.Seek(8, SeekOrigin.Current);
             inputStream.Read(inputData);
             CompressedData = inputData.ToArray();
             int bytesDecoded = LZ4Codec.Decode(inputData, outputData);
