@@ -13,7 +13,7 @@ namespace CyberCAT.Forms.Classes
         public NodeEntry Node;
         public NodeEntryTreeNode(NodeEntry sourceNode)
         {
-            this.Text = sourceNode.Name;
+            Text = $"[{sourceNode.Id}] {sourceNode.Name}";
             Node = sourceNode;
         }
         public static List<NodeEntryTreeNode> FromList(List<NodeEntry> nodes)
