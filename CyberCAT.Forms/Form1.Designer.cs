@@ -39,10 +39,11 @@
             this.decompressFilePathTextbox = new System.Windows.Forms.TextBox();
             this.uncompressButton = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
             this.loadAppearanceSectionButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.appearanceUncompressedSaveFilePathTextbox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -156,6 +157,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.treeView1);
             this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.loadAppearanceSectionButton);
             this.tabPage2.Controls.Add(this.label4);
@@ -167,6 +169,15 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Experimental";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 3);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(229, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Experimental Section to Convert Save to JSON";
             // 
             // loadAppearanceSectionButton
             // 
@@ -197,14 +208,12 @@
             this.appearanceUncompressedSaveFilePathTextbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragDrop);
             this.appearanceUncompressedSaveFilePathTextbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragEnter);
             // 
-            // label5
+            // treeView1
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 3);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(229, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Experimental Section to Convert Save to JSON";
+            this.treeView1.Location = new System.Drawing.Point(9, 85);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(432, 309);
+            this.treeView1.TabIndex = 4;
             // 
             // Form1
             // 
@@ -240,6 +249,7 @@
         private System.Windows.Forms.TextBox appearanceUncompressedSaveFilePathTextbox;
         private System.Windows.Forms.Button loadAppearanceSectionButton;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TreeView treeView1;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using CyberCAT.Core;
 using CyberCAT.Core.ChunkedLz4;
 using CyberCAT.Core.Classes;
+using CyberCAT.Forms.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -150,7 +151,24 @@ namespace CyberCAT.Forms
                 File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
             MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json");
-
+            foreach (var node in saveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+                AddChildrenToTreeNode(treeNode);
+                treeView1.Nodes.Add(treeNode);
+            }
+        }
+        private void AddChildrenToTreeNode(NodeEntryTreeNode treeNode)
+        {
+            if (treeNode.Node.Children.Count > 0)
+            {
+                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
+                foreach(var child in treeNode.Nodes)
+                {
+                    AddChildrenToTreeNode((NodeEntryTreeNode)child);
+                }
+            }
+            
         }
     }
 }

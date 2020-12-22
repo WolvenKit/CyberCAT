@@ -19,6 +19,7 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
         public Guid DumpGuid;
+        int calls = 0;
         List<INodeParser> _parsers;
         public SaveFile()
         {
@@ -30,7 +31,8 @@ namespace CyberCAT.Core.Classes
         }
         public void Load(Stream inputStream)
         {
-            using(var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
+            var tempNodes = new List<NodeEntry>(Nodes);
+            using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
                 string magic = reader.ReadString(4);
                 Version1 = reader.ReadInt32();
@@ -43,7 +45,7 @@ namespace CyberCAT.Core.Classes
                 reader.BaseStream.Seek(LastBlockOffset, SeekOrigin.Begin);
                 string edonMagic = reader.ReadString(4);
                 var flags = new Flags(reader);
-                for(int i = 0; i < flags.Length; i++)
+                for (int i = 0; i < flags.Length; i++)
                 {
                     var tmpFlags = new Flags(reader);
                     string name = reader.ReadString(tmpFlags.Length);
@@ -53,7 +55,7 @@ namespace CyberCAT.Core.Classes
                     entry.Offset = reader.ReadInt32();
                     entry.Size = reader.ReadInt32();
                     entry.Name = name;
-                    Nodes.Add(entry);
+                    tempNodes.Add(entry);
                 }
             }
             inputStream.Seek(0, SeekOrigin.Begin);
@@ -63,28 +65,71 @@ namespace CyberCAT.Core.Classes
             {
                 using (BinaryReader reader = new BinaryReader(memoryStream, Encoding.ASCII))
                 {
-                    foreach (var entry in Nodes)
+
+                    foreach (var node in tempNodes)
                     {
-                        reader.BaseStream.Position = entry.Offset;
-                        entry.Id = reader.ReadInt32();
+                        reader.BaseStream.Position = node.Offset;
+                        node.Id = reader.ReadInt32();
                     }
-                    foreach (var node in Nodes)
+                    foreach (var node in tempNodes)
+                    {
+                        if (!node.IsChild)
+                        {
+                            FindChildren(tempNodes, node);
+                        }
+                        if (node.NextId > -1)
+                        {
+                            node.SetNextNode(tempNodes.Where(n => n.Id == node.NextId).FirstOrDefault());
+                        }
+                    }
+                    Nodes.AddRange(tempNodes.Where(n => !n.IsChild));
+                    foreach(var node in Nodes)
                     {
                         var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
                         if (parser != null)
                         {
-                            node.Value = parser.Parse(node, reader);
+                            node.Value = parser.Read(node, reader,_parsers);
                         }
                         else
                         {
                             var fallback = new DefaultParser();
-                            node.Value = fallback.Parse(node, reader);
+                            node.Value = fallback.Read(node, reader, _parsers);
                         }
-                        
                     }
                 }
             }
             
+        }
+        private void Save()
+        {
+            foreach()
+        }
+        private void FindChildren(List<NodeEntry> nodes, NodeEntry node)
+        {
+            calls++;
+            if (calls > 100)
+            {
+                int a = 0;
+            }
+            if (node.ChildId > -1)
+            {
+                var counter = node.ChildId;
+                for(int i =node.ChildId; i<node.NextId;i++)
+                {
+                    var possibleChild = nodes.Where(n => n.Id == counter).FirstOrDefault();
+                    possibleChild.IsChild = true;
+                    if (possibleChild.ChildId > -1)//SubChild
+                    {
+                        FindChildren(nodes, possibleChild);
+                    }
+                    else
+                    {
+                        node.Children.Add(possibleChild);
+                    }
+                    counter++;
+
+                }
+            }
         }
     }
 }

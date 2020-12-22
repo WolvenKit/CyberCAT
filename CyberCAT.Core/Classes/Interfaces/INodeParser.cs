@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.Interfaces
 {
-    interface INodeParser
+    public interface INodeParser
     {
         string ParsableNodeName { get; set; }
-        object Parse(NodeEntry node, BinaryReader reader);
+        object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers);
+        byte[] Write(NodeEntry node, List<INodeParser> parsers);
     }
 }

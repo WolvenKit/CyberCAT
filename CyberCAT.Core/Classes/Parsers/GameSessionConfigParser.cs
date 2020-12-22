@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             ParsableNodeName = Constants.NodeNames.GAME_SESSION_CONFIG_NODE;
         }
-        public object Parse(NodeEntry node, BinaryReader reader)
+        public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             if (node.Name != ParsableNodeName)
             {
@@ -33,6 +33,11 @@ namespace CyberCAT.Core.Classes.Parsers
             result.Hash3 = reader.ReadUInt64();
             result.TrailingBytes = reader.ReadBytes(node.Size - (29 + flags.Length));
             return result;
+        }
+
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        {
+            throw new NotImplementedException();
         }
     }
 }

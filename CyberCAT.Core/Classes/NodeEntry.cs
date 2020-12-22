@@ -15,5 +15,20 @@ namespace CyberCAT.Core.Classes
         public int Offset { get; set; }
         public int Size { get; set; }
         public object Value { get; set; }
+        public bool IsChild { get; set; }
+        public List<NodeEntry> Children { get; set; }
+        private NodeEntry _nextNode;
+        public NodeEntry()
+        {
+            Children = new List<NodeEntry>();
+        }
+        public void SetNextNode(NodeEntry nextNode)
+        {
+            _nextNode = nextNode;
+        }
+        public NodeEntry GetNextNode()
+        {
+            return _nextNode;
+        }
     }
 }
