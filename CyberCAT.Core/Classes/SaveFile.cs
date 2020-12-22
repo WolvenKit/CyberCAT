@@ -19,7 +19,6 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
         public Guid DumpGuid;
-        int calls = 0;
         List<INodeParser> _parsers;
         public SaveFile()
         {
@@ -102,15 +101,10 @@ namespace CyberCAT.Core.Classes
         }
         private void Save()
         {
-            foreach()
+            throw new NotImplementedException();
         }
         private void FindChildren(List<NodeEntry> nodes, NodeEntry node)
         {
-            calls++;
-            if (calls > 100)
-            {
-                int a = 0;
-            }
             if (node.ChildId > -1)
             {
                 var counter = node.ChildId;
