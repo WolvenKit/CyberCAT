@@ -19,5 +19,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         }
 
         public List<AppearanceInstance> Instances = new List<AppearanceInstance>();
+
+        public string HelmetHairColor;
+        public string HelmetHairLength;
     }
 }

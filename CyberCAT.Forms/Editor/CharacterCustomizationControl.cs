@@ -33,6 +33,10 @@ namespace CyberCAT.Forms.Editor
                 }
                 tppList.Items.Add(new ListViewItem() { Text = $"{ai.Hash:X}", SubItems = { $"{ai.SecondString}", $"{ai.FirstString}" }, Group = group});
             }
+            var helmetGroup = new ListViewGroup("Helmet Hair");
+            tppList.Groups.Add(helmetGroup);
+            tppList.Items.Add(new ListViewItem() { Text = "-", SubItems = { "Helmet Hair Color", $"{_data.HelmetHairColor}" }, Group = helmetGroup });
+            tppList.Items.Add(new ListViewItem() { Text = "-", SubItems = { "Helmet Hair Length", $"{_data.HelmetHairLength}" }, Group = helmetGroup });
 
             tppList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }

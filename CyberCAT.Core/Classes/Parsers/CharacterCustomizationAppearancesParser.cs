@@ -49,6 +49,20 @@ namespace CyberCAT.Core.Classes.Parsers
                 ParseSection(reader, result);
             }
 
+            var unknown = reader.ReadInt32(); // it is not the count of the following strings...
+
+            count = 18;
+
+            for (int i = 0; i < count; ++i)
+            {
+                var s = ParserUtils.ReadString(reader);
+            }
+
+            reader.Skip(1); // 0x02 in my saves, could be a count
+
+            result.HelmetHairColor = ParserUtils.ReadString(reader);
+            result.HelmetHairLength = ParserUtils.ReadString(reader);
+
             return result;
         }
 
