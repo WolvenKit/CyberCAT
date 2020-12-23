@@ -18,6 +18,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             ParsableNodeName = Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE;
         }
+
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             if (node.Name != ParsableNodeName)
@@ -76,6 +77,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             return result;
         }
+
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;

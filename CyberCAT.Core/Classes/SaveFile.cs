@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes
 {
@@ -28,6 +29,7 @@ namespace CyberCAT.Core.Classes
             _parsers = new List<INodeParser>();
             _parsers.Add(new GameSessionConfigParser());
             _parsers.Add(new CharacterCustomizationAppearancesParser());
+            _parsers.Add(new ItemDataParser());
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {
