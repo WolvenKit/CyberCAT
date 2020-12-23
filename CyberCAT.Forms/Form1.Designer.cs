@@ -39,24 +39,39 @@
             this.decompressFilePathTextbox = new System.Windows.Forms.TextBox();
             this.uncompressButton = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.label5 = new System.Windows.Forms.Label();
             this.loadAppearanceSectionButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.appearanceUncompressedSaveFilePathTextbox = new System.Windows.Forms.TextBox();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.LoadSave = new System.Windows.Forms.Button();
+            this.EditorTree = new System.Windows.Forms.TreeView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(776, 426);
+            this.tabControl1.Size = new System.Drawing.Size(757, 455);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -72,7 +87,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(768, 400);
+            this.tabPage1.Size = new System.Drawing.Size(749, 429);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Compression";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -165,10 +180,17 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(768, 400);
+            this.tabPage2.Size = new System.Drawing.Size(1249, 823);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Experimental";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(9, 85);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(432, 309);
+            this.treeView1.TabIndex = 4;
             // 
             // label5
             // 
@@ -208,18 +230,72 @@
             this.appearanceUncompressedSaveFilePathTextbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragDrop);
             this.appearanceUncompressedSaveFilePathTextbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragEnter);
             // 
-            // treeView1
+            // tabPage3
             // 
-            this.treeView1.Location = new System.Drawing.Point(9, 85);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(432, 309);
-            this.treeView1.TabIndex = 4;
+            this.tabPage3.Controls.Add(this.splitContainer1);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1249, 823);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Editor";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(1243, 817);
+            this.splitContainer1.SplitterDistance = 414;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.LoadSave);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.EditorTree);
+            this.splitContainer2.Size = new System.Drawing.Size(414, 817);
+            this.splitContainer2.SplitterDistance = 30;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // LoadSave
+            // 
+            this.LoadSave.Location = new System.Drawing.Point(3, 3);
+            this.LoadSave.Name = "LoadSave";
+            this.LoadSave.Size = new System.Drawing.Size(75, 23);
+            this.LoadSave.TabIndex = 0;
+            this.LoadSave.Text = "Load Save";
+            this.LoadSave.UseVisualStyleBackColor = true;
+            this.LoadSave.Click += new System.EventHandler(this.EditorLoad_Click);
+            // 
+            // EditorTree
+            // 
+            this.EditorTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EditorTree.Location = new System.Drawing.Point(0, 0);
+            this.EditorTree.Name = "EditorTree";
+            this.EditorTree.Size = new System.Drawing.Size(414, 783);
+            this.EditorTree.TabIndex = 0;
+            this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(757, 455);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
             this.Text = "CyberCAT";
@@ -228,6 +304,14 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -250,6 +334,11 @@
         private System.Windows.Forms.Button loadAppearanceSectionButton;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.Button LoadSave;
+        private System.Windows.Forms.TreeView EditorTree;
     }
 }
 

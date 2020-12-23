@@ -50,6 +50,7 @@ namespace CyberCAT.Core
         public static class Numbers
         {
             public const int DEFAULT_HEADER_SIZE = 3105;
+            public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
         }
     }
 }

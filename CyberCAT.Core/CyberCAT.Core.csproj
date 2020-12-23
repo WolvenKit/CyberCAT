@@ -64,10 +64,13 @@
     <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NodeEntry.cs" />
+    <Compile Include="Classes\NodeRepresentations\CharacterCustomizationAppearances.cs" />
     <Compile Include="Classes\NodeRepresentations\DefaultRepresentation.cs" />
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
+    <Compile Include="Classes\Parsers\CharacterCustomizationAppearancesParser.cs" />
     <Compile Include="Classes\Parsers\DefaultParser.cs" />
     <Compile Include="Classes\Parsers\GameSessionConfigParser.cs" />
+    <Compile Include="Classes\Parsers\ParserUtils.cs" />
     <Compile Include="Classes\SaveFile.cs" />
     <Compile Include="Classes\ChunkedLz4FileTable.cs" />
     <Compile Include="Classes\SaveFileCompressionHelper.cs" />

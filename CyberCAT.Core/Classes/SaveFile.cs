@@ -27,6 +27,7 @@ namespace CyberCAT.Core.Classes
             //TODO do this with dependency injection or Reflection and a Plugin type DLL Folder
             _parsers = new List<INodeParser>();
             _parsers.Add(new GameSessionConfigParser());
+            _parsers.Add(new CharacterCustomizationAppearancesParser());
         }
         public void Load(Stream inputStream)
         {

@@ -41,6 +41,7 @@
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -63,16 +64,47 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
+    <Compile Include="Editor\CharacterCustomizationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\CharacterCustomizationControl.Designer.cs">
+      <DependentUpon>CharacterCustomizationControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\GameSessionConfigControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\GameSessionConfigControl.Designer.cs">
+      <DependentUpon>GameSessionConfigControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\HexEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\HexEditorControl.Designer.cs">
+      <DependentUpon>HexEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form1.Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Editor\CharacterCustomizationControl.resx">
+      <DependentUpon>CharacterCustomizationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\GameSessionConfigControl.resx">
+      <DependentUpon>GameSessionConfigControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\HexEditorControl.resx">
+      <DependentUpon>HexEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -103,5 +135,6 @@
       <Name>CyberCAT.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

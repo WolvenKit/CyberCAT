@@ -51,7 +51,6 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             else
             {
-                
                 reader.BaseStream.Position = node.Offset;
                 reader.ReadInt32();//dont store Id for now
                 result.Blob = reader.ReadBytes(node.Size-4);
