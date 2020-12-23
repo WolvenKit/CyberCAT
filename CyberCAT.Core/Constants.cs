@@ -42,6 +42,7 @@ namespace CyberCAT.Core
         public static class NodeNames
         {
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
+            public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
         }
     }
 }
