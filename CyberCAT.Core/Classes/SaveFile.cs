@@ -84,8 +84,10 @@ namespace CyberCAT.Core.Classes
                         }
                     }
                     Nodes.AddRange(_nodes.Where(n => !n.IsChild));
+                    CalculateTrueSizes();
                     foreach (var node in Nodes)
                     {
+                        
                         var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
                         if (parser != null)
                         {
@@ -210,6 +212,21 @@ namespace CyberCAT.Core.Classes
         result = stream.ToArray();
             }
             return result;
+        }
+        void CalculateTrueSizes()
+        {
+            
+            for(int i =0; i < _nodes.Count-1; i++)
+            {
+                var node = _nodes[i];
+                var next = _nodes[i + 1];
+                if (i == 60)
+                {
+                    Debugger.Break();
+                }
+                node.TrueSize = next.Offset - node.Offset;
+            }
+            _nodes[_nodes.Count - 1].TrueSize = _nodes[_nodes.Count - 1].Size;//I believe
         }
         void RecalculateOffsets(NodeEntry node)
         {

@@ -16,6 +16,8 @@ namespace CyberCAT.Core.Classes
         public int Size { get; set; }
         public object Value { get; set; }
         public bool IsChild { get; set; }
+        public bool IsFirstChild { get; set; }
+        public int TrueSize { get; set; }
         public List<NodeEntry> Children { get; set; }
         private NodeEntry _nextNode;
         private NodeEntry _previousNode;
@@ -35,12 +37,20 @@ namespace CyberCAT.Core.Classes
         }
         public void AddChild(NodeEntry child)
         {
+            if (Children.Count == 0)
+            {
+                child.IsFirstChild = true;
+            }
             Children.Add(child);
             child.SetParent(this);
         }
         public void SetParent(NodeEntry parent)
         {
             _parent = parent;
+        }
+        public NodeEntry GetParent()
+        {
+            return _parent;
         }
         public NodeEntry GetPreviousNode()
         {

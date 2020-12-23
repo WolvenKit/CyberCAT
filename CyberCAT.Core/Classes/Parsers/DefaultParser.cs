@@ -22,7 +22,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
                     if (parser != null)
                     {
-                        child.Value = parser.Read(child, reader,parsers);
+                        child.Value = parser.Read(child, reader, parsers);
                     }
                     else
                     {
@@ -30,32 +30,11 @@ namespace CyberCAT.Core.Classes.Parsers
                         child.Value = fallback.Read(child, reader, parsers);
                     }
                 }
-                //var sumOfChildSizes = 
-                var sumOfChildSizes = node.Children.Sum(c => c.Size);
-                if (sumOfChildSizes+4 < node.Size)//we need to add 4 to size because thats our ID and included in our size 
-                {
-                    var readSize = node.Size - sumOfChildSizes;
-                    if ((node.Children[0].Offset - node.Offset) > 4)
-                    {
-                        //We need to read out Data for this block infront
-                        reader.BaseStream.Position = node.Offset;
-                        reader.ReadInt32();//dont store Id for now
-                        result.Blob = reader.ReadBytes(readSize - 4);
-                        var nextNode = node.GetNextNode();
-                    }
-                    else
-                    {
-                        Debugger.Break();//Dont know what to do here
-                    }
-                }
             }
-            else
-            {
-                reader.BaseStream.Position = node.Offset;
-                reader.ReadInt32();//dont store Id for now
-                result.Blob = reader.ReadBytes(node.Size-4);
-                
-            }
+
+            reader.BaseStream.Position = node.Offset;
+            result.Blob = reader.ReadBytes(node.TrueSize);
+
             return result;
         }
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
@@ -67,7 +46,6 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    writer.Write(node.Id);
                     if (node.Children.Count > 0)
                     {
                         if (data.Blob != null)
@@ -101,7 +79,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             //we are recalculating the size while writing
             node.Size += result.Length;
-            if (node.Size == 4)//dont have their ID written
+            if (node.TrueSize == 0)//dont have their ID written
             {
                 result = new byte[4];
             }
