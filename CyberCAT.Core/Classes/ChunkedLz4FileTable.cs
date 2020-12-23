@@ -9,15 +9,11 @@ namespace CyberCAT.Core.ChunkedLz4
 
         public static ChunkedLz4FileTable Read(Stream input, int chunkCount)
         {
-            using (var reader = new BinaryReader(input, Encoding.UTF8, true))
+            using (var reader = new BinaryReader(input, Encoding.ASCII, true))
             {
                 Lz4Chunk[] chunks = new Lz4Chunk[chunkCount];
                 for (int i = 0; i < chunkCount; i++)
                 {
-                    if (i == 14)
-                    {
-                        int a = 0;
-                    }
                     chunks[i] = new Lz4Chunk();
                     chunks[i].CompressedChunkSize = reader.ReadInt32();
                     chunks[i].DecompressedChunkSize = reader.ReadInt32();

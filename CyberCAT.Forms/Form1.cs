@@ -145,12 +145,13 @@ namespace CyberCAT.Forms
         {
             var saveFile = new SaveFile();
             var fileBytes = File.ReadAllBytes(appearanceUncompressedSaveFilePathTextbox.Text);
+            var guid = Guid.NewGuid();
             using (var stream = new MemoryStream(fileBytes))
             {
                 saveFile.Load(stream);
-                File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
+                File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
-            MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{saveFile.DumpGuid}_dump.json");
+            MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
             foreach (var node in saveFile.Nodes)
             {
                 var treeNode = new NodeEntryTreeNode(node);

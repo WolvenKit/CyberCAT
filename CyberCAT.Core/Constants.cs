@@ -8,10 +8,13 @@ namespace CyberCAT.Core
 {
     public class Constants
     {
-        public static class SaveFile
+        public static class Magic
         {
-            public const string FIRST_FILE_HEADER_STRING = "VASC";
-            public const string SECOND_FILE_HEADER_STRING = "FZLC";
+            public const string FIRST_FILE_HEADER_MAGIC = "VASC";
+            public const string SECOND_FILE_HEADER_MAGIC = "FZLC";
+            public const string LZ4_CHUNK_MAGIC = "4ZLX";
+            public const string NODE_INFORMATION_START = "EDON";
+            public const string END_OF_FILE = "ENOD";
         }
         public static class FileStructure
         {
@@ -42,6 +45,11 @@ namespace CyberCAT.Core
         public static class NodeNames
         {
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
+            public const string ITEM_DATA = "itemData";
+        }
+        public static class Numbers
+        {
+            public const int DEFAULT_HEADER_SIZE = 3105;
         }
     }
 }

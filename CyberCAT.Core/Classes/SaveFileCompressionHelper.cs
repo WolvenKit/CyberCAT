@@ -25,13 +25,13 @@ namespace CyberCAT.Core.Classes
         }
         private void ReadHeader(Stream input)
         {
-            using (var reader = new BinaryReader(input, Encoding.UTF8, true))
+            using (var reader = new BinaryReader(input, Encoding.ASCII, true))
             {
                 long resumePosition = reader.BaseStream.Position;
                 MetaInformation.FirstFileHeaderMarker = reader.ReadString(4);
                 reader.BaseStream.Position = resumePosition;
                 MetaInformation.FirstHeaderBytes = reader.ReadBytes(4);
-                if (MetaInformation.FirstFileHeaderMarker != Constants.SaveFile.FIRST_FILE_HEADER_STRING)
+                if (MetaInformation.FirstFileHeaderMarker != Constants.Magic.FIRST_FILE_HEADER_MAGIC)
                 {
                     throw new InvalidOperationException();
                 }
@@ -42,7 +42,7 @@ namespace CyberCAT.Core.Classes
                 MetaInformation.SecondFileHeaderMarker = reader.ReadString(4);
                 reader.BaseStream.Position = resumePosition;
                 MetaInformation.SecondFileHeaderBytes = reader.ReadBytes(4);
-                if (MetaInformation.SecondFileHeaderMarker != Constants.SaveFile.SECOND_FILE_HEADER_STRING)
+                if (MetaInformation.SecondFileHeaderMarker != Constants.Magic.SECOND_FILE_HEADER_MAGIC)
                 {
                     throw new InvalidOperationException();
                 }
@@ -88,6 +88,47 @@ namespace CyberCAT.Core.Classes
             }
             return result;
         }
+        public List<Lz4Chunk> CompressToChunkList(byte[] uncomressedBody)
+        {
+            var result = new List<Lz4Chunk>();
+            List<byte[]> uncompressedChunks = new List<byte[]>();
+            using (var stream = new MemoryStream(uncomressedBody))
+            {
+                using (var reader = new BinaryReader(stream, Encoding.ASCII))
+                {
+                    long remainingBytes = reader.BaseStream.Length;
+                    while (remainingBytes > 262144)
+                    {
+                        var uncompressedBytes = reader.ReadBytes(262144);
+                        uncompressedChunks.Add(uncompressedBytes);
+                        remainingBytes = remainingBytes - 262144;
+                    }
+                    var lastBytes = reader.ReadBytes((int)remainingBytes);
+                    uncompressedChunks.Add(lastBytes);
+                }
+            }
+            foreach(var uncompressedChunk in uncompressedChunks)
+            {
+                var compressedChunk = new Lz4Chunk();
+                var target = new byte[LZ4Codec.MaximumOutputSize(uncompressedChunk.Length)];
+                int actualSize = LZ4Codec.Encode(uncompressedChunk, target, compressionLevel);
+                //need to add 8 because of 4ZLX and size prefix
+                compressedChunk.DecompressedChunkSize = uncompressedChunk.Length;
+                using (var stream = new MemoryStream())
+                {
+                    using(var writer = new BinaryWriter(stream, Encoding.ASCII))
+                    {
+                        writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.LZ4_CHUNK_MAGIC));
+                        writer.Write(compressedChunk.DecompressedChunkSize);
+                        writer.Write(target, 0, actualSize);
+                    }
+                    compressedChunk.CompressedData = stream.ToArray();
+                    compressedChunk.CompressedChunkSize = compressedChunk.CompressedData.Length;
+                }
+                result.Add(compressedChunk);
+            }
+            return result;
+        }
         /// <summary>
         /// Recmopresses from single File only supports files where the blocks and Filesize did not change
         /// </summary>
@@ -102,11 +143,11 @@ namespace CyberCAT.Core.Classes
             
             using (var memoryStream = new MemoryStream())
             {
-                using (var writer = new BinaryWriter(memoryStream, Encoding.UTF8))
+                using (var writer = new BinaryWriter(memoryStream, Encoding.ASCII))
                 {
                     using (var stream = File.OpenRead(inputFileName))
                     {
-                        using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
+                        using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
                         {
                             reader.Skip(MetaInformation.HeaderSize);
                             long remainingBytes = reader.BaseStream.Length-MetaInformation.RestOfContent.Length-MetaInformation.HeaderSize;
@@ -141,13 +182,9 @@ namespace CyberCAT.Core.Classes
                         writer.Write(fakeSize);//CompressedChunkSize
                         writer.Write(bytesDecoded);//DecompressedChunkSize
                         offset = offset + fakeSize;
-                        if (index < dataToCompress.Count - 1)
+                        if (index < dataToCompress.Count - 1)//only write if not last block last blockOffset is stored at -8 of EOF
                         {
                             writer.Write(offset);//EndOfChunkOffset
-                        }
-                        else
-                        {
-                            //writer.Write(0);
                         }
                         index++;
                     }
@@ -163,10 +200,6 @@ namespace CyberCAT.Core.Classes
                         Span<byte> outputData = new byte[bytesToCompress.Length];
                         Span<byte> inputData = compressedData;
                         int bytesDecoded = LZ4Codec.Decode(inputData, outputData);
-                        if (bytesDecoded != bytesToCompress.Length)
-                        {
-                            int a = 1;
-                        }
                         writer.Write(bytesDecoded);
                         writer.Write(compressedData);
                     }

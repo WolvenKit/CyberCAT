@@ -22,35 +22,91 @@ namespace CyberCAT.Core.Classes.Parsers
                     var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
                     if (parser != null)
                     {
-                        node.Value = parser.Read(child, reader,parsers);
+                        child.Value = parser.Read(child, reader,parsers);
                     }
                     else
                     {
                         var fallback = new DefaultParser();
-                        node.Value = fallback.Read(child, reader, parsers);
+                        child.Value = fallback.Read(child, reader, parsers);
                     }
                 }
+                //var sumOfChildSizes = 
                 var sumOfChildSizes = node.Children.Sum(c => c.Size);
-                if (sumOfChildSizes + 4 < node.Size)
+                if (sumOfChildSizes+4 < node.Size)//we need to add 4 to size because thats our ID and included in our size 
                 {
-                    reader.BaseStream.Position = node.Offset;
-                    reader.Skip(4);//skip Id TODO maybe store later
-                    var readSize = node.Size - 4 - sumOfChildSizes;
-                    result.Blob = reader.ReadBytes(readSize);
-                    Debug.Assert((node.Offset + sumOfChildSizes + result.Blob.Length + 4) == node.GetNextNode().Offset);//If not we have misread the structure somehow
+                    var readSize = node.Size - sumOfChildSizes;
+                    if ((node.Children[0].Offset - node.Offset) > 4)
+                    {
+                        //We need to read out Data for this block infront
+                        reader.BaseStream.Position = node.Offset;
+                        reader.ReadInt32();//dont store Id for now
+                        result.Blob = reader.ReadBytes(readSize - 4);
+                        var nextNode = node.GetNextNode();
+                    }
+                    else
+                    {
+                        Debugger.Break();//Dont know what to do here
+                    }
                 }
-                
             }
             else
             {
                 
                 reader.BaseStream.Position = node.Offset;
-                reader.Skip(4);//skip Id TODO maybe store later
+                reader.ReadInt32();//dont store Id for now
                 result.Blob = reader.ReadBytes(node.Size-4);
                 
             }
             return result;
+        }
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        {
+            byte[] result;
+            node.Size = 0;
+            var data = (DefaultRepresentation)node.Value;
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                {
+                    writer.Write(node.Id);
+                    if (node.Children.Count > 0)
+                    {
+                        if (data.Blob != null)
+                        {
+                            writer.Write(data.Blob);
+                        }
+                        foreach (var child in node.Children)
+                        {
+                            var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
+                            if (parser != null)
+                            {
+                                writer.Write(parser.Write(child, parsers));
+                            }
+                            else
+                            {
+                                var fallback = new DefaultParser();
+                                writer.Write(fallback.Write(child, parsers));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (data != null)
+                        {
+                            writer.Write(data.Blob);
 
+                        }
+                    }
+                }
+                result = stream.ToArray();
+            }
+            //we are recalculating the size while writing
+            node.Size += result.Length;
+            if (node.Size == 4)//dont have their ID written
+            {
+                result = new byte[4];
+            }
+            return result;
         }
     }
 }

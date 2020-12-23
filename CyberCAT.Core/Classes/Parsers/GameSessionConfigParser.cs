@@ -15,7 +15,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public GameSessionConfigParser()
         {
-            ParsableNodeName = Constants.NodeNames.GAME_SESSION_CONFIG_NODE;
+            ParsableNodeName = "off";//Constants.NodeNames.GAME_SESSION_CONFIG_NODE;
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
@@ -37,7 +37,24 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
-            throw new NotImplementedException();
+            byte[] result;
+            var data = (GameSessionConfig)node.Value;
+            using(var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream,Encoding.ASCII))
+                {
+                    writer.Write(node.Id);
+                    writer.Write(data.Hash1);
+                    writer.Write(data.Hash2);
+                    writer.Write((byte)(data.TextValue.Length+128));
+                    writer.Write(Encoding.ASCII.GetBytes(data.TextValue));
+                    writer.Write(data.Hash3);
+                    writer.Write(data.TrailingBytes);
+                }
+                result = stream.ToArray();
+            }
+            node.Size = result.Length;//Add id int size
+            return result;
         }
     }
 }

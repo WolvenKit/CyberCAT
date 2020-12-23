@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NodeEntry.cs" />
