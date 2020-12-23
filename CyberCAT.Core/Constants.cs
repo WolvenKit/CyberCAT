@@ -46,11 +46,11 @@ namespace CyberCAT.Core
         {
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
             public const string ITEM_DATA = "itemData";
+            public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
         }
         public static class Numbers
         {
             public const int DEFAULT_HEADER_SIZE = 3105;
-            public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
         }
     }
 }

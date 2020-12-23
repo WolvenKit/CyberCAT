@@ -19,6 +19,7 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> Children { get; set; }
         private NodeEntry _nextNode;
         private NodeEntry _previousNode;
+        private NodeEntry _parent;
         public NodeEntry()
         {
             Children = new List<NodeEntry>();
@@ -31,6 +32,15 @@ namespace CyberCAT.Core.Classes
         public void SetPreviousNode(NodeEntry previousNode)
         {
             _previousNode = previousNode;
+        }
+        public void AddChild(NodeEntry child)
+        {
+            Children.Add(child);
+            child.SetParent(this);
+        }
+        public void SetParent(NodeEntry parent)
+        {
+            _parent = parent;
         }
         public NodeEntry GetPreviousNode()
         {

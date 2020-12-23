@@ -254,7 +254,7 @@ namespace CyberCAT.Core.Classes
                     }
                     else
                     {
-                        node.Children.Add(possibleChild);
+                        node.AddChild(possibleChild);
                     }
 
                 }

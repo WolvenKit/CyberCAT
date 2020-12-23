@@ -15,7 +15,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public GameSessionConfigParser()
         {
-            ParsableNodeName = "off";//Constants.NodeNames.GAME_SESSION_CONFIG_NODE;
+            ParsableNodeName = Constants.NodeNames.GAME_SESSION_CONFIG_NODE;
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
