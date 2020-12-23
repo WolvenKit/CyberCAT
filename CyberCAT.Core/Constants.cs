@@ -41,6 +41,7 @@ namespace CyberCAT.Core
         public static class Parsing
         {
             public const string TPP_SECTION_NAME = "TPP";
+            public const string FPP_SECTION_NAME = "FPP";
         }
         public static class NodeNames
         {
