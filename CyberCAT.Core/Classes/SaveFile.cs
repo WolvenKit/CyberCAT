@@ -146,7 +146,6 @@ namespace CyberCAT.Core.Classes
                 }
                 result = stream.ToArray();
             }
-            File.WriteAllBytes($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Test.bin", uncompressedData);
             return result;
         }
         byte[] BuildHeader(List<Lz4Chunk> chunks)
