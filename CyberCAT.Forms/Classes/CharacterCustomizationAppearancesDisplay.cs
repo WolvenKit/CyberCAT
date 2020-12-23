@@ -16,6 +16,8 @@ namespace CyberCAT.Forms.Classes
         {
             UnknownFirstBytes = source.UnknownFirstBytes;
             ThirdPerson = source.ThirdPerson;
+            AdditionalThirdPerson = source.AdditionalThirdPerson;
+            FirstPerson = source.FirstPerson;
             TrailingBytes = source.TrailingBytes;
         }
     }

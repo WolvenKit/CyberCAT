@@ -76,7 +76,7 @@ namespace CyberCAT.Core.Classes
                     {
                         if (!node.IsChild)
                         {
-                            FindChildren(_nodes, node);
+                            FindChildren(_nodes, node, _nodes.Count);
                         }
                         if (node.NextId > -1)
                         {
@@ -230,14 +230,14 @@ namespace CyberCAT.Core.Classes
                 _nodes[i].Offset = previousNode.Offset + previousNode.TrueSize;
             }
         }
-        private void FindChildren(List<NodeEntry> nodes, NodeEntry node)
+        private void FindChildren(List<NodeEntry> nodes, NodeEntry node, int maxNextId)
         {
             if (node.ChildId > -1)
             {
                 var nextId = node.NextId;
                 if (nextId == -1)
                 {
-                    nextId = nodes.Count;
+                    nextId = maxNextId;
                 }
                 for (int i = node.ChildId; i < nextId; i++)
                 {
@@ -248,7 +248,7 @@ namespace CyberCAT.Core.Classes
                     }
                     if (possibleChild.ChildId > -1)//SubChild
                     {
-                        FindChildren(nodes, possibleChild);
+                        FindChildren(nodes, possibleChild, nextId);
                         node.AddChild(possibleChild);
                     }
                     else

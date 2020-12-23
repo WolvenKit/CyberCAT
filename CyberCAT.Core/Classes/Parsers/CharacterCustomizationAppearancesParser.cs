@@ -25,12 +25,25 @@ namespace CyberCAT.Core.Classes.Parsers
                 throw new Exception("Unexpected SectionName");
             }
             var result = new CharacterCustomizationAppearances();
-            reader.Skip(4);//skip Id
-            result.UnknownFirstBytes=reader.ReadBytes(15);
+            reader.Skip(4); //skip Id
+            result.UnknownFirstBytes = reader.ReadBytes(15);
+
             var tppTest = ParserUtils.ReadString(reader);
             Debug.Assert(tppTest == Constants.Parsing.TPP_SECTION_NAME);
             int count = reader.ReadInt32();
             result.ThirdPerson.AddRange(ReadHashValueSection(reader, count));
+
+            count = reader.ReadInt32();
+            if (count > 0)
+            {
+                result.AdditionalThirdPerson.AddRange(ReadValueSection(reader, count));
+            }
+
+            var fppTest = ParserUtils.ReadString(reader);
+            Debug.Assert(fppTest == Constants.Parsing.FPP_SECTION_NAME);
+            count = reader.ReadInt32();
+            result.FirstPerson.AddRange(ReadHashValueSection(reader, count));
+
             int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
             return result;
@@ -49,6 +62,20 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             return result;
         }
+
+        private List<CharacterCustomizationAppearances.ValueEntry> ReadValueSection(BinaryReader reader, int count)
+        {
+            var result = new List<CharacterCustomizationAppearances.ValueEntry>();
+            for (int i = 0; i < count; i++)
+            {
+                var entry = new CharacterCustomizationAppearances.ValueEntry();
+                entry.FirstString = ParserUtils.ReadString(reader);
+                entry.SecondString = ParserUtils.ReadString(reader);
+                entry.TrailingBytes = reader.ReadBytes(8);
+                result.Add(entry);
+            }
+            return result;
+        }
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
@@ -59,18 +86,42 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
                     writer.Write(data.UnknownFirstBytes);
-                    writer.Write((byte)(Constants.Parsing.TPP_SECTION_NAME.Length+128));
+                    writer.Write((byte)(Constants.Parsing.TPP_SECTION_NAME.Length + 128));
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Parsing.TPP_SECTION_NAME));
                     writer.Write(data.ThirdPerson.Count);
                     foreach(var entry in data.ThirdPerson)
                     {
                         writer.Write(entry.Hash);
-                        writer.Write((byte)(entry.FirstString.Length+128));
+                        writer.Write((byte)(entry.FirstString.Length + 128));
                         writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
                         writer.Write((byte)(entry.SecondString.Length + 128));
                         writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
                         writer.Write(entry.TrailingBytes);
                     }
+
+                    writer.Write(data.AdditionalThirdPerson.Count);
+                    foreach (var entry in data.AdditionalThirdPerson)
+                    {
+                        writer.Write((byte)(entry.FirstString.Length + 128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
+                        writer.Write((byte)(entry.SecondString.Length + 128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
+                        writer.Write(entry.TrailingBytes);
+                    }
+
+                    writer.Write((byte)(Constants.Parsing.FPP_SECTION_NAME.Length + 128));
+                    writer.Write(Encoding.ASCII.GetBytes(Constants.Parsing.FPP_SECTION_NAME));
+                    writer.Write(data.FirstPerson.Count);
+                    foreach (var entry in data.FirstPerson)
+                    {
+                        writer.Write(entry.Hash);
+                        writer.Write((byte)(entry.FirstString.Length + 128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
+                        writer.Write((byte)(entry.SecondString.Length + 128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
+                        writer.Write(entry.TrailingBytes);
+                    }
+
                     writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
