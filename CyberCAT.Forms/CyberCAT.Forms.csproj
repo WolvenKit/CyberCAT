@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CharacterCustomizationAppearancesDisplay.cs" />
+    <Compile Include="Classes\InventoryDisplay.cs" />
     <Compile Include="Classes\ItemDataDisplay.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
     <Compile Include="Editor\PropertyEditControl.cs">

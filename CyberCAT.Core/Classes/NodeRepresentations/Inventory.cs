@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
-    public class ItemData
+    public class Inventory
     {
-        public uint ItemNameCRC32b { get; set; }
-        public byte ItemNameLength { get; set; }
+        public byte[] HeaderBytes { get; set; }
+        public uint NumberOfItems { get; set; }
 
         /// <summary>
         /// Bytes that are not yet parsed into representation

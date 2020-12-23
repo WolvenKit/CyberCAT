@@ -30,6 +30,7 @@ namespace CyberCAT.Core.Classes
             _parsers.Add(new GameSessionConfigParser());
             _parsers.Add(new CharacterCustomizationAppearancesParser());
             _parsers.Add(new ItemDataParser());
+            _parsers.Add(new InventoryParser());
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {

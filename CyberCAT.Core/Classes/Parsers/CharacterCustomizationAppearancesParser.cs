@@ -128,7 +128,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-            node.TrueSize = result.Length;
+            //node.TrueSize = result.Length;
             return result;
         }
     }

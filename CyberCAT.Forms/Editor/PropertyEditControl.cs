@@ -17,7 +17,8 @@ namespace CyberCAT.Forms.Editor
         private static readonly Dictionary<Type, Type> DisplayTypes = new Dictionary<Type, Type>()
         {
             { typeof(CharacterCustomizationAppearances), typeof(CharacterCustomizationAppearancesDisplay) },
-            { typeof(ItemData), typeof(ItemDataDisplay) }
+            { typeof(ItemData), typeof(ItemDataDisplay) },
+            { typeof(Inventory), typeof(InventoryDisplay) },
         };
 
         public PropertyEditControl(object data)

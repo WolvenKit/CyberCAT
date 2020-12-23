@@ -23,6 +23,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             reader.Skip(4); //skip Id
 
+            result.ItemNameCRC32b = reader.ReadUInt32();
+            result.ItemNameLength = reader.ReadByte();
+
+            // Last 7 bytes always are the first 7 bytes of the next item, maybe for consistency?
+            // Except for the last item which has 24 bytes at the end
+
             int readSize = node.TrueSize - ((int) reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
@@ -38,6 +44,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(node.Id);
+
+                    writer.Write(data.ItemNameCRC32b);
+                    writer.Write(data.ItemNameLength);
 
                     writer.Write(data.TrailingBytes);
                 }
