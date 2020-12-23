@@ -47,6 +47,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.saveButton = new System.Windows.Forms.Button();
             this.LoadSave = new System.Windows.Forms.Button();
             this.EditorTree = new System.Windows.Forms.TreeView();
             this.tabControl1.SuspendLayout();
@@ -180,7 +181,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1249, 823);
+            this.tabPage2.Size = new System.Drawing.Size(749, 429);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Experimental";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -236,7 +237,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1249, 823);
+            this.tabPage3.Size = new System.Drawing.Size(749, 429);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Editor";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -250,8 +251,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1243, 817);
-            this.splitContainer1.SplitterDistance = 414;
+            this.splitContainer1.Size = new System.Drawing.Size(743, 423);
+            this.splitContainer1.SplitterDistance = 247;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -263,14 +264,25 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.saveButton);
             this.splitContainer2.Panel1.Controls.Add(this.LoadSave);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.EditorTree);
-            this.splitContainer2.Size = new System.Drawing.Size(414, 817);
-            this.splitContainer2.SplitterDistance = 30;
+            this.splitContainer2.Size = new System.Drawing.Size(247, 423);
+            this.splitContainer2.SplitterDistance = 25;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(84, 3);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 1;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // LoadSave
             // 
@@ -278,7 +290,7 @@
             this.LoadSave.Name = "LoadSave";
             this.LoadSave.Size = new System.Drawing.Size(75, 23);
             this.LoadSave.TabIndex = 0;
-            this.LoadSave.Text = "Load Save";
+            this.LoadSave.Text = "Load";
             this.LoadSave.UseVisualStyleBackColor = true;
             this.LoadSave.Click += new System.EventHandler(this.EditorLoad_Click);
             // 
@@ -287,7 +299,7 @@
             this.EditorTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
-            this.EditorTree.Size = new System.Drawing.Size(414, 783);
+            this.EditorTree.Size = new System.Drawing.Size(247, 394);
             this.EditorTree.TabIndex = 0;
             this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
             // 
@@ -339,6 +351,7 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button LoadSave;
         private System.Windows.Forms.TreeView EditorTree;
+        private System.Windows.Forms.Button saveButton;
     }
 }
 

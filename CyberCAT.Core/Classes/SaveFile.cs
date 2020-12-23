@@ -29,7 +29,7 @@ namespace CyberCAT.Core.Classes
             _parsers.Add(new GameSessionConfigParser());
             _parsers.Add(new CharacterCustomizationAppearancesParser());
         }
-        public void Load(Stream inputStream)
+        public void LoadFromCompressedStream(Stream inputStream)
         {
             _nodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
@@ -101,9 +101,8 @@ namespace CyberCAT.Core.Classes
                     }
                 }
             }
-            Save();
         }
-        private void Save()
+        public byte[] Save()
         {
             byte[] uncompressedData;
 
@@ -147,8 +146,8 @@ namespace CyberCAT.Core.Classes
                 }
                 result = stream.ToArray();
             }
-            File.WriteAllBytes($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\output.bin", result);
-
+            File.WriteAllBytes($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Test.bin", uncompressedData);
+            return result;
         }
         byte[] BuildHeader(List<Lz4Chunk> chunks)
         {
@@ -185,6 +184,7 @@ namespace CyberCAT.Core.Classes
                 }
                 result = stream.ToArray();
             }
+            
             return result;
         }
         byte[] BuildFooterWithoutLastEightBytes()

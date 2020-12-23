@@ -8,19 +8,23 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class CharacterCustomizationAppearances
     {
-        public struct AppearanceInstance
+        public class HashValueEntry
         {
-            public string Group;
-            public ulong Hash;
-            public Flags FirstFlags;
-            public string FirstString;
-            public Flags SecondFlags;
-            public string SecondString;
+            public ulong Hash { get; set; }
+            public string FirstString { get; set; }
+            public string SecondString { get; set; }
+            public byte[] TrailingBytes { get; set; }
         }
-
-        public List<AppearanceInstance> Instances = new List<AppearanceInstance>();
-
-        public string HelmetHairColor;
-        public string HelmetHairLength;
+        public byte[] UnknownFirstBytes;
+        /// <summary>
+        /// Bytes that are not yet parsed into representation
+        /// </summary>
+        public byte[] TrailingBytes { get; set; }
+        public List<HashValueEntry> ThirdPerson { get; set; }
+        public CharacterCustomizationAppearances()
+        {
+            ThirdPerson = new List<HashValueEntry>();
+        }
+       
     }
 }

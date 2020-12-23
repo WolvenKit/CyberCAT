@@ -15,6 +15,7 @@ namespace CyberCAT.Forms
 {
     partial class Form1
     {
+        SaveFile _activeSaveFile;
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
             { typeof(DefaultRepresentation), typeof(HexEditorControl) },
@@ -33,7 +34,14 @@ namespace CyberCAT.Forms
                 }
             }
         }
-
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+            if(saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.Save());
+            }
+        }
         private void EditorLoad_Click(object sender, EventArgs e)
         {
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
@@ -44,11 +52,11 @@ namespace CyberCAT.Forms
             }
 
             var fileName = fd.FileName;
-            var saveFile = new SaveFile();
+            _activeSaveFile = new SaveFile();
             var bytes = File.ReadAllBytes(fileName);
             try
             {
-                saveFile.Load(new MemoryStream(bytes));
+                _activeSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
             }
             catch (Exception exception)
             {
@@ -57,7 +65,7 @@ namespace CyberCAT.Forms
             }
 
             EditorTree.Nodes.Clear();
-            foreach (var node in saveFile.Nodes)
+            foreach (var node in _activeSaveFile.Nodes)
             {
                 var treeNode = new NodeEntryTreeNode(node);
                 AddChildrenToTreeNode(treeNode);

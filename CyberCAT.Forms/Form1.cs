@@ -148,9 +148,12 @@ namespace CyberCAT.Forms
             var guid = Guid.NewGuid();
             using (var stream = new MemoryStream(fileBytes))
             {
-                saveFile.Load(stream);
+                saveFile.LoadFromCompressedStream(stream);
                 File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
+            var growableSectionNames = new List<string>();
+            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.TrueSize).Select(n => n.Name));
+            File.WriteAllLines($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_growableSectionNames.txt", growableSectionNames);
             MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
             foreach (var node in saveFile.Nodes)
             {

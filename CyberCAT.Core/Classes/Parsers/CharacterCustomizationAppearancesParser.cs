@@ -25,76 +25,58 @@ namespace CyberCAT.Core.Classes.Parsers
                 throw new Exception("Unexpected SectionName");
             }
             var result = new CharacterCustomizationAppearances();
-
-            reader.BaseStream.Position = node.Offset;
-            reader.Skip(4); //Skip the ID
-            reader.Skip(15); // unknown bytes at start
-
-            ParseSection(reader, result);
-            ParseSection(reader, result);
-            ParseSection(reader, result);
-            ParseSection(reader, result);
-
-            var count = reader.ReadInt32(); // holstered and unholstered stuff
-
-            for (int i = 0; i < count; ++i)
-            {
-                ParseSection(reader, result);
-            }
-
-            count = reader.ReadInt32();
-
-            for (int i = 0; i < count; ++i)
-            {
-                ParseSection(reader, result);
-            }
-
-            var unknown = reader.ReadInt32(); // it is not the count of the following strings...
-
-            count = 18;
-
-            for (int i = 0; i < count; ++i)
-            {
-                var s = ParserUtils.ReadString(reader);
-            }
-
-            reader.Skip(1); // 0x02 in my saves, could be a count
-
-            result.HelmetHairColor = ParserUtils.ReadString(reader);
-            result.HelmetHairLength = ParserUtils.ReadString(reader);
-
+            reader.Skip(4);//skip Id
+            result.UnknownFirstBytes=reader.ReadBytes(15);
+            var tppTest = ParserUtils.ReadString(reader);
+            Debug.Assert(tppTest == Constants.Parsing.TPP_SECTION_NAME);
+            int count = reader.ReadInt32();
+            result.ThirdPerson.AddRange(ReadHashValueSection(reader, count));
+            int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
+            result.TrailingBytes = reader.ReadBytes(readSize);
             return result;
         }
-
-        private void ParseSection(BinaryReader reader, CharacterCustomizationAppearances result)
+        private List<CharacterCustomizationAppearances.HashValueEntry> ReadHashValueSection(BinaryReader reader, int count)
         {
-            var sectionName = ParserUtils.ReadString(reader);
-            var count = reader.ReadInt32(); // number of Instances section entries
-
-            for (int i = 0; i < count; ++i)
+            var result = new List<CharacterCustomizationAppearances.HashValueEntry>();
+            for(int i = 0; i < count; i++)
             {
-                result.Instances.Add(ParseAppearanceInstance(reader, sectionName));
+                var entry = new CharacterCustomizationAppearances.HashValueEntry();
+                entry.Hash = reader.ReadUInt64();
+                entry.FirstString = ParserUtils.ReadString(reader);
+                entry.SecondString = ParserUtils.ReadString(reader);
+                entry.TrailingBytes=reader.ReadBytes(8);
+                result.Add(entry);
             }
-
-            reader.Skip(4); // seems to be always 0
+            return result;
         }
-
-        private CharacterCustomizationAppearances.AppearanceInstance ParseAppearanceInstance(BinaryReader reader, string group)
-        {
-            var ai = new CharacterCustomizationAppearances.AppearanceInstance();
-            ai.Group = group;
-            ai.Hash = reader.ReadUInt64();
-            ai.FirstString = ParserUtils.ReadString(reader, out ai.FirstFlags);
-            ai.SecondString = ParserUtils.ReadString(reader, out ai.SecondFlags);
-            var unknown1 = reader.ReadInt32();
-            var unknown2 = reader.ReadInt32();
-            // Sometimes both are 1, sometimes only unknown1 is 1 und unknown2 is zero
-            return ai;
-        }
-
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
-            throw new NotImplementedException();
+            byte[] result;
+            var data = (CharacterCustomizationAppearances)node.Value;
+            using(var stream = new MemoryStream())
+            {
+                using(var writer = new BinaryWriter(stream,Encoding.ASCII))
+                {
+                    writer.Write(node.Id);
+                    writer.Write(data.UnknownFirstBytes);
+                    writer.Write((byte)(Constants.Parsing.TPP_SECTION_NAME.Length+128));
+                    writer.Write(Encoding.ASCII.GetBytes(Constants.Parsing.TPP_SECTION_NAME));
+                    writer.Write(data.ThirdPerson.Count);
+                    foreach(var entry in data.ThirdPerson)
+                    {
+                        writer.Write(entry.Hash);
+                        writer.Write((byte)(entry.FirstString.Length+128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
+                        writer.Write((byte)(entry.SecondString.Length + 128));
+                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
+                        writer.Write(entry.TrailingBytes);
+                    }
+                    writer.Write(data.TrailingBytes);
+                }
+                result = stream.ToArray();
+            }
+            node.TrueSize = result.Length;
+            return result;
         }
     }
 }

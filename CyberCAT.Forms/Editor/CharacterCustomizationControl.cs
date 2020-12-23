@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Forms.Classes;
 
 namespace CyberCAT.Forms.Editor
 {
@@ -21,24 +22,12 @@ namespace CyberCAT.Forms.Editor
             _data = data;
             _groups = new Dictionary<string, ListViewGroup>();
             InitializeComponent();
+            var propertyGrid = new PropertyGrid();
+            propertyGrid.Dock = DockStyle.Fill;
 
-            foreach (var ai in _data.Instances)
-            {
-                _groups.TryGetValue(ai.Group, out var group);
-                if (group == null)
-                {
-                    group = new ListViewGroup(ai.Group);
-                    _groups[ai.Group] = group;
-                    tppList.Groups.Add(group);
-                }
-                tppList.Items.Add(new ListViewItem() { Text = $"{ai.Hash:X}", SubItems = { $"{ai.SecondString}", $"{ai.FirstString}" }, Group = group});
-            }
-            var helmetGroup = new ListViewGroup("Helmet Hair");
-            tppList.Groups.Add(helmetGroup);
-            tppList.Items.Add(new ListViewItem() { Text = "-", SubItems = { "Helmet Hair Color", $"{_data.HelmetHairColor}" }, Group = helmetGroup });
-            tppList.Items.Add(new ListViewItem() { Text = "-", SubItems = { "Helmet Hair Length", $"{_data.HelmetHairLength}" }, Group = helmetGroup });
+            propertyGrid.SelectedObject = new CharacterCustomizationAppearancesDisplay(_data);
+            Controls.Add(propertyGrid);
 
-            tppList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
     }
 }

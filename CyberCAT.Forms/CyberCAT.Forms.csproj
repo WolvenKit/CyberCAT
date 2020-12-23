@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\CharacterCustomizationAppearancesDisplay.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
     <Compile Include="Editor\CharacterCustomizationControl.cs">
       <SubType>UserControl</SubType>
