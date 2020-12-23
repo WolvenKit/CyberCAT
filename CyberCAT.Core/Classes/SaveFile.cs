@@ -124,10 +124,8 @@ namespace CyberCAT.Core.Classes
                 }
                 uncompressedData = stream.ToArray();
             }
-            foreach (var node in Nodes)
-            {
-                RecalculateOffsets(node);
-            }
+
+            RecalculateOffsets();
             var footerWithoutLast8Bytes= BuildFooterWithoutLastEightBytes();
             var compressor = new SaveFileCompressionHelper();
             var chunks = compressor.CompressToChunkList(uncompressedData);
@@ -145,11 +143,11 @@ namespace CyberCAT.Core.Classes
                     int lastBlockOffset = (int)writer.BaseStream.Position;
                     writer.Write(footerWithoutLast8Bytes);
                     writer.Write(lastBlockOffset);
-                    writer.Write(Constants.Magic.END_OF_FILE);
+                    writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.END_OF_FILE));
                 }
                 result = stream.ToArray();
             }
-            File.WriteAllBytes($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\output.bin", uncompressedData);
+            File.WriteAllBytes($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\output.bin", result);
 
         }
         byte[] BuildHeader(List<Lz4Chunk> chunks)
@@ -192,15 +190,15 @@ namespace CyberCAT.Core.Classes
         byte[] BuildFooterWithoutLastEightBytes()
         {
             byte[] result;
-            using(var stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
-                using(var writer = new BinaryWriter(stream, Encoding.ASCII))
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.NODE_INFORMATION_START));
                     writer.WriteBit6(_nodes.Count);
                     foreach (var node in _nodes)
                     {
-                        writer.Write((byte)(node.Name.Length+128));
+                        writer.Write((byte)(node.Name.Length + 128));
                         writer.Write(Encoding.ASCII.GetBytes(node.Name));
                         writer.Write(node.NextId);
                         writer.Write(node.ChildId);
@@ -208,8 +206,7 @@ namespace CyberCAT.Core.Classes
                         writer.Write(node.Size);
                     }
                 }
-                
-        result = stream.ToArray();
+                result = stream.ToArray();
             }
             return result;
         }
@@ -220,37 +217,18 @@ namespace CyberCAT.Core.Classes
             {
                 var node = _nodes[i];
                 var next = _nodes[i + 1];
-                if (i == 60)
-                {
-                    Debugger.Break();
-                }
                 node.TrueSize = next.Offset - node.Offset;
             }
             _nodes[_nodes.Count - 1].TrueSize = _nodes[_nodes.Count - 1].Size;//I believe
         }
-        void RecalculateOffsets(NodeEntry node)
+        void RecalculateOffsets()
         {
-            if (node != null)
+            _nodes[0].Offset= Constants.Numbers.DEFAULT_HEADER_SIZE;
+            for (int i =1; i < _nodes.Count;i++)
             {
-                if (node.Id == 0)
-                {
-                    node.Offset = Constants.Numbers.DEFAULT_HEADER_SIZE;//TODO analyse if this is really fixed
-                }
-                else
-                {
-                    if (node.ChildId > -1)
-                    {
-                        var child = Nodes.Where(n => n.Id == node.ChildId).FirstOrDefault();
-                        RecalculateOffsets(child);
-                    }
-                    var previousNode = node.GetPreviousNode();
-                    node.Offset = previousNode.Offset + previousNode.Size;
-                }
+                var previousNode = _nodes[i - 1];
+                _nodes[i].Offset = previousNode.Offset + previousNode.TrueSize;
             }
-        }
-        void WriteNode(NodeEntry node, BinaryWriter writer)
-        {
-            throw new NotImplementedException();
         }
         private void FindChildren(List<NodeEntry> nodes, NodeEntry node)
         {
@@ -264,14 +242,22 @@ namespace CyberCAT.Core.Classes
                 for (int i = node.ChildId; i < nextId; i++)
                 {
                     var possibleChild = nodes.Where(n => n.Id == i).FirstOrDefault();
-                    possibleChild.IsChild = true;
+                    if (possibleChild == null)
+                    {
+                        Debugger.Break();
+                    }
                     if (possibleChild.ChildId > -1)//SubChild
                     {
                         FindChildren(nodes, possibleChild);
+                        node.AddChild(possibleChild);
                     }
                     else
                     {
-                        node.AddChild(possibleChild);
+                        if (!possibleChild.IsChild)//was already added
+                        {
+                            node.AddChild(possibleChild);
+                        }
+                        
                     }
 
                 }

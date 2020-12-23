@@ -37,6 +37,7 @@ namespace CyberCAT.Core.Classes
         }
         public void AddChild(NodeEntry child)
         {
+            child.IsChild = true;
             if (Children.Count == 0)
             {
                 child.IsFirstChild = true;

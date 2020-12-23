@@ -22,7 +22,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
                     if (parser != null)
                     {
-                        child.Value = parser.Read(child, reader, parsers);
+                        child.Value = parser.Read(child, reader,parsers);
                     }
                     else
                     {
@@ -32,15 +32,14 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
             }
 
-            reader.BaseStream.Position = node.Offset;
-            result.Blob = reader.ReadBytes(node.TrueSize);
-
+        reader.BaseStream.Position = node.Offset;
+        result.Blob = reader.ReadBytes(node.TrueSize);
+                
             return result;
         }
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
-            node.Size = 0;
             var data = (DefaultRepresentation)node.Value;
             using (var stream = new MemoryStream())
             {
@@ -78,7 +77,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
             //we are recalculating the size while writing
-            node.Size += result.Length;
             if (node.TrueSize == 0)//dont have their ID written
             {
                 result = new byte[4];
