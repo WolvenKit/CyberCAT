@@ -1,6 +1,7 @@
 ﻿using CyberCAT.Core;
 using CyberCAT.Core.ChunkedLz4;
 using CyberCAT.Core.Classes;
+using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Forms.Classes;
 using Newtonsoft.Json;
 using System;
@@ -26,6 +27,25 @@ namespace CyberCAT.Forms
             if (!Directory.Exists(Constants.FileStructure.OUTPUT_FOLDER_NAME))
             {
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
+            }
+            exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
+        }
+
+        private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
+                if(data.Node.Value is DefaultRepresentation)
+                {
+                    var representation = (DefaultRepresentation)data.Node.Value;
+                    File.WriteAllBytes(saveDialog.FileName, representation.Blob);
+                }
+                else
+                {
+                    MessageBox.Show("Exporting known structures not supported yet");
+                }
             }
         }
 
@@ -173,6 +193,14 @@ namespace CyberCAT.Forms
                 }
             }
             
+        }
+
+        private void editorTreeContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (EditorTree.SelectedNode !=null)
+            {
+                exportToolStripMenuItem.Enabled = true;
+            }
         }
     }
 }

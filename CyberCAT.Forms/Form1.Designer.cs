@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,6 +51,8 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.LoadSave = new System.Windows.Forms.Button();
             this.EditorTree = new System.Windows.Forms.TreeView();
+            this.editorTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -61,6 +64,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.editorTreeContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -296,12 +300,28 @@
             // 
             // EditorTree
             // 
+            this.EditorTree.ContextMenuStrip = this.editorTreeContextMenu;
             this.EditorTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
             this.EditorTree.Size = new System.Drawing.Size(247, 394);
             this.EditorTree.TabIndex = 0;
             this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
+            // 
+            // editorTreeContextMenu
+            // 
+            this.editorTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportToolStripMenuItem});
+            this.editorTreeContextMenu.Name = "editorTreeContextMenu";
+            this.editorTreeContextMenu.Size = new System.Drawing.Size(109, 26);
+            this.editorTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.editorTreeContextMenu_Opening);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Enabled = false;
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.exportToolStripMenuItem.Text = "Export";
             // 
             // Form1
             // 
@@ -324,6 +344,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.editorTreeContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -352,6 +373,8 @@
         private System.Windows.Forms.Button LoadSave;
         private System.Windows.Forms.TreeView EditorTree;
         private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.ContextMenuStrip editorTreeContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
     }
 }
 
