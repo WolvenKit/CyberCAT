@@ -34,18 +34,18 @@ namespace CyberCAT.Forms
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
-            if (saveDialog.ShowDialog() == DialogResult.OK)
+            var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
+            if (data.Node.Value is DefaultRepresentation)
             {
-                var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
-                if(data.Node.Value is DefaultRepresentation)
+                if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
                     var representation = (DefaultRepresentation)data.Node.Value;
                     File.WriteAllBytes(saveDialog.FileName, representation.Blob);
                 }
-                else
-                {
-                    MessageBox.Show("Exporting known structures not supported yet");
-                }
+            }
+            else
+            {
+                MessageBox.Show("Exporting known structures not supported yet");
             }
         }
 
