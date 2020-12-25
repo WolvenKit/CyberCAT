@@ -22,6 +22,15 @@ namespace CyberCAT.Core.Classes
         public int LastBlockOffset;
         List<NodeEntry> _nodes = new List<NodeEntry>();//flat structure
         List<INodeParser> _parsers;
+        /// <summary>
+        /// Creates a new Instance of Save File wich will utilize given parsers
+        /// </summary>
+        /// <param name="parsers">The parsers that will be used for parsing</param>
+        public SaveFile(IEnumerable<INodeParser> parsers)
+        {
+            _parsers = new List<INodeParser>();
+            _parsers.AddRange(parsers);
+        }
         public SaveFile()
         {
             Nodes = new List<NodeEntry>();
