@@ -10,11 +10,17 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     class ItemDataParser : INodeParser
     {
-        public string ParsableNodeName { get; set; }
+        public string ParsableNodeName { get; private set; }
+
+        public string DisplayName { get; private set; }
+
+        public Guid Guid { get; private set; }
 
         public ItemDataParser()
         {
             ParsableNodeName = Constants.NodeNames.ITEM_DATA;
+            DisplayName = "ItemData Parser";
+            Guid = Guid.Parse("{B05D52F2-44B5-4122-AB5D-7B84E99C784C}");
         }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)

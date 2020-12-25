@@ -12,11 +12,15 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     class CharacterCustomizationAppearancesParser : INodeParser
     {
-        public string ParsableNodeName { get; set; }
+        public string ParsableNodeName { get; private set; }
+        public string DisplayName { get; private set; }
+        public Guid Guid { get; private set;}
 
         public CharacterCustomizationAppearancesParser()
         {
             ParsableNodeName = Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE;
+            DisplayName = "Character Appearance Parser";
+            Guid = Guid.Parse("{0AFC700B-23C0-4C4A-AFCB-5D39443BD68F}");
         }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)

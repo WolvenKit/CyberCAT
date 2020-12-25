@@ -12,11 +12,17 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     class InventoryParser : INodeParser
     {
-        public string ParsableNodeName { get; set; }
+        public string ParsableNodeName { get; private set; }
+
+        public string DisplayName { get; private set; }
+
+        public Guid Guid { get; private set; }
 
         public InventoryParser()
         {
             ParsableNodeName = Constants.NodeNames.INVENTORY;
+            DisplayName = "Inventory Parser";
+            Guid = Guid.Parse("{2B294EE8-E791-4D9F-A40A-1EF3F516A4A8}");
         }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
