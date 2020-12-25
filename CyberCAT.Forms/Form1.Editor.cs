@@ -54,11 +54,13 @@ namespace CyberCAT.Forms
             }
 
             var fileName = fd.FileName;
-            _activeSaveFile = new SaveFile(_parserConfig.Where(p=>p.Enabled).Select(p=>p.Parser));
+
             var bytes = File.ReadAllBytes(fileName);
             try
             {
-                _activeSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
+                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
+                newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
+                _activeSaveFile = newSaveFile;
             }
             catch (Exception exception)
             {
