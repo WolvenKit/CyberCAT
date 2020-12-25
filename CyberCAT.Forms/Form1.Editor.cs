@@ -18,7 +18,7 @@ namespace CyberCAT.Forms
         SaveFile _activeSaveFile;
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
-            { typeof(DefaultRepresentation), typeof(HexEditorControl) },
+            { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
             { typeof(GameSessionConfig), typeof(GameSessionConfigControl) },
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
