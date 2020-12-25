@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes
 {
@@ -21,6 +22,15 @@ namespace CyberCAT.Core.Classes
         public int LastBlockOffset;
         List<NodeEntry> _nodes = new List<NodeEntry>();//flat structure
         List<INodeParser> _parsers;
+        /// <summary>
+        /// Creates a new Instance of Save File wich will utilize given parsers
+        /// </summary>
+        /// <param name="parsers">The parsers that will be used for parsing</param>
+        public SaveFile(IEnumerable<INodeParser> parsers)
+        {
+            _parsers = new List<INodeParser>();
+            _parsers.AddRange(parsers);
+        }
         public SaveFile()
         {
             Nodes = new List<NodeEntry>();
@@ -28,6 +38,8 @@ namespace CyberCAT.Core.Classes
             _parsers = new List<INodeParser>();
             _parsers.Add(new GameSessionConfigParser());
             _parsers.Add(new CharacterCustomizationAppearancesParser());
+            _parsers.Add(new ItemDataParser());
+            _parsers.Add(new InventoryParser());
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {

@@ -1,6 +1,6 @@
 ﻿namespace CyberCAT.Forms.Editor
 {
-    partial class CharacterCustomizationControl
+    partial class PropertyEditControl
     {
         /// <summary> 
         /// Erforderliche Designervariable.

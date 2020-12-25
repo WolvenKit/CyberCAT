@@ -64,12 +64,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CharacterCustomizationAppearancesDisplay.cs" />
+    <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\InventoryDisplay.cs" />
+    <Compile Include="Classes\ItemDataDisplay.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
-    <Compile Include="Editor\CharacterCustomizationControl.cs">
+    <Compile Include="Classes\ParserConfig.cs" />
+    <Compile Include="Editor\PropertyEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editor\CharacterCustomizationControl.Designer.cs">
-      <DependentUpon>CharacterCustomizationControl.cs</DependentUpon>
+    <Compile Include="Editor\PropertyEditControl.Designer.cs">
+      <DependentUpon>PropertyEditControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\GameSessionConfigControl.cs">
       <SubType>UserControl</SubType>
@@ -94,8 +98,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Editor\CharacterCustomizationControl.resx">
-      <DependentUpon>CharacterCustomizationControl.cs</DependentUpon>
+    <EmbeddedResource Include="Editor\PropertyEditControl.resx">
+      <DependentUpon>PropertyEditControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\GameSessionConfigControl.resx">
       <DependentUpon>GameSessionConfigControl.cs</DependentUpon>

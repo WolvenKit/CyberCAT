@@ -10,14 +10,19 @@ using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class CharacterCustomizationAppearancesParser : INodeParser
+    public class CharacterCustomizationAppearancesParser : INodeParser
     {
-        public string ParsableNodeName { get; set; }
+        public string ParsableNodeName { get; private set; }
+        public string DisplayName { get; private set; }
+        public Guid Guid { get; private set;}
 
         public CharacterCustomizationAppearancesParser()
         {
             ParsableNodeName = Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE;
+            DisplayName = "Character Appearance Parser";
+            Guid = Guid.Parse("{0AFC700B-23C0-4C4A-AFCB-5D39443BD68F}");
         }
+
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             if (node.Name != ParsableNodeName)
@@ -76,6 +81,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             return result;
         }
+
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
@@ -126,8 +132,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-            node.TrueSize = result.Length;
+            //node.TrueSize = result.Length;
             return result;
+        }
+        public override string ToString()
+        {
+            return DisplayName;
         }
     }
 }
