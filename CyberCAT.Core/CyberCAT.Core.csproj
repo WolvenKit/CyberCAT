@@ -67,6 +67,10 @@
     <Compile Include="Classes\NodeRepresentations\CharacterCustomizationAppearances.cs" />
     <Compile Include="Classes\NodeRepresentations\DefaultRepresentation.cs" />
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
+    <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
+    <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
+    <Compile Include="Classes\Parsers\InventoryParser.cs" />
+    <Compile Include="Classes\Parsers\ItemDataParser.cs" />
     <Compile Include="Classes\Parsers\CharacterCustomizationAppearancesParser.cs" />
     <Compile Include="Classes\Parsers\DefaultParser.cs" />
     <Compile Include="Classes\Parsers\GameSessionConfigParser.cs" />

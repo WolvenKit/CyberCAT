@@ -32,8 +32,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
             }
 
-        reader.BaseStream.Position = node.Offset;
-        result.Blob = reader.ReadBytes(node.TrueSize);
+            reader.BaseStream.Position = node.Offset;
+            result.Blob = reader.ReadBytes(node.TrueSize);
                 
             return result;
         }
