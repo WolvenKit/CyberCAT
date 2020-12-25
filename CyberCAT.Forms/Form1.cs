@@ -242,5 +242,19 @@ namespace CyberCAT.Forms
             _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
             File.WriteAllText(_settingsFileName, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
+
+        private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Export_{Guid.NewGuid()}");
+            foreach(var node in _activeSaveFile.FlatNodes)
+            {
+                if(node.Value is DefaultRepresentation)
+                {
+                    var representation = (DefaultRepresentation)node.Value;
+                    File.WriteAllBytes(Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}"), representation.Blob);
+                }
+            }
+            MessageBox.Show($"Exported All unparsed Nodes to {info.FullName}");
+        }
     }
 }
