@@ -27,7 +27,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             var result = new ItemData();
 
-            reader.Skip(4); //skip Id
+            reader.Skip(4); // Skip Id
 
             result.ItemNameCRC32b = reader.ReadUInt32();
             result.ItemNameLength = reader.ReadByte();
