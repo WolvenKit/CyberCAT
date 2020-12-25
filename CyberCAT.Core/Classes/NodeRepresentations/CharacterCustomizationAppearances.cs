@@ -33,7 +33,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
-        public byte[] UnknownFirstBytes;
+        public byte[] UnknownFirstBytes { get; set; }
 
         /// <summary>
         /// Bytes that are not yet parsed into representation
