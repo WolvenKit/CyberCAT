@@ -38,6 +38,11 @@ namespace CyberCAT.Forms
         }
         private void saveButton_Click(object sender, EventArgs e)
         {
+            if (_activeSaveFile == null)
+            {
+                return;
+            }
+
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             if(saveDialog.ShowDialog() == DialogResult.OK)
             {
