@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class GameSessionConfigParser : INodeParser
+    public class GameSessionConfigParser : INodeParser
     {
         public string ParsableNodeName { get; private set; }
 

@@ -10,7 +10,7 @@ using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class CharacterCustomizationAppearancesParser : INodeParser
+    public class CharacterCustomizationAppearancesParser : INodeParser
     {
         public string ParsableNodeName { get; private set; }
         public string DisplayName { get; private set; }
@@ -134,6 +134,10 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             //node.TrueSize = result.Length;
             return result;
+        }
+        public override string ToString()
+        {
+            return DisplayName;
         }
     }
 }

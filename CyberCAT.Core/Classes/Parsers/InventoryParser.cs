@@ -10,7 +10,7 @@ using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class InventoryParser : INodeParser
+    public class InventoryParser : INodeParser
     {
         public string ParsableNodeName { get; private set; }
 

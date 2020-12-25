@@ -64,9 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CharacterCustomizationAppearancesDisplay.cs" />
+    <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\InventoryDisplay.cs" />
     <Compile Include="Classes\ItemDataDisplay.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
+    <Compile Include="Classes\ParserConfig.cs" />
     <Compile Include="Editor\PropertyEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

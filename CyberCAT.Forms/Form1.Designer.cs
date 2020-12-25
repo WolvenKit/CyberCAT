@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.compressionTabPage = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
             this.metaInformationFilePathTextbox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -39,13 +39,7 @@
             this.recompressButton = new System.Windows.Forms.Button();
             this.decompressFilePathTextbox = new System.Windows.Forms.TextBox();
             this.uncompressButton = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.label5 = new System.Windows.Forms.Label();
-            this.loadAppearanceSectionButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.appearanceUncompressedSaveFilePathTextbox = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.editorTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.saveButton = new System.Windows.Forms.Button();
@@ -53,10 +47,19 @@
             this.EditorTree = new System.Windows.Forms.TreeView();
             this.editorTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.experimentalTabPage = new System.Windows.Forms.TabPage();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.label5 = new System.Windows.Forms.Label();
+            this.loadAppearanceSectionButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.appearanceUncompressedSaveFilePathTextbox = new System.Windows.Forms.TextBox();
+            this.settingsTabPage = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.saveSettingsButton = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.compressionTabPage.SuspendLayout();
+            this.editorTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -65,13 +68,17 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.editorTreeContextMenu.SuspendLayout();
+            this.experimentalTabPage.SuspendLayout();
+            this.settingsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.compressionTabPage);
+            this.tabControl1.Controls.Add(this.editorTabPage);
+            this.tabControl1.Controls.Add(this.experimentalTabPage);
+            this.tabControl1.Controls.Add(this.settingsTabPage);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -79,23 +86,23 @@
             this.tabControl1.Size = new System.Drawing.Size(757, 455);
             this.tabControl1.TabIndex = 0;
             // 
-            // tabPage1
+            // compressionTabPage
             // 
-            this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.metaInformationFilePathTextbox);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.recompressFilePathTextbox);
-            this.tabPage1.Controls.Add(this.recompressButton);
-            this.tabPage1.Controls.Add(this.decompressFilePathTextbox);
-            this.tabPage1.Controls.Add(this.uncompressButton);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(749, 429);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Compression";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.compressionTabPage.Controls.Add(this.label3);
+            this.compressionTabPage.Controls.Add(this.metaInformationFilePathTextbox);
+            this.compressionTabPage.Controls.Add(this.label2);
+            this.compressionTabPage.Controls.Add(this.label1);
+            this.compressionTabPage.Controls.Add(this.recompressFilePathTextbox);
+            this.compressionTabPage.Controls.Add(this.recompressButton);
+            this.compressionTabPage.Controls.Add(this.decompressFilePathTextbox);
+            this.compressionTabPage.Controls.Add(this.uncompressButton);
+            this.compressionTabPage.Location = new System.Drawing.Point(4, 22);
+            this.compressionTabPage.Name = "compressionTabPage";
+            this.compressionTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.compressionTabPage.Size = new System.Drawing.Size(749, 429);
+            this.compressionTabPage.TabIndex = 0;
+            this.compressionTabPage.Text = "Compression";
+            this.compressionTabPage.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -175,76 +182,16 @@
             this.uncompressButton.UseVisualStyleBackColor = true;
             this.uncompressButton.Click += new System.EventHandler(this.uncompressButton_Click);
             // 
-            // tabPage2
+            // editorTabPage
             // 
-            this.tabPage2.Controls.Add(this.treeView1);
-            this.tabPage2.Controls.Add(this.label5);
-            this.tabPage2.Controls.Add(this.loadAppearanceSectionButton);
-            this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Controls.Add(this.appearanceUncompressedSaveFilePathTextbox);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(749, 429);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Experimental";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Location = new System.Drawing.Point(9, 85);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(432, 309);
-            this.treeView1.TabIndex = 4;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 3);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(229, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Experimental Section to Convert Save to JSON";
-            // 
-            // loadAppearanceSectionButton
-            // 
-            this.loadAppearanceSectionButton.Location = new System.Drawing.Point(447, 58);
-            this.loadAppearanceSectionButton.Name = "loadAppearanceSectionButton";
-            this.loadAppearanceSectionButton.Size = new System.Drawing.Size(75, 23);
-            this.loadAppearanceSectionButton.TabIndex = 2;
-            this.loadAppearanceSectionButton.Text = "Load";
-            this.loadAppearanceSectionButton.UseVisualStyleBackColor = true;
-            this.loadAppearanceSectionButton.Click += new System.EventHandler(this.loadAppearanceSectionButton_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 38);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(131, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Compressed SaveFilePath";
-            // 
-            // appearanceUncompressedSaveFilePathTextbox
-            // 
-            this.appearanceUncompressedSaveFilePathTextbox.AllowDrop = true;
-            this.appearanceUncompressedSaveFilePathTextbox.Location = new System.Drawing.Point(6, 58);
-            this.appearanceUncompressedSaveFilePathTextbox.Name = "appearanceUncompressedSaveFilePathTextbox";
-            this.appearanceUncompressedSaveFilePathTextbox.Size = new System.Drawing.Size(435, 20);
-            this.appearanceUncompressedSaveFilePathTextbox.TabIndex = 0;
-            this.appearanceUncompressedSaveFilePathTextbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragDrop);
-            this.appearanceUncompressedSaveFilePathTextbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragEnter);
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.splitContainer1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(749, 429);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Editor";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.editorTabPage.Controls.Add(this.splitContainer1);
+            this.editorTabPage.Location = new System.Drawing.Point(4, 22);
+            this.editorTabPage.Name = "editorTabPage";
+            this.editorTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.editorTabPage.Size = new System.Drawing.Size(749, 429);
+            this.editorTabPage.TabIndex = 2;
+            this.editorTabPage.Text = "Editor";
+            this.editorTabPage.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -323,6 +270,105 @@
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
             this.exportToolStripMenuItem.Text = "Export";
             // 
+            // experimentalTabPage
+            // 
+            this.experimentalTabPage.Controls.Add(this.treeView1);
+            this.experimentalTabPage.Controls.Add(this.label5);
+            this.experimentalTabPage.Controls.Add(this.loadAppearanceSectionButton);
+            this.experimentalTabPage.Controls.Add(this.label4);
+            this.experimentalTabPage.Controls.Add(this.appearanceUncompressedSaveFilePathTextbox);
+            this.experimentalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.experimentalTabPage.Name = "experimentalTabPage";
+            this.experimentalTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.experimentalTabPage.Size = new System.Drawing.Size(749, 429);
+            this.experimentalTabPage.TabIndex = 1;
+            this.experimentalTabPage.Text = "Experimental";
+            this.experimentalTabPage.UseVisualStyleBackColor = true;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(9, 85);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(432, 309);
+            this.treeView1.TabIndex = 4;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 3);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(229, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Experimental Section to Convert Save to JSON";
+            // 
+            // loadAppearanceSectionButton
+            // 
+            this.loadAppearanceSectionButton.Location = new System.Drawing.Point(447, 58);
+            this.loadAppearanceSectionButton.Name = "loadAppearanceSectionButton";
+            this.loadAppearanceSectionButton.Size = new System.Drawing.Size(75, 23);
+            this.loadAppearanceSectionButton.TabIndex = 2;
+            this.loadAppearanceSectionButton.Text = "Load";
+            this.loadAppearanceSectionButton.UseVisualStyleBackColor = true;
+            this.loadAppearanceSectionButton.Click += new System.EventHandler(this.loadAppearanceSectionButton_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 38);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(131, 13);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Compressed SaveFilePath";
+            // 
+            // appearanceUncompressedSaveFilePathTextbox
+            // 
+            this.appearanceUncompressedSaveFilePathTextbox.AllowDrop = true;
+            this.appearanceUncompressedSaveFilePathTextbox.Location = new System.Drawing.Point(6, 58);
+            this.appearanceUncompressedSaveFilePathTextbox.Name = "appearanceUncompressedSaveFilePathTextbox";
+            this.appearanceUncompressedSaveFilePathTextbox.Size = new System.Drawing.Size(435, 20);
+            this.appearanceUncompressedSaveFilePathTextbox.TabIndex = 0;
+            this.appearanceUncompressedSaveFilePathTextbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragDrop);
+            this.appearanceUncompressedSaveFilePathTextbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.appearanceUncompressedSaveFilePathTextbox_DragEnter);
+            // 
+            // settingsTabPage
+            // 
+            this.settingsTabPage.Controls.Add(this.dataGridView1);
+            this.settingsTabPage.Controls.Add(this.label6);
+            this.settingsTabPage.Controls.Add(this.saveSettingsButton);
+            this.settingsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.settingsTabPage.Name = "settingsTabPage";
+            this.settingsTabPage.Size = new System.Drawing.Size(749, 429);
+            this.settingsTabPage.TabIndex = 3;
+            this.settingsTabPage.Text = "Settings";
+            this.settingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 10);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(87, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Enabled Parsers:";
+            // 
+            // saveSettingsButton
+            // 
+            this.saveSettingsButton.Location = new System.Drawing.Point(666, 398);
+            this.saveSettingsButton.Name = "saveSettingsButton";
+            this.saveSettingsButton.Size = new System.Drawing.Size(75, 23);
+            this.saveSettingsButton.TabIndex = 1;
+            this.saveSettingsButton.Text = "Save";
+            this.saveSettingsButton.UseVisualStyleBackColor = true;
+            this.saveSettingsButton.Click += new System.EventHandler(this.saveSettingsButton_Click);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(11, 26);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(252, 395);
+            this.dataGridView1.TabIndex = 4;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -332,11 +378,9 @@
             this.Name = "Form1";
             this.Text = "CyberCAT";
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
+            this.compressionTabPage.ResumeLayout(false);
+            this.compressionTabPage.PerformLayout();
+            this.editorTabPage.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -345,6 +389,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.editorTreeContextMenu.ResumeLayout(false);
+            this.experimentalTabPage.ResumeLayout(false);
+            this.experimentalTabPage.PerformLayout();
+            this.settingsTabPage.ResumeLayout(false);
+            this.settingsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -352,8 +401,8 @@
         #endregion
 
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage compressionTabPage;
+        private System.Windows.Forms.TabPage experimentalTabPage;
         private System.Windows.Forms.Button uncompressButton;
         private System.Windows.Forms.TextBox decompressFilePathTextbox;
         private System.Windows.Forms.Button recompressButton;
@@ -367,7 +416,7 @@
         private System.Windows.Forms.Button loadAppearanceSectionButton;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage editorTabPage;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button LoadSave;
@@ -375,6 +424,10 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.ContextMenuStrip editorTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.TabPage settingsTabPage;
+        private System.Windows.Forms.Button saveSettingsButton;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

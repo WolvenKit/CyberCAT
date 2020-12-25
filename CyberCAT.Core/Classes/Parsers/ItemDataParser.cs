@@ -8,7 +8,7 @@ using CyberCAT.Core.Classes.Interfaces;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
-    class ItemDataParser : INodeParser
+    public class ItemDataParser : INodeParser
     {
         public string ParsableNodeName { get; private set; }
 

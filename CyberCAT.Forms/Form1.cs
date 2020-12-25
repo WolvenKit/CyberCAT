@@ -1,7 +1,9 @@
 ﻿using CyberCAT.Core;
 using CyberCAT.Core.ChunkedLz4;
 using CyberCAT.Core.Classes;
+using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Core.Classes.Parsers;
 using CyberCAT.Forms.Classes;
 using Newtonsoft.Json;
 using System;
@@ -21,14 +23,43 @@ namespace CyberCAT.Forms
     public partial class Form1 : Form
     {
         SaveFileCompressionHelper activeSaveFile = new SaveFileCompressionHelper();
+        List<ParserConfig> _parserConfig = new List<ParserConfig>();
+        Settings _settings;
+        string _settingsFileName = "Settings.json";
         public Form1()
         {
+            
             InitializeComponent();
             if (!Directory.Exists(Constants.FileStructure.OUTPUT_FOLDER_NAME))
             {
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
+
+            //Settings
+            var interfaceType = typeof(INodeParser);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass);
+            if (File.Exists(_settingsFileName))
+            {
+                _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_settingsFileName));
+                foreach (var type in types)
+                {
+                    var instance = (INodeParser)Activator.CreateInstance(type);
+                    _parserConfig.Add(new ParserConfig(instance, _settings.EnabledParsers.Contains(instance.Guid)));
+                }
+            }
+            else
+            {
+                foreach (var type in types)
+                {
+                    var instance = Activator.CreateInstance(type);
+                    _parserConfig.Add(new ParserConfig((INodeParser)instance, true));
+                }
+                _settings = new Settings();
+                _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled = true).Select(p => p.Parser.Guid));
+            }
+            dataGridView1.DataSource = _parserConfig;
+            
         }
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -201,6 +232,13 @@ namespace CyberCAT.Forms
             {
                 exportToolStripMenuItem.Enabled = true;
             }
+        }
+
+        private void saveSettingsButton_Click(object sender, EventArgs e)
+        {
+            _settings.EnabledParsers.Clear();
+            _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
+            File.WriteAllText(_settingsFileName, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
     }
 }
