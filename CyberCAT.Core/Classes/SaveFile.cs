@@ -78,7 +78,6 @@ namespace CyberCAT.Core.Classes
             {
                 using (BinaryReader reader = new BinaryReader(memoryStream, Encoding.ASCII))
                 {
-
                     foreach (var node in _nodes)
                     {
                         reader.BaseStream.Position = node.Offset;
@@ -97,20 +96,7 @@ namespace CyberCAT.Core.Classes
                     }
                     Nodes.AddRange(_nodes.Where(n => !n.IsChild));
                     CalculateTrueSizes();
-                    foreach (var node in Nodes)
-                    {
-                        
-                        var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
-                        if (parser != null)
-                        {
-                            node.Value = parser.Read(node, reader, _parsers);
-                        }
-                        else
-                        {
-                            var fallback = new DefaultParser();
-                            node.Value = fallback.Read(node, reader, _parsers);
-                        }
-                    }
+                    ParserUtils.ParseChildren(Nodes, reader, _parsers);
                 }
             }
         }

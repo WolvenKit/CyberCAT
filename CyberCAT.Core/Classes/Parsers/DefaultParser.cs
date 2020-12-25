@@ -15,26 +15,10 @@ namespace CyberCAT.Core.Classes.Parsers
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             var result = new DefaultRepresentation();
-            if (node.Children.Count > 0)
-            {
-                foreach (var child in node.Children)
-                {
-                    var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
-                    if (parser != null)
-                    {
-                        child.Value = parser.Read(child, reader,parsers);
-                    }
-                    else
-                    {
-                        var fallback = new DefaultParser();
-                        child.Value = fallback.Read(child, reader, parsers);
-                    }
-                }
-            }
-
-            reader.BaseStream.Position = node.Offset;
             result.Blob = reader.ReadBytes(node.TrueSize);
-                
+
+            ParserUtils.ParseChildren(node.Children, reader, parsers);
+
             return result;
         }
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
@@ -45,12 +29,10 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    writer.Write(data.Blob);
+
                     if (node.Children.Count > 0)
                     {
-                        if (data.Blob != null)
-                        {
-                            writer.Write(data.Blob);
-                        }
                         foreach (var child in node.Children)
                         {
                             var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
@@ -63,14 +45,6 @@ namespace CyberCAT.Core.Classes.Parsers
                                 var fallback = new DefaultParser();
                                 writer.Write(fallback.Write(child, parsers));
                             }
-                        }
-                    }
-                    else
-                    {
-                        if (data != null)
-                        {
-                            writer.Write(data.Blob);
-
                         }
                     }
                 }

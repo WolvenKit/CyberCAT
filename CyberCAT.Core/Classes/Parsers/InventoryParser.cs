@@ -37,22 +37,7 @@ namespace CyberCAT.Core.Classes.Parsers
             int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
-            if (node.Children.Count > 0)
-            {
-                foreach (var child in node.Children)
-                {
-                    var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
-                    if (parser != null)
-                    {
-                        child.Value = parser.Read(child, reader, parsers);
-                    }
-                    else
-                    {
-                        var fallback = new DefaultParser();
-                        child.Value = fallback.Read(child, reader, parsers);
-                    }
-                }
-            }
+            ParserUtils.ParseChildren(node.Children, reader, parsers);
 
             return result;
         }
@@ -69,10 +54,13 @@ namespace CyberCAT.Core.Classes.Parsers
                     
                     writer.Write(data.HeaderBytes);
 
+                    // This seems to be wrong
+                    /*
                     if (data.NumberOfItems != node.Children.Count)
                     {
                         data.NumberOfItems = (uint) node.Children.Count;
                     }
+                    */
 
                     writer.Write(data.NumberOfItems);
 
