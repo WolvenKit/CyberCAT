@@ -19,7 +19,7 @@ namespace CyberCAT.Forms
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
             { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
-            { typeof(GameSessionConfig), typeof(GameSessionConfigControl) },
+            { typeof(GameSessionConfig), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) }

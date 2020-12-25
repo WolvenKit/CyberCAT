@@ -33,21 +33,54 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
+        public class AppearanceSection
+        {
+            public string SectionName { get; set; }
+            public List<HashValueEntry> MainList { get; set; }
+            public List<ValueEntry> AdditionalList { get; set; }
+
+            public AppearanceSection()
+            {
+                MainList = new List<HashValueEntry>();
+                AdditionalList = new List<ValueEntry>();
+            }
+
+            public override string ToString()
+            {
+                return $"{SectionName} ({MainList.Count} / {AdditionalList.Count})";
+            }
+        }
+
+        public class Section
+        {
+            public List<AppearanceSection> AppearanceSections { get; set; }
+
+            public Section()
+            {
+                AppearanceSections = new List<AppearanceSection>();
+            }
+
+            public override string ToString()
+            {
+                return $"{AppearanceSections.Count} inner sections";
+            }
+        }
+
         public byte[] UnknownFirstBytes { get; set; }
+
+        public Section FirstSection { get; set; }
+        public Section SecondSection { get; set; }
+        public Section ThirdSection { get; set; }
 
         /// <summary>
         /// Bytes that are not yet parsed into representation
         /// </summary>
         public byte[] TrailingBytes { get; set; }
-        public List<HashValueEntry> ThirdPerson { get; set; }
-        public List<ValueEntry> AdditionalThirdPerson { get; set; }
-        public List<HashValueEntry> FirstPerson { get; set; }
 
         public CharacterCustomizationAppearances()
         {
-            ThirdPerson = new List<HashValueEntry>();
-            AdditionalThirdPerson = new List<ValueEntry>();
-            FirstPerson = new List<HashValueEntry>();
+            FirstSection = new Section();
+            SecondSection = new Section();
         }
        
     }
