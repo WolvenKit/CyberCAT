@@ -3,7 +3,7 @@
 
 CyberPunk 2077 Customization Assistant Tool
 --------
-The goal is to provide a Tool that can edit Savegame Files
+Work in Progress Save Game Editor
 
 **This is still in early development.**
 
