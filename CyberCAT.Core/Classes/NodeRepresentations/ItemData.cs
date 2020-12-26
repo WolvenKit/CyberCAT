@@ -20,6 +20,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public ulong ItemTdbId { get; set; }
             public uint ItemID { get; set; }
             public byte[] UnknownBytes2 { get; set; }
+            public string UnknownString { get; set; }
+            public byte[] UnknownBytes3 { get; set; }
 
             public override string ToString()
             {
@@ -32,13 +34,19 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] UnknownBytes2 { get; set; }
         public uint ItemQuantity { get; set; }
         public byte[] UnknownBytes3 { get; set; }
-        public ModEntry[] ModEntries { get; set; }
+        public List<ModEntry> ModEntries { get; set; }
         public byte[] ItemDataBytes { get; set; }
 
         /// <summary>
         /// Bytes that are not yet parsed into representation
         /// </summary>
         public byte[] TrailingBytes { get; set; }
+
+        public ItemData()
+        {
+            ModEntries = new List<ModEntry>();
+        }
+
         public override string ToString()
         {
             return NameResolver.GetName(ItemTdbId);

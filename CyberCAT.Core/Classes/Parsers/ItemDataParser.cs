@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
+using CyberCAT.Core.Classes.Parsers;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class ItemDataParser : INodeParser
     {
+        private const uint MOD_MARKER = 0x7F7FFFFF;
+
         public string ParsableNodeName { get; private set; }
 
         public string DisplayName { get; private set; }
@@ -36,28 +41,46 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             if (result.ItemID != 2)
             {
-                result.UnknownBytes3 = reader.ReadBytes(40);
+                // Mods don't seem to have a length field but are escaped by FFFF7F7F markers
+                result.UnknownBytes3 = reader.ReadBytes(8);
 
-                var modCount = reader.ReadByte();
-                result.ModEntries = new ItemData.ModEntry[modCount];
-                for (int i = 0; i < modCount; i++)
+                // First, consume 4 bytes and see if we got the marker
+                var potentialMarker = reader.ReadUInt32();
+                if (potentialMarker == MOD_MARKER)
                 {
-                    result.ModEntries[i] = new ItemData.ModEntry();
-                    result.ModEntries[i].ItemTdbId = reader.ReadUInt64();
-                    result.ModEntries[i].ItemID = reader.ReadUInt32();
-                    result.ModEntries[i].UnknownBytes2 = reader.ReadBytes(37);
+                    while (true)
+                    {
+                        // We have one, so consume a mod entry.
+                        result.ModEntries.Add(ReadModEntry(reader));
+                        // Now, another marker should follow.
+                        potentialMarker = reader.ReadUInt32();
+                        Debug.Assert(potentialMarker == MOD_MARKER);
+                        // If there is space left, consume another mod marker
+                        var left = node.Size - (reader.BaseStream.Position - node.Offset);
+                        if (left > 0)
+                        {
+                            continue;
+                        }
+                        // Otherwise, this item is done.
+                        break;
+                    }
+                }
+                else
+                {
+                    reader.BaseStream.Position -= 4;
                 }
             }
 
             // The item data only goes until node.Size, afterwards
             var toRead = node.Size - (reader.BaseStream.Position - node.Offset);
-
+            Debug.Assert(toRead >= 0);
             result.ItemDataBytes = reader.ReadBytes((int)toRead);
 
             // Last 7 bytes always are the first 7 bytes of the next item, maybe for consistency?
             // Except for the last item which has 24 bytes at the end
 
             int readSize = node.TrueSize - ((int) reader.BaseStream.Position - node.Offset);
+            Debug.Assert(readSize >= 0);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
             return result;
@@ -72,6 +95,45 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             nextItemEntry.UnknownBytes2 = reader.ReadBytes(3);
 
             return nextItemEntry;
+        }
+
+        private ItemData.ModEntry ReadModEntry(BinaryReader reader)
+        {
+            var modEntry = new ItemData.ModEntry();
+            modEntry.ItemTdbId = reader.ReadUInt64();
+            modEntry.ItemID = reader.ReadUInt32();
+            modEntry.UnknownBytes2 = reader.ReadBytes(3);
+
+            // We need to look into the future. If there is a MOD_MARKER 16 bytes from the first one, then the entry is done.
+            reader.ReadByte(); // Discard one byte, now we have read 16 bytes.
+            var potentialMarker = reader.ReadUInt32();
+            if (potentialMarker == MOD_MARKER)
+            {
+                modEntry.UnknownString = null;
+                reader.BaseStream.Position -= 1 + 4;
+                modEntry.UnknownBytes3 = reader.ReadBytes(1);
+                // We are done here.
+                return modEntry;
+            }
+            reader.BaseStream.Position -= 1 + 4;
+
+            // otherwise, there should now be a string here.
+            modEntry.UnknownString = ParserUtils.ReadString(reader);
+
+            // Find the MOD_MARKER for the end.
+            var previousPosition = (int)reader.BaseStream.Position;
+            uint marker = 0;
+            while (marker != MOD_MARKER)
+            {
+                marker >>= 8;
+                marker |= ((uint)reader.ReadByte() << 24);
+            }
+
+            var skippedBytes = (int)reader.BaseStream.Position - previousPosition;
+            reader.BaseStream.Position = previousPosition;
+            modEntry.UnknownBytes3 = reader.ReadBytes(skippedBytes - 4);
+
+            return modEntry;
         }
 
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
@@ -92,13 +154,14 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     if (data.ItemID != 2)
                     {
                         writer.Write(data.UnknownBytes3);
-                        writer.Write((byte)data.ModEntries.Length);
 
-                        for (int i = 0; i < data.ModEntries.Length; i++)
+                        if (data.ModEntries.Count > 0)
                         {
-                            writer.Write(data.ModEntries[i].ItemTdbId);
-                            writer.Write(data.ModEntries[i].ItemID);
-                            writer.Write(data.ModEntries[i].UnknownBytes2);
+                            writer.Write(MOD_MARKER);
+                        }
+                        foreach (var modEntry in data.ModEntries)
+                        {
+                            WriteModEntry(writer, modEntry);
                         }
                     }
 
@@ -110,6 +173,25 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
 
             return result;
+        }
+
+        private void WriteModEntry(BinaryWriter writer, ItemData.ModEntry modEntry)
+        {
+            writer.Write(modEntry.ItemTdbId);
+            writer.Write(modEntry.ItemID);
+            writer.Write(modEntry.UnknownBytes2);
+
+            if (modEntry.UnknownString == null)
+            {
+                // This is a 16byte modEntry.
+                writer.Write(modEntry.UnknownBytes3);
+                writer.Write(MOD_MARKER);
+                return;
+            }
+
+            ParserUtils.WriteString(writer, modEntry.UnknownString);
+            writer.Write(modEntry.UnknownBytes3);
+            writer.Write(MOD_MARKER);
         }
 
         public static void WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
