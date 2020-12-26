@@ -31,6 +31,15 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             result.ItemNameCRC32b = reader.ReadUInt32();
             result.ItemNameLength = reader.ReadByte();
+            result.UnknownBytes1 = reader.ReadBytes(3);
+            result.ItemID = reader.ReadUInt32();
+            result.UnknownBytes2 = reader.ReadBytes(8);
+            result.ItemQuantity = reader.ReadUInt32();
+
+            // The item data only goes until node.Size, afterwards
+            var toRead = node.Size - (reader.BaseStream.Position - node.Offset);
+
+            result.ItemDataBytes = reader.ReadBytes((int)toRead);
 
             // Last 7 bytes always are the first 7 bytes of the next item, maybe for consistency?
             // Except for the last item which has 24 bytes at the end
@@ -39,6 +48,19 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             result.TrailingBytes = reader.ReadBytes(readSize);
 
             return result;
+        }
+
+        public static ItemData.NextItemEntry ReadNextItemEntry(BinaryReader reader)
+        {
+            var nextItemEntry = new ItemData.NextItemEntry();
+
+            nextItemEntry.ItemNameCRC32b = reader.ReadUInt32();
+            nextItemEntry.ItemNameLength = reader.ReadByte();
+            nextItemEntry.UnknownBytes1 = reader.ReadBytes(3);
+            nextItemEntry.ItemID = reader.ReadUInt32();
+            nextItemEntry.UnknownBytes2 = reader.ReadBytes(3);
+
+            return nextItemEntry;
         }
 
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
@@ -53,6 +75,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
                     writer.Write(data.ItemNameCRC32b);
                     writer.Write(data.ItemNameLength);
+                    writer.Write(data.UnknownBytes1);
+                    writer.Write(data.ItemID);
+                    writer.Write(data.UnknownBytes2);
+                    writer.Write(data.ItemQuantity);
+
+                    writer.Write(data.ItemDataBytes);
 
                     writer.Write(data.TrailingBytes);
                 }
@@ -60,6 +88,15 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
 
             return result;
+        }
+
+        public static void WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
+        {
+            writer.Write(nextItem.ItemNameCRC32b);
+            writer.Write(nextItem.ItemNameLength);
+            writer.Write(nextItem.UnknownBytes1);
+            writer.Write(nextItem.ItemID);
+            writer.Write(nextItem.UnknownBytes2);
         }
     }
 }

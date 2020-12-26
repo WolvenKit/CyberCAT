@@ -34,7 +34,9 @@ namespace CyberCAT.Core.Classes.Parsers
             result.HeaderBytes = reader.ReadBytes(4 + 8);
             result.NumberOfItems = reader.ReadUInt32();
 
-            int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
+            result.NextItem = ItemDataParser.ReadNextItemEntry(reader);
+
+            int readSize = node.TrueSize - ((int) reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
@@ -63,6 +65,8 @@ namespace CyberCAT.Core.Classes.Parsers
                     */
 
                     writer.Write(data.NumberOfItems);
+
+                    ItemDataParser.WriteNextItemEntry(writer, data.NextItem);
 
                     writer.Write(data.TrailingBytes);
 
