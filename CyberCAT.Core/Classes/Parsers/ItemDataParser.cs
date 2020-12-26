@@ -36,6 +36,23 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             result.UnknownBytes2 = reader.ReadBytes(8);
             result.ItemQuantity = reader.ReadUInt32();
 
+            if (result.ItemID != 2)
+            {
+                result.UnknownBytes3 = reader.ReadBytes(40);
+
+                var modCount = reader.ReadByte();
+                result.ModEntries = new ItemData.ModEntry[modCount];
+                for (int i = 0; i < modCount; i++)
+                {
+                    result.ModEntries[i] = new ItemData.ModEntry();
+                    result.ModEntries[i].ItemNameCRC32b = reader.ReadUInt32();
+                    result.ModEntries[i].ItemNameLength = reader.ReadByte();
+                    result.ModEntries[i].UnknownBytes1 = reader.ReadBytes(3);
+                    result.ModEntries[i].ItemID = reader.ReadUInt32();
+                    result.ModEntries[i].UnknownBytes2 = reader.ReadBytes(37);
+                }
+            }
+
             // The item data only goes until node.Size, afterwards
             var toRead = node.Size - (reader.BaseStream.Position - node.Offset);
 
@@ -79,6 +96,21 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     writer.Write(data.ItemID);
                     writer.Write(data.UnknownBytes2);
                     writer.Write(data.ItemQuantity);
+
+                    if (data.ItemID != 2)
+                    {
+                        writer.Write(data.UnknownBytes3);
+                        writer.Write((byte)data.ModEntries.Length);
+
+                        for (int i = 0; i < data.ModEntries.Length; i++)
+                        {
+                            writer.Write(data.ModEntries[i].ItemNameCRC32b);
+                            writer.Write(data.ModEntries[i].ItemNameLength);
+                            writer.Write(data.ModEntries[i].UnknownBytes1);
+                            writer.Write(data.ModEntries[i].ItemID);
+                            writer.Write(data.ModEntries[i].UnknownBytes2);
+                        }
+                    }
 
                     writer.Write(data.ItemDataBytes);
 
