@@ -135,7 +135,7 @@ namespace CyberCAT.Core.Classes
         /// <param name="inputFileName"></param>
         /// <param name="metadataFilePath"></param>
         /// <param name="recompressedFilePath"></param>
-        public void CompressFromSingleFile(string inputFileName, string metadataFilePath, out string recompressedFilePath)
+        public void CompressFromSingleFile(string inputFileName, string metadataFilePath, string recompressedFilePath)
         {
             string json = File.ReadAllText(metadataFilePath);
             MetaInformation = JsonConvert.DeserializeObject<SaveFileMetaInformation>(json);
@@ -207,7 +207,7 @@ namespace CyberCAT.Core.Classes
                     writer.Write(offset);
                     writer.Write(new byte[] { 0x45, 0x4E, 0x4F, 0x44 });
 
-                    recompressedFilePath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin";
+                    recompressedFilePath = Path.Combine(recompressedFilePath, $"{MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin");
 
                     using (var fileStream = File.Create(recompressedFilePath))
                     {
