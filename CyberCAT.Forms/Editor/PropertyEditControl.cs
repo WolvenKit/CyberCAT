@@ -17,8 +17,12 @@ namespace CyberCAT.Forms.Editor
         public PropertyEditControl(object data)
         {
             InitializeComponent();
-            var propertyGrid = new PropertyGrid  {Dock = DockStyle.Fill };
-            propertyGrid.SelectedObject = data;
+            var propertyGrid = new PropertyGrid
+            {
+                Dock = DockStyle.Fill,
+                SelectedObject = data,
+                PropertySort = PropertySort.NoSort
+            };
             Controls.Add(propertyGrid);
         }
     }

@@ -23,6 +23,46 @@ namespace CyberCAT.Core.Classes.Parsers
             Guid = Guid.Parse("{0AFC700B-23C0-4C4A-AFCB-5D39443BD68F}");
         }
 
+        private static List<string> ExpectedFirstSectionNames = new List<string>
+        {
+            Constants.Parsing.TPP_SECTION_NAME,
+            Constants.Parsing.FPP_SECTION_NAME,
+            Constants.Parsing.HAIRS_SECTION_NAME,
+            Constants.Parsing.CHARACTER_CUSTOMIZATION_SECTION_NAME
+        };
+
+        private static List<string> ExpectedSecondSectionNames = new List<string>
+        {
+            Constants.Parsing.HOLSTERED_DEFAULT_TPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_DEFAULT_FPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_STRONG_TPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_STRONG_FPP_SECTION_NAME,
+            Constants.Parsing.UNHOLSTERED_STRONG_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_NANOWIRE_TPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_NANOWIRE_FPP_SECTION_NAME,
+            Constants.Parsing.UNHOLSTERED_NANOWIRE_SECTION_NAME,
+            Constants.Parsing.CHARACTER_CUSTOMIZATION_SECTION_NAME, // Yes, in both sections
+            Constants.Parsing.PERSONAL_LINK_SIMPLE_SECTION_NAME,
+            Constants.Parsing.PERSONAL_LINK_ADVANCED_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_LAUNCHER_TPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_LAUNCHER_FPP_SECTION_NAME,
+            Constants.Parsing.UNHOLSTERED_LAUNCHER_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_MANTIS_TPP_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_MANTIS_FPP_SECTION_NAME,
+            Constants.Parsing.UNHOLSTERED_MANTIS_SECTION_NAME,
+        };
+
+        private static List<string> ExpectedThirdSectionNames = new List<string>
+        {
+            Constants.Parsing.FPP_BODY_SECTION_NAME,
+            Constants.Parsing.TPP_BODY_SECTION_NAME,
+            Constants.Parsing.CHARACTER_CREATION_SECTION_NAME,
+            Constants.Parsing.GENITALS_SECTION_NAME,
+            Constants.Parsing.BREAST_SECTION_NAME,
+            Constants.Parsing.LIFTED_FEET_SECTION_NAME,
+            Constants.Parsing.FLAT_FEET_SECTION_NAME
+        };
+
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             if (node.Name != ParsableNodeName)
@@ -31,28 +71,52 @@ namespace CyberCAT.Core.Classes.Parsers
             }
             var result = new CharacterCustomizationAppearances();
             reader.Skip(4); //skip Id
-            result.UnknownFirstBytes = reader.ReadBytes(15);
+            result.UnknownFirstBytes = reader.ReadBytes(11);
 
-            var tppTest = ParserUtils.ReadString(reader);
-            Debug.Assert(tppTest == Constants.Parsing.TPP_SECTION_NAME);
-            int count = reader.ReadInt32();
-            result.ThirdPerson.AddRange(ReadHashValueSection(reader, count));
+            result.FirstSection = ReadSection(reader, ExpectedFirstSectionNames);
 
-            count = reader.ReadInt32();
-            if (count > 0)
-            {
-                result.AdditionalThirdPerson.AddRange(ReadValueSection(reader, count));
-            }
+            result.SecondSection = ReadSection(reader, ExpectedSecondSectionNames);
 
-            var fppTest = ParserUtils.ReadString(reader);
-            Debug.Assert(fppTest == Constants.Parsing.FPP_SECTION_NAME);
-            count = reader.ReadInt32();
-            result.FirstPerson.AddRange(ReadHashValueSection(reader, count));
+            result.ThirdSection = ReadSection(reader, ExpectedThirdSectionNames);
 
             int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
             return result;
         }
+
+        private CharacterCustomizationAppearances.Section ReadSection(BinaryReader reader, List<string> expectedSectionNames)
+        {
+            var count = reader.ReadUInt32();
+
+            var section = new CharacterCustomizationAppearances.Section();
+            for (uint i = 0; i < count; ++i)
+            {
+                section.AppearanceSections.Add(ReadAppearanceSection(reader, expectedSectionNames));
+            }
+
+            return section;
+        }
+
+        private CharacterCustomizationAppearances.AppearanceSection ReadAppearanceSection(BinaryReader reader, List<string> expectedNames)
+        {
+            var sectionName = ParserUtils.ReadString(reader);
+            Debug.Assert(expectedNames.Contains(sectionName));
+
+            var appearanceSection = new CharacterCustomizationAppearances.AppearanceSection {SectionName = sectionName};
+
+
+            int count = reader.ReadInt32();
+            appearanceSection.MainList.AddRange(ReadHashValueSection(reader, count));
+
+            count = reader.ReadInt32();
+            if (count > 0)
+            {
+                appearanceSection.AdditionalList.AddRange(ReadValueSection(reader, count));
+            }
+
+            return appearanceSection;
+        }
+
         private List<CharacterCustomizationAppearances.HashValueEntry> ReadHashValueSection(BinaryReader reader, int count)
         {
             var result = new List<CharacterCustomizationAppearances.HashValueEntry>();
@@ -62,7 +126,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 entry.Hash = reader.ReadUInt64();
                 entry.FirstString = ParserUtils.ReadString(reader);
                 entry.SecondString = ParserUtils.ReadString(reader);
-                entry.TrailingBytes=reader.ReadBytes(8);
+                entry.TrailingBytes = reader.ReadBytes(8);
                 result.Add(entry);
             }
             return result;
@@ -92,41 +156,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
                     writer.Write(data.UnknownFirstBytes);
-                    writer.Write((byte)(Constants.Parsing.TPP_SECTION_NAME.Length + 128));
-                    writer.Write(Encoding.ASCII.GetBytes(Constants.Parsing.TPP_SECTION_NAME));
-                    writer.Write(data.ThirdPerson.Count);
-                    foreach(var entry in data.ThirdPerson)
-                    {
-                        writer.Write(entry.Hash);
-                        writer.Write((byte)(entry.FirstString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
-                        writer.Write((byte)(entry.SecondString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
-                        writer.Write(entry.TrailingBytes);
-                    }
 
-                    writer.Write(data.AdditionalThirdPerson.Count);
-                    foreach (var entry in data.AdditionalThirdPerson)
-                    {
-                        writer.Write((byte)(entry.FirstString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
-                        writer.Write((byte)(entry.SecondString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
-                        writer.Write(entry.TrailingBytes);
-                    }
-
-                    writer.Write((byte)(Constants.Parsing.FPP_SECTION_NAME.Length + 128));
-                    writer.Write(Encoding.ASCII.GetBytes(Constants.Parsing.FPP_SECTION_NAME));
-                    writer.Write(data.FirstPerson.Count);
-                    foreach (var entry in data.FirstPerson)
-                    {
-                        writer.Write(entry.Hash);
-                        writer.Write((byte)(entry.FirstString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
-                        writer.Write((byte)(entry.SecondString.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
-                        writer.Write(entry.TrailingBytes);
-                    }
+                    WriteSection(writer, data.FirstSection);
+                    WriteSection(writer, data.SecondSection);
+                    WriteSection(writer, data.ThirdSection);
 
                     writer.Write(data.TrailingBytes);
                 }
@@ -135,6 +168,43 @@ namespace CyberCAT.Core.Classes.Parsers
             //node.TrueSize = result.Length;
             return result;
         }
+
+        public void WriteSection(BinaryWriter writer, CharacterCustomizationAppearances.Section section)
+        {
+            writer.Write(section.AppearanceSections.Count);
+            foreach (var appearanceSection in section.AppearanceSections)
+            {
+                WriteAppearanceSection(writer, appearanceSection);
+            }
+        }
+
+        public void WriteAppearanceSection(BinaryWriter writer, CharacterCustomizationAppearances.AppearanceSection appearanceSection)
+        {
+            writer.Write((byte)(appearanceSection.SectionName.Length + 128));
+            writer.Write(Encoding.ASCII.GetBytes(appearanceSection.SectionName));
+
+            writer.Write(appearanceSection.MainList.Count);
+            foreach (var entry in appearanceSection.MainList)
+            {
+                writer.Write(entry.Hash);
+                writer.Write((byte)(entry.FirstString.Length + 128));
+                writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
+                writer.Write((byte)(entry.SecondString.Length + 128));
+                writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
+                writer.Write(entry.TrailingBytes);
+            }
+
+            writer.Write(appearanceSection.AdditionalList.Count);
+            foreach (var entry in appearanceSection.AdditionalList)
+            {
+                writer.Write((byte)(entry.FirstString.Length + 128));
+                writer.Write(Encoding.ASCII.GetBytes(entry.FirstString));
+                writer.Write((byte)(entry.SecondString.Length + 128));
+                writer.Write(Encoding.ASCII.GetBytes(entry.SecondString));
+                writer.Write(entry.TrailingBytes);
+            }
+        }
+
         public override string ToString()
         {
             return DisplayName;
