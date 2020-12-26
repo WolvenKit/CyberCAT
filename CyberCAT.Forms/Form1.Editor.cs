@@ -15,7 +15,7 @@ namespace CyberCAT.Forms
 {
     partial class Form1
     {
-        SaveFile _activeSaveFile;
+        private SaveFile _activeSaveFile;
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
             { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
