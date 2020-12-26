@@ -14,17 +14,13 @@ namespace CyberCAT.Forms.Classes
         public NodeEntry Node;
         public NodeEntryTreeNode(NodeEntry sourceNode)
         {
+            
             Text = $"[{sourceNode.Id}] {sourceNode.Name}";
-
-            // TODO: this should also be generalized so that each node can provide additional text for the name
-            // TODO: however, I did not want to put this into NodeEntry directly
-
-            if (sourceNode.Value is ItemData item)
+            // TODO: Make this generic or something
+            if (sourceNode.Value is ItemData)
             {
-                var tempDisplay = new ItemDataDisplay(item);
-                Text += $" ({tempDisplay.ItemName})";
+                Text = $"[{sourceNode.Id}] {sourceNode.Value}";
             }
-
             Node = sourceNode;
         }
         public static List<NodeEntryTreeNode> FromList(List<NodeEntry> nodes)

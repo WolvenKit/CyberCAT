@@ -11,6 +11,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] HeaderBytes { get; set; }
         public uint NumberOfItems { get; set; }
 
+        public ItemData.NextItemEntry NextItem { get; set; }
+
         /// <summary>
         /// Bytes that are not yet parsed into representation
         /// </summary>

@@ -18,8 +18,8 @@ namespace CyberCAT.Forms
         SaveFile _activeSaveFile;
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
-            { typeof(DefaultRepresentation), typeof(HexEditorControl) },
-            { typeof(GameSessionConfig), typeof(GameSessionConfigControl) },
+            { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
+            { typeof(GameSessionConfig), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) }
@@ -38,6 +38,11 @@ namespace CyberCAT.Forms
         }
         private void saveButton_Click(object sender, EventArgs e)
         {
+            if (_activeSaveFile == null)
+            {
+                return;
+            }
+
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             if(saveDialog.ShowDialog() == DialogResult.OK)
             {
@@ -54,11 +59,14 @@ namespace CyberCAT.Forms
             }
 
             var fileName = fd.FileName;
-            _activeSaveFile = new SaveFile(_parserConfig.Where(p=>p.Enabled).Select(p=>p.Parser));
+
             var bytes = File.ReadAllBytes(fileName);
+
             try
             {
-                _activeSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
+                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
+                newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
+                _activeSaveFile = newSaveFile;
             }
             catch (Exception exception)
             {

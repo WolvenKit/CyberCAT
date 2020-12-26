@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,15 +27,21 @@ namespace CyberCAT.Forms
         List<ParserConfig> _parserConfig = new List<ParserConfig>();
         Settings _settings;
         string _settingsFileName = "Settings.json";
+        string _itemsFileName = "Items.json";
         public Form1()
         {
-            
             InitializeComponent();
             if (!Directory.Exists(Constants.FileStructure.OUTPUT_FOLDER_NAME))
             {
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
+            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
+            //Add Hexeditor as editor for byte arrays
+            TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
+            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
 
             //Settings
             var interfaceType = typeof(INodeParser);
@@ -239,6 +246,20 @@ namespace CyberCAT.Forms
             _settings.EnabledParsers.Clear();
             _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
             File.WriteAllText(_settingsFileName, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+        }
+
+        private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Export_{Guid.NewGuid()}");
+            foreach(var node in _activeSaveFile.FlatNodes)
+            {
+                if(node.Value is DefaultRepresentation)
+                {
+                    var representation = (DefaultRepresentation)node.Value;
+                    File.WriteAllBytes(Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}"), representation.Blob);
+                }
+            }
+            MessageBox.Show($"Exported All unparsed Nodes to {info.FullName}");
         }
     }
 }

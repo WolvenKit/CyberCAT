@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes
 {
@@ -20,7 +21,7 @@ namespace CyberCAT.Core.Classes
         public byte[] SkippedHeaderBytes;
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
-        List<NodeEntry> _nodes = new List<NodeEntry>();//flat structure
+        public List<NodeEntry> FlatNodes = new List<NodeEntry>();//flat structure
         List<INodeParser> _parsers;
         /// <summary>
         /// Creates a new Instance of Save File wich will utilize given parsers
@@ -43,7 +44,7 @@ namespace CyberCAT.Core.Classes
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {
-            _nodes = new List<NodeEntry>();
+            FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
@@ -68,7 +69,7 @@ namespace CyberCAT.Core.Classes
                     entry.Offset = reader.ReadInt32();
                     entry.Size = reader.ReadInt32();
                     entry.Name = name;
-                    _nodes.Add(entry);
+                    FlatNodes.Add(entry);
                 }
             }
             inputStream.Seek(0, SeekOrigin.Begin);
@@ -78,23 +79,23 @@ namespace CyberCAT.Core.Classes
             {
                 using (BinaryReader reader = new BinaryReader(memoryStream, Encoding.ASCII))
                 {
-                    foreach (var node in _nodes)
+                    foreach (var node in FlatNodes)
                     {
                         reader.BaseStream.Position = node.Offset;
                         node.Id = reader.ReadInt32();
                     }
-                    foreach (var node in _nodes)
+                    foreach (var node in FlatNodes)
                     {
                         if (!node.IsChild)
                         {
-                            FindChildren(_nodes, node, _nodes.Count);
+                            FindChildren(FlatNodes, node, FlatNodes.Count);
                         }
                         if (node.NextId > -1)
                         {
-                            node.SetNextNode(_nodes.Where(n => n.Id == node.NextId).FirstOrDefault());
+                            node.SetNextNode(FlatNodes.Where(n => n.Id == node.NextId).FirstOrDefault());
                         }
                     }
-                    Nodes.AddRange(_nodes.Where(n => !n.IsChild));
+                    Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
                     CalculateTrueSizes();
                     ParserUtils.ParseChildren(Nodes, reader, _parsers);
                 }
@@ -192,8 +193,8 @@ namespace CyberCAT.Core.Classes
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.NODE_INFORMATION_START));
-                    writer.WriteBit6(_nodes.Count);
-                    foreach (var node in _nodes)
+                    writer.WriteBit6(FlatNodes.Count);
+                    foreach (var node in FlatNodes)
                     {
                         writer.Write((byte)(node.Name.Length + 128));
                         writer.Write(Encoding.ASCII.GetBytes(node.Name));
@@ -210,21 +211,21 @@ namespace CyberCAT.Core.Classes
         void CalculateTrueSizes()
         {
             
-            for(int i =0; i < _nodes.Count-1; i++)
+            for(int i =0; i < FlatNodes.Count-1; i++)
             {
-                var node = _nodes[i];
-                var next = _nodes[i + 1];
+                var node = FlatNodes[i];
+                var next = FlatNodes[i + 1];
                 node.TrueSize = next.Offset - node.Offset;
             }
-            _nodes[_nodes.Count - 1].TrueSize = _nodes[_nodes.Count - 1].Size;//I believe
+            FlatNodes[FlatNodes.Count - 1].TrueSize = FlatNodes[FlatNodes.Count - 1].Size;//I believe
         }
         void RecalculateOffsets()
         {
-            _nodes[0].Offset= Constants.Numbers.DEFAULT_HEADER_SIZE;
-            for (int i =1; i < _nodes.Count;i++)
+            FlatNodes[0].Offset= Constants.Numbers.DEFAULT_HEADER_SIZE;
+            for (int i =1; i < FlatNodes.Count;i++)
             {
-                var previousNode = _nodes[i - 1];
-                _nodes[i].Offset = previousNode.Offset + previousNode.TrueSize;
+                var previousNode = FlatNodes[i - 1];
+                FlatNodes[i].Offset = previousNode.Offset + previousNode.TrueSize;
             }
         }
         private void FindChildren(List<NodeEntry> nodes, NodeEntry node, int maxNextId)
