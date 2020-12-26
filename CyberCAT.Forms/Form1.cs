@@ -23,13 +23,16 @@ namespace CyberCAT.Forms
     
     public partial class Form1 : Form
     {
-        SaveFileCompressionHelper activeSaveFile = new SaveFileCompressionHelper();
+        SaveFileCompressionHelper _saveFileCompressionHelper = new SaveFileCompressionHelper();
         List<ParserConfig> _parserConfig = new List<ParserConfig>();
         Settings _settings;
         string _settingsFileName = "Settings.json";
         string _itemsFileName = "Items.json";
 
-        private string _selectedFileForDecompression = null;
+        private string _selectedFileForDecompression;
+        private string _selectedFileForRecompression;
+        private string _selectedMetaFileForRecompression;
+
         public Form1()
         {
             InitializeComponent();
@@ -68,7 +71,7 @@ namespace CyberCAT.Forms
                 _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled = true).Select(p => p.Parser.Guid));
             }
             dataGridView1.DataSource = _parserConfig;
-            
+            _saveFileCompressionHelper = new SaveFileCompressionHelper();
         }
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -95,12 +98,11 @@ namespace CyberCAT.Forms
             {
                 using (var compressedInputStream = File.OpenRead(_selectedFileForDecompression))
                 {
-                    activeSaveFile = new SaveFileCompressionHelper();
-                    var decompressedFile = activeSaveFile.Decompress(compressedInputStream);
-                    string json = JsonConvert.SerializeObject(activeSaveFile.MetaInformation, Formatting.Indented);
+                    var decompressedFile = _saveFileCompressionHelper.Decompress(compressedInputStream);
+                    string json = JsonConvert.SerializeObject(_saveFileCompressionHelper.MetaInformation, Formatting.Indented);
                     var outputFolder = new FileInfo(_selectedFileForDecompression).Directory.FullName;
-                    File.WriteAllText($"{outputFolder}\\{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.{Constants.FileExtensions.JSON}", json);
-                    File.WriteAllBytes($"{outputFolder}\\{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.{Constants.FileExtensions.DECOMPRESSED_FILE}", decompressedFile);
+                    File.WriteAllText($"{outputFolder}\\{_saveFileCompressionHelper.MetaInformation.FileGuid}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.{Constants.FileExtensions.JSON}", json);
+                    File.WriteAllBytes($"{outputFolder}\\{_saveFileCompressionHelper.MetaInformation.FileGuid}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.{Constants.FileExtensions.DECOMPRESSED_FILE}", decompressedFile);
                 }
 
                 MessageBox.Show(Constants.Messages.DECOMPRESSION_SUCCESSFUL, "", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -112,56 +114,19 @@ namespace CyberCAT.Forms
         }
         private void recompressButton_Click(object sender, EventArgs e)
         {
-            if (File.Exists(recompressFilePathTextbox.Text))
+            if (File.Exists(_selectedFileForRecompression))
             {
-                if (File.Exists(metaInformationFilePathTextbox.Text))
+                if (File.Exists(_selectedMetaFileForRecompression))
                 {
-                    activeSaveFile.CompressFromSingleFile(recompressFilePathTextbox.Text,metaInformationFilePathTextbox.Text, out _);
+                    var outputFolder = new FileInfo(_selectedFileForRecompression).Directory.FullName;
+                    _saveFileCompressionHelper.CompressFromSingleFile(_selectedFileForRecompression, _selectedMetaFileForRecompression, outputFolder);
+
+                    MessageBox.Show(Constants.Messages.RECOMPRESSION_SUCCESSFUL, "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
                     MessageBox.Show(Constants.Messages.MISSING_METAINFO_FILE_TEXT);
                 }
-            }
-        }
-
-        private void recompressFilePathTextbox_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Length != 0)
-            {
-                recompressFilePathTextbox.Text = files[0];
-                var splitted = Path.GetFileName(files[0]).Split('_');
-                var metainfoFileNameGuess = $"{splitted[0]}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.{Constants.FileExtensions.JSON}";
-                if (File.Exists($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{metainfoFileNameGuess}"))
-                {
-                    metaInformationFilePathTextbox.Text = Path.GetFullPath($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{metainfoFileNameGuess}");
-                }
-            }
-        }
-
-        private void recompressFilePathTextbox_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-            {
-                e.Effect = DragDropEffects.All;
-            }
-        }
-
-        private void metaInformationFilePathTextbox_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Length != 0)
-            {
-                metaInformationFilePathTextbox.Text = files[0];
-            }
-        }
-
-        private void metaInformationFilePathTextbox_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-            {
-                e.Effect = DragDropEffects.All;
             }
         }
 
@@ -257,6 +222,31 @@ namespace CyberCAT.Forms
             _selectedFileForDecompression = fd.FileName;
             uncompressButton.Enabled = true;
             lblSelectedFileForDecompression.Text = $"Selected File: {_selectedFileForDecompression}";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var metainfFile = fd.FileName.Replace(
+                $"{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.{Constants.FileExtensions.DECOMPRESSED_FILE}",
+                $"{Constants.FileStructure.METAINFORMATION_SUFFIX}.{Constants.FileExtensions.JSON}");
+
+            if (!File.Exists(metainfFile))
+            {
+                MessageBox.Show(Constants.Messages.MISSING_METAINFO_FILE_TEXT, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _selectedFileForRecompression = fd.FileName;
+            _selectedMetaFileForRecompression = metainfFile;
+            recompressButton.Enabled = true;
+            lblSelectedFileForRecompression.Text = $"Selected File: {_selectedFileForRecompression}";
         }
     }
 }
