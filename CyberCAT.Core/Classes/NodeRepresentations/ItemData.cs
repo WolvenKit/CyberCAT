@@ -11,8 +11,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class NextItemEntry
         {
             public ulong ItemTdbId { get; set; }
-            public byte ItemNameLength { get; set; }
-            public byte[] UnknownBytes1 { get; set; }
             public uint ItemID { get; set; }
             public byte[] UnknownBytes2 { get; set; }
         }
@@ -20,8 +18,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class ModEntry
         {
             public ulong ItemTdbId { get; set; }
-            public byte ItemNameLength { get; set; }
-            public byte[] UnknownBytes1 { get; set; }
             public uint ItemID { get; set; }
             public byte[] UnknownBytes2 { get; set; }
 
@@ -32,8 +28,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         }
 
         public ulong ItemTdbId { get; set; }
-        public byte ItemNameLength { get; set; }
-        public byte[] UnknownBytes1 { get; set; }
         public uint ItemID { get; set; }
         public byte[] UnknownBytes2 { get; set; }
         public uint ItemQuantity { get; set; }
