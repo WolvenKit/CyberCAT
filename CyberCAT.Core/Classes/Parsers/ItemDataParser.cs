@@ -29,9 +29,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             reader.Skip(4); // Skip Id
 
-            result.ItemNameCRC32b = reader.ReadUInt32();
-            result.ItemNameLength = reader.ReadByte();
-            result.UnknownBytes1 = reader.ReadBytes(3);
+            result.ItemTdbId = reader.ReadUInt64();
+            result.ItemNameLength = BitConverter.GetBytes(result.ItemTdbId)[4];
             result.ItemID = reader.ReadUInt32();
             result.UnknownBytes2 = reader.ReadBytes(8);
             result.ItemQuantity = reader.ReadUInt32();
@@ -45,9 +44,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 for (int i = 0; i < modCount; i++)
                 {
                     result.ModEntries[i] = new ItemData.ModEntry();
-                    result.ModEntries[i].ItemNameCRC32b = reader.ReadUInt32();
-                    result.ModEntries[i].ItemNameLength = reader.ReadByte();
-                    result.ModEntries[i].UnknownBytes1 = reader.ReadBytes(3);
+                    result.ModEntries[i].ItemTdbId = reader.ReadUInt64();
+                    result.ModEntries[i].ItemNameLength = BitConverter.GetBytes(result.ModEntries[i].ItemTdbId)[4];
                     result.ModEntries[i].ItemID = reader.ReadUInt32();
                     result.ModEntries[i].UnknownBytes2 = reader.ReadBytes(37);
                 }
@@ -71,9 +69,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             var nextItemEntry = new ItemData.NextItemEntry();
 
-            nextItemEntry.ItemNameCRC32b = reader.ReadUInt32();
-            nextItemEntry.ItemNameLength = reader.ReadByte();
-            nextItemEntry.UnknownBytes1 = reader.ReadBytes(3);
+            nextItemEntry.ItemTdbId = reader.ReadUInt64();
+            nextItemEntry.ItemNameLength = BitConverter.GetBytes(nextItemEntry.ItemTdbId)[4];
             nextItemEntry.ItemID = reader.ReadUInt32();
             nextItemEntry.UnknownBytes2 = reader.ReadBytes(3);
 
@@ -90,9 +87,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 {
                     writer.Write(node.Id);
 
-                    writer.Write(data.ItemNameCRC32b);
+                    writer.Write(data.ItemTdbId);
                     writer.Write(data.ItemNameLength);
-                    writer.Write(data.UnknownBytes1);
+                    writer.Write(new byte[] { 0, 0, 0 });
                     writer.Write(data.ItemID);
                     writer.Write(data.UnknownBytes2);
                     writer.Write(data.ItemQuantity);
@@ -104,9 +101,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
                         for (int i = 0; i < data.ModEntries.Length; i++)
                         {
-                            writer.Write(data.ModEntries[i].ItemNameCRC32b);
+                            writer.Write(data.ModEntries[i].ItemTdbId);
                             writer.Write(data.ModEntries[i].ItemNameLength);
-                            writer.Write(data.ModEntries[i].UnknownBytes1);
+                            writer.Write(new byte[] {0,0,0});
                             writer.Write(data.ModEntries[i].ItemID);
                             writer.Write(data.ModEntries[i].UnknownBytes2);
                         }
@@ -124,9 +121,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public static void WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
         {
-            writer.Write(nextItem.ItemNameCRC32b);
+            writer.Write(nextItem.ItemTdbId);
             writer.Write(nextItem.ItemNameLength);
-            writer.Write(nextItem.UnknownBytes1);
+            writer.Write(new byte[] { 0, 0, 0 });
             writer.Write(nextItem.ItemID);
             writer.Write(nextItem.UnknownBytes2);
         }

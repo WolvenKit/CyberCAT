@@ -10,7 +10,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
     {
         public class NextItemEntry
         {
-            public uint ItemNameCRC32b { get; set; }
+            public ulong ItemTdbId { get; set; }
             public byte ItemNameLength { get; set; }
             public byte[] UnknownBytes1 { get; set; }
             public uint ItemID { get; set; }
@@ -19,7 +19,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public class ModEntry
         {
-            public uint ItemNameCRC32b { get; set; }
+            public ulong ItemTdbId { get; set; }
             public byte ItemNameLength { get; set; }
             public byte[] UnknownBytes1 { get; set; }
             public uint ItemID { get; set; }
@@ -27,11 +27,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return NameResolver.GetName(ItemNameCRC32b);
+                return NameResolver.GetName(ItemTdbId);
             }
         }
 
-        public uint ItemNameCRC32b { get; set; }
+        public ulong ItemTdbId { get; set; }
         public byte ItemNameLength { get; set; }
         public byte[] UnknownBytes1 { get; set; }
         public uint ItemID { get; set; }
@@ -47,7 +47,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] TrailingBytes { get; set; }
         public override string ToString()
         {
-            return NameResolver.GetName(ItemNameCRC32b);
+            return NameResolver.GetName(ItemTdbId);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace CyberCAT.Forms
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
-            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<uint, string>>(File.ReadAllText(_itemsFileName)));
+            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
             //Add Hexeditor as editor for byte arrays
             TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));

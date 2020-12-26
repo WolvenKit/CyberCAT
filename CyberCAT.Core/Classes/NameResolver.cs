@@ -9,8 +9,8 @@ namespace CyberCAT.Core.Classes
     
     public static class NameResolver
     {
-        static Dictionary<uint, string> _items = new Dictionary<uint, string>();
-        public static string GetName(uint hash)
+        static Dictionary<ulong, string> _items = new Dictionary<ulong, string>();
+        public static string GetName(ulong hash)
         {
             if (_items.ContainsKey(hash))
             {
@@ -18,7 +18,7 @@ namespace CyberCAT.Core.Classes
             }
             return $"Unknown_{hash}";
         }
-        public static void UseDictionary(Dictionary<uint, string> dictionary)
+        public static void UseDictionary(Dictionary<ulong, string> dictionary)
         {
             _items = dictionary;
         }
