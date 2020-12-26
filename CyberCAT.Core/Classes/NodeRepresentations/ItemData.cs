@@ -31,7 +31,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public ulong ItemTdbId { get; set; }
         public uint ItemID { get; set; }
-        public byte[] UnknownBytes2 { get; set; }
+        public byte[] UnknownBytes1 { get; set; }
+        public bool IsQuestItem { get; set; }
+        public uint CreationTime { get; set; }
         public uint ItemQuantity { get; set; }
         public byte[] UnknownBytes3 { get; set; }
         public List<ModEntry> ModEntries { get; set; }

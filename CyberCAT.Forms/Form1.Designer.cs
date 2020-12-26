@@ -47,6 +47,7 @@
             this.editorTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.txtEditorFilter = new System.Windows.Forms.TextBox();
             this.saveButton = new System.Windows.Forms.Button();
             this.LoadSave = new System.Windows.Forms.Button();
             this.EditorTree = new System.Windows.Forms.TreeView();
@@ -265,21 +266,33 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.txtEditorFilter);
             this.splitContainer2.Panel1.Controls.Add(this.saveButton);
             this.splitContainer2.Panel1.Controls.Add(this.LoadSave);
+            this.splitContainer2.Panel1MinSize = 60;
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.EditorTree);
             this.splitContainer2.Size = new System.Drawing.Size(247, 423);
-            this.splitContainer2.SplitterDistance = 25;
+            this.splitContainer2.SplitterDistance = 60;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // txtEditorFilter
+            // 
+            this.txtEditorFilter.Location = new System.Drawing.Point(3, 32);
+            this.txtEditorFilter.Name = "txtEditorFilter";
+            this.txtEditorFilter.Size = new System.Drawing.Size(156, 20);
+            this.txtEditorFilter.TabIndex = 2;
+            this.txtEditorFilter.TextChanged += new System.EventHandler(this.txtEditorFilter_TextChanged);
             // 
             // saveButton
             // 
@@ -305,9 +318,10 @@
             // 
             this.EditorTree.ContextMenuStrip = this.editorTreeContextMenu;
             this.EditorTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EditorTree.HideSelection = false;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
-            this.EditorTree.Size = new System.Drawing.Size(247, 394);
+            this.EditorTree.Size = new System.Drawing.Size(247, 359);
             this.EditorTree.TabIndex = 0;
             this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
             // 
@@ -452,6 +466,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -501,6 +516,7 @@
         private System.Windows.Forms.Label lblSelectedFileForRecompression;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtEditorFilter;
     }
 }
 
