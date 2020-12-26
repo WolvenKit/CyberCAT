@@ -36,7 +36,7 @@ namespace CyberCAT.Core
         {
             public const string MISSING_FILE_TEXT = "File does not exist";
             public const string MISSING_METAINFO_FILE_TEXT = "Metainfo File not found";
-
+            public const string DECOMPRESSION_SUCCESSFUL = "Decompression successful";
         }
         public static class Parsing
         {
@@ -72,7 +72,6 @@ namespace CyberCAT.Core
             public const string BREAST_SECTION_NAME = "breast";
             public const string LIFTED_FEET_SECTION_NAME = "lifted_feet";
             public const string FLAT_FEET_SECTION_NAME = "flat_feet";
-
         }
         public static class NodeNames
         {
