@@ -36,7 +36,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             result.ItemTdbId = reader.ReadUInt64();
             result.ItemID = reader.ReadUInt32();
-            result.UnknownBytes2 = reader.ReadBytes(8);
+            result.UnknownBytes1 = reader.ReadBytes(3);
+            var isQuestItem = reader.ReadByte(); // Yes, there is a reader.ReadBoolean(), however, this might also be a bitfield instead of just a boolean
+            // So make sure to throw hands up if we ever see anything other than 0 or 1
+            Debug.Assert(isQuestItem == 0 || isQuestItem == 1);
+            result.IsQuestItem = isQuestItem == 1;
+            result.CreationTime = reader.ReadUInt32();
             result.ItemQuantity = reader.ReadUInt32();
 
             if (result.ItemID != 2)
@@ -148,7 +153,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
                     writer.Write(data.ItemTdbId);
                     writer.Write(data.ItemID);
-                    writer.Write(data.UnknownBytes2);
+                    writer.Write(data.UnknownBytes1);
+                    writer.Write(data.IsQuestItem);
+                    writer.Write(data.CreationTime);
                     writer.Write(data.ItemQuantity);
 
                     if (data.ItemID != 2)

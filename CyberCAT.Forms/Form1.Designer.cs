@@ -318,6 +318,7 @@
             // 
             this.EditorTree.ContextMenuStrip = this.editorTreeContextMenu;
             this.EditorTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EditorTree.HideSelection = false;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
             this.EditorTree.Size = new System.Drawing.Size(247, 359);
