@@ -11,17 +11,11 @@ namespace CyberCAT.Forms.Classes
 {
     class NodeEntryTreeNode : TreeNode
     {
-        public NodeEntry Node;
+        public readonly NodeEntry Node;
         public NodeEntryTreeNode(NodeEntry sourceNode)
         {
-            
-            Text = $"[{sourceNode.Id}] {sourceNode.Name}";
-            // TODO: Make this generic or something
-            if (sourceNode.Value is ItemData)
-            {
-                Text = $"[{sourceNode.Id}] {sourceNode.Value}";
-            }
             Node = sourceNode;
+            Text = Node.ToString();
         }
         public static List<NodeEntryTreeNode> FromList(List<NodeEntry> nodes)
         {
@@ -31,6 +25,32 @@ namespace CyberCAT.Forms.Classes
                 result.Add(new NodeEntryTreeNode(node));
             }
             return result;
+        }
+
+        //public new virtual string Text => Node.ToString();
+        public override string ToString()
+        {
+            return Node.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is NodeEntryTreeNode netn)
+            {
+                return netn.Node == Node;
+            }
+
+            return false;
+        }
+
+        protected bool Equals(NodeEntryTreeNode other)
+        {
+            return Equals(Node, other.Node);
+        }
+
+        public override int GetHashCode()
+        {
+            return Node != null ? Node.GetHashCode() : 0;
         }
     }
 }

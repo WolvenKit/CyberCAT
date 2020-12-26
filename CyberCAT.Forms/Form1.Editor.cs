@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Forms.Classes;
@@ -75,6 +73,8 @@ namespace CyberCAT.Forms
             }
 
             EditorTree.Nodes.Clear();
+            txtEditorFilter.Text = "";
+
             foreach (var node in _activeSaveFile.Nodes)
             {
                 var treeNode = new NodeEntryTreeNode(node);
@@ -110,6 +110,76 @@ namespace CyberCAT.Forms
             splitContainer1.Panel2.Controls.Clear();
             nodeControl.Dock = DockStyle.Fill;
             splitContainer1.Panel2.Controls.Add(nodeControl);
+        }
+
+        private void AddChildrenToTreeNodeWithFilter(NodeEntryTreeNode treeNode, string filter)
+        {
+            if (treeNode.Node.Children.Count > 0)
+            {
+                var nodes = new List<NodeEntryTreeNode>();
+                nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
+
+                foreach (var child in nodes)
+                {
+                    AddChildrenToTreeNodeWithFilter(child, filter);
+                    if (child.Text.ToLowerInvariant().Contains(filter) || child.Nodes.Count > 0)
+                    {
+                        treeNode.Nodes.Add(child);
+                    }
+                }
+            }
+
+        }
+
+        private void txtEditorFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (_activeSaveFile == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtEditorFilter.Text))
+            {
+                EditorTree.Nodes.Clear();
+                foreach (var node in _activeSaveFile.Nodes)
+                {
+                    var treeNode = new NodeEntryTreeNode(node);
+                    AddChildrenToTreeNode(treeNode);
+                    EditorTree.Nodes.Add(treeNode);
+                }
+
+                return;
+            }
+            // Filter nodes. We also show parents if children contain the text.
+
+            var filterString = txtEditorFilter.Text;
+
+            List<NodeEntry> filteredNodes = new List<NodeEntry>();
+
+            foreach (var node in _activeSaveFile.FlatNodes)
+            {
+                if (node.ToString().Contains(filterString))
+                {
+                    filteredNodes.Add(node);
+                }
+            }
+
+            List<NodeEntryTreeNode> filteredTreeNodes = new List<NodeEntryTreeNode>();
+
+            EditorTree.Nodes.Clear();
+            foreach (var node in _activeSaveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+
+                AddChildrenToTreeNodeWithFilter(treeNode, filterString);
+                if (treeNode.Text.ToLowerInvariant().Contains(filterString) || treeNode.Nodes.Count > 0)
+                {
+                    EditorTree.Nodes.Add(treeNode);
+                }
+
+            }
+
+            EditorTree.ExpandAll();
         }
     }
 }
