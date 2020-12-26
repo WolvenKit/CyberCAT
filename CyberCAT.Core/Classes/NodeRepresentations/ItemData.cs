@@ -24,6 +24,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public byte[] UnknownBytes1 { get; set; }
             public uint ItemID { get; set; }
             public byte[] UnknownBytes2 { get; set; }
+
+            public override string ToString()
+            {
+                return NameResolver.GetName(ItemNameCRC32b);
+            }
         }
 
         public uint ItemNameCRC32b { get; set; }
