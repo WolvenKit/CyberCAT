@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes
 {
@@ -60,6 +61,19 @@ namespace CyberCAT.Core.Classes
         public NodeEntry GetNextNode()
         {
             return _nextNode;
+        }
+
+        public override string ToString()
+        {
+            var s = $"[{Id}] {Name}";
+
+            // TODO: Make this generic or something
+            if (Value is ItemData)
+            {
+                s = $"[{Id}] {Value}";
+            }
+
+            return s;
         }
     }
 }
