@@ -9,7 +9,8 @@ namespace CyberCAT.Core.Classes
 {
     public class Flags
     {
-        public bool HasUnknownFlag { get; set; }
+        public bool UnknownFlag1 { get; set; }
+        public bool UnknownFlag2 { get; set; }
         public int Length { get; set; }
         public Flags()
         {
@@ -19,7 +20,8 @@ namespace CyberCAT.Core.Classes
         {
             byte flags = reader.ReadByte();
             Length = (byte)(flags & 0x3F);
-            HasUnknownFlag = (flags & 0x80) != 0; // don't know purpose yet
+            UnknownFlag1 = (flags & 0x80) != 0; // don't know purpose yet
+            UnknownFlag2 = (flags & 0x40) != 0; // don't know purpose yet
             if ((flags & 0x40) != 0)
             {
                 int shift = -1;
@@ -39,7 +41,8 @@ namespace CyberCAT.Core.Classes
         public Flags(byte flagbyte)
         {
             Length = (byte)(flagbyte & 0x3F);
-            HasUnknownFlag = (flagbyte & 0x80) != 0; // don't know purpose yet
+            UnknownFlag1 = (flagbyte & 0x80) != 0; // don't know purpose yet
+            UnknownFlag2 = (flagbyte & 0x40) != 0; // don't know purpose yet
         }
     }
 }
