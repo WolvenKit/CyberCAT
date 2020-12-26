@@ -65,6 +65,10 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                         break;
                     }
                 }
+                else
+                {
+                    reader.BaseStream.Position -= 4;
+                }
             }
 
             // The item data only goes until node.Size, afterwards
@@ -150,6 +154,15 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     if (data.ItemID != 2)
                     {
                         writer.Write(data.UnknownBytes3);
+
+                        if (data.ModEntries.Count > 0)
+                        {
+                            writer.Write(MOD_MARKER);
+                        }
+                        foreach (var modEntry in data.ModEntries)
+                        {
+                            WriteModEntry(writer, modEntry);
+                        }
                     }
 
                     writer.Write(data.ItemDataBytes);
@@ -160,6 +173,25 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
 
             return result;
+        }
+
+        private void WriteModEntry(BinaryWriter writer, ItemData.ModEntry modEntry)
+        {
+            writer.Write(modEntry.ItemTdbId);
+            writer.Write(modEntry.ItemID);
+            writer.Write(modEntry.UnknownBytes2);
+
+            if (modEntry.UnknownString == null)
+            {
+                // This is a 16byte modEntry.
+                writer.Write(modEntry.UnknownBytes3);
+                writer.Write(MOD_MARKER);
+                return;
+            }
+
+            ParserUtils.WriteString(writer, modEntry.UnknownString);
+            writer.Write(modEntry.UnknownBytes3);
+            writer.Write(MOD_MARKER);
         }
 
         public static void WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
