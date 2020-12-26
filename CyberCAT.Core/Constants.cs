@@ -45,6 +45,11 @@ namespace CyberCAT.Core
             public const string HAIRS_SECTION_NAME = "hairs";
             public const string CHARACTER_CUSTOMIZATION_SECTION_NAME = "character_customization";
             public const string HOLSTERED_DEFAULT_TPP_SECTION_NAME = "holstered_default_tpp";
+            public const string HOLSTERED_DEFAULT_SECTION_NAME = "holstered_default";
+            public const string HOLSTERED_STRONG_SECTION_NAME = "holstered_strong";
+            public const string HOLSTERED_NANOWIRE_SECTION_NAME = "holstered_nanowire";
+            public const string HOLSTERED_LAUNCHER_SECTION_NAME = "holstered_launcher";
+            public const string HOLSTERED_MANTIS_SECTION_NAME = "holstered_mantis";
             public const string HOLSTERED_DEFAULT_FPP_SECTION_NAME = "holstered_default_fpp";
             public const string HOLSTERED_STRONG_TPP_SECTION_NAME = "holstered_strong_tpp";
             public const string HOLSTERED_STRONG_FPP_SECTION_NAME = "holstered_strong_fpp";

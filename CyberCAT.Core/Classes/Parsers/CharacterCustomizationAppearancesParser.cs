@@ -33,6 +33,11 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private static List<string> ExpectedSecondSectionNames = new List<string>
         {
+            Constants.Parsing.HOLSTERED_DEFAULT_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_STRONG_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_NANOWIRE_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_LAUNCHER_SECTION_NAME,
+            Constants.Parsing.HOLSTERED_MANTIS_SECTION_NAME,
             Constants.Parsing.HOLSTERED_DEFAULT_TPP_SECTION_NAME,
             Constants.Parsing.HOLSTERED_DEFAULT_FPP_SECTION_NAME,
             Constants.Parsing.HOLSTERED_STRONG_TPP_SECTION_NAME,

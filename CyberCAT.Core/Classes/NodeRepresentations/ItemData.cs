@@ -29,5 +29,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         /// Bytes that are not yet parsed into representation
         /// </summary>
         public byte[] TrailingBytes { get; set; }
+        public override string ToString()
+        {
+            return NameResolver.GetName(ItemNameCRC32b);
+        }
     }
 }

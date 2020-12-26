@@ -14,8 +14,13 @@ namespace CyberCAT.Forms.Classes
         public NodeEntry Node;
         public NodeEntryTreeNode(NodeEntry sourceNode)
         {
-            // TODO: Add abolity for each node to provide additional text for the name
+            
             Text = $"[{sourceNode.Id}] {sourceNode.Name}";
+            // TODO: Make this generic or something
+            if (sourceNode.Value is ItemData)
+            {
+                Text = $"[{sourceNode.Id}] {sourceNode.Value}";
+            }
             Node = sourceNode;
         }
         public static List<NodeEntryTreeNode> FromList(List<NodeEntry> nodes)

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes
 {
