@@ -30,29 +30,21 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); //skip Id
 
-            var readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
-            var count = readSize / 8;
+            var count = ParserUtils.ReadPackedLong(reader);
 
-            // seem to be size related, but if there are more than 0xFF items, it doesn't add up...
-            var UnknownBytesLength = readSize % 8;
-            result.Unknown1 = reader.ReadBytes(UnknownBytesLength);
-
-            if (count > 0)
+            var tmpFactList = new List<uint>();
+            for (int i = 0; i < count; i++)
             {
-                var tmpFactList = new List<uint>();
-                for (int i = 0; i < count; i++)
-                {
-                    tmpFactList.Add(reader.ReadUInt32());
-                }
+                tmpFactList.Add(reader.ReadUInt32());
+            }
 
-                for (int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
+            {
+                result.FactEntries.Add(new FactsTable.FactEntry()
                 {
-                    result.FactEntries.Add(new FactsTable.FactEntry()
-                    {
-                        Hash = tmpFactList[i],
-                        Value = reader.ReadUInt32()
-                    });
-                }
+                    Hash = tmpFactList[i],
+                    Value = reader.ReadUInt32()
+                });
             }
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
@@ -70,7 +62,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
 
-                    writer.Write(data.Unknown1);
+                    ParserUtils.WritePackedLong(writer, data.FactEntries.Count);
 
                     foreach (var fact in data.FactEntries)
                     {

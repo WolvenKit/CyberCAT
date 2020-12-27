@@ -16,9 +16,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
-        // seem to be size related, but if there are more than 0xFF items, it doesn't add up...
-        public byte[] Unknown1 { get; set; }
-
         public List<FactEntry> FactEntries { get; set; }
 
         public FactsTable()
