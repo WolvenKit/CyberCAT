@@ -8,14 +8,20 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class Inventory
     {
-        public byte[] HeaderBytes { get; set; }
-        public uint NumberOfItems { get; set; }
+        public class SubInventory
+        {
+            public ulong InventoryId { get; set; }
+            public uint NumberOfItems { get; set; }
+            public ItemData.NextItemEntry[] ItemHeaders { get; set; }
+            public ItemData[] Items { get; set; }
 
-        public ItemData.NextItemEntry NextItem { get; set; }
+            public override string ToString()
+            {
+                return $"{InventoryId:X}";
+            }
+        }
+        public uint NumberOfInventories { get; set; }
 
-        /// <summary>
-        /// Bytes that are not yet parsed into representation
-        /// </summary>
-        public byte[] TrailingBytes { get; set; }
+        public SubInventory[] SubInventories { get; set; }
     }
 }

@@ -12,16 +12,63 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public ulong ItemTdbId { get; set; }
             public uint ItemID { get; set; }
-            public byte[] UnknownBytes2 { get; set; }
+            public byte[] UnknownBytes { get; set; }
+            public override string ToString()
+            {
+                return NameResolver.GetName(ItemTdbId);
+            }
+        }
+
+        public class ItemFlags
+        {
+            public byte Raw { get; set; }
+            public bool IsQuestItem
+            {
+                get => (Raw & 0x01) == 0x01;
+                set
+                {
+                    if (value)
+                    {
+                        Raw |= 0x01;
+                    } else {
+                        Raw &= byte.MaxValue ^ (0x01);
+                    }
+                } 
+            }
+            public bool Unknown2
+            {
+                get => (Raw & 0x02) == 0x02;
+                set
+                {
+                    if (value)
+                    {
+                        Raw |= 0x02;
+                    }
+                    else
+                    {
+                        Raw &= byte.MaxValue ^ (0x02);
+                    }
+                }
+            }
+
+            public ItemFlags(byte raw)
+            {
+                Raw = raw;
+            }
+
+            public override string ToString()
+            {
+                return $"[......{(Unknown2 ? '?' : '.')}{(IsQuestItem ? 'Q' : '.')}]";
+            }
         }
 
         public class ModEntry
         {
             public ulong ItemTdbId { get; set; }
             public uint ItemID { get; set; }
-            public byte[] UnknownBytes2 { get; set; }
+            public byte[] UnknownBytes1 { get; set; }
             public string UnknownString { get; set; }
-            public byte[] UnknownBytes3 { get; set; }
+            public byte[] UnknownBytes2 { get; set; }
 
             public override string ToString()
             {
@@ -32,17 +79,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public ulong ItemTdbId { get; set; }
         public uint ItemID { get; set; }
         public byte[] UnknownBytes1 { get; set; }
-        public bool IsQuestItem { get; set; }
+        public ItemFlags Flags { get; set; }
         public uint CreationTime { get; set; }
         public uint ItemQuantity { get; set; }
         public byte[] UnknownBytes3 { get; set; }
         public List<ModEntry> ModEntries { get; set; }
         public byte[] ItemDataBytes { get; set; }
-
-        /// <summary>
-        /// Bytes that are not yet parsed into representation
-        /// </summary>
-        public byte[] TrailingBytes { get; set; }
 
         public ItemData()
         {
