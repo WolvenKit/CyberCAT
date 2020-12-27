@@ -19,6 +19,8 @@ namespace CyberCAT.Forms
             { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
             { typeof(GameSessionConfig), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
+            { typeof(CharacterCustomizationAppearances.Section), typeof(PropertyEditControl) },
+            { typeof(CharacterCustomizationAppearances.AppearanceSection), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
             { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
@@ -58,11 +60,11 @@ namespace CyberCAT.Forms
             if (treeNode.Node.Value is Inventory inv)
             {
                 // For inventory, we insert virtual nodes for the sub inventories.
-                var subinventories = inv.SubInventories.Select(_ => (NodeEntry)new VirtualNodeEntry() {Data = _, Value = _}).ToList();
+                var subinventories = inv.SubInventories.Select(_ => (NodeEntry)new VirtualNodeEntry() {Value = _}).ToList();
                 foreach (var subinventory in subinventories)
                 {
                     var real = subinventory as VirtualNodeEntry;
-                    var data = real.Data as Inventory.SubInventory;
+                    var data = real.Value as Inventory.SubInventory;
                     foreach (var itemNode in treeNode.Node.Children)
                     {
                         if (data.Items.Contains(itemNode.Value))
@@ -76,6 +78,24 @@ namespace CyberCAT.Forms
                 {
                     BuildVisualSubTree((NodeEntryTreeNode)child);
                 }
+                return;
+            }
+
+            if (treeNode.Node.Value is CharacterCustomizationAppearances cca)
+            {
+                // For CCA we also insert virtual nodes for the three sections
+                var sections = new List<CharacterCustomizationAppearances.Section> {cca.FirstSection, cca.SecondSection, cca.ThirdSection};
+
+                foreach (var section in sections)
+                {
+                    var treeSection = new NodeEntryTreeNode(new VirtualNodeEntry { Value = section });
+                    foreach (var appearanceSection in section.AppearanceSections)
+                    {
+                        treeSection.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry { Value = appearanceSection }));
+                    }
+                    treeNode.Nodes.Add(treeSection);
+                }
+
                 return;
             }
 
@@ -194,7 +214,7 @@ namespace CyberCAT.Forms
             }
             // Filter nodes. We also show parents if children contain the text.
 
-            var filterString = txtEditorFilter.Text;
+            var filterString = txtEditorFilter.Text.ToLowerInvariant();
 
             List<NodeEntry> filteredNodes = new List<NodeEntry>();
 

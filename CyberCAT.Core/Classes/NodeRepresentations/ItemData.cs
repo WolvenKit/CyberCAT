@@ -86,7 +86,7 @@
 
             public override string ToString()
             {
-                return $"{TdbId1Name}";
+                return $"{Flags} {TdbId1Name}";
             }
         }
 
