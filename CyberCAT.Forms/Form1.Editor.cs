@@ -21,6 +21,7 @@ namespace CyberCAT.Forms
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
+            { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
             { typeof(FactsTable), typeof(PropertyEditControl) },
             { typeof(FactsDB), typeof(PropertyEditControl) },
             { typeof(ItemDropStorage), typeof(PropertyEditControl) },
@@ -51,6 +52,43 @@ namespace CyberCAT.Forms
                 File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.Save());
             }
         }
+
+        private void BuildVisualSubTree(NodeEntryTreeNode treeNode)
+        {
+            if (treeNode.Node.Value is Inventory inv)
+            {
+                // For inventory, we insert virtual nodes for the sub inventories.
+                var subinventories = inv.SubInventories.Select(_ => (NodeEntry)new VirtualNodeEntry() {Data = _, Value = _}).ToList();
+                foreach (var subinventory in subinventories)
+                {
+                    var real = subinventory as VirtualNodeEntry;
+                    var data = real.Data as Inventory.SubInventory;
+                    foreach (var itemNode in treeNode.Node.Children)
+                    {
+                        if (data.Items.Contains(itemNode.Value))
+                        {
+                            subinventory.Children.Add(itemNode);
+                        }
+                    }
+                }
+                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(subinventories).ToArray());
+                foreach (var child in treeNode.Nodes)
+                {
+                    BuildVisualSubTree((NodeEntryTreeNode)child);
+                }
+                return;
+            }
+
+            if (treeNode.Node.Children.Count > 0)
+            {
+                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
+                foreach (var child in treeNode.Nodes)
+                {
+                    BuildVisualSubTree((NodeEntryTreeNode)child);
+                }
+            }
+        }
+
         private void EditorLoad_Click(object sender, EventArgs e)
         {
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
@@ -82,7 +120,7 @@ namespace CyberCAT.Forms
             foreach (var node in _activeSaveFile.Nodes)
             {
                 var treeNode = new NodeEntryTreeNode(node);
-                AddChildrenToTreeNode(treeNode);
+                BuildVisualSubTree(treeNode);
                 EditorTree.Nodes.Add(treeNode);
             }
         }
@@ -90,7 +128,7 @@ namespace CyberCAT.Forms
         private void EditorTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var node = (e.Node as NodeEntryTreeNode)?.Node;
-            if (node == null)
+            if (node?.Value == null)
             {
                 splitContainer1.Panel2.Controls.Clear();
                 return;
@@ -148,7 +186,7 @@ namespace CyberCAT.Forms
                 foreach (var node in _activeSaveFile.Nodes)
                 {
                     var treeNode = new NodeEntryTreeNode(node);
-                    AddChildrenToTreeNode(treeNode);
+                    BuildVisualSubTree(treeNode);
                     EditorTree.Nodes.Add(treeNode);
                 }
 

@@ -189,7 +189,6 @@ namespace CyberCAT.Forms
                     AddChildrenToTreeNode((NodeEntryTreeNode)child);
                 }
             }
-            
         }
 
         private void editorTreeContextMenu_Opening(object sender, CancelEventArgs e)

@@ -71,6 +71,7 @@
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
     <Compile Include="Classes\ParserConfig.cs" />
+    <Compile Include="Classes\VirtualNodeEntry.cs" />
     <Compile Include="Editor\PropertyEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
