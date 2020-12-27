@@ -66,11 +66,11 @@
         {
             public ItemFlags Flags { get; set; }
             public uint CreationTime { get; set; }
-            public uint Unknown2 { get; set; }
+            public uint Quantity { get; set; }
 
             public override string ToString()
             {
-                return $"{Flags} {CreationTime} {Unknown2}";
+                return $"{Quantity}x {Flags} @{CreationTime}";
             }
         }
 

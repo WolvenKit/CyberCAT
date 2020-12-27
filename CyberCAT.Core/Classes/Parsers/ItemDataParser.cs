@@ -73,7 +73,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             result.Flags = new ItemData.ItemFlags(reader.ReadByte());
             result.CreationTime = reader.ReadUInt32();
-            result.Unknown2 = reader.ReadUInt32();
+            result.Quantity = reader.ReadUInt32();
 
             return result;
         }
@@ -170,7 +170,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             writer.Write(data.Flags.Raw);
             writer.Write(data.CreationTime);
-            writer.Write(data.Unknown2);
+            writer.Write(data.Quantity);
         }
 
         public static void WriteKind2Data(BinaryWriter writer, ItemData.Kind2Data data)
