@@ -43,7 +43,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        private Inventory.SubInventory ReadSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryReader reader, List<INodeParser> parsers)
+        public static Inventory.SubInventory ReadSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryReader reader, List<INodeParser> parsers)
         {
             var subInventory = new Inventory.SubInventory();
 
@@ -87,7 +87,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public void WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
+        public static void WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
         {
             writer.Write(subInventory.InventoryId);
             writer.Write(subInventory.NumberOfItems);

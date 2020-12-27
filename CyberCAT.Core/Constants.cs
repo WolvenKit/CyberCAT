@@ -79,6 +79,8 @@ namespace CyberCAT.Core
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
+            public const string ITEM_DROP_STORAGE = "ItemDropStorage";
+            public const string ITEM_DROP_STORAGE_MANAGER = "ItemDropStorageManager";
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
         }
         public static class Numbers
