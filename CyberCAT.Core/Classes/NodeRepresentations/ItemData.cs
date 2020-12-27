@@ -67,6 +67,11 @@
             public ItemFlags Flags { get; set; }
             public uint CreationTime { get; set; }
             public uint Unknown2 { get; set; }
+
+            public override string ToString()
+            {
+                return $"{Flags} {CreationTime} {Unknown2}";
+            }
         }
 
         public class Kind2Data : KindData
@@ -78,6 +83,11 @@
             public uint Unknown2 { get; set; }
             public uint Unknown3 { get; set; }
             public Kind2DataNode RootNode { get; set; }
+
+            public override string ToString()
+            {
+                return $"{TdbId1Name}";
+            }
         }
 
         public class Kind2DataNode
