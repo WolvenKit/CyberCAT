@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\FactResolver.cs" />
+    <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
     <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
     <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
+    <Compile Include="Classes\Parsers\FactsDBParser.cs" />
     <Compile Include="Classes\Parsers\FactsTableParser.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemDropStorage.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemDropStorageManager.cs" />
