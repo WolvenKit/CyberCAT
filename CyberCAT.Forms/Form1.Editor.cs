@@ -20,7 +20,9 @@ namespace CyberCAT.Forms
             { typeof(GameSessionConfig), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
-            { typeof(Inventory), typeof(PropertyEditControl) }
+            { typeof(Inventory), typeof(PropertyEditControl) },
+            { typeof(ItemDropStorage), typeof(PropertyEditControl) },
+            { typeof(ItemDropStorageManager), typeof(PropertyEditControl) },
         };
 
         private void EditorAddChildrenToTreeNode(NodeEntryTreeNode treeNode)
