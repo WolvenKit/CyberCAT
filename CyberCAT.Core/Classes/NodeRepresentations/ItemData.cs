@@ -8,6 +8,14 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class ItemData
     {
+        [Flags]
+        public enum Flag1
+        {
+            None = 0,
+            IsQuestItem = 1,
+            Unknown1 = 2,
+        }
+
         public class NextItemEntry
         {
             public ulong ItemTdbId { get; set; }
@@ -32,7 +40,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public ulong ItemTdbId { get; set; }
         public uint ItemID { get; set; }
         public byte[] UnknownBytes1 { get; set; }
-        public bool IsQuestItem { get; set; }
+        public Flag1 Flags1 { get; set; }
         public uint CreationTime { get; set; }
         public uint ItemQuantity { get; set; }
         public byte[] UnknownBytes3 { get; set; }
