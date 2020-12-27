@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\FactResolver.cs" />
+    <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
     <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NameResolver.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
     <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
+    <Compile Include="Classes\Parsers\FactsTableParser.cs" />
     <Compile Include="Classes\Parsers\InventoryParser.cs" />
     <Compile Include="Classes\Parsers\ItemDataParser.cs" />
     <Compile Include="Classes\Parsers\CharacterCustomizationAppearancesParser.cs" />

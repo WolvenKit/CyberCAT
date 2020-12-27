@@ -80,6 +80,7 @@ namespace CyberCAT.Core
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
+            public const string FACTS_TABLE = "FactsTable";
         }
         public static class Numbers
         {

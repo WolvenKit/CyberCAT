@@ -41,6 +41,7 @@ namespace CyberCAT.Core.Classes
             _parsers.Add(new CharacterCustomizationAppearancesParser());
             _parsers.Add(new ItemDataParser());
             _parsers.Add(new InventoryParser());
+            _parsers.Add(new FactsTableParser());
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {

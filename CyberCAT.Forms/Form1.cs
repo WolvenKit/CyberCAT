@@ -28,6 +28,7 @@ namespace CyberCAT.Forms
         Settings _settings;
         string _settingsFileName = "Settings.json";
         string _itemsFileName = "Items.json";
+        string _factsFileName = "Facts.json";
 
         private string _selectedFileForDecompression;
         private string _selectedFileForRecompression;
@@ -42,6 +43,7 @@ namespace CyberCAT.Forms
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
             NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
+            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_factsFileName)));
             //Add Hexeditor as editor for byte arrays
             TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
