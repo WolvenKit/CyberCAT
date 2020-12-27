@@ -21,7 +21,7 @@ namespace CyberCAT.Forms
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
-            { typeof(FactsTable), typeof(PropertyEditControl) }
+            { typeof(FactsTable), typeof(PropertyEditControl) },
             { typeof(ItemDropStorage), typeof(PropertyEditControl) },
             { typeof(ItemDropStorageManager), typeof(PropertyEditControl) },
         };

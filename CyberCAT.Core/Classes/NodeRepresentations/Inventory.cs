@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"{InventoryId:X}";
+                return $"[{InventoryId:X}] {NumberOfItems} items";
             }
         }
         public uint NumberOfInventories { get; set; }
