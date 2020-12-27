@@ -37,10 +37,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             result.ItemTdbId = reader.ReadUInt64();
             result.ItemID = reader.ReadUInt32();
             result.UnknownBytes1 = reader.ReadBytes(3);
-            var isQuestItem = reader.ReadByte(); // Yes, there is a reader.ReadBoolean(), however, this might also be a bitfield instead of just a boolean
-            // So make sure to throw hands up if we ever see anything other than 0 or 1
-            Debug.Assert(isQuestItem == 0 || isQuestItem == 1);
-            result.IsQuestItem = isQuestItem == 1;
+            result.Flags = new ItemData.ItemFlags(reader.ReadByte());
             result.CreationTime = reader.ReadUInt32();
             result.ItemQuantity = reader.ReadUInt32();
 
@@ -81,13 +78,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             Debug.Assert(toRead >= 0);
             result.ItemDataBytes = reader.ReadBytes((int)toRead);
 
-            // Last 7 bytes always are the first 7 bytes of the next item, maybe for consistency?
-            // Except for the last item which has 24 bytes at the end
-
-            int readSize = node.TrueSize - ((int) reader.BaseStream.Position - node.Offset);
-            Debug.Assert(readSize >= 0);
-            result.TrailingBytes = reader.ReadBytes(readSize);
-
             return result;
         }
 
@@ -97,7 +87,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             nextItemEntry.ItemTdbId = reader.ReadUInt64();
             nextItemEntry.ItemID = reader.ReadUInt32();
-            nextItemEntry.UnknownBytes2 = reader.ReadBytes(3);
+            nextItemEntry.UnknownBytes = reader.ReadBytes(3);
 
             return nextItemEntry;
         }
@@ -107,7 +97,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             var modEntry = new ItemData.ModEntry();
             modEntry.ItemTdbId = reader.ReadUInt64();
             modEntry.ItemID = reader.ReadUInt32();
-            modEntry.UnknownBytes2 = reader.ReadBytes(3);
+            modEntry.UnknownBytes1 = reader.ReadBytes(3);
 
             // We need to look into the future. If there is a MOD_MARKER 16 bytes from the first one, then the entry is done.
             reader.ReadByte(); // Discard one byte, now we have read 16 bytes.
@@ -116,7 +106,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 modEntry.UnknownString = null;
                 reader.BaseStream.Position -= 1 + 4;
-                modEntry.UnknownBytes3 = reader.ReadBytes(1);
+                modEntry.UnknownBytes2 = reader.ReadBytes(1);
                 // We are done here.
                 return modEntry;
             }
@@ -136,7 +126,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             var skippedBytes = (int)reader.BaseStream.Position - previousPosition;
             reader.BaseStream.Position = previousPosition;
-            modEntry.UnknownBytes3 = reader.ReadBytes(skippedBytes - 4);
+            modEntry.UnknownBytes2 = reader.ReadBytes(skippedBytes - 4);
 
             return modEntry;
         }
@@ -154,7 +144,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     writer.Write(data.ItemTdbId);
                     writer.Write(data.ItemID);
                     writer.Write(data.UnknownBytes1);
-                    writer.Write(data.IsQuestItem);
+                    writer.Write(data.Flags.Raw);
                     writer.Write(data.CreationTime);
                     writer.Write(data.ItemQuantity);
 
@@ -173,8 +163,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     }
 
                     writer.Write(data.ItemDataBytes);
-
-                    writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
             }
@@ -186,18 +174,18 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             writer.Write(modEntry.ItemTdbId);
             writer.Write(modEntry.ItemID);
-            writer.Write(modEntry.UnknownBytes2);
+            writer.Write(modEntry.UnknownBytes1);
 
             if (modEntry.UnknownString == null)
             {
                 // This is a 16byte modEntry.
-                writer.Write(modEntry.UnknownBytes3);
+                writer.Write(modEntry.UnknownBytes2);
                 writer.Write(MOD_MARKER);
                 return;
             }
 
             ParserUtils.WriteString(writer, modEntry.UnknownString);
-            writer.Write(modEntry.UnknownBytes3);
+            writer.Write(modEntry.UnknownBytes2);
             writer.Write(MOD_MARKER);
         }
 
@@ -205,7 +193,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             writer.Write(nextItem.ItemTdbId);
             writer.Write(nextItem.ItemID);
-            writer.Write(nextItem.UnknownBytes2);
+            writer.Write(nextItem.UnknownBytes);
         }
     }
 }
