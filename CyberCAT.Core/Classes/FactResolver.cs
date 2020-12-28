@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes
             {
                 return _facts[hash];
             }
-            return $"Unknown_{hash}";
+            return $"Unknown_{hash:X}";
         }
         public static void UseDictionary(Dictionary<ulong, string> dictionary)
         {

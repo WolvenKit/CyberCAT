@@ -83,6 +83,7 @@ namespace CyberCAT.Core
             public const string ITEM_DROP_STORAGE_MANAGER = "ItemDropStorageManager";
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
             public const string FACTS_TABLE = "FactsTable";
+            public const string FACTSDB = "FactsDB";
         }
         public static class Numbers
         {
