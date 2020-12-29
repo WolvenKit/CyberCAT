@@ -37,7 +37,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     {
                         foreach (var child in node.Children)
                         {
-                            var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
+                            var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(child.Name));
                             if (parser != null)
                             {
                                 writer.Write(parser.Write(child, parsers));

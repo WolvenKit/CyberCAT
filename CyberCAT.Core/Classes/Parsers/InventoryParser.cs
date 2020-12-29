@@ -12,7 +12,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class InventoryParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public List<string> ParsableNodeNames { get; private set; }
 
         public string DisplayName { get; private set; }
 
@@ -20,7 +20,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public InventoryParser()
         {
-            ParsableNodeName = Constants.NodeNames.INVENTORY;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.INVENTORY
+            };
             DisplayName = "Inventory Parser";
             Guid = Guid.Parse("{2B294EE8-E791-4D9F-A40A-1EF3F516A4A8}");
         }
@@ -52,7 +55,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             subInventory.ItemHeaders = new ItemData.NextItemEntry[subInventory.NumberOfItems];
             subInventory.Items = new ItemData[subInventory.NumberOfItems];
-            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DATA).FirstOrDefault();
+            var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(Constants.NodeNames.ITEM_DATA));
             Debug.Assert(parser != null);
 
             for (var i = 0; i < subInventory.NumberOfItems; ++i)
@@ -92,7 +95,7 @@ namespace CyberCAT.Core.Classes.Parsers
             writer.Write(subInventory.InventoryId);
             writer.Write(subInventory.NumberOfItems);
 
-            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DATA).FirstOrDefault();
+            var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(Constants.NodeNames.ITEM_DATA));
             Debug.Assert(parser != null);
 
             for (var i = 0; i < subInventory.NumberOfItems; ++i)

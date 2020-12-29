@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageParser :INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public List<string> ParsableNodeNames { get; private set; }
 
         public string DisplayName { get; private set; }
 
@@ -19,7 +19,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public ItemDropStorageParser()
         {
-            ParsableNodeName = Constants.NodeNames.ITEM_DROP_STORAGE;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.ITEM_DROP_STORAGE
+            };
             DisplayName = "ItemDropStorage Parser";
             Guid = Guid.Parse("{417FE6C4-A916-4C9C-86B9-AD73C9D3B50D}");
         }

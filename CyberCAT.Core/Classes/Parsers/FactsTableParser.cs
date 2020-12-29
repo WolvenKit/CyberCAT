@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class FactsTableParser : INodeParser
     {
-        public string ParsableNodeName { get; }
+        public List<string> ParsableNodeNames { get; private set; }
 
         public string DisplayName { get; }
 
@@ -19,7 +19,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public FactsTableParser()
         {
-            ParsableNodeName = Constants.NodeNames.FACTS_TABLE;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.FACTS_TABLE
+            };
             DisplayName = "FactsTable Parser";
             Guid = Guid.Parse("{9C547EAE-3993-4A7E-9732-F7CF24942BC0}");
         }

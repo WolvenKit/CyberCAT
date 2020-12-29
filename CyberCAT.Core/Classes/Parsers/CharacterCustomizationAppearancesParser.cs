@@ -12,13 +12,16 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class CharacterCustomizationAppearancesParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public List<string> ParsableNodeNames { get; private set; }
         public string DisplayName { get; private set; }
         public Guid Guid { get; private set;}
 
         public CharacterCustomizationAppearancesParser()
         {
-            ParsableNodeName = Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE
+            };
             DisplayName = "Character Appearance Parser";
             Guid = Guid.Parse("{0AFC700B-23C0-4C4A-AFCB-5D39443BD68F}");
         }
@@ -70,7 +73,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            if (node.Name != ParsableNodeName)
+            if (!ParsableNodeNames.Contains(node.Name))
             {
                 throw new Exception("Unexpected SectionName");
             }
