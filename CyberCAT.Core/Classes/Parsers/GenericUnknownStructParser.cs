@@ -923,6 +923,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "gameEHotkey":
                 case "gameStatPoolsSystemSave":
                 case "gameStatPoolDataValueChangeMode":
+                case "gameStatPoolDataStatPoolModificationStatus":
                     var sId2 = reader.ReadUInt16();
                     return stringList[sId2];
 
