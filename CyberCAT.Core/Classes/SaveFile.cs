@@ -113,7 +113,7 @@ namespace CyberCAT.Core.Classes
             {
                 foreach(var node in Nodes)
                 {
-                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
+                    var parser = _parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(node.Name));
                     if (parser != null)
                     {
                         stream.Write(parser.Write(node, _parsers));

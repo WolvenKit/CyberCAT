@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public List<string> ParsableNodeNames { get; private set; }
 
         public string DisplayName { get; private set; }
 
@@ -19,7 +19,16 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public GenericUnknownStructParser()
         {
-            ParsableNodeName = Constants.NodeNames.SCRIPTABLE_SYSTEMS_CONTAINER;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.SCRIPTABLE_SYSTEMS_CONTAINER,
+                Constants.NodeNames.MOVING_PLATFORM_SYSTEM,
+                Constants.NodeNames.STAT_POOLS_SYSTEM,
+                Constants.NodeNames.STATS_SYSTEM,
+                Constants.NodeNames.GOD_MODE_SYSTEM,
+                Constants.NodeNames.TIER_SYSTEM,
+                Constants.NodeNames.RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM
+            };
             DisplayName = "Generic Unknown Struct Parser";
             Guid = System.Guid.Parse("{CA17650B-E151-4246-A5F4-7834342E3CD1}");
         }
@@ -138,14 +147,17 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 var field = new GenericUnknownStruct.FieldEntry();
 
-                /*var pos2 = reader.BaseStream.Position;
-                var bytes = reader.ReadBytes(6);
-                field.Debug = BitConverter.ToString(bytes).Replace("-", " ");
-                reader.BaseStream.Position = pos2;*/
-
                 var s = reader.ReadUInt16();
+                if (s >= stringList.Count)
+                {
+                    throw new Exception();
+                }
                 field.Name = stringList[s];
                 s = reader.ReadUInt16();
+                if (s >= stringList.Count)
+                {
+                    throw new Exception();
+                }
                 field.Type = stringList[s];
                 field.Offset = reader.ReadUInt32();
 
@@ -155,7 +167,9 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var field in fieldList)
             {
                 reader.BaseStream.Position = pos + field.Offset;
-                var typeParts = field.Type.Split(':');
+                // TODO: ...
+                var fieldType = field.Type.Replace("[2]", "array:");
+                var typeParts = fieldType.Split(':');
                 field.Value = ReadValue(reader, stringList, typeParts, 0);
             }
 
@@ -165,6 +179,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public object ReadValue(BinaryReader reader, List<string> stringList, string[] typeParts, int index)
         {
             var dataType = typeParts[index];
+
             switch (dataType)
             {
                 case "array":
@@ -889,7 +904,9 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "worldOffMeshConnectionType":
                 case "worldRainIntensity":
                 case "worldTrafficLightColor":
-                    return reader.ReadUInt16();
+                    var sId = reader.ReadUInt16();
+                    var str = stringList[sId];
+                    return str;
 
                 case "CC_Debug":
                     var pos2 = reader.BaseStream.Position;
@@ -910,6 +927,9 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "CName":
                 case "gameStatIDType":
                 case "gameEHotkey":
+                case "NodeRef":
+                case "gameStatPoolsSystemSave":
+                case "gameStatPoolDataValueChangeMode":
                     // what the hell is CName
                     return reader.ReadBytes(2);
 

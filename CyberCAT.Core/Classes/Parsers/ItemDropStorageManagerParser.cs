@@ -12,7 +12,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageManagerParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public List<string> ParsableNodeNames { get; private set; }
 
         public string DisplayName { get; private set; }
 
@@ -20,7 +20,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public ItemDropStorageManagerParser()
         {
-            ParsableNodeName = Constants.NodeNames.ITEM_DROP_STORAGE_MANAGER;
+            ParsableNodeNames = new List<string>
+            {
+                Constants.NodeNames.ITEM_DROP_STORAGE_MANAGER
+            };
             DisplayName = "ItemDropStorageManager Parser";
             Guid = Guid.Parse("{79D024AD-2A06-4F03-9652-BA6A3AF03CA2}");
         }
@@ -32,7 +35,7 @@ namespace CyberCAT.Core.Classes.Parsers
             result.NumberOfItemDropStorages = reader.ReadUInt32();
             result.ItemDropStorages = new ItemDropStorage[result.NumberOfItemDropStorages];
 
-            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE).FirstOrDefault();
+            var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(Constants.NodeNames.ITEM_DROP_STORAGE));
             Debug.Assert(parser != null);
 
             for (var i = 0; i < result.NumberOfItemDropStorages; ++i)
@@ -59,7 +62,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(node.Id);
                     writer.Write(data.NumberOfItemDropStorages);
 
-                    var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE).FirstOrDefault();
+                    var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(Constants.NodeNames.ITEM_DROP_STORAGE));
                     Debug.Assert(parser != null);
 
                     for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
