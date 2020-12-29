@@ -24,6 +24,7 @@ namespace CyberCAT.Forms
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
             { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
+            { typeof(FactsTable.FactEntry), typeof(PropertyEditControl) },
             { typeof(FactsTable), typeof(PropertyEditControl) },
             { typeof(FactsDB), typeof(PropertyEditControl) },
             { typeof(ItemDropStorage), typeof(PropertyEditControl) },
@@ -94,6 +95,16 @@ namespace CyberCAT.Forms
                         treeSection.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry { Value = appearanceSection }));
                     }
                     treeNode.Nodes.Add(treeSection);
+                }
+
+                return;
+            }
+
+            if (treeNode.Node.Value is FactsTable ft)
+            {
+                foreach (var fe in ft.FactEntries)
+                {
+                    treeNode.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry {Value = fe}));
                 }
 
                 return;
