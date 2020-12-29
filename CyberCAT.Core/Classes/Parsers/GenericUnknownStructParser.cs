@@ -129,7 +129,14 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
 
                 reader.BaseStream.Position = pos + offset;
-                classEntry.Fields = ReadFields(reader, stringList);
+                try
+                {
+                    classEntry.Fields = ReadFields(reader, stringList);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
 
                 result.ClassList.Add(classEntry);
             }
@@ -923,6 +930,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     }
                     return null;
 
+                // TODO: check if thats always the case for those
                 // unknown, 2 bytes
                 case "CName":
                 case "gameStatIDType":
@@ -930,8 +938,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "NodeRef":
                 case "gameStatPoolsSystemSave":
                 case "gameStatPoolDataValueChangeMode":
-                    // what the hell is CName
-                    return reader.ReadBytes(2);
+                    var sId2 = reader.ReadUInt16();
+                    return stringList[sId2];
 
                 default:
                     return ReadFields(reader, stringList);
