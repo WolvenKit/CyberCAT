@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
+    [JsonObject]
     public class FactsDB
     {
         public byte FactsTableCount { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace CyberCAT.Core.Classes.NodeRepresentations
+﻿using Newtonsoft.Json;
+
+namespace CyberCAT.Core.Classes.NodeRepresentations
 {
+    [JsonObject]
     public class ItemData
     {
         public class NextItemEntry
@@ -13,7 +16,7 @@
                 return ItemName;
             }
         }
-
+        [JsonObject]
         public class ItemFlags
         {
             public byte Raw { get; set; }
@@ -56,12 +59,12 @@
                 return $"[......{(Unknown2 ? '?' : '.')}{(IsQuestItem ? 'Q' : '.')}]";
             }
         }
-
+        [JsonObject]
         public class KindData
         {
 
         }
-
+        [JsonObject]
         public class Kind1Data : KindData
         {
             public ItemFlags Flags { get; set; }
@@ -73,7 +76,7 @@
                 return $"{Quantity}x {Flags} @{CreationTime}";
             }
         }
-
+        [JsonObject]
         public class Kind2Data : KindData
         {
             public ItemFlags Flags { get; set; }
@@ -89,7 +92,7 @@
                 return $"{Flags} {TdbId1Name}";
             }
         }
-
+        [JsonObject]
         public class Kind2DataNode
         {
             public ulong ItemTdbId { get; set; }
@@ -110,7 +113,7 @@
                 return ItemName;
             }
         }
-
+        [JsonObject]
         public class HeaderThing
         {
             public uint ItemId { get; set; }

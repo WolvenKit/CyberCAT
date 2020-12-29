@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
+    [JsonObject]
     public class Inventory
     {
+        [JsonObject]
         public class SubInventory
         {
             public ulong InventoryId { get; set; }

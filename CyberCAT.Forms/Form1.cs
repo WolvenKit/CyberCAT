@@ -44,6 +44,9 @@ namespace CyberCAT.Forms
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
             NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
             FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_factsFileName)));
+            //Make rightclick select node. Better usability of context menu
+            EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
+
             //Add Hexeditor as editor for byte arrays
             TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
@@ -257,6 +260,15 @@ namespace CyberCAT.Forms
             _selectedMetaFileForRecompression = metainfFile;
             recompressButton.Enabled = true;
             lblSelectedFileForRecompression.Text = $"Selected File: {_selectedFileForRecompression}";
+        }
+
+        private void exportJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = (NodeEntryTreeNode)EditorTree.SelectedNode;
+            var data = (NodeEntry)selectedNode.Node;
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            
+            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
         }
     }
 }
