@@ -13,13 +13,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class ItemDataParser : INodeParser
     {
-        private const uint MOD_MARKER = 0x7F7FFFFF;
+        public string ParsableNodeName { get; }
 
-        public string ParsableNodeName { get; private set; }
+        public string DisplayName { get; }
 
-        public string DisplayName { get; private set; }
-
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public ItemDataParser()
         {
@@ -99,7 +97,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             result.ItemTdbId = reader.ReadUInt64();
             result.Header = ReadHeaderThing(reader);
             result.UnknownString = ParserUtils.ReadString(reader);
-            result.TdbId1 = reader.ReadUInt64();
+            result.AttachmentSlotTdbId = reader.ReadUInt64();
             var count = ParserUtils.ReadPackedLong(reader);
             result.Children = new ItemData.Kind2DataNode[count];
             for(var i = 0; i < count; ++i)
@@ -188,7 +186,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             writer.Write(data.ItemTdbId);
             WriteHeaderThing(writer, data.Header);
             ParserUtils.WriteString(writer, data.UnknownString);
-            writer.Write(data.TdbId1);
+            writer.Write(data.AttachmentSlotTdbId);
             ParserUtils.WritePackedLong(writer, data.ChildrenCount);
             foreach (var kind2DataNode in data.Children)
             {

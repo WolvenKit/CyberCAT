@@ -26,9 +26,9 @@ namespace CyberCAT.Forms
         SaveFileCompressionHelper _saveFileCompressionHelper = new SaveFileCompressionHelper();
         List<ParserConfig> _parserConfig = new List<ParserConfig>();
         Settings _settings;
-        string _settingsFileName = "Settings.json";
-        string _itemsFileName = "Items.json";
-        string _factsFileName = "Facts.json";
+        private const string SETTINGS_FILE_NAME = "Settings.json";
+        private const string NAMES_FILE_NAME = "Names.json";
+        private const string FACTS_FILE_NAME = "Facts.json";
 
         private string _selectedFileForDecompression;
         private string _selectedFileForRecompression;
@@ -42,8 +42,8 @@ namespace CyberCAT.Forms
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
-            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
-            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_factsFileName)));
+            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(FACTS_FILE_NAME)));
             //Make rightclick select node. Better usability of context menu
             EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
 
@@ -61,13 +61,14 @@ namespace CyberCAT.Forms
             TypeDescriptor.AddAttributes(typeof(ItemData.Kind2DataNode), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
 
             //Settings
             var interfaceType = typeof(INodeParser);
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass);
-            if (File.Exists(_settingsFileName))
+            if (File.Exists(SETTINGS_FILE_NAME))
             {
-                _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_settingsFileName));
+                _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE_NAME));
                 foreach (var type in types)
                 {
                     var instance = (INodeParser)Activator.CreateInstance(type);
@@ -206,7 +207,7 @@ namespace CyberCAT.Forms
         {
             _settings.EnabledParsers.Clear();
             _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
-            File.WriteAllText(_settingsFileName, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+            File.WriteAllText(SETTINGS_FILE_NAME, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
 
         private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
