@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
@@ -90,7 +92,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 stringList.Add(ReadStringAtOffset(reader, stringBasePosition, stringOffset, stringLength - 1));
             }
 
-            // jump straight behind the last string
             reader.BaseStream.Position = stringBasePosition + stringOffset + stringLength;
 
             Debug.Assert(reader.BaseStream.Position == indexTablePosition);
@@ -100,15 +101,10 @@ namespace CyberCAT.Core.Classes.Parsers
             var pointerList = new List<KeyValuePair<uint, uint>>();
             for (int i = 0; i < count3; i++)
             {
-                // probably counter, offset
                 pointerList.Add(new KeyValuePair<uint, uint>(reader.ReadUInt32(), reader.ReadUInt32()));
             }
 
             Debug.Assert(reader.BaseStream.Position == dataTablePosition);
-
-            /*int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            Debug.Assert(readSize >= 0);
-            result.TrailingBytes = reader.ReadBytes(readSize);*/
 
             var pos = reader.BaseStream.Position;
             for (int i = 0; i < pointerList.Count; i++)
@@ -121,25 +117,21 @@ namespace CyberCAT.Core.Classes.Parsers
                 int length = 0;
                 if (i == pointerList.Count - 1)
                 {
-                    length = (int)(result.TotalLength - pointerList[i].Value);
+                    length = (int) (result.TotalLength - pointerList[i].Value);
                 }
                 else
                 {
-                    length = (int)(pointerList[i + 1].Value - pointerList[i].Value);
+                    length = (int) (pointerList[i + 1].Value - pointerList[i].Value);
                 }
 
                 reader.BaseStream.Position = pos + offset;
-                try
-                {
-                    classEntry.Fields = ReadFields(reader, stringList);
-                }
-                catch (Exception e)
-                {
-                    throw;
-                }
+                classEntry.Fields = ReadFields(reader, stringList);
 
                 result.ClassList.Add(classEntry);
             }
+
+            int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
+            // result.TrailingBytes = reader.ReadBytes(readSize);
 
             return result;
         }
@@ -155,16 +147,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 var field = new GenericUnknownStruct.FieldEntry();
 
                 var s = reader.ReadUInt16();
-                if (s >= stringList.Count)
-                {
-                    throw new Exception();
-                }
                 field.Name = stringList[s];
                 s = reader.ReadUInt16();
-                if (s >= stringList.Count)
-                {
-                    throw new Exception();
-                }
                 field.Type = stringList[s];
                 field.Offset = reader.ReadUInt32();
 
@@ -194,8 +178,9 @@ namespace CyberCAT.Core.Classes.Parsers
                     var arraySize = reader.ReadUInt32();
                     for (int i = 0; i < arraySize; i++)
                     {
-                        ((List<object>)result).Add(ReadValue(reader, stringList, typeParts, index + 1));
+                        ((List<object>) result).Add(ReadValue(reader, stringList, typeParts, index + 1));
                     }
+
                     return result;
 
                 case "Int32":
@@ -928,6 +913,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     {
                         throw;
                     }
+
                     return null;
 
                 // TODO: check if thats always the case for those
@@ -935,11 +921,15 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "CName":
                 case "gameStatIDType":
                 case "gameEHotkey":
-                case "NodeRef":
                 case "gameStatPoolsSystemSave":
                 case "gameStatPoolDataValueChangeMode":
                     var sId2 = reader.ReadUInt16();
                     return stringList[sId2];
+
+                case "NodeRef":
+                    var size = reader.ReadUInt16();
+                    var buffer = reader.ReadBytes(size);
+                    return Encoding.ASCII.GetString(buffer);
 
                 default:
                     return ReadFields(reader, stringList);
@@ -948,15 +938,13 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
-            throw new NotImplementedException();
-            /*byte[] result;
-            var data = (GenericUnknownStruct)node.Value;
+            byte[] result;
+            var data = (GenericUnknownStruct) node.Value;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    writer.Write(node.Id);
-                    writer.Write(new byte[] { 0, 0, 0, 0 });
+                    writer.Write(new byte[4]);
                     writer.Write(data.Unknown1);
                     writer.Write(data.Unknown2);
                     writer.Write(data.Unknown3);
@@ -971,46 +959,268 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var pos = writer.BaseStream.Position;
 
-                    var offset = (short)(data.StringList.Count * 4);
-                    foreach (var str in data.StringList)
+                    var stringList = GenerateStringList(data);
+
+                    var offset = (short) (stringList.Count * 4);
+                    foreach (var str in stringList)
                     {
                         writer.Write(offset);
-                        writer.Write(new byte[] { 0 });
-                        writer.Write((byte)(str.Length + 1));
-                        offset += (short)(str.Length + 1);
+                        writer.Write(new byte[] {0});
+                        writer.Write((byte) (str.Length + 1));
+                        offset += (short) (str.Length + 1);
                     }
 
                     var stringTableOffset = writer.BaseStream.Position - pos;
 
-                    foreach (var str in data.StringList)
+                    foreach (var str in stringList)
                     {
                         var bytes = Encoding.ASCII.GetBytes(str);
                         writer.Write(bytes);
-                        writer.Write(new byte[] { 0 });
+                        writer.Write(new byte[1]);
                     }
 
                     var indexTableOffset = writer.BaseStream.Position - pos;
 
-                    foreach (var pair in data.PointerList)
+                    foreach (var classEntry in data.ClassList)
                     {
-                        writer.Write(pair.Key);
-                        writer.Write(pair.Value);
+                        var strId = stringList.IndexOf(classEntry.Name);
+                        writer.Write(strId);
+                        writer.Write(new byte[4]);
                     }
 
                     var dataTableOffset = writer.BaseStream.Position - pos;
 
-                    writer.Write(data.TrailingBytes);
+                    for (int i = 0; i < data.ClassList.Count; i++)
+                    {
+                        var classEntry = data.ClassList[i];
 
-                    writer.BaseStream.Position = 4;
-                    writer.Write((int)writer.BaseStream.Length - 8);
+                        var buffer = GenerateDataFromFields(classEntry.Fields, stringList);
+
+                        var classOffset = writer.BaseStream.Position - pos;
+                        writer.Write(buffer);
+                        var currentPos = writer.BaseStream.Position;
+
+                        writer.BaseStream.Position = pos + indexTableOffset + (i * 8) + 4;
+                        writer.Write((uint)classOffset);
+                        writer.BaseStream.Position = currentPos;
+                    }
+
+                    writer.BaseStream.Position = 0;
+                    writer.Write((int) writer.BaseStream.Length - 4);
                     writer.BaseStream.Position += 12;
-                    writer.Write((int)stringTableOffset);
-                    writer.Write((int)indexTableOffset);
-                    writer.Write((int)dataTableOffset);
+                    writer.Write((int) stringTableOffset);
+                    writer.Write((int) indexTableOffset);
+                    writer.Write((int) dataTableOffset);
+                }
+
+                result = stream.ToArray();
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                {
+                    writer.Write(node.Id);
+                    writer.Write(result);
                 }
                 result = stream.ToArray();
             }
-            return result;*/
+
+            return result;
+        }
+
+        private List<string> GenerateStringList(GenericUnknownStruct data)
+        {
+            var result = new List<string>();
+
+            foreach (var classEntry in data.ClassList)
+            {
+                if (!result.Contains(classEntry.Name))
+                {
+                    result.Add(classEntry.Name);
+                }
+
+                GenerateStringListFromFields(classEntry.Fields, ref result);
+            }
+
+            return result;
+        }
+
+        private void GenerateStringListFromFields(List<GenericUnknownStruct.FieldEntry> fields, ref List<string> strings)
+        {
+            foreach (var field in fields)
+            {
+                if (!strings.Contains(field.Name))
+                {
+                    strings.Add(field.Name);
+                }
+
+                if (!strings.Contains(field.Type))
+                {
+                    strings.Add(field.Type);
+                }
+
+                if (field.Type == "NodeRef")
+                {
+                    continue;
+                }
+                else if (field.Value is IList)
+                {
+                    if (field.Value is List<GenericUnknownStruct.FieldEntry> subFields1)
+                    {
+                        GenerateStringListFromFields(subFields1, ref strings);
+                    }
+                    else
+                    {
+                        var subList = (IList) field.Value;
+                        foreach (var t1 in subList)
+                        {
+                            if (t1 is List<GenericUnknownStruct.FieldEntry> subFields2)
+                            {
+                                GenerateStringListFromFields(subFields2, ref strings);
+                            }
+                            else if (t1 is String)
+                            {
+                                var strVal = (string) t1;
+                                if (!strings.Contains(strVal))
+                                {
+                                    strings.Add(strVal);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (field.Value is String)
+                {
+                    var strVal = (string) field.Value;
+                    if (!strings.Contains(strVal))
+                    {
+                        strings.Add(strVal);
+                    }
+                }
+            }
+        }
+
+        private byte[] GenerateDataFromFields(List<GenericUnknownStruct.FieldEntry> fields, List<string> stringList)
+        {
+            byte[] result;
+
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                {
+                    writer.Write((ushort)fields.Count);
+                    foreach (var field in fields)
+                    {
+                        writer.Write((ushort)stringList.IndexOf(field.Name));
+                        writer.Write((ushort)stringList.IndexOf(field.Type));
+                        writer.Write(new byte[4]); // offset
+                    }
+
+                    for (int i = 0; i < fields.Count; i++)
+                    {
+                        var pos = writer.BaseStream.Position;
+                        writer.BaseStream.Position = 6 + (i * 8);
+                        writer.Write((uint)pos);
+                        writer.BaseStream.Position = pos;
+
+                        var field = fields[i];
+                        if (field.Type == "NodeRef")
+                        {
+                            var valStr = (string) field.Value;
+                            var valBytes = Encoding.ASCII.GetBytes(valStr);
+
+                            writer.Write((ushort) valStr.Length);
+                            writer.Write(valBytes);
+                        }
+                        else if (field.Value is IList)
+                        {
+                            if (field.Value is List<GenericUnknownStruct.FieldEntry> subFields1)
+                            {
+                                var buffer = GenerateDataFromFields(subFields1, stringList);
+                                writer.Write(buffer);
+                            }
+                            else
+                            {
+                                var subList = (IList)field.Value;
+                                writer.Write(subList.Count);
+                                foreach (var t1 in subList)
+                                {
+                                    if (t1 is List<GenericUnknownStruct.FieldEntry> subFields2)
+                                    {
+                                        var buffer = GenerateDataFromFields(subFields2, stringList);
+                                        writer.Write(buffer);
+                                    }
+                                    else if (t1 is String)
+                                    {
+                                        writer.Write((ushort)stringList.IndexOf((string)t1));
+                                    }
+                                    else
+                                    {
+                                        WriteValue(writer, t1);
+                                    }
+                                }
+                            }
+                        }
+                        else if (field.Value is String)
+                        {
+                            writer.Write((ushort)stringList.IndexOf((string)field.Value));
+                        }
+                        else
+                        {
+                            WriteValue(writer, field.Value);
+                        }
+                    }
+                }
+
+                result = stream.ToArray();
+            }
+
+            return result;
+        }
+
+        private void WriteValue(BinaryWriter writer, object value)
+        {
+            var type = value.GetType();
+            var typeStr = type.FullName;
+
+            switch (typeStr)
+            {
+                case "System.Int16":
+                    writer.Write((short)value);
+                    break;
+
+                case "System.UInt16":
+                    writer.Write((ushort)value);
+                    break;
+
+                case "System.Int32":
+                    writer.Write((int)value);
+                    break;
+
+                case "System.UInt32":
+                    writer.Write((uint)value);
+                    break;
+
+                case "System.Int64":
+                    writer.Write((long)value);
+                    break;
+
+                case "System.UInt64":
+                    writer.Write((ulong)value);
+                    break;
+
+                case "System.Boolean":
+                    writer.Write((bool)value);
+                    break;
+
+                case "System.Single":
+                    writer.Write((float)value);
+                    break;
+
+                default:
+                    throw new Exception();
+            }
         }
     }
 }

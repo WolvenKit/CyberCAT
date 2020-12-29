@@ -35,7 +35,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] Unknown3 { get; set; }
         public byte[] Unknown4 { get; set; }
         public List<ClassEntry> ClassList { get; set; }
-
+        
         public GenericUnknownStruct()
         {
             ClassList = new List<ClassEntry>();
