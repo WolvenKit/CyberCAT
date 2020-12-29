@@ -132,6 +132,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             // result.TrailingBytes = reader.ReadBytes(readSize);
+            Debug.Assert(readSize == 0);
 
             return result;
         }
@@ -1025,6 +1026,8 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(result);
                 }
                 result = stream.ToArray();
+                node.Size = result.Length;
+                node.TrueSize = result.Length;
             }
 
             return result;
