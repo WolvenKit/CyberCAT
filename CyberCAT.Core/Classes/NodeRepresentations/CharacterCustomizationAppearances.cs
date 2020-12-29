@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
+    [JsonObject]
     public class CharacterCustomizationAppearances
     {
+        [JsonObject]
         public class HashValueEntry
         {
             public ulong Hash { get; set; }
@@ -20,7 +23,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{FirstString} / {SecondString}";
             }
         }
-
+        [JsonObject]
         public class ValueEntry
         {
             public string FirstString { get; set; }
@@ -32,7 +35,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{FirstString} / {SecondString}";
             }
         }
-
+        [JsonObject]
         public class AppearanceSection
         {
             public string SectionName { get; set; }
@@ -50,7 +53,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{SectionName} ({MainList.Count} / {AdditionalList.Count})";
             }
         }
-
+        [JsonObject]
         public class Section
         {
             public List<AppearanceSection> AppearanceSections { get; set; }

@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     [JsonObject]
-    public class DefaultRepresentation
+    public class ItemDropStorage
     {
-        public byte[] Blob { get; set; }
+        public string UnknownString { get; set; }
+        public byte[] HeaderBytes { get; set; }
+        public Inventory.SubInventory Inventory { get; set; }
     }
 }

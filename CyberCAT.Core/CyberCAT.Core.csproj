@@ -61,6 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\FactResolver.cs" />
+    <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
+    <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
     <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NameResolver.cs" />
@@ -70,11 +73,17 @@
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
     <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
+    <Compile Include="Classes\Parsers\FactsDBParser.cs" />
+    <Compile Include="Classes\Parsers\FactsTableParser.cs" />
+    <Compile Include="Classes\NodeRepresentations\ItemDropStorage.cs" />
+    <Compile Include="Classes\NodeRepresentations\ItemDropStorageManager.cs" />
     <Compile Include="Classes\Parsers\InventoryParser.cs" />
     <Compile Include="Classes\Parsers\ItemDataParser.cs" />
     <Compile Include="Classes\Parsers\CharacterCustomizationAppearancesParser.cs" />
     <Compile Include="Classes\Parsers\DefaultParser.cs" />
     <Compile Include="Classes\Parsers\GameSessionConfigParser.cs" />
+    <Compile Include="Classes\Parsers\ItemDropStorageManagerParser.cs" />
+    <Compile Include="Classes\Parsers\ItemDropStorageParser.cs" />
     <Compile Include="Classes\Parsers\ParserUtils.cs" />
     <Compile Include="Classes\SaveFile.cs" />
     <Compile Include="Classes\ChunkedLz4FileTable.cs" />

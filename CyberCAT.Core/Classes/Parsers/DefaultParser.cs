@@ -14,8 +14,9 @@ namespace CyberCAT.Core.Classes.Parsers
     {
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            reader.Skip(4); // Skip Id
             var result = new DefaultRepresentation();
-            result.Blob = reader.ReadBytes(node.TrueSize);
+            result.Blob = reader.ReadBytes(node.TrueSize - 4);
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
 
@@ -29,6 +30,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    writer.Write(node.Id);
                     writer.Write(data.Blob);
 
                     if (node.Children.Count > 0)

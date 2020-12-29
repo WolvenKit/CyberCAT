@@ -72,9 +72,9 @@ namespace CyberCAT.Core.Classes
             byte[] result;
             using (var stream = new MemoryStream())
             {
-                byte[] header = new byte[3105];
+                byte[] header = new byte[MetaInformation.HeaderSize];
                 input.Position = 0;
-                input.Read(header, 0, 3105);
+                input.Read(header, 0, MetaInformation.HeaderSize);
                 stream.Write(header);
                 foreach (var chunk in Table.Chunks)
                 {

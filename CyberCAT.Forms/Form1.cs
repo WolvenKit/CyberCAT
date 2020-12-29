@@ -28,6 +28,7 @@ namespace CyberCAT.Forms
         Settings _settings;
         string _settingsFileName = "Settings.json";
         string _itemsFileName = "Items.json";
+        string _factsFileName = "Facts.json";
 
         private string _selectedFileForDecompression;
         private string _selectedFileForRecompression;
@@ -42,11 +43,24 @@ namespace CyberCAT.Forms
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
             NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
+            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_factsFileName)));
+            //Make rightclick select node. Better usability of context menu
+            EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
+
             //Add Hexeditor as editor for byte arrays
             TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemFlags), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.HeaderThing), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.KindData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.Kind1Data), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.Kind2Data), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.Kind2DataNode), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
 
             //Settings
             var interfaceType = typeof(INodeParser);
@@ -178,7 +192,6 @@ namespace CyberCAT.Forms
                     AddChildrenToTreeNode((NodeEntryTreeNode)child);
                 }
             }
-            
         }
 
         private void editorTreeContextMenu_Opening(object sender, CancelEventArgs e)
@@ -247,6 +260,15 @@ namespace CyberCAT.Forms
             _selectedMetaFileForRecompression = metainfFile;
             recompressButton.Enabled = true;
             lblSelectedFileForRecompression.Text = $"Selected File: {_selectedFileForRecompression}";
+        }
+
+        private void exportJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = (NodeEntryTreeNode)EditorTree.SelectedNode;
+            var data = (NodeEntry)selectedNode.Node;
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            
+            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
         }
     }
 }
