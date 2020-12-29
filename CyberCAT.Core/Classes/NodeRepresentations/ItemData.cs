@@ -101,7 +101,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public string UnknownString { get; set; }
             public ulong TdbId1 { get; set; }
             public string TdbId1Name => NameResolver.GetName(TdbId1);
-            public int ChildrenCount => Children.Length;
+            public int ChildrenCount => Children?.Length ?? 0;
             public Kind2DataNode[] Children { get; set; }
             public uint Unknown2 { get; set; }
             public ulong TdbId2 { get; set; }
