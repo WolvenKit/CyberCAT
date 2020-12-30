@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class GenericUnknownStruct
     {
+        public uint TotalLength { get; set; }
+        public byte[] Unknown1 { get; set; }
+        public uint Unknown2 { get; set; }
+        public byte[] Unknown3 { get; set; }
+        public byte[] Unknown4 { get; set; }
+        public ClassEntry[] ClassList { get; set; }
+
         public class ClassEntry
         {
             public string Name { get; set; }
-            public List<FieldEntry> Fields { get; set; }
-
-            public ClassEntry()
-            {
-                Fields = new List<FieldEntry>();
-            }
+            public BaseGenericField[] Fields { get; set; }
 
             public override string ToString()
             {
@@ -25,20 +26,23 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public string Name { get; set; }
             public string Type { get; set; }
-            public uint Offset { get; set; }
             public object Value { get; set; }
         }
 
-        public uint TotalLength { get; set; }
-        public byte[] Unknown1 { get; set; }
-        public uint Unknown2 { get; set; }
-        public byte[] Unknown3 { get; set; }
-        public byte[] Unknown4 { get; set; }
-        public List<ClassEntry> ClassList { get; set; }
-        
-        public GenericUnknownStruct()
+        public class BaseGenericField
         {
-            ClassList = new List<ClassEntry>();
+            public string Name { get; set; }
+            public string Type { get; set; }
+        }
+
+        public class GenericField<T> : BaseGenericField
+        {
+            public GenericField(object val)
+            {
+                Value = (T)Convert.ChangeType(val, typeof(T));
+            }
+
+            public T Value { get; set; }
         }
     }
 }

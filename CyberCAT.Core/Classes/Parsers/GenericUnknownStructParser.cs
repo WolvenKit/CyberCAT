@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
-using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
+        public const bool DEBUG_WRITING = false;
+
         private string ReadStringAtOffset(BinaryReader reader, long baseAddress, uint offset, int length)
         {
             var origPos = reader.BaseStream.Position;
@@ -28,6 +28,16 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new GenericUnknownStruct();
 
             reader.Skip(4); //skip Id
+
+            int readSize = 0;
+            if (DEBUG_WRITING)
+            {
+                var tmpPos = reader.BaseStream.Position;
+                readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
+                var tmpBuffer = reader.ReadBytes(readSize);
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", tmpBuffer);
+                reader.BaseStream.Position = tmpPos;
+            }
 
             result.TotalLength = reader.ReadUInt32();
             result.Unknown1 = reader.ReadBytes(4);
@@ -84,66 +94,78 @@ namespace CyberCAT.Core.Classes.Parsers
 
             Debug.Assert(reader.BaseStream.Position == dataTablePosition);
 
+            result.ClassList = new GenericUnknownStruct.ClassEntry[pointerList.Count];
             var pos = reader.BaseStream.Position;
             for (int i = 0; i < pointerList.Count; i++)
             {
                 var offset = pointerList[i].Value - pointerList[0].Value;
 
                 var classEntry = new GenericUnknownStruct.ClassEntry();
-                classEntry.Name = stringList[(int) pointerList[i].Key];
+                classEntry.Name = stringList[(int)pointerList[i].Key];
 
                 int length = 0;
                 if (i == pointerList.Count - 1)
                 {
-                    length = (int) (result.TotalLength - pointerList[i].Value);
+                    length = (int)(result.TotalLength - pointerList[i].Value);
                 }
                 else
                 {
-                    length = (int) (pointerList[i + 1].Value - pointerList[i].Value);
+                    length = (int)(pointerList[i + 1].Value - pointerList[i].Value);
                 }
 
                 reader.BaseStream.Position = pos + offset;
                 classEntry.Fields = ReadFields(reader, stringList);
 
-                result.ClassList.Add(classEntry);
+                result.ClassList[i] = classEntry;
             }
 
-            int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
+            readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             // result.TrailingBytes = reader.ReadBytes(readSize);
             Debug.Assert(readSize == 0);
 
             return result;
         }
 
-        public List<GenericUnknownStruct.FieldEntry> ReadFields(BinaryReader reader, List<string> stringList)
+        public GenericUnknownStruct.BaseGenericField[] ReadFields(BinaryReader reader, List<string> stringList)
         {
-            var fieldList = new List<GenericUnknownStruct.FieldEntry>();
-
             var pos = reader.BaseStream.Position;
             var fieldCount = reader.ReadUInt16();
+
+            var fieldArray = new GenericUnknownStruct.BaseGenericField[fieldCount];
+            var offsetList = new uint[fieldCount];
+
             for (int i = 0; i < fieldCount; i++)
             {
-                var field = new GenericUnknownStruct.FieldEntry();
+                var field = new GenericUnknownStruct.BaseGenericField();
 
                 var s = reader.ReadUInt16();
                 field.Name = stringList[s];
                 s = reader.ReadUInt16();
                 field.Type = stringList[s];
-                field.Offset = reader.ReadUInt32();
+                var offset = reader.ReadUInt32();
 
-                fieldList.Add(field);
+                fieldArray[i] = field;
+                offsetList[i] = offset;
             }
 
-            foreach (var field in fieldList)
+            for (int i = 0; i < fieldArray.Length; i++)
             {
-                reader.BaseStream.Position = pos + field.Offset;
+                reader.BaseStream.Position = pos + offsetList[i];
                 // TODO: ...
-                var fieldType = field.Type.Replace("[2]", "array:");
+                var fieldType = fieldArray[i].Type.Replace("[2]", "array:");
                 var typeParts = fieldType.Split(':');
-                field.Value = ReadValue(reader, stringList, typeParts, 0);
+
+                var val = ReadValue(reader, stringList, typeParts, 0);
+
+                var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
+                dynamic field = Activator.CreateInstance(type, val);
+                field.Name = fieldArray[i].Name;
+                field.Type = fieldArray[i].Type;
+
+                fieldArray[i] = field;
             }
 
-            return fieldList;
+            return fieldArray;
         }
 
         public object ReadValue(BinaryReader reader, List<string> stringList, string[] typeParts, int index)
@@ -153,13 +175,17 @@ namespace CyberCAT.Core.Classes.Parsers
             switch (dataType)
             {
                 case "array":
-                    object result = new List<object>();
                     var arraySize = reader.ReadUInt32();
+                    object result = null;
                     for (int i = 0; i < arraySize; i++)
                     {
-                        ((List<object>) result).Add(ReadValue(reader, stringList, typeParts, index + 1));
+                        var val = ReadValue(reader, stringList, typeParts, index + 1);
+                        if (i == 0)
+                        {
+                            result = Array.CreateInstance(val.GetType(), arraySize);
+                        }
+                        ((Array)result).SetValue(val, i);
                     }
-
                     return result;
 
                 case "Int32":
@@ -919,7 +945,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
-            var data = (GenericUnknownStruct) node.Value;
+            var data = (GenericUnknownStruct)node.Value;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
@@ -941,13 +967,13 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var stringList = GenerateStringList(data);
 
-                    var offset = (short) (stringList.Count * 4);
+                    var offset = (short)(stringList.Count * 4);
                     foreach (var str in stringList)
                     {
                         writer.Write(offset);
-                        writer.Write(new byte[] {0});
-                        writer.Write((byte) (str.Length + 1));
-                        offset += (short) (str.Length + 1);
+                        writer.Write(new byte[] { 0 });
+                        writer.Write((byte)(str.Length + 1));
+                        offset += (short)(str.Length + 1);
                     }
 
                     var stringTableOffset = writer.BaseStream.Position - pos;
@@ -970,7 +996,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var dataTableOffset = writer.BaseStream.Position - pos;
 
-                    for (int i = 0; i < data.ClassList.Count; i++)
+                    for (int i = 0; i < data.ClassList.Length; i++)
                     {
                         var classEntry = data.ClassList[i];
 
@@ -986,14 +1012,19 @@ namespace CyberCAT.Core.Classes.Parsers
                     }
 
                     writer.BaseStream.Position = 0;
-                    writer.Write((int) writer.BaseStream.Length - 4);
+                    writer.Write((int)writer.BaseStream.Length - 4);
                     writer.BaseStream.Position += 12;
-                    writer.Write((int) stringTableOffset);
-                    writer.Write((int) indexTableOffset);
-                    writer.Write((int) dataTableOffset);
+                    writer.Write((int)stringTableOffset);
+                    writer.Write((int)indexTableOffset);
+                    writer.Write((int)dataTableOffset);
                 }
 
                 result = stream.ToArray();
+            }
+
+            if (DEBUG_WRITING)
+            {
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", result);
             }
 
             using (var stream = new MemoryStream())
@@ -1028,9 +1059,9 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        private void GenerateStringListFromFields(List<GenericUnknownStruct.FieldEntry> fields, ref List<string> strings)
+        private void GenerateStringListFromFields(GenericUnknownStruct.BaseGenericField[] fields, ref List<string> strings)
         {
-            foreach (var field in fields)
+            foreach (dynamic field in fields)
             {
                 if (!strings.Contains(field.Name))
                 {
@@ -1048,22 +1079,22 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 else if (field.Value is IList)
                 {
-                    if (field.Value is List<GenericUnknownStruct.FieldEntry> subFields1)
+                    if (field.Value is GenericUnknownStruct.BaseGenericField[] subFields1)
                     {
                         GenerateStringListFromFields(subFields1, ref strings);
                     }
                     else
                     {
-                        var subList = (IList) field.Value;
+                        var subList = (IList)field.Value;
                         foreach (var t1 in subList)
                         {
-                            if (t1 is List<GenericUnknownStruct.FieldEntry> subFields2)
+                            if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                             {
                                 GenerateStringListFromFields(subFields2, ref strings);
                             }
                             else if (t1 is String)
                             {
-                                var strVal = (string) t1;
+                                var strVal = (string)t1;
                                 if (!strings.Contains(strVal))
                                 {
                                     strings.Add(strVal);
@@ -1074,7 +1105,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 else if (field.Value is String)
                 {
-                    var strVal = (string) field.Value;
+                    var strVal = (string)field.Value;
                     if (!strings.Contains(strVal))
                     {
                         strings.Add(strVal);
@@ -1083,7 +1114,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        private byte[] GenerateDataFromFields(List<GenericUnknownStruct.FieldEntry> fields, List<string> stringList)
+        private byte[] GenerateDataFromFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
         {
             byte[] result;
 
@@ -1091,7 +1122,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    writer.Write((ushort)fields.Count);
+                    writer.Write((ushort)fields.Length);
                     foreach (var field in fields)
                     {
                         writer.Write((ushort)stringList.IndexOf(field.Name));
@@ -1099,25 +1130,25 @@ namespace CyberCAT.Core.Classes.Parsers
                         writer.Write(new byte[4]); // offset
                     }
 
-                    for (int i = 0; i < fields.Count; i++)
+                    for (int i = 0; i < fields.Length; i++)
                     {
                         var pos = writer.BaseStream.Position;
                         writer.BaseStream.Position = 6 + (i * 8);
                         writer.Write((uint)pos);
                         writer.BaseStream.Position = pos;
 
-                        var field = fields[i];
+                        dynamic field = fields[i];
                         if (field.Type == "NodeRef")
                         {
-                            var valStr = (string) field.Value;
+                            var valStr = (string)field.Value;
                             var valBytes = Encoding.ASCII.GetBytes(valStr);
 
-                            writer.Write((ushort) valStr.Length);
+                            writer.Write((ushort)valStr.Length);
                             writer.Write(valBytes);
                         }
                         else if (field.Value is IList)
                         {
-                            if (field.Value is List<GenericUnknownStruct.FieldEntry> subFields1)
+                            if (field.Value is GenericUnknownStruct.BaseGenericField[] subFields1)
                             {
                                 var buffer = GenerateDataFromFields(subFields1, stringList);
                                 writer.Write(buffer);
@@ -1128,7 +1159,7 @@ namespace CyberCAT.Core.Classes.Parsers
                                 writer.Write(subList.Count);
                                 foreach (var t1 in subList)
                                 {
-                                    if (t1 is List<GenericUnknownStruct.FieldEntry> subFields2)
+                                    if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                                     {
                                         var buffer = GenerateDataFromFields(subFields2, stringList);
                                         writer.Write(buffer);
