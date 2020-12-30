@@ -12784,11 +12784,6 @@
     "gameName": "",
     "name": "Items.MediumQualityAlcohol7"
   },
-  "119749817973": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.q105_evelyns_handbagw"
-  },
   "119752699768": {
     "gameDescription": "",
     "gameName": "",
@@ -13013,6 +13008,11 @@
     "gameDescription": "",
     "gameName": "",
     "name": "PhotoModePoses.action_sprint"
+  },
+  "120304905212": {
+    "gameDescription": "",
+    "gameName": "",
+    "name": "Items.Recipe_TechWeaponMod03"
   },
   "120317159033": {
     "gameDescription": "",
@@ -36934,6 +36934,11 @@
     "gameName": "",
     "name": "BaseStats.ThreeOrMoreProgramsCooldownRedPerk"
   },
+  "190165957528": {
+    "gameDescription": "",
+    "gameName": "",
+    "name": "Items.Recipe_Preset_Nova_Doom_Doom_Legendary"
+  },
   "190166246935": {
     "gameDescription": "",
     "gameName": "",
@@ -45466,7 +45471,7 @@
   },
   "86622686573": {
     "gameDescription": "",
-    "gameName": "",
+    "gameName": "Bounce Back MK2",
     "name": "Items.BonesMcCoy70V1"
   },
   "86625290371": {
@@ -45786,7 +45791,7 @@
   },
   "87444585979": {
     "gameDescription": "",
-    "gameName": "",
+    "gameName": "Bounce Back MK1",
     "name": "Items.BonesMcCoy70V0"
   },
   "87478256487": {
@@ -46336,7 +46341,7 @@
   },
   "88887008471": {
     "gameDescription": "",
-    "gameName": "",
+    "gameName": "Bounce Back MK3",
     "name": "Items.BonesMcCoy70V2"
   },
   "88887411640": {
@@ -49476,7 +49481,7 @@
   },
   "94893359008": {
     "gameDescription": "",
-    "gameName": "",
+    "gameName": "Cat Food",
     "name": "Items.LowQualityFood11"
   },
   "94893901084": {

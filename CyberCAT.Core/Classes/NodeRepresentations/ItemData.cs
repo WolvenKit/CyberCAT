@@ -142,7 +142,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"Type: {Kind} | {ItemId:X16}";
+                return $"Type: {Kind} | {ItemId:X8}";
             }
         }
 
