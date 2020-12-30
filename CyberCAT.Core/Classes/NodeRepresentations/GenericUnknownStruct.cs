@@ -10,6 +10,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] Unknown3 { get; set; }
         public ulong[] CNameHashes { get; set; }
         public ClassEntry[] ClassList { get; set; }
+        public byte[] TrailingBytes { get; set; }
 
         public class ClassEntry
         {

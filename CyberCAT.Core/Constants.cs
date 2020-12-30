@@ -91,6 +91,8 @@ namespace CyberCAT.Core
             public const string GOD_MODE_SYSTEM = "godModeSystem";
             public const string TIER_SYSTEM = "tierSystem";
             public const string RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM = "RenderGameplayEffectsManagerSystem";
+            public const string PS_DATA = "PSData";
+            public const string SCANNING_CONTROLLER = "scanningController";
         }
         public static class Numbers
         {

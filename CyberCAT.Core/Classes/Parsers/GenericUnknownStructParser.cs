@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        public const bool DEBUG_WRITING = false;
+        public const bool DEBUG_WRITING = true;
 
         private string ReadStringAtOffset(BinaryReader reader, long baseAddress, uint offset, int length)
         {
@@ -29,14 +29,15 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); //skip Id
 
+            var nodeStartPos = reader.BaseStream.Position;
+
             int readSize = 0;
             if (DEBUG_WRITING)
             {
-                var tmpPos = reader.BaseStream.Position;
                 readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
                 var tmpBuffer = reader.ReadBytes(readSize);
                 File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", tmpBuffer);
-                reader.BaseStream.Position = tmpPos;
+                reader.BaseStream.Position = nodeStartPos;
             }
 
             result.TotalLength = reader.ReadUInt32();
@@ -48,7 +49,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var indexTableOffset = reader.ReadUInt32();
             var dataTableOffset = reader.ReadUInt32();
 
-            if (result.Unknown2 == 16)
+            if (result.Unknown2 > 1)
             {
                 // only for ScriptableSystemsContainer
                 var count1 = reader.ReadInt32();
@@ -124,9 +125,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 result.ClassList[i] = classEntry;
             }
 
+            Debug.Assert((reader.BaseStream.Position - nodeStartPos - 4) == result.TotalLength);
+
+            // only for PSData, what the heck is this...
             readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            // result.TrailingBytes = reader.ReadBytes(readSize);
-            Debug.Assert(readSize == 0);
+            result.TrailingBytes = reader.ReadBytes(readSize);
 
             return result;
         }
@@ -144,8 +147,16 @@ namespace CyberCAT.Core.Classes.Parsers
                 var field = new GenericUnknownStruct.BaseGenericField();
 
                 var s = reader.ReadUInt16();
+                if (s >= stringList.Count)
+                {
+                    throw new Exception();
+                }
                 field.Name = stringList[s];
                 s = reader.ReadUInt16();
+                if (s >= stringList.Count)
+                {
+                    throw new Exception();
+                }
                 field.Type = stringList[s];
                 var offset = reader.ReadUInt32();
 
@@ -162,12 +173,15 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 var val = ReadValue(reader, stringList, typeParts, 0);
 
-                var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
-                dynamic field = Activator.CreateInstance(type, val);
-                field.Name = fieldArray[i].Name;
-                field.Type = fieldArray[i].Type;
+                if (val != null)
+                {
+                    var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
+                    dynamic field = Activator.CreateInstance(type, val);
+                    field.Name = fieldArray[i].Name;
+                    field.Type = fieldArray[i].Type;
 
-                fieldArray[i] = field;
+                    fieldArray[i] = field;
+                }
             }
 
             return fieldArray;
@@ -209,6 +223,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 case "Float":
                     return reader.ReadSingle();
+
+                case "static":
+                    return reader.ReadBytes(8);
 
                 // enums
                 case "ActiveMode":
