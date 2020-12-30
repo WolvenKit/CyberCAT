@@ -21,7 +21,7 @@ namespace CyberCAT.Core.Classes
         public byte[] SkippedHeaderBytes;
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
-        public List<NodeEntry> FlatNodes = new List<NodeEntry>();//flat structure
+        public List<NodeEntry> FlatNodes; //flat structure
         public Guid Guid { get; private set;}
         List<INodeParser> _parsers;
         /// <summary>
@@ -33,9 +33,12 @@ namespace CyberCAT.Core.Classes
             _parsers = new List<INodeParser>();
             _parsers.AddRange(parsers);
             Guid = Guid.NewGuid();
+            FlatNodes = new List<NodeEntry>();
+            Nodes = new List<NodeEntry>();
         }
         public SaveFile()
         {
+            FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
             //TODO do this with dependency injection or Reflection and a Plugin type DLL Folder
             _parsers = new List<INodeParser>();
@@ -50,8 +53,8 @@ namespace CyberCAT.Core.Classes
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {
-            FlatNodes = new List<NodeEntry>();
-            Nodes = new List<NodeEntry>();
+            FlatNodes.Clear();
+            Nodes.Clear();
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
                 string magic = reader.ReadString(4);
@@ -107,7 +110,63 @@ namespace CyberCAT.Core.Classes
                 }
             }
         }
-        public byte[] Save()
+
+        public void LoadFromUncompressedStream(Stream inputStream)
+        {
+            FlatNodes.Clear();
+            Nodes.Clear();
+            using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
+            {
+                string magic = reader.ReadString(4);
+                Version1 = reader.ReadInt32();
+                Version2 = reader.ReadInt32();
+                SkippedHeaderBytes = reader.ReadBytes(9);
+                Version3 = reader.ReadInt32();
+                int blockInfoStart = (int)reader.BaseStream.Position;
+                reader.BaseStream.Seek(-8, SeekOrigin.End);
+                LastBlockOffset = reader.ReadInt32();
+                reader.BaseStream.Seek(LastBlockOffset, SeekOrigin.Begin);
+                string edonMagic = reader.ReadString(4);
+                var flags = new Flags(reader);
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    var tmpFlags = new Flags(reader.ReadByte());
+                    string name = reader.ReadString(tmpFlags.Length);
+                    var entry = new NodeEntry();
+                    entry.NextId = reader.ReadInt32();
+                    entry.ChildId = reader.ReadInt32();
+                    entry.Offset = reader.ReadInt32();
+                    entry.Size = reader.ReadInt32();
+                    entry.Name = name;
+                    FlatNodes.Add(entry);
+                }
+            }
+            inputStream.Seek(0, SeekOrigin.Begin);
+            using (BinaryReader reader = new BinaryReader(inputStream, Encoding.ASCII))
+            {
+                foreach (var node in FlatNodes)
+                {
+                    reader.BaseStream.Position = node.Offset;
+                    node.Id = reader.ReadInt32();
+                }
+                foreach (var node in FlatNodes)
+                {
+                    if (!node.IsChild)
+                    {
+                        FindChildren(FlatNodes, node, FlatNodes.Count);
+                    }
+                    if (node.NextId > -1)
+                    {
+                        node.SetNextNode(FlatNodes.Where(n => n.Id == node.NextId).FirstOrDefault());
+                    }
+                }
+                Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
+                CalculateTrueSizes();
+                ParserUtils.ParseChildren(Nodes, reader, _parsers);
+            }
+        }
+
+        public byte[] SaveToCompressed()
         {
             byte[] uncompressedData;
 
@@ -153,12 +212,69 @@ namespace CyberCAT.Core.Classes
             }
             return result;
         }
+
+        public byte[] SaveToUncompressed()
+        {
+            byte[] uncompressedData;
+
+            using (var stream = new MemoryStream())
+            {
+                foreach (var node in Nodes)
+                {
+                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
+                    if (parser != null)
+                    {
+                        stream.Write(parser.Write(node, _parsers));
+                    }
+                    else
+                    {
+                        var fallback = new DefaultParser();
+                        stream.Write(fallback.Write(node, _parsers));
+                    }
+                }
+                uncompressedData = stream.ToArray();
+            }
+
+            RecalculateOffsets();
+
+            var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes();
+            var compressor = new SaveFileCompressionHelper();
+            var chunks = compressor.CompressToChunkList(uncompressedData);
+            foreach (var chunk in chunks)
+            {
+                chunk.CompressedChunkSize = 4 << 16;
+                chunk.DecompressedChunkSize = 4 << 16;
+                chunk.CompressedData = new byte[4 << 16];
+                chunk.DecompressedData = new byte[0];
+            }
+
+            chunks.Last().DecompressedChunkSize = uncompressedData.Length - (140 << 16);
+            chunks.Last().CompressedData = new byte[uncompressedData.Length - (140 << 16)];
+            var header = BuildHeader(chunks);
+            //var header = BuildHeader(new List<Lz4Chunk>());
+            byte[] result;
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                {
+                    writer.Write(header);
+                    writer.Write(uncompressedData);
+                    int lastBlockOffset = (int)writer.BaseStream.Position;
+                    writer.Write(footerWithoutLast8Bytes);
+                    writer.Write(lastBlockOffset);
+                    writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.END_OF_FILE));
+                }
+                result = stream.ToArray();
+            }
+            return result;
+        }
+
         byte[] BuildHeader(List<Lz4Chunk> chunks)
         {
             byte[] result;
-            using(var stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
-                using(var writer = new BinaryWriter(stream,Encoding.ASCII))
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.FIRST_FILE_HEADER_MAGIC));
                     writer.Write(Version1);
@@ -172,25 +288,29 @@ namespace CyberCAT.Core.Classes
                     int index = 0;
                     foreach (var chunk in chunks)
                     {
-                        writer.Write(chunk.CompressedData.Length);//CompressedChunkSize
-                        writer.Write(chunk.DecompressedChunkSize);//DecompressedChunkSize
+                        writer.Write(chunk.CompressedData.Length); //CompressedChunkSize
+                        writer.Write(chunk.DecompressedChunkSize); //DecompressedChunkSize
                         offset = offset + chunk.CompressedChunkSize;
                         if (index < chunks.Count - 1)
                         {
-                            writer.Write(offset);//EndOfChunkOffset
+                            writer.Write(offset); //EndOfChunkOffset
                         }
+
                         index++;
                     }
+
                     while (writer.BaseStream.Position < Constants.Numbers.DEFAULT_HEADER_SIZE)
                     {
-                        writer.Write((byte)0);
+                        writer.Write((byte) 0);
                     }
                 }
+
                 result = stream.ToArray();
             }
-            
+
             return result;
         }
+
         byte[] BuildFooterWithoutLastEightBytes()
         {
             byte[] result;

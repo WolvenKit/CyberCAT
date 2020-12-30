@@ -31,18 +31,81 @@ namespace CyberCAT.Forms
             { typeof(ItemDropStorageManager), typeof(PropertyEditControl) },
         };
 
-        private void EditorAddChildrenToTreeNode(NodeEntryTreeNode treeNode)
+        private void savbinCompressedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeNode.Node.Children.Count > 0)
+            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
+
+            if (fd.ShowDialog() != DialogResult.OK)
             {
-                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
-                foreach (var child in treeNode.Nodes)
-                {
-                    EditorAddChildrenToTreeNode((NodeEntryTreeNode)child);
-                }
+                return;
+            }
+
+            var fileName = fd.FileName;
+
+            var bytes = File.ReadAllBytes(fileName);
+
+            try
+            {
+                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
+                newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
+                _activeSaveFile = newSaveFile;
+                Text = $"CyberCAT: {fileName}";
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
+            }
+
+            EditorTree.Nodes.Clear();
+            txtEditorFilter.Text = "";
+
+            foreach (var node in _activeSaveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+                BuildVisualSubTree(treeNode, null);
+                EditorTree.Nodes.Add(treeNode);
             }
         }
-        private void saveButton_Click(object sender, EventArgs e)
+
+        private void uncompressedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var fileName = fd.FileName;
+
+            var bytes = File.ReadAllBytes(fileName);
+
+            try
+            {
+                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
+                newSaveFile.LoadFromUncompressedStream(new MemoryStream(bytes));
+                _activeSaveFile = newSaveFile;
+                Text = $"CyberCAT: {fileName}";
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
+            }
+
+            EditorTree.Nodes.Clear();
+            txtEditorFilter.Text = "";
+
+            foreach (var node in _activeSaveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+                BuildVisualSubTree(treeNode, null);
+                EditorTree.Nodes.Add(treeNode);
+            }
+        }
+
+        private void savbinCompressedToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (_activeSaveFile == null)
             {
@@ -50,9 +113,23 @@ namespace CyberCAT.Forms
             }
 
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
-            if(saveDialog.ShowDialog() == DialogResult.OK)
+            if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.Save());
+                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.SaveToCompressed());
+            }
+        }
+
+        private void uncompressedToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (_activeSaveFile == null)
+            {
+                return;
+            }
+
+            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.SaveToUncompressed());
             }
         }
 
@@ -134,43 +211,6 @@ namespace CyberCAT.Forms
                         treeNode.Nodes.Add(child);
                     }
                 }
-            }
-        }
-
-        private void EditorLoad_Click(object sender, EventArgs e)
-        {
-            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
-
-            if (fd.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
-            var fileName = fd.FileName;
-
-            var bytes = File.ReadAllBytes(fileName);
-
-            try
-            {
-                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
-                _activeSaveFile = newSaveFile;
-                Text = $"CyberCAT: {fileName}";
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show($"Error reading file: {exception.Message}");
-                return;
-            }
-
-            EditorTree.Nodes.Clear();
-            txtEditorFilter.Text = "";
-
-            foreach (var node in _activeSaveFile.Nodes)
-            {
-                var treeNode = new NodeEntryTreeNode(node);
-                BuildVisualSubTree(treeNode, null);
-                EditorTree.Nodes.Add(treeNode);
             }
         }
 
