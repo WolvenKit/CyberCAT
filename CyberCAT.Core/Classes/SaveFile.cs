@@ -22,6 +22,7 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
         public List<NodeEntry> FlatNodes = new List<NodeEntry>();//flat structure
+        public Guid Guid { get; private set;}
         List<INodeParser> _parsers;
         /// <summary>
         /// Creates a new Instance of Save File wich will utilize given parsers
@@ -31,6 +32,7 @@ namespace CyberCAT.Core.Classes
         {
             _parsers = new List<INodeParser>();
             _parsers.AddRange(parsers);
+            Guid = Guid.NewGuid();
         }
         public SaveFile()
         {

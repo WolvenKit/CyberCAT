@@ -211,7 +211,7 @@ namespace CyberCAT.Forms
 
         private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Export_{Guid.NewGuid()}");
+            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{Guid.NewGuid()}");
             foreach(var node in _activeSaveFile.FlatNodes)
             {
                 if(node.Value is DefaultRepresentation)
@@ -267,8 +267,13 @@ namespace CyberCAT.Forms
             var selectedNode = (NodeEntryTreeNode)EditorTree.SelectedNode;
             var data = (NodeEntry)selectedNode.Node;
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-            
-            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
+            string folderPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{_activeSaveFile.Guid}";
+            if (!Directory.Exists(folderPath)) ;
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            File.WriteAllText($"{folderPath}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
+            MessageBox.Show($"Exported selected node to {folderPath}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json");
         }
     }
 }

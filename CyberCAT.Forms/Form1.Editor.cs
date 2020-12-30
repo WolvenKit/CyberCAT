@@ -127,6 +127,7 @@ namespace CyberCAT.Forms
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;
+                Text = $"CyberCAT: {fileName}";
             }
             catch (Exception exception)
             {
