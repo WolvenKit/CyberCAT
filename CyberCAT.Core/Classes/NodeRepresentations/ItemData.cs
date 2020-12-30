@@ -114,7 +114,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public uint Unknown4 { get; set; }
             public override string ToString()
             {
-                return $"{ItemName} ({ItemGameName})";
+                return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
             }
         }
         [JsonObject]
@@ -157,7 +157,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public override string ToString()
         {
-            return $"{ItemName} ({ItemGameName})";
+            return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
         }
     }
 }
