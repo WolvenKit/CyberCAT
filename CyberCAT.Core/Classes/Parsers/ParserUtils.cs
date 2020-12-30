@@ -33,7 +33,7 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var node in children)
             {
                 reader.BaseStream.Position = node.Offset;
-                var parser = parsers.FirstOrDefault(p => p.ParsableNodeNames.Contains(node.Name));
+                var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==node.Name);
                 if (parser != null)
                 {
                     node.Value = parser.Read(node, reader, parsers);

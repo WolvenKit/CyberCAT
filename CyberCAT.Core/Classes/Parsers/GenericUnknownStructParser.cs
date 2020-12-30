@@ -11,30 +11,8 @@ using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    public class GenericUnknownStructParser : INodeParser
+    public class GenericUnknownStructParser
     {
-        public List<string> ParsableNodeNames { get; private set; }
-
-        public string DisplayName { get; private set; }
-
-        public Guid Guid { get; private set; }
-
-        public GenericUnknownStructParser()
-        {
-            ParsableNodeNames = new List<string>
-            {
-                Constants.NodeNames.SCRIPTABLE_SYSTEMS_CONTAINER,
-                Constants.NodeNames.MOVING_PLATFORM_SYSTEM,
-                Constants.NodeNames.STAT_POOLS_SYSTEM,
-                Constants.NodeNames.STATS_SYSTEM,
-                Constants.NodeNames.GOD_MODE_SYSTEM,
-                Constants.NodeNames.TIER_SYSTEM,
-                Constants.NodeNames.RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM
-            };
-            DisplayName = "Generic Unknown Struct Parser";
-            Guid = System.Guid.Parse("{CA17650B-E151-4246-A5F4-7834342E3CD1}");
-        }
-
         private string ReadStringAtOffset(BinaryReader reader, long baseAddress, uint offset, int length)
         {
             var origPos = reader.BaseStream.Position;

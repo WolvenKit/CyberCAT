@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Interfaces
     {
         string DisplayName { get;}
         Guid Guid { get;}
-        List<string> ParsableNodeNames { get;}
+        string ParsableNodeName { get;}
         object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers);
         byte[] Write(NodeEntry node, List<INodeParser> parsers);
     }
