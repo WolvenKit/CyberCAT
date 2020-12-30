@@ -52,7 +52,12 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 // only for ScriptableSystemsContainer
                 var count1 = reader.ReadInt32();
-                result.Unknown4 = reader.ReadBytes(count1 * 8);
+
+                result.CNameHashes = new ulong[count1];
+                for (int i = 0; i < count1; i++)
+                {
+                    result.CNameHashes[i] = reader.ReadUInt64();
+                }
             }
 
             var stringTablePosition = reader.BaseStream.Position + stringTableOffset;
@@ -958,9 +963,11 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     if (data.Unknown2 == 16)
                     {
-                        var count = data.Unknown4.Length / 8;
-                        writer.Write(count);
-                        writer.Write(data.Unknown4);
+                        writer.Write(data.CNameHashes.Length);
+                        foreach (var hash in data.CNameHashes)
+                        {
+                            writer.Write(hash);
+                        }
                     }
 
                     var pos = writer.BaseStream.Position;

@@ -8,7 +8,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] Unknown1 { get; set; }
         public uint Unknown2 { get; set; }
         public byte[] Unknown3 { get; set; }
-        public byte[] Unknown4 { get; set; }
+        public ulong[] CNameHashes { get; set; }
         public ClassEntry[] ClassList { get; set; }
 
         public class ClassEntry
@@ -20,13 +20,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 return Name;
             }
-        }
-
-        public class FieldEntry
-        {
-            public string Name { get; set; }
-            public string Type { get; set; }
-            public object Value { get; set; }
         }
 
         public class BaseGenericField
