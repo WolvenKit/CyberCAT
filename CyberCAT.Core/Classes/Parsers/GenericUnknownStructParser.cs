@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        public const bool DEBUG_WRITING = true;
+        public const bool DEBUG_WRITING = false;
 
         private string ReadStringAtOffset(BinaryReader reader, long baseAddress, uint offset, int length)
         {
@@ -1057,6 +1057,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
                     writer.Write(result);
+                    writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
                 node.Size = result.Length;
