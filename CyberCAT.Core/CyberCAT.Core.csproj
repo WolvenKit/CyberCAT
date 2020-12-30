@@ -89,7 +89,9 @@
     <Compile Include="Classes\Parsers\ItemDropStorageParser.cs" />
     <Compile Include="Classes\Parsers\MovingPlatformSystemParser.cs" />
     <Compile Include="Classes\Parsers\ParserUtils.cs" />
+    <Compile Include="Classes\Parsers\PSDataParser.cs" />
     <Compile Include="Classes\Parsers\RenderGameplayEffectsManagerSystemParser.cs" />
+    <Compile Include="Classes\Parsers\ScanningContollerParser.cs" />
     <Compile Include="Classes\Parsers\ScriptableSystemsContainerParser.cs" />
     <Compile Include="Classes\Parsers\StatPoolSystemParser.cs" />
     <Compile Include="Classes\Parsers\StatsSystemParser.cs" />
