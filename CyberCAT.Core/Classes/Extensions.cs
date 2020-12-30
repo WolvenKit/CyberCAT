@@ -9,6 +9,32 @@ namespace CyberCAT.Core.Classes
 {
     public static class Extensions
     {
+        public static int ReadInt24(this BinaryReader reader)
+        {
+            var buffer = new byte[4];
+            reader.Read(buffer, 0, 3);
+            return BitConverter.ToInt32(buffer, 0);
+        }
+
+        public static void WriteInt24(this BinaryWriter writer, int val)
+        {
+            var bytes = BitConverter.GetBytes(val);
+            writer.Write(bytes, 0, 3);
+        }
+
+        public static uint ReadUInt24(this BinaryReader reader)
+        {
+            var buffer = new byte[4];
+            reader.Read(buffer, 0, 3);
+            return BitConverter.ToUInt32(buffer, 0);
+        }
+
+        public static void WriteUInt24(this BinaryWriter writer, uint val)
+        {
+            var bytes = BitConverter.GetBytes(val);
+            writer.Write(bytes, 0, 3);
+        }
+
         //TODO use dll probably too tired right now too add correctly
         public static void WriteBit6(this BinaryWriter stream, int c)
         {

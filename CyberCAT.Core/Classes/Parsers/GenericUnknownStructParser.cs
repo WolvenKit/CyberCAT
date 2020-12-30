@@ -51,7 +51,6 @@ namespace CyberCAT.Core.Classes.Parsers
 
             if (result.Unknown2 > 1)
             {
-                // only for ScriptableSystemsContainer
                 var count1 = reader.ReadInt32();
 
                 result.CNameHashes1 = new ulong[count1];
@@ -68,9 +67,8 @@ namespace CyberCAT.Core.Classes.Parsers
             // start of stringIndexTable
             var stringList = new List<string>();
             var stringBasePosition = reader.BaseStream.Position;
-            var stringOffset = reader.ReadUInt16();
+            var stringOffset = reader.ReadUInt24();
             var count2 = stringOffset / 4 - 1; // there could be another count somewhere...
-            reader.Skip(1);
             var stringLength = reader.ReadByte(); // string is null terminated?
 
             // length - 1 because null terminated...
@@ -80,8 +78,7 @@ namespace CyberCAT.Core.Classes.Parsers
             // there could be another count somewhere...
             for (int i = 0; i < count2; i++)
             {
-                stringOffset = reader.ReadUInt16();
-                reader.Skip(1);
+                stringOffset = reader.ReadUInt24();
                 stringLength = reader.ReadByte();
                 stringList.Add(ReadStringAtOffset(reader, stringBasePosition, stringOffset, stringLength - 1));
             }
@@ -109,16 +106,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 var classEntry = new GenericUnknownStruct.ClassEntry();
                 classEntry.Name = stringList[(int)pointerList[i].Key];
 
-                int length = 0;
-                if (i == pointerList.Count - 1)
-                {
-                    length = (int)(result.TotalLength - pointerList[i].Value);
-                }
-                else
-                {
-                    length = (int)(pointerList[i + 1].Value - pointerList[i].Value);
-                }
-
                 reader.BaseStream.Position = pos + offset;
                 classEntry.Fields = ReadFields(reader, stringList);
 
@@ -127,7 +114,6 @@ namespace CyberCAT.Core.Classes.Parsers
 
             Debug.Assert((reader.BaseStream.Position - nodeStartPos - 4) == result.TotalLength);
 
-            // only for PSData, what the heck is this...
             readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             if (readSize > 0)
             {
@@ -148,86 +134,90 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public GenericUnknownStruct.BaseGenericField[] ReadFields(BinaryReader reader, List<string> stringList)
         {
-            var pos = reader.BaseStream.Position;
+            var startPos = reader.BaseStream.Position;
+
+            // Testing time
             var fieldCount = reader.ReadUInt16();
 
             var fieldArray = new GenericUnknownStruct.BaseGenericField[fieldCount];
             var offsetList = new uint[fieldCount];
-
             for (int i = 0; i < fieldCount; i++)
             {
-                var field = new GenericUnknownStruct.BaseGenericField();
+                fieldArray[i] = new GenericUnknownStruct.BaseGenericField();
 
-                var s = reader.ReadUInt16();
-                if (s >= stringList.Count)
-                {
-                    throw new Exception();
-                }
-                field.Name = stringList[s];
-                s = reader.ReadUInt16();
-                if (s >= stringList.Count)
-                {
-                    throw new Exception();
-                }
-                field.Type = stringList[s];
-                var offset = reader.ReadUInt32();
-
-                fieldArray[i] = field;
-                offsetList[i] = offset;
+                fieldArray[i].Name = stringList[reader.ReadUInt16()];
+                fieldArray[i].Type = stringList[reader.ReadUInt16()];
+                offsetList[i] = reader.ReadUInt32();
             }
 
             for (int i = 0; i < fieldArray.Length; i++)
             {
-                reader.BaseStream.Position = pos + offsetList[i];
-                // TODO: ...
-                var fieldType = fieldArray[i].Type.Replace("[2]", "array:");
-                var typeParts = fieldType.Split(':');
+                reader.BaseStream.Position = startPos + offsetList[i];
 
-                var val = ReadValue(reader, stringList, typeParts, 0);
+                var val = ReadFieldValue(reader, fieldArray[i].Name, fieldArray[i].Type, stringList);
 
-                if (val != null)
-                {
-                    var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
-                    dynamic field = Activator.CreateInstance(type, val);
-                    field.Name = fieldArray[i].Name;
-                    field.Type = fieldArray[i].Type;
+                var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
+                dynamic field = Activator.CreateInstance(type, val);
+                field.Name = fieldArray[i].Name;
+                field.Type = fieldArray[i].Type;
 
-                    fieldArray[i] = field;
-                }
+                fieldArray[i] = field;
             }
 
             return fieldArray;
         }
 
-        public object ReadValue(BinaryReader reader, List<string> stringList, string[] typeParts, int index)
-        {
-            var dataType = typeParts[index];
+        public static List<string> KnownFieldTypes = new List<string>();
+        public static List<string> KnownEnumTypes = new List<string>();
 
-            switch (dataType)
+        public object ReadFieldValue(BinaryReader reader, string fieldName, string fieldType, List<string> stringList)
+        {
+            if (fieldType.StartsWith("array:") || fieldType.StartsWith("static:") || fieldType.StartsWith("["))
             {
-                case "array":
-                    var arraySize = reader.ReadUInt32();
-                    object result = null;
-                    for (int i = 0; i < arraySize; i++)
-                    {
-                        var val = ReadValue(reader, stringList, typeParts, index + 1);
-                        if (i == 0)
-                        {
-                            result = Array.CreateInstance(val.GetType(), arraySize);
-                        }
-                        ((Array)result).SetValue(val, i);
-                    }
-                    return result;
+                if (fieldType.StartsWith("array:"))
+                    fieldType = fieldType.Substring("array:".Length);
+                else if (fieldType.StartsWith("static:"))
+                    fieldType = fieldType.Substring(fieldType.IndexOf(',') + 1);
+                else
+                    fieldType = fieldType.Substring(fieldType.IndexOf(']') + 1);
+
+                var arraySize = reader.ReadUInt32();
+                object result = null;
+                for (int i = 0; i < arraySize; i++)
+                {
+                    var val = ReadFieldValue(reader, fieldName, fieldType, stringList);
+
+                    if (i == 0)
+                        result = Array.CreateInstance(val.GetType(), arraySize);
+                    ((Array)result).SetValue(val, i);
+                }
+
+                return result;
+            }
+
+            if (fieldType.StartsWith("script_ref:"))
+            {
+                throw new Exception();
+            }
+
+            if (fieldType.StartsWith("handle:"))
+            {
+                return reader.ReadUInt32();
+            }
+
+            switch (fieldType)
+            {
+                case "Bool":
+                    return reader.ReadByte() != 0;
 
                 case "Int32":
                     return reader.ReadInt32();
 
                 case "Uint32":
-                case "handle":
                     return reader.ReadUInt32();
 
-                case "Bool":
-                    return reader.ReadByte() != 0;
+                case "Int64":
+                    return reader.ReadInt64();
 
                 case "Uint64":
                 case "TweakDBID":
@@ -236,743 +226,66 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "Float":
                     return reader.ReadSingle();
 
-                case "static":
-                    return reader.ReadBytes(8);
-
-                // enums
-                case "ActiveMode":
-                case "ActorVisibilityStatus":
-                case "AdditionalTraceType":
-                case "AIactionParamsPackageTypes":
-                case "AIArgumentType":
-                case "AIbehaviorCompletionStatus":
-                case "AIbehaviorConditionOutcomes":
-                case "AIbehaviorUpdateOutcome":
-                case "AICombatSectorType":
-                case "AICombatSpaceSize":
-                case "AICommandState":
-                case "AICoverExposureMethod":
-                case "AIEExecutionOutcome":
-                case "AIEInterruptionOutcome":
-                case "aimTypeEnum":
-                case "AIParameterizationType":
-                case "AIReactionCountOutcome":
-                case "AISignalFlags":
-                case "AISquadType":
-                case "AIThreatPersistenceStatus":
-                case "AITrackedStatusType":
-                case "AIUninterruptibleActionType":
-                case "animAimState":
-                case "animCoverAction":
-                case "animCoverState":
-                case "animHitReactionType":
-                case "animLookAtChestMode":
-                case "animLookAtEyesMode":
-                case "animLookAtHeadMode":
-                case "animLookAtLeftHandedMode":
-                case "animLookAtLimitDegreesType":
-                case "animLookAtLimitDistanceType":
-                case "animLookAtRightHandedMode":
-                case "animLookAtStatus":
-                case "animLookAtStyle":
-                case "animLookAtTwoHandedMode":
-                case "animNPCVehicleDeathType":
-                case "animStanceState":
-                case "animWeaponOwnerType":
-                case "AttitudeChange":
-                case "AttributeButtonState":
-                case "audioAudioEventFlags":
-                case "audioEventActionType":
-                case "BlacklistReason":
-                case "braindanceVisionMode":
-                case "ButtonStatus":
-                case "CharacterScreenType":
-                case "ClueState":
-                case "CodexCategoryType":
-                case "CodexDataSource":
-                case "CodexImageType":
-                case "coverLeanDirection":
-                case "CrafringMaterialItemHighlight":
-                case "CraftingCommands":
-                case "CraftingInfoType":
-                case "CraftingMode":
-                case "CraftingNotificationType":
-                case "CustomButtonType":
-                case "CustomWeaponWheelSlot":
-                case "CyberwareInfoType":
-                case "CyberwareScreenType":
-                case "DamageEffectDisplayType":
-                case "damageSystemLogFlags":
-                case "DerivedFilterResult":
-                case "DeviceStimType":
-                case "DMGPipelineType":
-                case "DronePose":
-                case "DropdownDisplayContext":
-                case "DropdownItemDirection":
-                case "DropPointPackageStatus":
-                case "EActionContext":
-                case "EActionInactivityReson":
-                case "EActionsSequencerMode":
-                case "EActionType":
-                case "EActivationState":
-                case "EAIActionPhase":
-                case "EAIActionState":
-                case "EAIActionTarget":
-                case "EAIAttitude":
-                case "EAIBackgroundCombatStep":
-                case "EAICombatPreset":
-                case "EAICoverAction":
-                case "EAICoverActionDirection":
-                case "EAIDismembermentBodyPart":
-                case "EAIGateEventFlags":
-                case "EAIGateSignalFlags":
-                case "EAIHitBodyPart":
-                case "EAIHitDirection":
-                case "EAIHitIntensity":
-                case "EAIHitSource":
-                case "EAILastHitReactionPlayed":
-                case "EAimAssistLevel":
-                case "EAIPlayerSquadOrder":
-                case "EAIRole":
-                case "EAIShootingPatternRange":
-                case "EAISquadAction":
-                case "EAISquadChoiceAlgorithm":
-                case "EAISquadRing":
-                case "EAISquadTactic":
-                case "EAISquadVerb":
-                case "EAITargetType":
-                case "EAIThreatCalculationType":
-                case "EAITicketStatus":
-                case "EAllowedTo":
-                case "EAnimationType":
-                case "EArgumentType":
-                case "EAttackType":
-                case "EAxisType":
-                case "EBarkList":
-                case "EBeamStyle":
-                case "EBinkOperationType":
-                case "EBOOL":
-                case "EBreachOrigin":
-                case "EBroadcasteingType":
-                case "ECallbackExpressionActions":
-                case "ECameraDirectionFunctionalTestsUtil":
-                case "ECarryState":
-                case "ECartOperationResult":
-                case "ECentaurShieldState":
-                case "ECLSForcedState":
-                case "ECompanionDistancePreset":
-                case "ECompanionPositionPreset":
-                case "ECompareOp":
-                case "EComparisonOperator":
-                case "EComparisonType":
-                case "EComponentOperation":
-                case "EComputerAnimationState":
-                case "EComputerMenuType":
-                case "EConclusionQuestState":
-                case "ECooldownGameControllerMode":
-                case "ECooldownIndicatorState":
-                case "ECoverSpecialAction":
-                case "ECraftingIconPositioning":
-                case "EDeathType":
-                case "EDebuggerColor":
-                case "EDeviceChallengeAttribute":
-                case "EDeviceChallengeSkill":
-                case "EDeviceDurabilityState":
-                case "EDeviceDurabilityType":
-                case "EDeviceStatus":
-                case "EDocumentType":
-                case "EDodgeMovementInput":
-                case "EDoorOpeningType":
-                case "EDoorSkillcheckSide":
-                case "EDoorStatus":
-                case "EDoorTriggerSide":
-                case "EDoorType":
-                case "EDownedType":
-                case "EDPadSlot":
-                case "EDrillMachineRewireState":
-                case "EEffectOperationType":
-                case "EEquipmentSetType":
-                case "EEquipmentSide":
-                case "EEquipmentState":
-                case "EExplosiveAdditionalGameEffectType":
-                case "EFastTravelSystemInstruction":
-                case "EFastTravelTriggerType":
-                case "EFilterType":
-                case "EFocusClueInvestigationState":
-                case "EFocusForcedHighlightType":
-                case "EFocusOutlineType":
-                case "EForcedElevatorArrowsState":
-                case "EGameplayChallengeLevel":
-                case "EGameplayRole":
-                case "EGameSessionDataType":
-                case "EGenericNotificationPriority":
-                case "EGlitchState":
-                case "EGravityType":
-                case "EGrenadeType":
-                case "EHandEquipSlot":
-                case "EHitReactionMode":
-                case "EHitReactionZone":
-                case "EHitShapeType":
-                case "EHotkey":
-                case "EHotkeyRequestType":
-                case "EHudAvatarMode":
-                case "EHudPhoneFunction":
-                case "EHudPhoneVisibility":
-                case "EIndustrialArmAnimations":
-                case "EInitReactionAnim":
-                case "EInkAnimationPlaybackOption":
-                case "EInputCustomKey":
-                case "EInputKey":
-                case "EInventoryComboBoxMode":
-                case "EInventoryDataStatDisplayType":
-                case "EItemOperationType":
-                case "EItemSlotCheckType":
-                case "EJuryrigTrapState":
-                case "EKnockdownStates":
-                case "ELastUsed":
-                case "ELauncherActionType":
-                case "ELaunchMode":
-                case "ELayoutType":
-                case "ELightSequenceStage":
-                case "ELightSwitchRandomizerType":
-                case "ELinkType":
-                case "ELogicOperator":
-                case "ELogType":
-                case "EMagazineAmmoState":
-                case "EMappinDisplayMode":
-                case "EMappinVisualState":
-                case "EMathOperationType":
-                case "EMathOperator":
-                case "EMeasurementSystem":
-                case "EMeasurementUnit":
-                case "EMeleeAttacks":
-                case "EMeleeAttackType":
-                case "EMissileRainPhase":
-                case "EMoveAssistLevel":
-                case "EMovementDirection":
-                case "ENetworkRelation":
-                case "ENeutralizeType":
-                case "ENPCPhaseState":
-                case "ENPCTelemetryData":
-                case "entAttachmentTarget":
-                case "entAudioDismembermentPart":
-                case "EntityNotificationType":
-                case "entragdollActivationRequestType":
-                case "EOperationClassType":
-                case "EOutlineType":
-                case "EPaymentSchedule":
-                case "EPermissionSource":
-                case "EPersonalLinkConnectionStatus":
-                case "EPersonalLinkSlotSide":
-                case "EPingType":
-                case "EPlayerMovementDirection":
-                case "EPlaystyle":
-                case "EPlaystyleType":
-                case "EPowerDifferential":
-                case "EPreventionDebugProcessReason":
-                case "EPreventionHeatStage":
-                case "EPreventionPsychoLogicType":
-                case "EPreventionSystemInstruction":
-                case "EPriority":
-                case "EProgressBarContext":
-                case "EProgressBarType":
-                case "EQuestFilterType":
-                case "EQuestVehicleDoorState":
-                case "EQuestVehicleWindowState":
-                case "EquipmentManipulationAction":
-                case "EquipmentManipulationRequestSlot":
-                case "EquipmentManipulationRequestType":
-                case "EquipmentPriority":
-                case "ERadialMode":
-                case "ERadioStationList":
-                case "EReactionValue":
-                case "ERenderingPlane":
-                case "ERentStatus":
-                case "EReprimandInstructions":
-                case "ERevealDurationType":
-                case "ERevealPlayerType":
-                case "ERevealState":
-                case "EScreenRatio":
-                case "ESecurityAccessLevel":
-                case "ESecurityAreaType":
-                case "ESecurityGateEntranceType":
-                case "ESecurityGateResponseType":
-                case "ESecurityGateScannerIssueType":
-                case "ESecurityGateStatus":
-                case "ESecurityNotificationType":
-                case "ESecuritySystemState":
-                case "ESecurityTurretStatus":
-                case "ESecurityTurretType":
-                case "ESensorDeviceStates":
-                case "ESensorDeviceWakeState":
-                case "EShouldChangeAttitude":
-                case "ESlotState":
-                case "ESmartBulletPhase":
-                case "ESmartHousePreset":
-                case "ESoundStatusEffects":
-                case "ESpaceFillMode":
-                case "EStatProviderDataSource":
-                case "EStatusEffectBehaviorType":
-                case "EStatusEffects":
-                case "EstatusEffectsState":
-                case "ESurveillanceCameraState":
-                case "ESurveillanceCameraStatus":
-                case "ESwitchAction":
-                case "ESystems":
-                case "ETakedownActionType":
-                case "ETakedownBossName":
-                case "ETargetManagerAnimGraphState":
-                case "ETauntType":
-                case "ETelemetryData":
-                case "EToggleActivationTypeComputer":
-                case "EToggleOperationType":
-                case "ETooltipsStyle":
-                case "ETransformAnimationOperationType":
-                case "ETransitionMode":
-                case "ETrap":
-                case "ETrapEffects":
-                case "ETriggerOperationType":
-                case "ETVChannel":
-                case "ETweakAINodeType":
-                case "EUIActionState":
-                case "EUIStealthIconType":
-                case "EUploadProgramState":
-                case "EVarDBMode":
-                case "EVehicleDoor":
-                case "EVehicleWindowState":
-                case "EVendorMode":
-                case "EViabilityDecision":
-                case "EVirtualSystem":
-                case "EVisualizerActivityState":
-                case "EVisualizerType":
-                case "EWeaponNamesList":
-                case "EWidgetPlacementType":
-                case "EWidgetState":
-                case "EWindowBlindersStates":
-                case "EWorkspotOperationType":
-                case "EWorldMapView":
-                case "EWoundedBodyPart":
-                case "ExplosiveTriggerDeviceLaserState":
-                case "ExtraEffect":
-                case "Ft_Result":
-                case "Ft_TakedownStage":
-                case "Ft_TakedownType":
-                case "FTNpcMountingState":
-                case "FTScriptState":
-                case "FunctionalTestsResultCode":
-                case "gameaudioeventsSurfaceDirection":
-                case "gamecheatsystemFlag":
-                case "gameCityAreaType":
-                case "gameCombinedStatOperation":
-                case "gameContactType":
-                case "gameCoverHeight":
-                case "gameDamageCallbackType":
-                case "gameDamagePipelineStage":
-                case "gamedataAchievement":
-                case "gamedataAffiliation":
-                case "gamedataAIActionSecurityAreaType":
-                case "gamedataAIActionSecurityNotificationType":
-                case "gamedataAIActionTarget":
-                case "gamedataAIActionType":
-                case "gamedataAIAdditionalTraceType":
-                case "gamedataAIDirectorEntryStartType":
-                case "gamedataAIExposureMethodType":
-                case "gamedataAimAssistType":
-                case "gamedataAIRingType":
-                case "gamedataAIRole":
-                case "gamedataAISmartCompositeType":
-                case "gamedataAISquadType":
-                case "gamedataAITacticType":
-                case "gamedataAITicketType":
-                case "gamedataArchetypeType":
-                case "gamedataAttackSubtype":
-                case "gamedataAttackType":
-                case "gamedataBuildType":
-                case "gamedataChargeStep":
-                case "gamedataChoiceCaptionPartType":
-                case "gamedataCompanionDistancePreset":
-                case "gamedataConsumableBaseName":
-                case "gamedataConsumableType":
-                case "gamedataDamageType":
-                case "gamedataDefenseMode":
-                case "gamedataDevelopmentPointType":
-                case "gamedataDistrict":
-                case "gamedataEquipmentArea":
-                case "gamedataEthnicity":
-                case "gamedataFxAction":
-                case "gamedataFxActionType":
-                case "gamedataGender":
-                case "gamedataGrenadeDeliveryMethodType":
-                case "gamedataHitPrereqConditionType":
-                case "gamedataImprovementRelation":
-                case "gamedataItemCategory":
-                case "gamedataItemStructure":
-                case "gamedataItemType":
-                case "gamedataLifePath":
-                case "gamedataLocomotionMode":
-                case "gamedataMappinPhase":
-                case "gamedataMappinVariant":
-                case "gamedataMeleeAttackDirection":
-                case "gamedataMetaQuest":
-                case "gamedataMovementType":
-                case "gamedataNPCBehaviorState":
-                case "gamedataNPCHighLevelState":
-                case "gamedataNPCQuestAffiliation":
-                case "gamedataNPCRarity":
-                case "gamedataNPCStanceState":
-                case "gamedataNPCType":
-                case "gamedataNPCUpperBodyState":
-                case "gamedataObjectActionReference":
-                case "gamedataObjectActionType":
-                case "gamedataOutput":
-                case "gamedataParentAttachmentType":
-                case "gamedataPerkArea":
-                case "gamedataPerkType":
-                case "gamedataPerkUtility":
-                case "gamedataPingType":
-                case "gamedataPlayerBuild":
-                case "gamedataPlayerPossesion":
-                case "gamedataProficiencyType":
-                case "gamedataProjectileLaunchMode":
-                case "gamedataProjectileOnCollisionAction":
-                case "gamedataQuality":
-                case "gamedataReactionPresetType":
-                case "gamedataSenseObjectType":
-                case "gamedataSpawnableObjectPriority":
-                case "gamedataStatPoolType":
-                case "gamedataStatType":
-                case "gamedataStatusEffectAIBehaviorFlag":
-                case "gamedataStatusEffectAIBehaviorType":
-                case "gamedataStatusEffectType":
-                case "gamedataStatusEffectVariation":
-                case "gamedataStimPriority":
-                case "gamedataStimPropagation":
-                case "gamedataStimType":
-                case "gamedataSubCharacter":
-                case "gamedataTrackingMode":
-                case "gamedataTraitType":
-                case "gamedataTriggerMode":
-                case "gamedataUICondition":
-                case "gamedataUIIconCensorFlag":
-                case "gamedataUINameplateDisplayType":
-                case "gamedataVehicleManufacturer":
-                case "gamedataVehicleModel":
-                case "gamedataVehicleType":
-                case "gamedataVendorType":
-                case "gamedataWeaponEvolution":
-                case "gamedataWeaponManufacturer":
-                case "gamedataWorkspotActionType":
-                case "gamedataWorkspotCategory":
-                case "gamedataWorkspotReactionType":
-                case "gamedataWorldMapFilter":
-                case "gameDebugViewETextAlignment":
-                case "gamedeviceActionPropertyFlags":
-                case "gamedeviceRequestType":
-                case "gameDifficulty":
-                case "gameDismBodyPart":
-                case "gameDismWoundType":
-                case "gameEActionStatus":
-                case "gameEContinuousMode":
-                case "gameEEquipmentManagerState":
-                case "gameEnemyStealthAwarenessState":
-                case "gameEntitySpawnerEventType":
-                case "gameEPrerequisiteType":
-                case "gameEquipAnimationType":
-                case "gameEStatFlags":
-                case "gameeventsDeathDirection":
-                case "gameGodModeType":
-                case "gameGrenadeThrowStartType":
-                case "gameinfluenceCollisionTestOutcome":
-                case "gameinfluenceTestLineResult":
-                case "gameinputActionType":
-                case "gameinteractionsBumpIntensity":
-                case "gameinteractionsBumpLocation":
-                case "gameinteractionsBumpSide":
-                case "gameinteractionsChoiceType":
-                case "gameinteractionsEInteractionEventType":
-                case "gameinteractionsELootChoiceType":
-                case "gameinteractionsELootVisualiserControlOperation":
-                case "gameinteractionsReactionState":
-                case "gameItemEquipContexts":
-                case "gameItemUnequipContexts":
-                case "gameJournalBriefingContentType":
-                case "gameJournalEntryState":
-                case "gameJournalListenerType":
-                case "gameJournalQuestType":
-                case "gameKillType":
-                case "gameLoSMode":
-                case "gamemappinsMappinTargetType":
-                case "gamemappinsVerticalPositioning":
-                case "gameMessageSender":
-                case "gameMountingObjectType":
-                case "gameMountingRelationshipType":
-                case "gameMountingSlotRole":
-                case "gameMovingPlatformLoopType":
-                case "gameMovingPlatformMovementInitializationType":
-                case "gamePlatformMovementState":
-                case "gamePlayerCoverDirection":
-                case "gamePlayerCoverMode":
-                case "gamePlayerObstacleSystemQueryType":
-                case "gamePlayerStateMachine":
-                case "GameplayTier":
-                case "gameprojectileELaunchMode":
-                case "gameprojectileOnCollisionAction":
-                case "gamePSMBodyCarrying":
-                case "gamePSMBodyCarryingLocomotion":
-                case "gamePSMBodyCarryingStyle":
-                case "gamePSMCombat":
-                case "gamePSMCombatGadget":
-                case "gamePSMCrosshairStates":
-                case "gamePSMDetailedBodyDisposal":
-                case "gamePSMDetailedLocomotionStates":
-                case "gamePSMFallStates":
-                case "gamePSMHighLevel":
-                case "gamePSMLandingState":
-                case "gamePSMLeftHandCyberware":
-                case "gamePSMLocomotionStates":
-                case "gamePSMMelee":
-                case "gamePSMMeleeWeapon":
-                case "gamePSMNanoWireLaunchMode":
-                case "gamePSMRangedWeaponStates":
-                case "gamePSMReaction":
-                case "gamePSMStamina":
-                case "gamePSMSwimming":
-                case "gamePSMTakedown":
-                case "gamePSMTimeDilation":
-                case "gamePSMUIState":
-                case "gamePSMUpperBodyStates":
-                case "gamePSMVehicle":
-                case "gamePSMVision":
-                case "gamePSMVisionDebug":
-                case "gamePSMVitals":
-                case "gamePSMWeaponStates":
-                case "gamePSMWhip":
-                case "gamePSMWorkspotState":
-                case "gamePSMZones":
-                case "gameReprimandMappinAnimationState":
-                case "gameSaveLockReason":
-                case "gameScanningMode":
-                case "gameScanningState":
-                case "gameSceneAnimationMotionActionParamsPlacementMode":
-                case "gameScriptedBlackboardStorage":
-                case "gameSharedInventoryTag":
-                case "gamesmartGunTargetState":
-                case "gamestateMachineParameterAspect":
-                case "gameStatModifierType":
-                case "gameStatObjectsRelation":
-                case "gameStatPoolModificationTypes":
-                case "gameStoryTier":
-                case "gametargetingSystemETargetFilterStatus":
-                case "gameTelemetryDamageSituation":
-                case "gameTickableEventState":
-                case "gameTutorialBracketType":
-                case "gameuiAuthorisationNotificationType":
-                case "gameuiCharacterCustomizationPart":
-                case "gameuiDamageDigitsMode":
-                case "gameuiDamageDigitsStickingMode":
-                case "gameuiDamageIndicatorMode":
-                case "gameuiEBraindanceLayer":
-                case "gameuiEClueDescriptorMode":
-                case "gameuiEWorldMapDistrictView":
-                case "gameuiHitType":
-                case "gameuiMappinGroupState":
-                case "gameVisionModeType":
-                case "gameweaponReloadStatus":
-                case "GenericMessageNotificationResult":
-                case "GenericMessageNotificationType":
-                case "GenericNotificationType":
-                case "GOGRewardsSystemErrors":
-                case "GOGRewardsSystemStatus":
-                case "GrenadeDamageType":
-                case "grsHeistStatus":
-                case "HackingMinigameState":
-                case "HighlightContext":
-                case "HighlightMode":
-                case "hitFlag":
-                case "HitShape_Type":
-                case "HoverStatus":
-                case "HubMenuCharacterItems":
-                case "HubMenuCraftingItems":
-                case "HubMenuDatabaseItems":
-                case "HubMenuInventoryItems":
-                case "HubMenuItems":
-                case "HubVendorMenuItems":
-                case "HUDActorStatus":
-                case "HUDActorType":
-                case "HUDContext":
-                case "HUDState":
-                case "inkEButtonState":
-                case "inkEScrollDirection":
-                case "inkESliderDirection":
-                case "inkEToggleState":
-                case "inkIconResult":
-                case "inkLoadingScreenType":
-                case "inkMenuMode":
-                case "inkMenuState":
-                case "inkSelectorChangeDirection":
-                case "inputContextType":
-                case "InstanceState":
-                case "IntercomStatus":
-                case "InventoryItemAttachmentType":
-                case "InventoryModes":
-                case "InventoryPaperdollZoomArea":
-                case "InventoryTooltipDisplayContext":
-                case "ItemAdditionalInfoType":
-                case "ItemComparisonState":
-                case "ItemDisplayContext":
-                case "ItemDisplayType":
-                case "ItemFilterCategory":
-                case "ItemFilterType":
-                case "ItemLabelType":
-                case "ItemSortMode":
-                case "ItemViewModes":
-                case "JournalChangeType":
-                case "JournalNotifyOption":
-                case "LandingType":
-                case "LaserTargettingState":
-                case "MechanicalScanType":
-                case "meleeMoveDirection":
-                case "meleeQueuedAttack":
-                case "MessageViewType":
-                case "MinigameActionType":
-                case "ModuleState":
-                case "moveCirclingDirection":
-                case "moveExplorationType":
-                case "moveLineOfSight":
-                case "moveMovementType":
-                case "moveSecureFootingFailureReason":
-                case "moveSecureFootingFailureType":
-                case "NavGenAgentSize":
-                case "navNaviPositionType":
-                case "operationsMode":
-                case "OutcomeMessage":
-                case "PackageStatus":
-                case "panzerBootupUI":
-                case "PaperdollPositionAnimation":
-                case "PauseMenuAction":
-                case "PaymentStatus":
-                case "PerkMenuAttribute":
-                case "PersistenceSource":
-                case "physicsStateValue":
-                case "PlayerVisionModeControllerRefreshPolicyEnum":
-                case "PopupPosition":
-                case "ProgramEffect":
-                case "ProgramType":
-                case "ProximityProgressBarOrientation":
-                case "ProximityProgressBarState":
-                case "PuppetVehicleState":
-                case "QuantityPickerActionType":
-                case "questJournalAlignmentEventType":
-                case "questJournalSizeEventType":
-                case "questObjectInspectEventType":
-                case "questPhoneCallMode":
-                case "questPhoneCallPhase":
-                case "questPhoneStatus":
-                case "questPhoneTalkingState":
-                case "QuickSlotActionType":
-                case "QuickSlotItemType":
-                case "ReactionZones_Humanoid_Side":
-                case "Ref_1_3_3_Colors":
-                case "Ref_1_3_3_CustomSize_2":
-                case "Ref_2_3_3_Enum32Bit":
-                case "RequestType":
-                case "RipperdocFilter":
-                case "RipperdocModes":
-                case "ScannerDataType":
-                case "ScannerNetworkState":
-                case "ScannerObjectType":
-                case "scnDialogLineLanguage":
-                case "scnDialogLineType":
-                case "scnFastForwardMode":
-                case "scnPlayDirection":
-                case "scnPlaySpeed":
-                case "SecurityEventScopeSettings":
-                case "senseEShapeType":
-                case "SettingsType":
-                case "SignalType":
-                case "SignShape":
-                case "SignType":
-                case "SlotType":
-                case "TargetComponentFilterType":
-                case "TargetingSet":
-                case "telemetryInitalChoiceStage":
-                case "telemetryLevelGainReason":
-                case "ThrowType":
-                case "Tier2WalkType":
-                case "TSFMV":
-                case "TweakWeaponPose":
-                case "UIGameContext":
-                case "UIInGameNotificationType":
-                case "UIMenuNotificationType":
-                case "UIObjectiveEntryType":
-                case "vehicleAudioEventAction":
-                case "vehicleCameraType":
-                case "VehicleDoorInteractionState":
-                case "VehicleDoorState":
-                case "vehicleELightMode":
-                case "vehicleELightType":
-                case "vehicleEState":
-                case "vehicleExitDirection":
-                case "vehicleGarageState":
-                case "vehicleQuestUIEnable":
-                case "vehicleQuestWindowDestruction":
-                case "vehicleRaceUI":
-                case "vehicleSummonState":
-                case "VendorConfirmationPopupType":
-                case "VisionModePatternType":
-                case "VisualState":
-                case "WeaponPartType":
-                case "WorkspotConditionOperators":
-                case "WorkspotSlidingBehaviour":
-                case "WorkspotWeaponConditionEnum":
-                case "workWorkspotDebugMode":
-                case "worldgeometryaverageNormalDetectionHelperQueryStatus":
-                case "worldgeometryDescriptionQueryFlags":
-                case "worldgeometryDescriptionQueryStatus":
-                case "worldgeometryProbingStatus":
-                case "WorldMapTooltipType":
-                case "worldNavigationRequestStatus":
-                case "worldOffMeshConnectionType":
-                case "worldRainIntensity":
-                case "worldTrafficLightColor":
-                    var sId = reader.ReadUInt16();
-                    var str = stringList[sId];
-                    return str;
-
-                case "CC_Debug":
-                    var pos2 = reader.BaseStream.Position;
-                    var bytes = reader.ReadBytes(128);
-                    var hex = BitConverter.ToString(bytes).Replace("-", " ");
-                    reader.BaseStream.Position = pos2;
-                    try
-                    {
-                        var t1 = ReadFields(reader, stringList);
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
-                    }
-
-                    return null;
-
-                // TODO: check if thats always the case for those
-                // unknown, 2 bytes
-                case "CName":
-                case "gameStatIDType":
-                case "gameEHotkey":
-                case "gameStatPoolsSystemSave":
-                case "gameStatPoolDataValueChangeMode":
-                case "gameStatPoolDataStatPoolModificationStatus":
-                    var sId2 = reader.ReadUInt16();
-                    return stringList[sId2];
-
                 case "NodeRef":
                     var size = reader.ReadUInt16();
                     var buffer = reader.ReadBytes(size);
                     return Encoding.ASCII.GetString(buffer);
 
-                default:
-                    return ReadFields(reader, stringList);
+                case "CName":
+                    return stringList[reader.ReadUInt16()];
+
+                // Not needed, but why not
+                case "vehicleVehicleDoorInteractionState":
+                case "gameEHotkey":
+                case "gameStatIDType":
+                case "gameStatPoolDataValueChangeMode":
+                case "gameStatPoolDataStatPoolModificationStatus":
+                case "gameuiHackingMinigameState":
+                case "vehicleVehicleDoorState":
+                case "vehicleEVehicleWindowState":
+                case "vehicleCameraPerspective":
+                    var val = stringList[reader.ReadUInt16()];
+                    return val;
+
+                // TODO: special cases
+                case "KEEP_FOR_DEBUG":
+                    var cPos = reader.BaseStream.Position;
+                    var buffer2 = reader.ReadBytes(256);
+                    var debugStr = BitConverter.ToString(buffer2).Replace("-", " ");
+                    reader.BaseStream.Position = cPos;
+                    return new byte[2];
+            }
+
+            if (ENUMS.Contains(fieldType))
+                return stringList[reader.ReadUInt16()];
+
+            if (KnownFieldTypes.Contains(fieldType))
+                return ReadFields(reader, stringList);
+
+            if (KnownEnumTypes.Contains(fieldType))
+                return stringList[reader.ReadUInt16()];
+
+            // TODO:
+            var pos2 = reader.BaseStream.Position;
+            try
+            {
+                var val = ReadFields(reader, stringList);
+                if (!KnownFieldTypes.Contains(fieldType))
+                {
+                    KnownFieldTypes.Add(fieldType);
+                }
+                return val;
+            }
+            catch (Exception)
+            {
+                reader.BaseStream.Position = pos2;
+
+                var stringValue = stringList[reader.ReadUInt16()];
+                if (!KnownEnumTypes.Contains(fieldType))
+                {
+                    KnownEnumTypes.Add(fieldType);
+                }
+                return stringValue;
             }
         }
 
@@ -990,7 +303,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(data.Unknown3);
                     writer.Write(new byte[12]);
 
-                    if (data.Unknown2 == 16)
+                    if (data.Unknown2 > 1)
                     {
                         writer.Write(data.CNameHashes1.Length);
                         foreach (var hash in data.CNameHashes1)
@@ -1003,11 +316,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var stringList = GenerateStringList(data);
 
-                    var offset = (short)(stringList.Count * 4);
+                    var offset = stringList.Count * 4;
                     foreach (var str in stringList)
                     {
-                        writer.Write(offset);
-                        writer.Write(new byte[] { 0 });
+                        writer.WriteInt24(offset);
                         writer.Write((byte)(str.Length + 1));
                         offset += (short)(str.Length + 1);
                     }
@@ -1058,18 +370,13 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
 
-            if (DEBUG_WRITING)
-            {
-                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", result);
-            }
-
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(node.Id);
                     writer.Write(result);
-                    if (data.CNameHashes2.Length > 0)
+                    if (data.CNameHashes2 != null && data.CNameHashes2.Length > 0)
                     {
                         writer.Write(data.CNameHashes2.Length);
                         foreach (var hash in data.CNameHashes2)
@@ -1081,6 +388,13 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
                 node.Size = result.Length;
                 node.TrueSize = result.Length;
+            }
+
+            if (DEBUG_WRITING)
+            {
+                var buffer = new byte[result.Length - 4];
+                Array.Copy(result, 4, buffer, 0, buffer.Length);
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", buffer);
             }
 
             return result;
@@ -1117,7 +431,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     strings.Add(field.Type);
                 }
 
-                if (field.Type == "NodeRef")
+                if (field.Type == "NodeRef" || field.Type == "array:NodeRef")
                 {
                     continue;
                 }
@@ -1203,7 +517,15 @@ namespace CyberCAT.Core.Classes.Parsers
                                 writer.Write(subList.Count);
                                 foreach (var t1 in subList)
                                 {
-                                    if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
+                                    if (field.Type == "array:NodeRef")
+                                    {
+                                        var valStr = (string)t1;
+                                        var valBytes = Encoding.ASCII.GetBytes(valStr);
+
+                                        writer.Write((ushort)valStr.Length);
+                                        writer.Write(valBytes);
+                                    }
+                                    else if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                                     {
                                         var buffer = GenerateDataFromFields(subFields2, stringList);
                                         writer.Write(buffer);
@@ -1243,6 +565,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
             switch (typeStr)
             {
+                case "System.Byte":
+                    writer.Write((byte)value);
+                    break;
+
                 case "System.Int16":
                     writer.Write((short)value);
                     break;
@@ -1279,5 +605,178 @@ namespace CyberCAT.Core.Classes.Parsers
                     throw new Exception();
             }
         }
+
+        private readonly List<string> ENUMS = new List<string>
+        {
+            "ActiveMode", "ActorVisibilityStatus", "AdditionalTraceType", "AIactionParamsPackageTypes",
+            "AIArgumentType", "AIbehaviorCompletionStatus", "AIbehaviorConditionOutcomes", "AIbehaviorUpdateOutcome",
+            "AICombatSectorType", "AICombatSpaceSize", "AICommandState", "AICoverExposureMethod", "AIEExecutionOutcome",
+            "AIEInterruptionOutcome", "aimTypeEnum", "AIParameterizationType", "AIReactionCountOutcome",
+            "AISignalFlags", "AISquadType", "AIThreatPersistenceStatus", "AITrackedStatusType",
+            "AIUninterruptibleActionType", "animAimState", "animCoverAction", "animCoverState", "animHitReactionType",
+            "animLookAtChestMode", "animLookAtEyesMode", "animLookAtHeadMode", "animLookAtLeftHandedMode",
+            "animLookAtLimitDegreesType", "animLookAtLimitDistanceType", "animLookAtRightHandedMode",
+            "animLookAtStatus", "animLookAtStyle", "animLookAtTwoHandedMode", "animNPCVehicleDeathType",
+            "animStanceState", "animWeaponOwnerType", "AttitudeChange", "AttributeButtonState", "audioAudioEventFlags",
+            "audioEventActionType", "BlacklistReason", "braindanceVisionMode", "ButtonStatus", "CharacterScreenType",
+            "ClueState", "CodexCategoryType", "CodexDataSource", "CodexImageType", "coverLeanDirection",
+            "CrafringMaterialItemHighlight", "CraftingCommands", "CraftingInfoType", "CraftingMode",
+            "CraftingNotificationType", "CustomButtonType", "CustomWeaponWheelSlot", "CyberwareInfoType",
+            "CyberwareScreenType", "DamageEffectDisplayType", "damageSystemLogFlags", "DerivedFilterResult",
+            "DeviceStimType", "DMGPipelineType", "DronePose", "DropdownDisplayContext", "DropdownItemDirection",
+            "DropPointPackageStatus", "EActionContext", "EActionInactivityReson", "EActionsSequencerMode",
+            "EActionType", "EActivationState", "EAIActionPhase", "EAIActionState", "EAIActionTarget", "EAIAttitude",
+            "EAIBackgroundCombatStep", "EAICombatPreset", "EAICoverAction", "EAICoverActionDirection",
+            "EAIDismembermentBodyPart", "EAIGateEventFlags", "EAIGateSignalFlags", "EAIHitBodyPart", "EAIHitDirection",
+            "EAIHitIntensity", "EAIHitSource", "EAILastHitReactionPlayed", "EAimAssistLevel", "EAIPlayerSquadOrder",
+            "EAIRole", "EAIShootingPatternRange", "EAISquadAction", "EAISquadChoiceAlgorithm", "EAISquadRing",
+            "EAISquadTactic", "EAISquadVerb", "EAITargetType", "EAIThreatCalculationType", "EAITicketStatus",
+            "EAllowedTo", "EAnimationType", "EArgumentType", "EAttackType", "EAxisType", "EBarkList", "EBeamStyle",
+            "EBinkOperationType", "EBOOL", "EBreachOrigin", "EBroadcasteingType", "ECallbackExpressionActions",
+            "ECameraDirectionFunctionalTestsUtil", "ECarryState", "ECartOperationResult", "ECentaurShieldState",
+            "ECLSForcedState", "ECompanionDistancePreset", "ECompanionPositionPreset", "ECompareOp",
+            "EComparisonOperator", "EComparisonType", "EComponentOperation", "EComputerAnimationState",
+            "EComputerMenuType", "EConclusionQuestState", "ECooldownGameControllerMode", "ECooldownIndicatorState",
+            "ECoverSpecialAction", "ECraftingIconPositioning", "EDeathType", "EDebuggerColor",
+            "EDeviceChallengeAttribute", "EDeviceChallengeSkill", "EDeviceDurabilityState", "EDeviceDurabilityType",
+            "EDeviceStatus", "EDocumentType", "EDodgeMovementInput", "EDoorOpeningType", "EDoorSkillcheckSide",
+            "EDoorStatus", "EDoorTriggerSide", "EDoorType", "EDownedType", "EDPadSlot", "EDrillMachineRewireState",
+            "EEffectOperationType", "EEquipmentSetType", "EEquipmentSide", "EEquipmentState",
+            "EExplosiveAdditionalGameEffectType", "EFastTravelSystemInstruction", "EFastTravelTriggerType",
+            "EFilterType", "EFocusClueInvestigationState", "EFocusForcedHighlightType", "EFocusOutlineType",
+            "EForcedElevatorArrowsState", "EGameplayChallengeLevel", "EGameplayRole", "EGameSessionDataType",
+            "EGenericNotificationPriority", "EGlitchState", "EGravityType", "EGrenadeType", "EHandEquipSlot",
+            "EHitReactionMode", "EHitReactionZone", "EHitShapeType", "EHotkey", "EHotkeyRequestType", "EHudAvatarMode",
+            "EHudPhoneFunction", "EHudPhoneVisibility", "EIndustrialArmAnimations", "EInitReactionAnim",
+            "EInkAnimationPlaybackOption", "EInputCustomKey", "EInputKey", "EInventoryComboBoxMode",
+            "EInventoryDataStatDisplayType", "EItemOperationType", "EItemSlotCheckType", "EJuryrigTrapState",
+            "EKnockdownStates", "ELastUsed", "ELauncherActionType", "ELaunchMode", "ELayoutType", "ELightSequenceStage",
+            "ELightSwitchRandomizerType", "ELinkType", "ELogicOperator", "ELogType", "EMagazineAmmoState",
+            "EMappinDisplayMode", "EMappinVisualState", "EMathOperationType", "EMathOperator", "EMeasurementSystem",
+            "EMeasurementUnit", "EMeleeAttacks", "EMeleeAttackType", "EMissileRainPhase", "EMoveAssistLevel",
+            "EMovementDirection", "ENetworkRelation", "ENeutralizeType", "ENPCPhaseState", "ENPCTelemetryData",
+            "entAttachmentTarget", "entAudioDismembermentPart", "EntityNotificationType",
+            "entragdollActivationRequestType", "EOperationClassType", "EOutlineType", "EPaymentSchedule",
+            "EPermissionSource", "EPersonalLinkConnectionStatus", "EPersonalLinkSlotSide", "EPingType",
+            "EPlayerMovementDirection", "EPlaystyle", "EPlaystyleType", "EPowerDifferential",
+            "EPreventionDebugProcessReason", "EPreventionHeatStage", "EPreventionPsychoLogicType",
+            "EPreventionSystemInstruction", "EPriority", "EProgressBarContext", "EProgressBarType", "EQuestFilterType",
+            "EQuestVehicleDoorState", "EQuestVehicleWindowState", "EquipmentManipulationAction",
+            "EquipmentManipulationRequestSlot", "EquipmentManipulationRequestType", "EquipmentPriority", "ERadialMode",
+            "ERadioStationList", "EReactionValue", "ERenderingPlane", "ERentStatus", "EReprimandInstructions",
+            "ERevealDurationType", "ERevealPlayerType", "ERevealState", "EScreenRatio", "ESecurityAccessLevel",
+            "ESecurityAreaType", "ESecurityGateEntranceType", "ESecurityGateResponseType",
+            "ESecurityGateScannerIssueType", "ESecurityGateStatus", "ESecurityNotificationType", "ESecuritySystemState",
+            "ESecurityTurretStatus", "ESecurityTurretType", "ESensorDeviceStates", "ESensorDeviceWakeState",
+            "EShouldChangeAttitude", "ESlotState", "ESmartBulletPhase", "ESmartHousePreset", "ESoundStatusEffects",
+            "ESpaceFillMode", "EStatProviderDataSource", "EStatusEffectBehaviorType", "EStatusEffects",
+            "EstatusEffectsState", "ESurveillanceCameraState", "ESurveillanceCameraStatus", "ESwitchAction", "ESystems",
+            "ETakedownActionType", "ETakedownBossName", "ETargetManagerAnimGraphState", "ETauntType", "ETelemetryData",
+            "EToggleActivationTypeComputer", "EToggleOperationType", "ETooltipsStyle",
+            "ETransformAnimationOperationType", "ETransitionMode", "ETrap", "ETrapEffects", "ETriggerOperationType",
+            "ETVChannel", "ETweakAINodeType", "EUIActionState", "EUIStealthIconType", "EUploadProgramState",
+            "EVarDBMode", "EVehicleDoor", "EVehicleWindowState", "EVendorMode", "EViabilityDecision", "EVirtualSystem",
+            "EVisualizerActivityState", "EVisualizerType", "EWeaponNamesList", "EWidgetPlacementType", "EWidgetState",
+            "EWindowBlindersStates", "EWorkspotOperationType", "EWorldMapView", "EWoundedBodyPart",
+            "ExplosiveTriggerDeviceLaserState", "ExtraEffect", "Ft_Result", "Ft_TakedownStage", "Ft_TakedownType",
+            "FTNpcMountingState", "FTScriptState", "FunctionalTestsResultCode", "gameaudioeventsSurfaceDirection",
+            "gamecheatsystemFlag", "gameCityAreaType", "gameCombinedStatOperation", "gameContactType",
+            "gameCoverHeight", "gameDamageCallbackType", "gameDamagePipelineStage", "gamedataAchievement",
+            "gamedataAffiliation", "gamedataAIActionSecurityAreaType", "gamedataAIActionSecurityNotificationType",
+            "gamedataAIActionTarget", "gamedataAIActionType", "gamedataAIAdditionalTraceType",
+            "gamedataAIDirectorEntryStartType", "gamedataAIExposureMethodType", "gamedataAimAssistType",
+            "gamedataAIRingType", "gamedataAIRole", "gamedataAISmartCompositeType", "gamedataAISquadType",
+            "gamedataAITacticType", "gamedataAITicketType", "gamedataArchetypeType", "gamedataAttackSubtype",
+            "gamedataAttackType", "gamedataBuildType", "gamedataChargeStep", "gamedataChoiceCaptionPartType",
+            "gamedataCompanionDistancePreset", "gamedataConsumableBaseName", "gamedataConsumableType",
+            "gamedataDamageType", "gamedataDefenseMode", "gamedataDevelopmentPointType", "gamedataDistrict",
+            "gamedataEquipmentArea", "gamedataEthnicity", "gamedataFxAction", "gamedataFxActionType", "gamedataGender",
+            "gamedataGrenadeDeliveryMethodType", "gamedataHitPrereqConditionType", "gamedataImprovementRelation",
+            "gamedataItemCategory", "gamedataItemStructure", "gamedataItemType", "gamedataLifePath",
+            "gamedataLocomotionMode", "gamedataMappinPhase", "gamedataMappinVariant", "gamedataMeleeAttackDirection",
+            "gamedataMetaQuest", "gamedataMovementType", "gamedataNPCBehaviorState", "gamedataNPCHighLevelState",
+            "gamedataNPCQuestAffiliation", "gamedataNPCRarity", "gamedataNPCStanceState", "gamedataNPCType",
+            "gamedataNPCUpperBodyState", "gamedataObjectActionReference", "gamedataObjectActionType", "gamedataOutput",
+            "gamedataParentAttachmentType", "gamedataPerkArea", "gamedataPerkType", "gamedataPerkUtility",
+            "gamedataPingType", "gamedataPlayerBuild", "gamedataPlayerPossesion", "gamedataProficiencyType",
+            "gamedataProjectileLaunchMode", "gamedataProjectileOnCollisionAction", "gamedataQuality",
+            "gamedataReactionPresetType", "gamedataSenseObjectType", "gamedataSpawnableObjectPriority",
+            "gamedataStatPoolType", "gamedataStatType", "gamedataStatusEffectAIBehaviorFlag",
+            "gamedataStatusEffectAIBehaviorType", "gamedataStatusEffectType", "gamedataStatusEffectVariation",
+            "gamedataStimPriority", "gamedataStimPropagation", "gamedataStimType", "gamedataSubCharacter",
+            "gamedataTrackingMode", "gamedataTraitType", "gamedataTriggerMode", "gamedataUICondition",
+            "gamedataUIIconCensorFlag", "gamedataUINameplateDisplayType", "gamedataVehicleManufacturer",
+            "gamedataVehicleModel", "gamedataVehicleType", "gamedataVendorType", "gamedataWeaponEvolution",
+            "gamedataWeaponManufacturer", "gamedataWorkspotActionType", "gamedataWorkspotCategory",
+            "gamedataWorkspotReactionType", "gamedataWorldMapFilter", "gameDebugViewETextAlignment",
+            "gamedeviceActionPropertyFlags", "gamedeviceRequestType", "gameDifficulty", "gameDismBodyPart",
+            "gameDismWoundType", "gameEActionStatus", "gameEContinuousMode", "gameEEquipmentManagerState",
+            "gameEnemyStealthAwarenessState", "gameEntitySpawnerEventType", "gameEPrerequisiteType",
+            "gameEquipAnimationType", "gameEStatFlags", "gameeventsDeathDirection", "gameGodModeType",
+            "gameGrenadeThrowStartType", "gameinfluenceCollisionTestOutcome", "gameinfluenceTestLineResult",
+            "gameinputActionType", "gameinteractionsBumpIntensity", "gameinteractionsBumpLocation",
+            "gameinteractionsBumpSide", "gameinteractionsChoiceType", "gameinteractionsEInteractionEventType",
+            "gameinteractionsELootChoiceType", "gameinteractionsELootVisualiserControlOperation",
+            "gameinteractionsReactionState", "gameItemEquipContexts", "gameItemUnequipContexts",
+            "gameJournalBriefingContentType", "gameJournalEntryState", "gameJournalListenerType",
+            "gameJournalQuestType", "gameKillType", "gameLoSMode", "gamemappinsMappinTargetType",
+            "gamemappinsVerticalPositioning", "gameMessageSender", "gameMountingObjectType",
+            "gameMountingRelationshipType", "gameMountingSlotRole", "gameMovingPlatformLoopType",
+            "gameMovingPlatformMovementInitializationType", "gamePlatformMovementState", "gamePlayerCoverDirection",
+            "gamePlayerCoverMode", "gamePlayerObstacleSystemQueryType", "gamePlayerStateMachine", "GameplayTier",
+            "gameprojectileELaunchMode", "gameprojectileOnCollisionAction", "gamePSMBodyCarrying",
+            "gamePSMBodyCarryingLocomotion", "gamePSMBodyCarryingStyle", "gamePSMCombat", "gamePSMCombatGadget",
+            "gamePSMCrosshairStates", "gamePSMDetailedBodyDisposal", "gamePSMDetailedLocomotionStates",
+            "gamePSMFallStates", "gamePSMHighLevel", "gamePSMLandingState", "gamePSMLeftHandCyberware",
+            "gamePSMLocomotionStates", "gamePSMMelee", "gamePSMMeleeWeapon", "gamePSMNanoWireLaunchMode",
+            "gamePSMRangedWeaponStates", "gamePSMReaction", "gamePSMStamina", "gamePSMSwimming", "gamePSMTakedown",
+            "gamePSMTimeDilation", "gamePSMUIState", "gamePSMUpperBodyStates", "gamePSMVehicle", "gamePSMVision",
+            "gamePSMVisionDebug", "gamePSMVitals", "gamePSMWeaponStates", "gamePSMWhip", "gamePSMWorkspotState",
+            "gamePSMZones", "gameReprimandMappinAnimationState", "gameSaveLockReason", "gameScanningMode",
+            "gameScanningState", "gameSceneAnimationMotionActionParamsPlacementMode", "gameScriptedBlackboardStorage",
+            "gameSharedInventoryTag", "gamesmartGunTargetState", "gamestateMachineParameterAspect",
+            "gameStatModifierType", "gameStatObjectsRelation", "gameStatPoolModificationTypes", "gameStoryTier",
+            "gametargetingSystemETargetFilterStatus", "gameTelemetryDamageSituation", "gameTickableEventState",
+            "gameTutorialBracketType", "gameuiAuthorisationNotificationType", "gameuiCharacterCustomizationPart",
+            "gameuiDamageDigitsMode", "gameuiDamageDigitsStickingMode", "gameuiDamageIndicatorMode",
+            "gameuiEBraindanceLayer", "gameuiEClueDescriptorMode", "gameuiEWorldMapDistrictView", "gameuiHitType",
+            "gameuiMappinGroupState", "gameVisionModeType", "gameweaponReloadStatus",
+            "GenericMessageNotificationResult", "GenericMessageNotificationType", "GenericNotificationType",
+            "GOGRewardsSystemErrors", "GOGRewardsSystemStatus", "GrenadeDamageType", "grsHeistStatus",
+            "HackingMinigameState", "HighlightContext", "HighlightMode", "hitFlag", "HitShape_Type", "HoverStatus",
+            "HubMenuCharacterItems", "HubMenuCraftingItems", "HubMenuDatabaseItems", "HubMenuInventoryItems",
+            "HubMenuItems", "HubVendorMenuItems", "HUDActorStatus", "HUDActorType", "HUDContext", "HUDState",
+            "inkEButtonState", "inkEScrollDirection", "inkESliderDirection", "inkEToggleState", "inkIconResult",
+            "inkLoadingScreenType", "inkMenuMode", "inkMenuState", "inkSelectorChangeDirection", "inputContextType",
+            "InstanceState", "IntercomStatus", "InventoryItemAttachmentType", "InventoryModes",
+            "InventoryPaperdollZoomArea", "InventoryTooltipDisplayContext", "ItemAdditionalInfoType",
+            "ItemComparisonState", "ItemDisplayContext", "ItemDisplayType", "ItemFilterCategory", "ItemFilterType",
+            "ItemLabelType", "ItemSortMode", "ItemViewModes", "JournalChangeType", "JournalNotifyOption", "LandingType",
+            "LaserTargettingState", "MechanicalScanType", "meleeMoveDirection", "meleeQueuedAttack", "MessageViewType",
+            "MinigameActionType", "ModuleState", "moveCirclingDirection", "moveExplorationType", "moveLineOfSight",
+            "moveMovementType", "moveSecureFootingFailureReason", "moveSecureFootingFailureType", "NavGenAgentSize",
+            "navNaviPositionType", "operationsMode", "OutcomeMessage", "PackageStatus", "panzerBootupUI",
+            "PaperdollPositionAnimation", "PauseMenuAction", "PaymentStatus", "PerkMenuAttribute", "PersistenceSource",
+            "physicsStateValue", "PlayerVisionModeControllerRefreshPolicyEnum", "PopupPosition", "ProgramEffect",
+            "ProgramType", "ProximityProgressBarOrientation", "ProximityProgressBarState", "PuppetVehicleState",
+            "QuantityPickerActionType", "questJournalAlignmentEventType", "questJournalSizeEventType",
+            "questObjectInspectEventType", "questPhoneCallMode", "questPhoneCallPhase", "questPhoneStatus",
+            "questPhoneTalkingState", "QuickSlotActionType", "QuickSlotItemType", "ReactionZones_Humanoid_Side",
+            "Ref_1_3_3_Colors", "Ref_1_3_3_CustomSize_2", "Ref_2_3_3_Enum32Bit", "RequestType", "RipperdocFilter",
+            "RipperdocModes", "ScannerDataType", "ScannerNetworkState", "ScannerObjectType", "scnDialogLineLanguage",
+            "scnDialogLineType", "scnFastForwardMode", "scnPlayDirection", "scnPlaySpeed", "SecurityEventScopeSettings",
+            "senseEShapeType", "SettingsType", "SignalType", "SignShape", "SignType", "SlotType",
+            "TargetComponentFilterType", "TargetingSet", "telemetryInitalChoiceStage", "telemetryLevelGainReason",
+            "ThrowType", "Tier2WalkType", "TSFMV", "TweakWeaponPose", "UIGameContext", "UIInGameNotificationType",
+            "UIMenuNotificationType", "UIObjectiveEntryType", "vehicleAudioEventAction", "vehicleCameraType",
+            "VehicleDoorInteractionState", "VehicleDoorState", "vehicleELightMode", "vehicleELightType",
+            "vehicleEState", "vehicleExitDirection", "vehicleGarageState", "vehicleQuestUIEnable",
+            "vehicleQuestWindowDestruction", "vehicleRaceUI", "vehicleSummonState", "VendorConfirmationPopupType",
+            "VisionModePatternType", "VisualState", "WeaponPartType", "WorkspotConditionOperators",
+            "WorkspotSlidingBehaviour", "WorkspotWeaponConditionEnum", "workWorkspotDebugMode",
+            "worldgeometryaverageNormalDetectionHelperQueryStatus", "worldgeometryDescriptionQueryFlags",
+            "worldgeometryDescriptionQueryStatus", "worldgeometryProbingStatus", "WorldMapTooltipType",
+            "worldNavigationRequestStatus", "worldOffMeshConnectionType", "worldRainIntensity", "worldTrafficLightColor"
+        };
     }
 }
