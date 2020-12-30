@@ -54,10 +54,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 // only for ScriptableSystemsContainer
                 var count1 = reader.ReadInt32();
 
-                result.CNameHashes = new ulong[count1];
+                result.CNameHashes1 = new ulong[count1];
                 for (int i = 0; i < count1; i++)
                 {
-                    result.CNameHashes[i] = reader.ReadUInt64();
+                    result.CNameHashes1[i] = reader.ReadUInt64();
                 }
             }
 
@@ -129,7 +129,19 @@ namespace CyberCAT.Core.Classes.Parsers
 
             // only for PSData, what the heck is this...
             readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            result.TrailingBytes = reader.ReadBytes(readSize);
+            if (readSize > 0)
+            {
+                var count1 = reader.ReadInt32();
+
+                result.CNameHashes2 = new ulong[count1];
+                for (int i = 0; i < count1; i++)
+                {
+                    result.CNameHashes2[i] = reader.ReadUInt64();
+                }
+            }
+
+            readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
+            Debug.Assert(readSize == 0);
 
             return result;
         }
@@ -980,8 +992,8 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     if (data.Unknown2 == 16)
                     {
-                        writer.Write(data.CNameHashes.Length);
-                        foreach (var hash in data.CNameHashes)
+                        writer.Write(data.CNameHashes1.Length);
+                        foreach (var hash in data.CNameHashes1)
                         {
                             writer.Write(hash);
                         }
@@ -1057,7 +1069,14 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
                     writer.Write(result);
-                    writer.Write(data.TrailingBytes);
+                    if (data.CNameHashes2.Length > 0)
+                    {
+                        writer.Write(data.CNameHashes2.Length);
+                        foreach (var hash in data.CNameHashes2)
+                        {
+                            writer.Write(hash);
+                        }
+                    }
                 }
                 result = stream.ToArray();
                 node.Size = result.Length;
