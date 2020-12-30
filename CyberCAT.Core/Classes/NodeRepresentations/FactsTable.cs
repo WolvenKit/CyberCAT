@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
@@ -10,20 +9,15 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class FactEntry
         {
             public uint Hash { get; set; }
-
+            public string FactName => FactResolver.GetName(Hash);
             public uint Value { get; set; }
 
             public override string ToString()
             {
-                return FactResolver.GetName(Hash);
+                return $"{FactName}";
             }
         }
 
-        public List<FactEntry> FactEntries { get; set; }
-
-        public FactsTable()
-        {
-            FactEntries = new List<FactEntry>();
-        }
+        public FactEntry[] FactEntries { get; set; }
     }
 }

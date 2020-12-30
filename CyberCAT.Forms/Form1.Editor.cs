@@ -24,6 +24,7 @@ namespace CyberCAT.Forms
             { typeof(ItemData), typeof(PropertyEditControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
             { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
+            { typeof(FactsTable.FactEntry), typeof(PropertyEditControl) },
             { typeof(FactsTable), typeof(PropertyEditControl) },
             { typeof(FactsDB), typeof(PropertyEditControl) },
             { typeof(ItemDropStorage), typeof(PropertyEditControl) },
@@ -55,7 +56,7 @@ namespace CyberCAT.Forms
             }
         }
 
-        private void BuildVisualSubTree(NodeEntryTreeNode treeNode)
+        private void BuildVisualSubTree(NodeEntryTreeNode treeNode, string filter)
         {
             if (treeNode.Node.Value is Inventory inv)
             {
@@ -67,17 +68,18 @@ namespace CyberCAT.Forms
                     var data = real.Value as Inventory.SubInventory;
                     foreach (var itemNode in treeNode.Node.Children)
                     {
-                        if (data.Items.Contains(itemNode.Value))
+                        if (data.Items.Contains(itemNode.Value) && (filter == null || itemNode.ToString().ToLowerInvariant().Contains(filter)))
                         {
                             subinventory.Children.Add(itemNode);
                         }
                     }
                 }
-                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(subinventories).ToArray());
+                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(subinventories.Where(_ => filter == null || _.Children.Count > 0).ToList()).ToArray());
                 foreach (var child in treeNode.Nodes)
                 {
-                    BuildVisualSubTree((NodeEntryTreeNode)child);
+                    BuildVisualSubTree((NodeEntryTreeNode)child, filter);
                 }
+
                 return;
             }
 
@@ -91,9 +93,29 @@ namespace CyberCAT.Forms
                     var treeSection = new NodeEntryTreeNode(new VirtualNodeEntry { Value = section });
                     foreach (var appearanceSection in section.AppearanceSections)
                     {
-                        treeSection.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry { Value = appearanceSection }));
+                        if (filter == null || appearanceSection.ToString().ToLowerInvariant().Contains(filter))
+                        {
+                            treeSection.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry { Value = appearanceSection }));
+                        }
                     }
-                    treeNode.Nodes.Add(treeSection);
+
+                    if (treeSection.Nodes.Count > 0)
+                    {
+                        treeNode.Nodes.Add(treeSection);
+                    }
+                }
+
+                return;
+            }
+
+            if (treeNode.Node.Value is FactsTable ft)
+            {
+                foreach (var fe in ft.FactEntries)
+                {
+                    if (filter == null || fe.ToString().ToLowerInvariant().Contains(filter))
+                    {
+                        treeNode.Nodes.Add(new NodeEntryTreeNode(new VirtualNodeEntry { Value = fe }));
+                    }
                 }
 
                 return;
@@ -101,10 +123,16 @@ namespace CyberCAT.Forms
 
             if (treeNode.Node.Children.Count > 0)
             {
-                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
-                foreach (var child in treeNode.Nodes)
+                var nodes = new List<NodeEntryTreeNode>();
+                nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
+
+                foreach (var child in nodes)
                 {
-                    BuildVisualSubTree((NodeEntryTreeNode)child);
+                    BuildVisualSubTree((NodeEntryTreeNode)child, filter);
+                    if (filter == null || child.Text.ToLowerInvariant().Contains(filter) || child.Nodes.Count > 0)
+                    {
+                        treeNode.Nodes.Add(child);
+                    }
                 }
             }
         }
@@ -141,7 +169,7 @@ namespace CyberCAT.Forms
             foreach (var node in _activeSaveFile.Nodes)
             {
                 var treeNode = new NodeEntryTreeNode(node);
-                BuildVisualSubTree(treeNode);
+                BuildVisualSubTree(treeNode, null);
                 EditorTree.Nodes.Add(treeNode);
             }
         }
@@ -207,7 +235,7 @@ namespace CyberCAT.Forms
                 foreach (var node in _activeSaveFile.Nodes)
                 {
                     var treeNode = new NodeEntryTreeNode(node);
-                    BuildVisualSubTree(treeNode);
+                    BuildVisualSubTree(treeNode, null);
                     EditorTree.Nodes.Add(treeNode);
                 }
 
@@ -234,7 +262,7 @@ namespace CyberCAT.Forms
             {
                 var treeNode = new NodeEntryTreeNode(node);
 
-                AddChildrenToTreeNodeWithFilter(treeNode, filterString);
+                BuildVisualSubTree(treeNode, filterString);
                 if (treeNode.Text.ToLowerInvariant().Contains(filterString) || treeNode.Nodes.Count > 0)
                 {
                     EditorTree.Nodes.Add(treeNode);

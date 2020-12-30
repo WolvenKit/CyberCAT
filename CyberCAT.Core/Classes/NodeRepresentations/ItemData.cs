@@ -9,11 +9,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public ulong ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
+            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
             public uint ItemID { get; set; }
             public byte[] UnknownBytes { get; set; }
             public override string ToString()
             {
-                return ItemName;
+                return $"{ItemName} ({ItemGameName})";
             }
         }
         [JsonObject]
@@ -97,11 +99,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public ulong ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
+            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
             public HeaderThing Header { get; set; }
             public string UnknownString { get; set; }
-            public ulong TdbId1 { get; set; }
-            public string TdbId1Name => NameResolver.GetName(TdbId1);
-            public int ChildrenCount => Children.Length;
+            public ulong AttachmentSlotTdbId { get; set; }
+            public string AttachmentSlotName => NameResolver.GetName(AttachmentSlotTdbId);
+            public int ChildrenCount => Children?.Length ?? 0;
             public Kind2DataNode[] Children { get; set; }
             public uint Unknown2 { get; set; }
             public ulong TdbId2 { get; set; }
@@ -110,7 +114,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public uint Unknown4 { get; set; }
             public override string ToString()
             {
-                return ItemName;
+                return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
             }
         }
         [JsonObject]
@@ -142,6 +146,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public ulong ItemTdbId { get; set; }
         public string ItemName => NameResolver.GetName(ItemTdbId);
+        public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+        public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
         public HeaderThing Header { get; set; }
 
@@ -151,7 +157,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public override string ToString()
         {
-            return ItemName;
+            return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
         }
     }
 }
