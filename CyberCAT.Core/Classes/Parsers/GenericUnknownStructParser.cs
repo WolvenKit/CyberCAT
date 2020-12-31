@@ -111,7 +111,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     // end of mainData
                     Debug.Assert((br.BaseStream.Position - 4) == result.TotalLength);
 
-                    readSize = node.Size - ((int)br.BaseStream.Position - node.Offset);
+                    readSize = (int) (br.BaseStream.Length - br.BaseStream.Position);
                     if (readSize > 0)
                     {
                         var count1 = br.ReadInt32();
