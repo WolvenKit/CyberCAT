@@ -29,100 +29,99 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); //skip Id
 
-            var nodeStartPos = reader.BaseStream.Position;
+            int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
+            var dataBuffer = reader.ReadBytes(readSize);
 
-            int readSize = 0;
             if (DEBUG_WRITING)
             {
-                readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-                var tmpBuffer = reader.ReadBytes(readSize);
-                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", tmpBuffer);
-                reader.BaseStream.Position = nodeStartPos;
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", dataBuffer);
             }
 
-            result.TotalLength = reader.ReadUInt32();
-            result.Unknown1 = reader.ReadBytes(4);
-            result.Unknown2 = reader.ReadUInt32();
-            result.Unknown3 = reader.ReadBytes(4);
-
-            var stringTableOffset = reader.ReadUInt32();
-            var indexTableOffset = reader.ReadUInt32();
-            var dataTableOffset = reader.ReadUInt32();
-
-            if (result.Unknown2 > 1)
+            using (var ms = new MemoryStream(dataBuffer))
             {
-                var count1 = reader.ReadInt32();
-
-                result.CNameHashes1 = new ulong[count1];
-                for (int i = 0; i < count1; i++)
+                using (var br = new BinaryReader(ms))
                 {
-                    result.CNameHashes1[i] = reader.ReadUInt64();
-                }
-            }
+                    result.TotalLength = br.ReadUInt32();
+                    result.Unknown1 = br.ReadBytes(4);
+                    result.Unknown2 = br.ReadUInt32();
+                    result.Unknown3 = br.ReadBytes(4);
 
-            var stringTablePosition = reader.BaseStream.Position + stringTableOffset;
-            var indexTablePosition = reader.BaseStream.Position + indexTableOffset;
-            var dataTablePosition = reader.BaseStream.Position + dataTableOffset;
+                    var stringListOffset = br.ReadUInt32();
+                    var dataIndexListOffset = br.ReadUInt32();
+                    var dataListOffset = br.ReadUInt32();
 
-            // start of stringIndexTable
-            var stringList = new List<string>();
-            var stringBasePosition = reader.BaseStream.Position;
-            var stringOffset = reader.ReadUInt24();
-            var count2 = stringOffset / 4 - 1; // there could be another count somewhere...
-            var stringLength = reader.ReadByte(); // string is null terminated?
+                    if (result.Unknown2 > 1)
+                    {
+                        var count1 = br.ReadInt32();
 
-            // length - 1 because null terminated...
-            // could probably ignore the stringIndexTable and read null terminated strings, then you also don't net the hacky jump after this
-            stringList.Add(ReadStringAtOffset(reader, stringBasePosition, stringOffset, stringLength - 1));
+                        result.CNameHashes1 = new ulong[count1];
+                        for (int i = 0; i < count1; i++)
+                        {
+                            result.CNameHashes1[i] = br.ReadUInt64();
+                        }
+                    }
 
-            // there could be another count somewhere...
-            for (int i = 0; i < count2; i++)
-            {
-                stringOffset = reader.ReadUInt24();
-                stringLength = reader.ReadByte();
-                stringList.Add(ReadStringAtOffset(reader, stringBasePosition, stringOffset, stringLength - 1));
-            }
+                    var stringIndexListPosition = br.BaseStream.Position;
+                    var stringListPosition = stringIndexListPosition + stringListOffset;
+                    var dataIndexListPosition = stringIndexListPosition + dataIndexListOffset;
+                    var dataListPosition = stringIndexListPosition + dataListOffset;
 
-            reader.BaseStream.Position = stringBasePosition + stringOffset + stringLength;
+                    // start of stringIndexList
+                    var stringInfoList = new List<KeyValuePair<uint, byte>>();
+                    for (int i = 0; i < (stringListPosition - stringIndexListPosition) / 4; i++)
+                    {
+                        stringInfoList.Add(new KeyValuePair<uint, byte>(br.ReadUInt24(), br.ReadByte()));
+                    }
 
-            Debug.Assert(reader.BaseStream.Position == indexTablePosition);
+                    // start of stringList
+                    Debug.Assert(br.BaseStream.Position == stringListPosition);
 
-            var count3 = (dataTableOffset - indexTableOffset) / 8;
+                    var stringList = new List<string>();
+                    foreach (var pair in stringInfoList)
+                    {
+                        Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pair.Key);
+                        stringList.Add(br.ReadString(pair.Value - 1));
+                        br.Skip(1); // null terminator
+                    }
 
-            var pointerList = new List<KeyValuePair<uint, uint>>();
-            for (int i = 0; i < count3; i++)
-            {
-                pointerList.Add(new KeyValuePair<uint, uint>(reader.ReadUInt32(), reader.ReadUInt32()));
-            }
+                    // start of dataIndexList
+                    Debug.Assert(br.BaseStream.Position == dataIndexListPosition);
 
-            Debug.Assert(reader.BaseStream.Position == dataTablePosition);
+                    var pointerList = new List<KeyValuePair<uint, uint>>();
+                    for (int i = 0; i < (dataListPosition - dataIndexListPosition) / 8; i++)
+                    {
+                        pointerList.Add(new KeyValuePair<uint, uint>(br.ReadUInt32(), br.ReadUInt32()));
+                    }
 
-            result.ClassList = new GenericUnknownStruct.ClassEntry[pointerList.Count];
-            var pos = reader.BaseStream.Position;
-            for (int i = 0; i < pointerList.Count; i++)
-            {
-                var offset = pointerList[i].Value - pointerList[0].Value;
+                    // start of dataList
+                    Debug.Assert(br.BaseStream.Position == dataListPosition);
 
-                var classEntry = new GenericUnknownStruct.ClassEntry();
-                classEntry.Name = stringList[(int)pointerList[i].Key];
+                    result.ClassList = new GenericUnknownStruct.ClassEntry[pointerList.Count];
+                    for (int i = 0; i < pointerList.Count; i++)
+                    {
+                        var classEntry = new GenericUnknownStruct.ClassEntry();
+                        classEntry.Name = stringList[(int)pointerList[i].Key];
 
-                reader.BaseStream.Position = pos + offset;
-                classEntry.Fields = ReadFields(reader, stringList);
+                        br.BaseStream.Position = stringIndexListPosition + pointerList[i].Value;
+                        classEntry.Fields = ReadFields(br, stringList);
 
-                result.ClassList[i] = classEntry;
-            }
+                        result.ClassList[i] = classEntry;
+                    }
 
-            Debug.Assert((reader.BaseStream.Position - nodeStartPos - 4) == result.TotalLength);
+                    // end of mainData
+                    Debug.Assert((br.BaseStream.Position - 4) == result.TotalLength);
 
-            readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            if (readSize > 0)
-            {
-                var count1 = reader.ReadInt32();
+                    readSize = node.Size - ((int)br.BaseStream.Position - node.Offset);
+                    if (readSize > 0)
+                    {
+                        var count1 = br.ReadInt32();
 
-                result.CNameHashes2 = new ulong[count1];
-                for (int i = 0; i < count1; i++)
-                {
-                    result.CNameHashes2[i] = reader.ReadUInt64();
+                        result.CNameHashes2 = new ulong[count1];
+                        for (int i = 0; i < count1; i++)
+                        {
+                            result.CNameHashes2[i] = br.ReadUInt64();
+                        }
+                    }
                 }
             }
 
