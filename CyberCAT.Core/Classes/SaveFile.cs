@@ -248,8 +248,10 @@ namespace CyberCAT.Core.Classes
                 chunk.DecompressedData = new byte[0];
             }
 
-            chunks.Last().DecompressedChunkSize = uncompressedData.Length - (140 << 16);
-            chunks.Last().CompressedData = new byte[uncompressedData.Length - (140 << 16)];
+            var offset = (chunks.Count - 1) * 4;
+
+            chunks.Last().DecompressedChunkSize = uncompressedData.Length - (offset << 16);
+            chunks.Last().CompressedData = new byte[uncompressedData.Length - (offset << 16)];
             var header = BuildHeader(chunks);
             //var header = BuildHeader(new List<Lz4Chunk>());
             byte[] result;
