@@ -20920,8 +20920,8 @@
     "name": "Items.SimpleFabricEnhancer11"
   },
   "122936272008": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Reduces reload time and adds an extra mod slot. Higher Chance to apply burn and stun.",
+    "gameName": "La Chingona Dorada",
     "name": "Items.Preset_Nue_Jackie_Epic"
   },
   "122939717072": {
@@ -22600,8 +22600,8 @@
     "name": "Items.Shorts_01_rich_01_Epic"
   },
   "124491260803": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Custom-made for Johnny Silverhand. The guy had taste.",
+    "gameName": "Malorian Arms 3516",
     "name": "Items.Preset_Silverhand_3516"
   },
   "124496781344": {
@@ -42355,8 +42355,8 @@
     "name": "Items.generic_q112_warehouse_ammo"
   },
   "142254269062": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Custom-made for Johnny Silverhand. The guy had taste.",
+    "gameName": "Malorian Arms 3516",
     "name": "Items.Preset_Silverhand_3516_Epic"
   },
   "142255405531": {
@@ -43955,8 +43955,8 @@
     "name": "BaseStatusEffect.OverloadCooldown"
   },
   "143829939072": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Reduces reload time and adds an extra mod slot. Higher Chance to apply burn and stun.",
+    "gameName": "La Chingona Dorada",
     "name": "Items.Preset_Nue_Jackie_Legendary"
   },
   "143835285325": {
@@ -61805,8 +61805,8 @@
     "name": "Items.generic_metacorp_shard_Legendary"
   },
   "166345261196": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Custom-made for Johnny Silverhand. The guy had taste.",
+    "gameName": "Malorian Arms 3516",
     "name": "Items.Preset_Silverhand_3516_Legendary"
   },
   "166354297381": {
@@ -91490,8 +91490,8 @@
     "name": "NPCBehaviorState.State3"
   },
   "98793512338": {
-    "gameDescription": "",
-    "gameName": "",
+    "gameDescription": "Reduces reload time and adds an extra mod slot. Higher Chance to apply burn and stun.",
+    "gameName": "La Chingona Dorada",
     "name": "Items.Preset_Nue_Jackie"
   },
   "98795056339": {
