@@ -414,7 +414,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        private List<string> GenerateStringList(GenericUnknownStruct data)
+        protected List<string> GenerateStringList(GenericUnknownStruct data)
         {
             var result = new HashSet<string>();
 
@@ -467,7 +467,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        private byte[] GenerateDataFromFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
+        protected byte[] GenerateDataFromFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
         {
             byte[] result;
 

@@ -4664,7 +4664,6 @@ namespace CyberCAT.Core.DumpedEnums
 		ThrusterJumpDown,
 		Climb400cmDown
 	}
-	[JsonConverter(typeof(StringEnumConverter))]
 	public enum gameStatIDType
 	{
 		EntityID,
@@ -6733,7 +6732,6 @@ namespace CyberCAT.Core.DumpedEnums
 		Count,
 		Invalid
 	}
-	[JsonConverter(typeof(StringEnumConverter))]
 	public enum gamedataStatType
 	{
 		Acceleration,

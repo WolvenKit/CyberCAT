@@ -29,6 +29,7 @@ namespace CyberCAT.Forms
             { typeof(ItemDropStorage), typeof(PropertyEditControl) },
             { typeof(ItemDropStorageManager), typeof(PropertyEditControl) },
             { typeof(GenericUnknownStruct), typeof(PropertyEditControl) },
+            { typeof(StatsSystem), typeof(PropertyEditControl) },
         };
 
         private void EditorAddChildrenToTreeNode(NodeEntryTreeNode treeNode)
