@@ -9,11 +9,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public ulong ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
+            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
             public uint ItemID { get; set; }
             public byte[] UnknownBytes { get; set; }
             public override string ToString()
             {
-                return ItemName;
+                return $"{ItemName} ({ItemGameName})";
             }
         }
         [JsonObject]
@@ -60,49 +62,53 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
         [JsonObject]
-        public class KindData
+        public class ItemInnerData
         {
 
         }
         [JsonObject]
-        public class Kind1Data : KindData
+        public class SimpleItemData : ItemInnerData
         {
-            public ItemFlags Flags { get; set; }
-            public uint CreationTime { get; set; }
             public uint Quantity { get; set; }
 
             public override string ToString()
             {
-                return $"{Quantity}x {Flags} @{CreationTime}";
+                return $"{Quantity}x";
             }
         }
         [JsonObject]
-        public class Kind2Data : KindData
+        public class ModableItemData : ItemInnerData
         {
-            public ItemFlags Flags { get; set; }
-            public uint CreationTime { get; set; }
             public ulong TdbId1 { get; set; }
             public string TdbId1Name => NameResolver.GetName(TdbId1);
             public uint Unknown2 { get; set; }
             public uint Unknown3 { get; set; }
-            public Kind2DataNode RootNode { get; set; }
+            public ItemModData RootNode { get; set; }
 
             public override string ToString()
             {
-                return $"{Flags} {TdbId1Name}";
+                return $"{TdbId1Name}";
             }
         }
+
         [JsonObject]
-        public class Kind2DataNode
+        public class ModableItemWithQuantityData : ModableItemData
+        {
+            public uint Quantity { get; set; }
+        }
+        [JsonObject]
+        public class ItemModData
         {
             public ulong ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
+            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
             public HeaderThing Header { get; set; }
             public string UnknownString { get; set; }
-            public ulong TdbId1 { get; set; }
-            public string TdbId1Name => NameResolver.GetName(TdbId1);
-            public int ChildrenCount => Children.Length;
-            public Kind2DataNode[] Children { get; set; }
+            public ulong AttachmentSlotTdbId { get; set; }
+            public string AttachmentSlotName => NameResolver.GetName(AttachmentSlotTdbId);
+            public int ChildrenCount => Children?.Length ?? 0;
+            public ItemModData[] Children { get; set; }
             public uint Unknown2 { get; set; }
             public ulong TdbId2 { get; set; }
             public string TdbId2Name => NameResolver.GetName(TdbId2);
@@ -110,7 +116,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public uint Unknown4 { get; set; }
             public override string ToString()
             {
-                return ItemName;
+                return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
             }
         }
         [JsonObject]
@@ -136,22 +142,26 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"Kind: {Kind}";
+                return $"Type: {Kind} | {ItemId:X8}";
             }
         }
 
         public ulong ItemTdbId { get; set; }
         public string ItemName => NameResolver.GetName(ItemTdbId);
+        public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
+        public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
         public HeaderThing Header { get; set; }
+        public ItemFlags Flags { get; set; }
+        public uint CreationTime { get; set; }
 
-        public KindData Data { get; set; }
+        public ItemInnerData Data { get; set; }
 
         public byte[] TrailingBytes { get; set; }
 
         public override string ToString()
         {
-            return ItemName;
+            return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
         }
     }
 }
