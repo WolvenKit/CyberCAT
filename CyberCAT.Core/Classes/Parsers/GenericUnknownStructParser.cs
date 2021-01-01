@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
@@ -12,16 +14,6 @@ namespace CyberCAT.Core.Classes.Parsers
     public class GenericUnknownStructParser
     {
         public const bool DEBUG_WRITING = false;
-
-        private string ReadStringAtOffset(BinaryReader reader, long baseAddress, uint offset, int length)
-        {
-            var origPos = reader.BaseStream.Position;
-            reader.BaseStream.Position = baseAddress + offset;
-            var bytes = reader.ReadBytes(length);
-            reader.BaseStream.Position = origPos;
-
-            return Encoding.ASCII.GetString(bytes);
-        }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
@@ -96,17 +88,40 @@ namespace CyberCAT.Core.Classes.Parsers
                     // start of dataList
                     Debug.Assert(br.BaseStream.Position == dataListPosition);
 
+                    var bufferDict = new Dictionary<int, byte[]>();
                     result.ClassList = new GenericUnknownStruct.ClassEntry[pointerList.Count];
-                    for (int i = 0; i < pointerList.Count; i++)
+                    for (int i = 0; i < result.ClassList.Length; i++)
                     {
+                        Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pointerList[i].Value);
+
+                        long length;
+                        if (i < result.ClassList.Length - 1)
+                        {
+                            length = pointerList[i+1].Value - pointerList[i].Value;
+                        }
+                        else
+                        {
+                            length = result.TotalLength - br.BaseStream.Position + 4;
+                        }
+
                         var classEntry = new GenericUnknownStruct.ClassEntry();
                         classEntry.Name = stringList[(int)pointerList[i].Key];
 
-                        br.BaseStream.Position = stringIndexListPosition + pointerList[i].Value;
-                        classEntry.Fields = ReadFields(br, stringList);
+                        bufferDict.Add(i, br.ReadBytes((int)length));
 
                         result.ClassList[i] = classEntry;
                     }
+
+                    Parallel.ForEach(bufferDict, (pair) =>
+                    {
+                        using (var ms2 = new MemoryStream(pair.Value))
+                        {
+                            using (var br2 = new BinaryReader(ms2))
+                            {
+                                result.ClassList[pair.Key].Fields = ReadFields(br2, stringList);
+                            }
+                        }
+                    });
 
                     // end of mainData
                     Debug.Assert((br.BaseStream.Position - 4) == result.TotalLength);
@@ -323,7 +338,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         offset += (short)(str.Length + 1);
                     }
 
-                    var stringTableOffset = writer.BaseStream.Position - pos;
+                    var stringListOffset = writer.BaseStream.Position - pos;
 
                     foreach (var str in stringList)
                     {
@@ -332,38 +347,37 @@ namespace CyberCAT.Core.Classes.Parsers
                         writer.Write(new byte[1]);
                     }
 
-                    var indexTableOffset = writer.BaseStream.Position - pos;
+                    var dataIndexListOffset = writer.BaseStream.Position - pos;
 
-                    foreach (var classEntry in data.ClassList)
+                    var bufferList = new byte[data.ClassList.Length][];
+                    Parallel.For(0, data.ClassList.Length, (index, state) =>
                     {
-                        var strId = stringList.IndexOf(classEntry.Name);
-                        writer.Write(strId);
-                        writer.Write(new byte[4]);
-                    }
+                        bufferList[index] = GenerateDataFromFields(data.ClassList[index].Fields, stringList);
+                    });
 
-                    var dataTableOffset = writer.BaseStream.Position - pos;
-
+                    var dataListOffset = writer.BaseStream.Position - pos + (data.ClassList.Length * 8);
+                    int classOffset = (int)dataListOffset;
                     for (int i = 0; i < data.ClassList.Length; i++)
                     {
-                        var classEntry = data.ClassList[i];
+                        var strId = stringList.IndexOf(data.ClassList[i].Name);
+                        writer.Write(strId);
+                        writer.Write(classOffset);
+                        classOffset += bufferList[i].Length;
+                    }
 
-                        var buffer = GenerateDataFromFields(classEntry.Fields, stringList);
+                    Debug.Assert(writer.BaseStream.Position == dataListOffset + pos);
 
-                        var classOffset = writer.BaseStream.Position - pos;
+                    foreach (var buffer in bufferList)
+                    {
                         writer.Write(buffer);
-                        var currentPos = writer.BaseStream.Position;
-
-                        writer.BaseStream.Position = pos + indexTableOffset + (i * 8) + 4;
-                        writer.Write((uint)classOffset);
-                        writer.BaseStream.Position = currentPos;
                     }
 
                     writer.BaseStream.Position = 0;
                     writer.Write((int)writer.BaseStream.Length - 4);
                     writer.BaseStream.Position += 12;
-                    writer.Write((int)stringTableOffset);
-                    writer.Write((int)indexTableOffset);
-                    writer.Write((int)dataTableOffset);
+                    writer.Write((int)stringListOffset);
+                    writer.Write((int)dataIndexListOffset);
+                    writer.Write((int)dataListOffset);
                 }
 
                 result = stream.ToArray();
@@ -396,39 +410,29 @@ namespace CyberCAT.Core.Classes.Parsers
                 File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", buffer);
             }
 
+            GC.Collect();
             return result;
         }
 
         private List<string> GenerateStringList(GenericUnknownStruct data)
         {
-            var result = new List<string>();
+            var result = new HashSet<string>();
 
             foreach (var classEntry in data.ClassList)
             {
-                if (!result.Contains(classEntry.Name))
-                {
-                    result.Add(classEntry.Name);
-                }
-
+                result.Add(classEntry.Name);
                 GenerateStringListFromFields(classEntry.Fields, ref result);
             }
 
-            return result;
+            return result.ToList();
         }
 
-        private void GenerateStringListFromFields(GenericUnknownStruct.BaseGenericField[] fields, ref List<string> strings)
+        private void GenerateStringListFromFields(GenericUnknownStruct.BaseGenericField[] fields, ref HashSet<string> strings)
         {
             foreach (dynamic field in fields)
             {
-                if (!strings.Contains(field.Name))
-                {
-                    strings.Add(field.Name);
-                }
-
-                if (!strings.Contains(field.Type))
-                {
-                    strings.Add(field.Type);
-                }
+                strings.Add(field.Name);
+                strings.Add(field.Type);
 
                 if (field.Type == "NodeRef" || field.Type == "array:NodeRef")
                 {
@@ -451,22 +455,14 @@ namespace CyberCAT.Core.Classes.Parsers
                             }
                             else if (t1 is String)
                             {
-                                var strVal = (string)t1;
-                                if (!strings.Contains(strVal))
-                                {
-                                    strings.Add(strVal);
-                                }
+                                strings.Add((string) t1);
                             }
                         }
                     }
                 }
                 else if (field.Value is String)
                 {
-                    var strVal = (string)field.Value;
-                    if (!strings.Contains(strVal))
-                    {
-                        strings.Add(strVal);
-                    }
+                    strings.Add((string)field.Value);
                 }
             }
         }
