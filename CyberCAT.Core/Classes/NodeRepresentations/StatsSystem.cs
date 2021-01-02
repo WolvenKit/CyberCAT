@@ -9,7 +9,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class StatsSystem
     {
-        public byte[] Unknown1 { get=>_genericStruct.Unknown1; set=>_genericStruct.Unknown1=value; }
+        /*public byte[] Unknown1 { get=>_genericStruct.Unknown1; set=>_genericStruct.Unknown1=value; }
         public uint Unknown2 { get=>_genericStruct.Unknown2; set=>_genericStruct.Unknown2=value; }
         public byte[] Unknown3 { get=>_genericStruct.Unknown3; set=>_genericStruct.Unknown3=value; }
         public ulong[] CNameHashes1 { get=>_genericStruct.CNameHashes1; set=> _genericStruct.CNameHashes1=value; }
@@ -24,6 +24,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public GenericUnknownStruct GetUnknownStruct()
         {
             return _genericStruct;
-        }
+        }*/
     }
 }

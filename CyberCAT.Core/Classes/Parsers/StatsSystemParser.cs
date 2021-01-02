@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.Mapping;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
@@ -25,7 +26,16 @@ namespace CyberCAT.Core.Classes.Parsers
             DisplayName = "Stat System Parser";
             Guid = Guid.Parse("{8F3788DA-3ECD-47FC-A6F9-A50314F61AA7}");
         }
-        private int IndexOf(GenericUnknownStruct.ClassEntry[] classList, object obj)
+
+        public new object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
+        {
+            var dict = MappingHelper.GetMappings("CyberCAT.Core.Classes.Mapping.StatsSystem");
+            var result = base.ReadWithMapping(node, reader, parsers, dict);
+
+            return result;
+        }
+
+        /*private int IndexOf(GenericUnknownStruct.ClassEntry[] classList, object obj)
         {
             for (int i = 0; i < classList.Length; i++)
             {
@@ -38,6 +48,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public new object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            //var dict = MappingHelper.GetMappings("CyberCAT.Core.Classes.Mapping.StatsSystem");
+            //var result = base.ReadWithMapping(node, reader, parsers, dict);
+
             var result = (GenericUnknownStruct)base.Read(node, reader, parsers);
 
             foreach (var classEntry in result.ClassList)
@@ -439,6 +452,6 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 return EntityHash.ToString();
             }
-        }
+        }*/
     }
 }

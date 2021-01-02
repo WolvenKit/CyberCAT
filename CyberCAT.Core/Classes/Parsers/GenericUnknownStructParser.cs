@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
+using CyberCAT.Core.Classes.Mapping;
+using CyberCAT.Core.Classes.Mapping.StatsSystem;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
@@ -15,7 +18,47 @@ namespace CyberCAT.Core.Classes.Parsers
     {
         public const bool DEBUG_WRITING = false;
 
+        private static readonly Dictionary<string, Type> _dumpedEnums = new Dictionary<string, Type>();
+        private List<string> _stringList;
+
+        private bool _doMapping;
+        private Dictionary<string, Type> _typeDictionary;
+
+        private void init()
+        {
+            if (_dumpedEnums.Count == 0)
+            {
+                var types = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(s => s.GetTypes())
+                    .Where(p => p.Namespace == "CyberCAT.Core.DumpedEnums" && p.IsEnum);
+
+                foreach (var type in types)
+                {
+                    _dumpedEnums.Add(type.Name, type);
+                }
+            }
+        }
+
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
+        {
+            _doMapping = false;
+
+            init();
+
+            return internalRead(node, reader, parsers);
+        }
+
+        public object ReadWithMapping(NodeEntry node, BinaryReader reader, List<INodeParser> parsers, Dictionary<string, Type> typeDictionary)
+        {
+            _doMapping = true;
+            _typeDictionary = typeDictionary;
+
+            init();
+
+            return internalRead(node, reader, parsers);
+        }
+
+        private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             var result = new GenericUnknownStruct();
 
@@ -68,11 +111,11 @@ namespace CyberCAT.Core.Classes.Parsers
                     // start of stringList
                     Debug.Assert(br.BaseStream.Position == stringListPosition);
 
-                    var stringList = new List<string>();
+                    _stringList = new List<string>();
                     foreach (var pair in stringInfoList)
                     {
                         Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pair.Key);
-                        stringList.Add(br.ReadString(pair.Value - 1));
+                        _stringList.Add(br.ReadString(pair.Value - 1));
                         br.Skip(1); // null terminator
                     }
 
@@ -89,7 +132,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     Debug.Assert(br.BaseStream.Position == dataListPosition);
 
                     var bufferDict = new Dictionary<int, byte[]>();
-                    result.ClassList = new GenericUnknownStruct.ClassEntry[pointerList.Count];
+                    result.ClassList = new GenericUnknownStruct.BaseClassEntry[pointerList.Count];
                     for (int i = 0; i < result.ClassList.Length; i++)
                     {
                         Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pointerList[i].Value);
@@ -104,8 +147,17 @@ namespace CyberCAT.Core.Classes.Parsers
                             length = result.TotalLength - br.BaseStream.Position + 4;
                         }
 
-                        var classEntry = new GenericUnknownStruct.ClassEntry();
-                        classEntry.Name = stringList[(int)pointerList[i].Key];
+                        GenericUnknownStruct.BaseClassEntry classEntry;
+                        if (_doMapping)
+                        {
+                            classEntry = GetInstanceFromName(_stringList[(int) pointerList[i].Key]);
+                        }
+                        else
+                        {
+                            classEntry = new GenericUnknownStruct.ClassEntry();
+                            ((GenericUnknownStruct.ClassEntry)classEntry).Name = _stringList[(int)pointerList[i].Key];
+
+                        }
 
                         bufferDict.Add(i, br.ReadBytes((int)length));
 
@@ -118,7 +170,10 @@ namespace CyberCAT.Core.Classes.Parsers
                         {
                             using (var br2 = new BinaryReader(ms2))
                             {
-                                result.ClassList[pair.Key].Fields = ReadFields(br2, stringList);
+                                if (_doMapping)
+                                    ReadMappedFields(br2, result.ClassList[pair.Key]);
+                                else
+                                    ((GenericUnknownStruct.ClassEntry)result.ClassList[pair.Key]).Fields = ReadUnmappedFields(br2);
                             }
                         }
                     });
@@ -146,34 +201,103 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public GenericUnknownStruct.BaseGenericField[] ReadFields(BinaryReader reader, List<string> stringList)
+        private class FieldInfo
+        {
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public uint Offset { get; set; }
+        }
+
+        private Type GetTypeFromName(string name)
+        {
+            if (_typeDictionary.ContainsKey(name))
+            {
+                return _typeDictionary[name];
+            }
+
+            return null;
+        }
+
+        private GenericUnknownStruct.BaseClassEntry GetInstanceFromName(string name)
+        {
+            if (_typeDictionary.ContainsKey(name))
+            {
+                var classType = _typeDictionary[name];
+                return (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(classType);
+            }
+
+            throw new Exception();
+        }
+
+        private void SetProperty(GenericUnknownStruct.BaseClassEntry cls, string fieldName, object value)
+        {
+            foreach (var prop in cls.GetType().GetProperties())
+            {
+                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == fieldName);
+                if (attr != null)
+                {
+                    if (prop.PropertyType.IsEnum)
+                    {
+                        value = (int)Enum.Parse(prop.PropertyType, (string)value);
+                    }
+
+                    prop.SetValue(cls, value);
+                }
+            }
+        }
+
+        private FieldInfo[] ReadFieldInfos(BinaryReader reader)
+        {
+            var fieldArray = new FieldInfo[reader.ReadUInt16()];
+            for (int i = 0; i < fieldArray.Length; i++)
+            {
+                fieldArray[i] = new FieldInfo
+                {
+                    Name = _stringList[reader.ReadUInt16()],
+                    Type = _stringList[reader.ReadUInt16()],
+                    Offset = reader.ReadUInt32()
+                };
+            }
+
+            return fieldArray;
+        }
+
+        private object ReadMappedFields(BinaryReader reader, GenericUnknownStruct.BaseClassEntry cls)
         {
             var startPos = reader.BaseStream.Position;
 
-            // Testing time
-            var fieldCount = reader.ReadUInt16();
-
-            var fieldArray = new GenericUnknownStruct.BaseGenericField[fieldCount];
-            var offsetList = new uint[fieldCount];
-            for (int i = 0; i < fieldCount; i++)
+            var fieldInfos = ReadFieldInfos(reader);
+            for (int i = 0; i < fieldInfos.Length; i++)
             {
-                fieldArray[i] = new GenericUnknownStruct.BaseGenericField();
+                reader.BaseStream.Position = startPos + fieldInfos[i].Offset;
 
-                fieldArray[i].Name = stringList[reader.ReadUInt16()];
-                fieldArray[i].Type = stringList[reader.ReadUInt16()];
-                offsetList[i] = reader.ReadUInt32();
+                var fieldTypeName = fieldInfos[i].Type;
+                if (fieldTypeName.StartsWith("array:"))
+                    fieldTypeName = fieldTypeName.Substring("array:".Length);
+
+                var ret = ReadMappedFieldValue(reader, cls, fieldInfos[i].Name, fieldInfos[i].Type);
+                SetProperty(cls, fieldInfos[i].Name, ret);
             }
 
-            for (int i = 0; i < fieldArray.Length; i++)
-            {
-                reader.BaseStream.Position = startPos + offsetList[i];
+            return null;
+        }
 
-                var val = ReadFieldValue(reader, fieldArray[i].Name, fieldArray[i].Type, stringList);
+        public GenericUnknownStruct.BaseGenericField[] ReadUnmappedFields(BinaryReader reader)
+        {
+            var startPos = reader.BaseStream.Position;
+
+            var fieldInfos = ReadFieldInfos(reader);
+            var fieldArray = new GenericUnknownStruct.BaseGenericField[fieldInfos.Length];
+            for (int i = 0; i < fieldInfos.Length; i++)
+            {
+                reader.BaseStream.Position = startPos + fieldInfos[i].Offset;
+
+                var val = ReadUnappedFieldValue(reader, fieldInfos[i].Name, fieldInfos[i].Type);
 
                 var type = typeof(GenericUnknownStruct.GenericField<>).MakeGenericType(val.GetType());
                 dynamic field = Activator.CreateInstance(type, val);
-                field.Name = fieldArray[i].Name;
-                field.Type = fieldArray[i].Type;
+                field.Name = fieldInfos[i].Name;
+                field.Type = fieldInfos[i].Type;
 
                 fieldArray[i] = field;
             }
@@ -184,7 +308,154 @@ namespace CyberCAT.Core.Classes.Parsers
         public static List<string> KnownFieldTypes = new List<string>();
         public static List<string> KnownEnumTypes = new List<string>();
 
-        public object ReadFieldValue(BinaryReader reader, string fieldName, string fieldType, List<string> stringList)
+        private object ReadMappedFieldValue(BinaryReader reader, GenericUnknownStruct.BaseClassEntry cls, string fieldName, string fieldTypeName)
+        {
+            if (fieldTypeName.StartsWith("array:") || fieldTypeName.StartsWith("static:") || fieldTypeName.StartsWith("["))
+            {
+                if (fieldTypeName.StartsWith("array:"))
+                    fieldTypeName = fieldTypeName.Substring("array:".Length);
+                else if (fieldTypeName.StartsWith("static:"))
+                    fieldTypeName = fieldTypeName.Substring(fieldTypeName.IndexOf(',') + 1);
+                else
+                    fieldTypeName = fieldTypeName.Substring(fieldTypeName.IndexOf(']') + 1);
+
+                var arraySize = reader.ReadUInt32();
+
+                Type fieldType;
+                if (fieldTypeName.StartsWith("handle:"))
+                    fieldType = typeof(uint);
+                else
+                    fieldType = GetTypeFromName(fieldTypeName);
+
+                if (fieldType == null && _dumpedEnums.ContainsKey(fieldTypeName))
+                    fieldType = _dumpedEnums[fieldTypeName];
+
+                var arr = (IList)Array.CreateInstance(fieldType, arraySize);
+
+                for (int i = 0; i < arraySize; i++)
+                {
+                    var val = ReadMappedFieldValue(reader, cls, fieldName, fieldTypeName);
+                    if (fieldType.IsEnum)
+                    {
+                        arr[i] = Enum.Parse(fieldType, (string) val);
+                    }
+                    else if (fieldType == typeof(Handle))
+                    {
+                        arr[i] = new Handle()
+                        {
+                            Pointer = (uint) val
+                        };
+                    }
+                    else
+                    {
+                        arr[i] = val;
+                    }
+                }
+
+                return arr;
+            }
+
+            if (fieldTypeName.StartsWith("script_ref:"))
+            {
+                throw new Exception();
+            }
+
+            if (fieldTypeName.StartsWith("handle:"))
+            {
+                return reader.ReadUInt32();
+            }
+
+            switch (fieldTypeName)
+            {
+                case "Bool":
+                    return reader.ReadByte() != 0;
+
+                case "Int32":
+                    return reader.ReadInt32();
+
+                case "Uint32":
+                    return reader.ReadUInt32();
+
+                case "Int64":
+                    return reader.ReadInt64();
+
+                case "Uint64":
+                case "TweakDBID":
+                    return reader.ReadUInt64();
+
+                case "Float":
+                    return reader.ReadSingle();
+
+                case "NodeRef":
+                    var size = reader.ReadUInt16();
+                    var buffer = reader.ReadBytes(size);
+                    return Encoding.ASCII.GetString(buffer);
+
+                case "CName":
+                    return _stringList[reader.ReadUInt16()];
+
+                // Not needed, but why not
+                case "vehicleVehicleDoorInteractionState":
+                case "gameEHotkey":
+                case "gameStatIDType":
+                case "gameStatPoolDataValueChangeMode":
+                case "gameStatPoolDataStatPoolModificationStatus":
+                case "gameuiHackingMinigameState":
+                case "vehicleVehicleDoorState":
+                case "vehicleEVehicleWindowState":
+                case "vehicleCameraPerspective":
+                    var val = _stringList[reader.ReadUInt16()];
+                    return val;
+
+                // TODO: special cases
+                case "KEEP_FOR_DEBUG":
+                    var cPos = reader.BaseStream.Position;
+                    var buffer2 = reader.ReadBytes(256);
+                    var debugStr = BitConverter.ToString(buffer2).Replace("-", " ");
+                    reader.BaseStream.Position = cPos;
+                    return new byte[2];
+            }
+
+            if (_dumpedEnums.ContainsKey(fieldTypeName) || KnownEnumTypes.Contains(fieldTypeName))
+            {
+                var strIdx = reader.ReadUInt16();
+                return _stringList[strIdx];
+            }
+                
+
+            if (KnownFieldTypes.Contains(fieldTypeName))
+            {
+                var subCls = GetInstanceFromName(fieldTypeName);
+                ReadMappedFields(reader, subCls);
+                return subCls;
+            }
+
+            // TODO:
+            var pos2 = reader.BaseStream.Position;
+            try
+            {
+                var subCls = GetInstanceFromName(fieldTypeName);
+                ReadMappedFields(reader, subCls);
+                if (!KnownFieldTypes.Contains(fieldTypeName))
+                {
+                    KnownFieldTypes.Add(fieldTypeName);
+                }
+                return subCls;
+            }
+            catch (Exception e)
+            {
+                reader.BaseStream.Position = pos2;
+
+                var stringValue = _stringList[reader.ReadUInt16()];
+                if (!KnownEnumTypes.Contains(fieldTypeName))
+                {
+                    KnownEnumTypes.Add(fieldTypeName);
+                }
+                return stringValue;
+            }
+        }
+
+        private object ReadUnappedFieldValue(BinaryReader reader, string fieldName, string fieldType)
         {
             if (fieldType.StartsWith("array:") || fieldType.StartsWith("static:") || fieldType.StartsWith("["))
             {
@@ -199,7 +470,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 object result = null;
                 for (int i = 0; i < arraySize; i++)
                 {
-                    var val = ReadFieldValue(reader, fieldName, fieldType, stringList);
+                    var val = ReadUnappedFieldValue(reader, fieldName, fieldType);
 
                     if (i == 0)
                         result = Array.CreateInstance(val.GetType(), arraySize);
@@ -246,7 +517,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     return Encoding.ASCII.GetString(buffer);
 
                 case "CName":
-                    return stringList[reader.ReadUInt16()];
+                    return _stringList[reader.ReadUInt16()];
 
                 // Not needed, but why not
                 case "vehicleVehicleDoorInteractionState":
@@ -258,7 +529,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "vehicleVehicleDoorState":
                 case "vehicleEVehicleWindowState":
                 case "vehicleCameraPerspective":
-                    var val = stringList[reader.ReadUInt16()];
+                    var val = _stringList[reader.ReadUInt16()];
                     return val;
 
                 // TODO: special cases
@@ -270,20 +541,20 @@ namespace CyberCAT.Core.Classes.Parsers
                     return new byte[2];
             }
 
-            if (ENUMS.Contains(fieldType))
-                return stringList[reader.ReadUInt16()];
+            if (_dumpedEnums.ContainsKey(fieldType))
+                return _stringList[reader.ReadUInt16()];
 
             if (KnownFieldTypes.Contains(fieldType))
-                return ReadFields(reader, stringList);
+                return ReadUnmappedFields(reader);
 
             if (KnownEnumTypes.Contains(fieldType))
-                return stringList[reader.ReadUInt16()];
+                return _stringList[reader.ReadUInt16()];
 
             // TODO:
             var pos2 = reader.BaseStream.Position;
             try
             {
-                var val = ReadFields(reader, stringList);
+                var val = ReadUnmappedFields(reader);
                 if (!KnownFieldTypes.Contains(fieldType))
                 {
                     KnownFieldTypes.Add(fieldType);
@@ -294,7 +565,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 reader.BaseStream.Position = pos2;
 
-                var stringValue = stringList[reader.ReadUInt16()];
+                var stringValue = _stringList[reader.ReadUInt16()];
                 if (!KnownEnumTypes.Contains(fieldType))
                 {
                     KnownEnumTypes.Add(fieldType);
@@ -352,15 +623,30 @@ namespace CyberCAT.Core.Classes.Parsers
                     var bufferList = new byte[data.ClassList.Length][];
                     Parallel.For(0, data.ClassList.Length, (index, state) =>
                     {
-                        bufferList[index] = GenerateDataFromFields(data.ClassList[index].Fields, stringList);
+                        if (_doMapping)
+                        {
+                            bufferList[index] = GenerateDataFromMappedFields(data.ClassList[index], stringList);
+                        }
+                        else
+                        {
+                            bufferList[index] = GenerateDataFromUnmappedFields(((GenericUnknownStruct.ClassEntry)data.ClassList[index]).Fields, stringList);
+                        }
                     });
 
                     var dataListOffset = writer.BaseStream.Position - pos + (data.ClassList.Length * 8);
                     int classOffset = (int)dataListOffset;
                     for (int i = 0; i < data.ClassList.Length; i++)
                     {
-                        var strId = stringList.IndexOf(data.ClassList[i].Name);
-                        writer.Write(strId);
+                        if (_doMapping)
+                        {
+                            var strId = stringList.IndexOf(GetRealNameFromClass(data.ClassList[i]));
+                            writer.Write(strId);
+                        }
+                        else
+                        {
+                            var strId = stringList.IndexOf(((GenericUnknownStruct.ClassEntry)data.ClassList[i]).Name);
+                            writer.Write(strId);
+                        }
                         writer.Write(classOffset);
                         classOffset += bufferList[i].Length;
                     }
@@ -414,20 +700,124 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
+        private string GetRealNameFromClass(GenericUnknownStruct.BaseClassEntry cls)
+        {
+            var attr = (RealNameAttribute)Attribute.GetCustomAttribute(cls.GetType(), typeof(RealNameAttribute));
+            if (attr == null)
+                throw new Exception();
+
+            return attr.Name;
+        }
+
+        private string GetRealNameFromProperty(PropertyInfo prop)
+        {
+            var nameAttr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
+            if (nameAttr == null)
+                throw new Exception();
+
+            return nameAttr.Name;
+        }
+
         protected List<string> GenerateStringList(GenericUnknownStruct data)
         {
             var result = new HashSet<string>();
 
             foreach (var classEntry in data.ClassList)
             {
-                result.Add(classEntry.Name);
-                GenerateStringListFromFields(classEntry.Fields, ref result);
+                if (_doMapping)
+                {
+                    result.Add(GetRealNameFromClass(classEntry));
+                    GenerateStringListFromMappedFields(classEntry, ref result);
+                }
+                else
+                {
+                    result.Add(((GenericUnknownStruct.ClassEntry)classEntry).Name);
+                    GenerateStringListFromUnmappedFields(((GenericUnknownStruct.ClassEntry)classEntry).Fields, ref result);
+                }
             }
 
             return result.ToList();
         }
 
-        private void GenerateStringListFromFields(GenericUnknownStruct.BaseGenericField[] fields, ref HashSet<string> strings)
+        private string GetRealTypeFromProperty(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo prop)
+        {
+            string typeName = null;
+
+            var typeAttr = ((RealTypeAttribute[])prop.GetCustomAttributes(typeof(RealTypeAttribute), true)).FirstOrDefault();
+            if (typeAttr != null)
+                typeName = typeAttr.Type;
+
+            if (prop.PropertyType.IsEnum && _dumpedEnums.ContainsKey(prop.PropertyType.Name))
+                typeName = prop.PropertyType.Name;
+
+            if (prop.PropertyType.IsArray && prop.PropertyType.GetElementType().IsEnum && _dumpedEnums.ContainsKey(prop.PropertyType.GetElementType().Name))
+                typeName = prop.PropertyType.GetElementType().Name;
+
+            if (typeName == null)
+                typeName = _typeDictionary.FirstOrDefault(x => prop.PropertyType.IsArray ? x.Value == prop.PropertyType.GetElementType() : x.Value == prop.PropertyType).Key;
+
+            if (typeName == null)
+                throw new Exception();
+
+            // TODO: static and []
+            if (prop.PropertyType.IsArray)
+                typeName = "array:" + typeName;
+
+            return typeName;
+        }
+
+        private void GenerateStringListFromMappedFields(GenericUnknownStruct.BaseClassEntry cls, ref HashSet<string> strings)
+        {
+            var props = cls.GetType().GetProperties();
+            foreach (var prop in props)
+            {
+                var realType = GetRealTypeFromProperty(cls, prop);
+                
+                if (prop.PropertyType.IsArray)
+                {
+                    var arr = (IList) prop.GetValue(cls);
+                    if (arr != null)
+                    {
+                        strings.Add(GetRealNameFromProperty(prop));
+                        strings.Add(realType);
+                        foreach (var val in arr)
+                        {
+                            if (val is GenericUnknownStruct.BaseClassEntry)
+                            {
+                                GenerateStringListFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, ref strings);
+                            }
+                            else if (val.GetType().IsEnum)
+                            {
+                                strings.Add(val.ToString());
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    strings.Add(GetRealNameFromProperty(prop));
+                    strings.Add(realType);
+
+                    var val = prop.GetValue(cls);
+                    if (val == null)
+                        continue;
+
+                    if (realType == "CName")
+                        strings.Add((string) val);
+                    if (prop.PropertyType.IsEnum)
+                    {
+                        strings.Add(Enum.GetName(prop.PropertyType, val));
+                    }
+                    
+                    if (val is GenericUnknownStruct.BaseClassEntry)
+                    {
+                        GenerateStringListFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, ref strings);
+                    }
+                }
+            }
+        }
+
+        private void GenerateStringListFromUnmappedFields(GenericUnknownStruct.BaseGenericField[] fields, ref HashSet<string> strings)
         {
             foreach (dynamic field in fields)
             {
@@ -442,7 +832,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     if (field.Value is GenericUnknownStruct.BaseGenericField[] subFields1)
                     {
-                        GenerateStringListFromFields(subFields1, ref strings);
+                        GenerateStringListFromUnmappedFields(subFields1, ref strings);
                     }
                     else
                     {
@@ -451,7 +841,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         {
                             if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                             {
-                                GenerateStringListFromFields(subFields2, ref strings);
+                                GenerateStringListFromUnmappedFields(subFields2, ref strings);
                             }
                             else if (t1 is String)
                             {
@@ -467,7 +857,112 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        protected byte[] GenerateDataFromFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
+        protected byte[] GenerateDataFromMappedFields(GenericUnknownStruct.BaseClassEntry cls, List<string> strings)
+        {
+            byte[] result;
+
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                {
+                    var props = cls.GetType().GetProperties();
+
+                    var count = 0;
+                    foreach (var prop in props)
+                    {
+                        var val = prop.GetValue(cls);
+                        if (val != null)
+                            count++;
+                    }
+                    writer.Write((ushort)count);
+
+                    foreach (var prop in props)
+                    {
+                        var val = prop.GetValue(cls);
+                        if (val != null)
+                        {
+                            writer.Write((ushort)strings.IndexOf(GetRealNameFromProperty(prop)));
+                            writer.Write((ushort)strings.IndexOf(GetRealTypeFromProperty(cls, prop)));
+                            writer.Write(new byte[4]); // offset
+                        }
+                    }
+
+                    var cnt = 0;
+                    for (int i = 0; i < props.Length; i++)
+                    {
+                        var val1 = props[i].GetValue(cls);
+                        if (val1 == null)
+                            continue;
+
+                        var pos = writer.BaseStream.Position;
+                        writer.BaseStream.Position = 6 + (cnt * 8);
+                        cnt++;
+                        writer.Write((uint)pos);
+                        writer.BaseStream.Position = pos;
+
+                        var realType = GetRealTypeFromProperty(cls, props[i]);
+
+                        if (props[i].PropertyType.IsArray)
+                        {
+                            var elementType = realType.Substring("array:".Length);
+
+                            var arr = (IList)props[i].GetValue(cls);
+                            if (arr != null)
+                            {
+                                writer.Write(arr.Count);
+                                foreach (var val in arr)
+                                {
+                                    if (val is GenericUnknownStruct.BaseClassEntry)
+                                    {
+                                        var buffer = GenerateDataFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, strings);
+                                        writer.Write(buffer);
+                                    }
+                                    else if (elementType.StartsWith("handle:"))
+                                    {
+                                        writer.Write((uint)val);
+                                    }
+                                    else if (val.GetType().IsEnum)
+                                    {
+                                        WriteValue(writer, (ushort)strings.IndexOf(val.ToString()));
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (val1 is GenericUnknownStruct.BaseClassEntry)
+                            {
+                                var buffer = GenerateDataFromMappedFields((GenericUnknownStruct.BaseClassEntry)val1, strings);
+                                writer.Write(buffer);
+                            }
+                            else if (val1 is string)
+                            {
+                                if (realType == "CName")
+                                {
+                                    var idx = (ushort) strings.IndexOf((string)val1);
+                                    writer.Write(idx);
+                                }
+                            }
+                            else if (props[i].PropertyType.IsEnum)
+                            {
+                                var idx = (ushort) strings.IndexOf(val1.ToString());
+                                WriteValue(writer, idx);
+                            }
+                            else
+                            {
+                                WriteValue(writer, val1);
+                            }
+                        }
+                    }
+                }
+
+                result = stream.ToArray();
+            }
+
+            return result;
+        }
+
+        protected byte[] GenerateDataFromUnmappedFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
         {
             byte[] result;
 
@@ -503,7 +998,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         {
                             if (field.Value is GenericUnknownStruct.BaseGenericField[] subFields1)
                             {
-                                var buffer = GenerateDataFromFields(subFields1, stringList);
+                                var buffer = GenerateDataFromUnmappedFields(subFields1, stringList);
                                 writer.Write(buffer);
                             }
                             else
@@ -522,7 +1017,7 @@ namespace CyberCAT.Core.Classes.Parsers
                                     }
                                     else if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                                     {
-                                        var buffer = GenerateDataFromFields(subFields2, stringList);
+                                        var buffer = GenerateDataFromUnmappedFields(subFields2, stringList);
                                         writer.Write(buffer);
                                     }
                                     else if (t1 is String)
@@ -600,178 +1095,5 @@ namespace CyberCAT.Core.Classes.Parsers
                     throw new Exception();
             }
         }
-
-        private readonly List<string> ENUMS = new List<string>
-        {
-            "ActiveMode", "ActorVisibilityStatus", "AdditionalTraceType", "AIactionParamsPackageTypes",
-            "AIArgumentType", "AIbehaviorCompletionStatus", "AIbehaviorConditionOutcomes", "AIbehaviorUpdateOutcome",
-            "AICombatSectorType", "AICombatSpaceSize", "AICommandState", "AICoverExposureMethod", "AIEExecutionOutcome",
-            "AIEInterruptionOutcome", "aimTypeEnum", "AIParameterizationType", "AIReactionCountOutcome",
-            "AISignalFlags", "AISquadType", "AIThreatPersistenceStatus", "AITrackedStatusType",
-            "AIUninterruptibleActionType", "animAimState", "animCoverAction", "animCoverState", "animHitReactionType",
-            "animLookAtChestMode", "animLookAtEyesMode", "animLookAtHeadMode", "animLookAtLeftHandedMode",
-            "animLookAtLimitDegreesType", "animLookAtLimitDistanceType", "animLookAtRightHandedMode",
-            "animLookAtStatus", "animLookAtStyle", "animLookAtTwoHandedMode", "animNPCVehicleDeathType",
-            "animStanceState", "animWeaponOwnerType", "AttitudeChange", "AttributeButtonState", "audioAudioEventFlags",
-            "audioEventActionType", "BlacklistReason", "braindanceVisionMode", "ButtonStatus", "CharacterScreenType",
-            "ClueState", "CodexCategoryType", "CodexDataSource", "CodexImageType", "coverLeanDirection",
-            "CrafringMaterialItemHighlight", "CraftingCommands", "CraftingInfoType", "CraftingMode",
-            "CraftingNotificationType", "CustomButtonType", "CustomWeaponWheelSlot", "CyberwareInfoType",
-            "CyberwareScreenType", "DamageEffectDisplayType", "damageSystemLogFlags", "DerivedFilterResult",
-            "DeviceStimType", "DMGPipelineType", "DronePose", "DropdownDisplayContext", "DropdownItemDirection",
-            "DropPointPackageStatus", "EActionContext", "EActionInactivityReson", "EActionsSequencerMode",
-            "EActionType", "EActivationState", "EAIActionPhase", "EAIActionState", "EAIActionTarget", "EAIAttitude",
-            "EAIBackgroundCombatStep", "EAICombatPreset", "EAICoverAction", "EAICoverActionDirection",
-            "EAIDismembermentBodyPart", "EAIGateEventFlags", "EAIGateSignalFlags", "EAIHitBodyPart", "EAIHitDirection",
-            "EAIHitIntensity", "EAIHitSource", "EAILastHitReactionPlayed", "EAimAssistLevel", "EAIPlayerSquadOrder",
-            "EAIRole", "EAIShootingPatternRange", "EAISquadAction", "EAISquadChoiceAlgorithm", "EAISquadRing",
-            "EAISquadTactic", "EAISquadVerb", "EAITargetType", "EAIThreatCalculationType", "EAITicketStatus",
-            "EAllowedTo", "EAnimationType", "EArgumentType", "EAttackType", "EAxisType", "EBarkList", "EBeamStyle",
-            "EBinkOperationType", "EBOOL", "EBreachOrigin", "EBroadcasteingType", "ECallbackExpressionActions",
-            "ECameraDirectionFunctionalTestsUtil", "ECarryState", "ECartOperationResult", "ECentaurShieldState",
-            "ECLSForcedState", "ECompanionDistancePreset", "ECompanionPositionPreset", "ECompareOp",
-            "EComparisonOperator", "EComparisonType", "EComponentOperation", "EComputerAnimationState",
-            "EComputerMenuType", "EConclusionQuestState", "ECooldownGameControllerMode", "ECooldownIndicatorState",
-            "ECoverSpecialAction", "ECraftingIconPositioning", "EDeathType", "EDebuggerColor",
-            "EDeviceChallengeAttribute", "EDeviceChallengeSkill", "EDeviceDurabilityState", "EDeviceDurabilityType",
-            "EDeviceStatus", "EDocumentType", "EDodgeMovementInput", "EDoorOpeningType", "EDoorSkillcheckSide",
-            "EDoorStatus", "EDoorTriggerSide", "EDoorType", "EDownedType", "EDPadSlot", "EDrillMachineRewireState",
-            "EEffectOperationType", "EEquipmentSetType", "EEquipmentSide", "EEquipmentState",
-            "EExplosiveAdditionalGameEffectType", "EFastTravelSystemInstruction", "EFastTravelTriggerType",
-            "EFilterType", "EFocusClueInvestigationState", "EFocusForcedHighlightType", "EFocusOutlineType",
-            "EForcedElevatorArrowsState", "EGameplayChallengeLevel", "EGameplayRole", "EGameSessionDataType",
-            "EGenericNotificationPriority", "EGlitchState", "EGravityType", "EGrenadeType", "EHandEquipSlot",
-            "EHitReactionMode", "EHitReactionZone", "EHitShapeType", "EHotkey", "EHotkeyRequestType", "EHudAvatarMode",
-            "EHudPhoneFunction", "EHudPhoneVisibility", "EIndustrialArmAnimations", "EInitReactionAnim",
-            "EInkAnimationPlaybackOption", "EInputCustomKey", "EInputKey", "EInventoryComboBoxMode",
-            "EInventoryDataStatDisplayType", "EItemOperationType", "EItemSlotCheckType", "EJuryrigTrapState",
-            "EKnockdownStates", "ELastUsed", "ELauncherActionType", "ELaunchMode", "ELayoutType", "ELightSequenceStage",
-            "ELightSwitchRandomizerType", "ELinkType", "ELogicOperator", "ELogType", "EMagazineAmmoState",
-            "EMappinDisplayMode", "EMappinVisualState", "EMathOperationType", "EMathOperator", "EMeasurementSystem",
-            "EMeasurementUnit", "EMeleeAttacks", "EMeleeAttackType", "EMissileRainPhase", "EMoveAssistLevel",
-            "EMovementDirection", "ENetworkRelation", "ENeutralizeType", "ENPCPhaseState", "ENPCTelemetryData",
-            "entAttachmentTarget", "entAudioDismembermentPart", "EntityNotificationType",
-            "entragdollActivationRequestType", "EOperationClassType", "EOutlineType", "EPaymentSchedule",
-            "EPermissionSource", "EPersonalLinkConnectionStatus", "EPersonalLinkSlotSide", "EPingType",
-            "EPlayerMovementDirection", "EPlaystyle", "EPlaystyleType", "EPowerDifferential",
-            "EPreventionDebugProcessReason", "EPreventionHeatStage", "EPreventionPsychoLogicType",
-            "EPreventionSystemInstruction", "EPriority", "EProgressBarContext", "EProgressBarType", "EQuestFilterType",
-            "EQuestVehicleDoorState", "EQuestVehicleWindowState", "EquipmentManipulationAction",
-            "EquipmentManipulationRequestSlot", "EquipmentManipulationRequestType", "EquipmentPriority", "ERadialMode",
-            "ERadioStationList", "EReactionValue", "ERenderingPlane", "ERentStatus", "EReprimandInstructions",
-            "ERevealDurationType", "ERevealPlayerType", "ERevealState", "EScreenRatio", "ESecurityAccessLevel",
-            "ESecurityAreaType", "ESecurityGateEntranceType", "ESecurityGateResponseType",
-            "ESecurityGateScannerIssueType", "ESecurityGateStatus", "ESecurityNotificationType", "ESecuritySystemState",
-            "ESecurityTurretStatus", "ESecurityTurretType", "ESensorDeviceStates", "ESensorDeviceWakeState",
-            "EShouldChangeAttitude", "ESlotState", "ESmartBulletPhase", "ESmartHousePreset", "ESoundStatusEffects",
-            "ESpaceFillMode", "EStatProviderDataSource", "EStatusEffectBehaviorType", "EStatusEffects",
-            "EstatusEffectsState", "ESurveillanceCameraState", "ESurveillanceCameraStatus", "ESwitchAction", "ESystems",
-            "ETakedownActionType", "ETakedownBossName", "ETargetManagerAnimGraphState", "ETauntType", "ETelemetryData",
-            "EToggleActivationTypeComputer", "EToggleOperationType", "ETooltipsStyle",
-            "ETransformAnimationOperationType", "ETransitionMode", "ETrap", "ETrapEffects", "ETriggerOperationType",
-            "ETVChannel", "ETweakAINodeType", "EUIActionState", "EUIStealthIconType", "EUploadProgramState",
-            "EVarDBMode", "EVehicleDoor", "EVehicleWindowState", "EVendorMode", "EViabilityDecision", "EVirtualSystem",
-            "EVisualizerActivityState", "EVisualizerType", "EWeaponNamesList", "EWidgetPlacementType", "EWidgetState",
-            "EWindowBlindersStates", "EWorkspotOperationType", "EWorldMapView", "EWoundedBodyPart",
-            "ExplosiveTriggerDeviceLaserState", "ExtraEffect", "Ft_Result", "Ft_TakedownStage", "Ft_TakedownType",
-            "FTNpcMountingState", "FTScriptState", "FunctionalTestsResultCode", "gameaudioeventsSurfaceDirection",
-            "gamecheatsystemFlag", "gameCityAreaType", "gameCombinedStatOperation", "gameContactType",
-            "gameCoverHeight", "gameDamageCallbackType", "gameDamagePipelineStage", "gamedataAchievement",
-            "gamedataAffiliation", "gamedataAIActionSecurityAreaType", "gamedataAIActionSecurityNotificationType",
-            "gamedataAIActionTarget", "gamedataAIActionType", "gamedataAIAdditionalTraceType",
-            "gamedataAIDirectorEntryStartType", "gamedataAIExposureMethodType", "gamedataAimAssistType",
-            "gamedataAIRingType", "gamedataAIRole", "gamedataAISmartCompositeType", "gamedataAISquadType",
-            "gamedataAITacticType", "gamedataAITicketType", "gamedataArchetypeType", "gamedataAttackSubtype",
-            "gamedataAttackType", "gamedataBuildType", "gamedataChargeStep", "gamedataChoiceCaptionPartType",
-            "gamedataCompanionDistancePreset", "gamedataConsumableBaseName", "gamedataConsumableType",
-            "gamedataDamageType", "gamedataDefenseMode", "gamedataDevelopmentPointType", "gamedataDistrict",
-            "gamedataEquipmentArea", "gamedataEthnicity", "gamedataFxAction", "gamedataFxActionType", "gamedataGender",
-            "gamedataGrenadeDeliveryMethodType", "gamedataHitPrereqConditionType", "gamedataImprovementRelation",
-            "gamedataItemCategory", "gamedataItemStructure", "gamedataItemType", "gamedataLifePath",
-            "gamedataLocomotionMode", "gamedataMappinPhase", "gamedataMappinVariant", "gamedataMeleeAttackDirection",
-            "gamedataMetaQuest", "gamedataMovementType", "gamedataNPCBehaviorState", "gamedataNPCHighLevelState",
-            "gamedataNPCQuestAffiliation", "gamedataNPCRarity", "gamedataNPCStanceState", "gamedataNPCType",
-            "gamedataNPCUpperBodyState", "gamedataObjectActionReference", "gamedataObjectActionType", "gamedataOutput",
-            "gamedataParentAttachmentType", "gamedataPerkArea", "gamedataPerkType", "gamedataPerkUtility",
-            "gamedataPingType", "gamedataPlayerBuild", "gamedataPlayerPossesion", "gamedataProficiencyType",
-            "gamedataProjectileLaunchMode", "gamedataProjectileOnCollisionAction", "gamedataQuality",
-            "gamedataReactionPresetType", "gamedataSenseObjectType", "gamedataSpawnableObjectPriority",
-            "gamedataStatPoolType", "gamedataStatType", "gamedataStatusEffectAIBehaviorFlag",
-            "gamedataStatusEffectAIBehaviorType", "gamedataStatusEffectType", "gamedataStatusEffectVariation",
-            "gamedataStimPriority", "gamedataStimPropagation", "gamedataStimType", "gamedataSubCharacter",
-            "gamedataTrackingMode", "gamedataTraitType", "gamedataTriggerMode", "gamedataUICondition",
-            "gamedataUIIconCensorFlag", "gamedataUINameplateDisplayType", "gamedataVehicleManufacturer",
-            "gamedataVehicleModel", "gamedataVehicleType", "gamedataVendorType", "gamedataWeaponEvolution",
-            "gamedataWeaponManufacturer", "gamedataWorkspotActionType", "gamedataWorkspotCategory",
-            "gamedataWorkspotReactionType", "gamedataWorldMapFilter", "gameDebugViewETextAlignment",
-            "gamedeviceActionPropertyFlags", "gamedeviceRequestType", "gameDifficulty", "gameDismBodyPart",
-            "gameDismWoundType", "gameEActionStatus", "gameEContinuousMode", "gameEEquipmentManagerState",
-            "gameEnemyStealthAwarenessState", "gameEntitySpawnerEventType", "gameEPrerequisiteType",
-            "gameEquipAnimationType", "gameEStatFlags", "gameeventsDeathDirection", "gameGodModeType",
-            "gameGrenadeThrowStartType", "gameinfluenceCollisionTestOutcome", "gameinfluenceTestLineResult",
-            "gameinputActionType", "gameinteractionsBumpIntensity", "gameinteractionsBumpLocation",
-            "gameinteractionsBumpSide", "gameinteractionsChoiceType", "gameinteractionsEInteractionEventType",
-            "gameinteractionsELootChoiceType", "gameinteractionsELootVisualiserControlOperation",
-            "gameinteractionsReactionState", "gameItemEquipContexts", "gameItemUnequipContexts",
-            "gameJournalBriefingContentType", "gameJournalEntryState", "gameJournalListenerType",
-            "gameJournalQuestType", "gameKillType", "gameLoSMode", "gamemappinsMappinTargetType",
-            "gamemappinsVerticalPositioning", "gameMessageSender", "gameMountingObjectType",
-            "gameMountingRelationshipType", "gameMountingSlotRole", "gameMovingPlatformLoopType",
-            "gameMovingPlatformMovementInitializationType", "gamePlatformMovementState", "gamePlayerCoverDirection",
-            "gamePlayerCoverMode", "gamePlayerObstacleSystemQueryType", "gamePlayerStateMachine", "GameplayTier",
-            "gameprojectileELaunchMode", "gameprojectileOnCollisionAction", "gamePSMBodyCarrying",
-            "gamePSMBodyCarryingLocomotion", "gamePSMBodyCarryingStyle", "gamePSMCombat", "gamePSMCombatGadget",
-            "gamePSMCrosshairStates", "gamePSMDetailedBodyDisposal", "gamePSMDetailedLocomotionStates",
-            "gamePSMFallStates", "gamePSMHighLevel", "gamePSMLandingState", "gamePSMLeftHandCyberware",
-            "gamePSMLocomotionStates", "gamePSMMelee", "gamePSMMeleeWeapon", "gamePSMNanoWireLaunchMode",
-            "gamePSMRangedWeaponStates", "gamePSMReaction", "gamePSMStamina", "gamePSMSwimming", "gamePSMTakedown",
-            "gamePSMTimeDilation", "gamePSMUIState", "gamePSMUpperBodyStates", "gamePSMVehicle", "gamePSMVision",
-            "gamePSMVisionDebug", "gamePSMVitals", "gamePSMWeaponStates", "gamePSMWhip", "gamePSMWorkspotState",
-            "gamePSMZones", "gameReprimandMappinAnimationState", "gameSaveLockReason", "gameScanningMode",
-            "gameScanningState", "gameSceneAnimationMotionActionParamsPlacementMode", "gameScriptedBlackboardStorage",
-            "gameSharedInventoryTag", "gamesmartGunTargetState", "gamestateMachineParameterAspect",
-            "gameStatModifierType", "gameStatObjectsRelation", "gameStatPoolModificationTypes", "gameStoryTier",
-            "gametargetingSystemETargetFilterStatus", "gameTelemetryDamageSituation", "gameTickableEventState",
-            "gameTutorialBracketType", "gameuiAuthorisationNotificationType", "gameuiCharacterCustomizationPart",
-            "gameuiDamageDigitsMode", "gameuiDamageDigitsStickingMode", "gameuiDamageIndicatorMode",
-            "gameuiEBraindanceLayer", "gameuiEClueDescriptorMode", "gameuiEWorldMapDistrictView", "gameuiHitType",
-            "gameuiMappinGroupState", "gameVisionModeType", "gameweaponReloadStatus",
-            "GenericMessageNotificationResult", "GenericMessageNotificationType", "GenericNotificationType",
-            "GOGRewardsSystemErrors", "GOGRewardsSystemStatus", "GrenadeDamageType", "grsHeistStatus",
-            "HackingMinigameState", "HighlightContext", "HighlightMode", "hitFlag", "HitShape_Type", "HoverStatus",
-            "HubMenuCharacterItems", "HubMenuCraftingItems", "HubMenuDatabaseItems", "HubMenuInventoryItems",
-            "HubMenuItems", "HubVendorMenuItems", "HUDActorStatus", "HUDActorType", "HUDContext", "HUDState",
-            "inkEButtonState", "inkEScrollDirection", "inkESliderDirection", "inkEToggleState", "inkIconResult",
-            "inkLoadingScreenType", "inkMenuMode", "inkMenuState", "inkSelectorChangeDirection", "inputContextType",
-            "InstanceState", "IntercomStatus", "InventoryItemAttachmentType", "InventoryModes",
-            "InventoryPaperdollZoomArea", "InventoryTooltipDisplayContext", "ItemAdditionalInfoType",
-            "ItemComparisonState", "ItemDisplayContext", "ItemDisplayType", "ItemFilterCategory", "ItemFilterType",
-            "ItemLabelType", "ItemSortMode", "ItemViewModes", "JournalChangeType", "JournalNotifyOption", "LandingType",
-            "LaserTargettingState", "MechanicalScanType", "meleeMoveDirection", "meleeQueuedAttack", "MessageViewType",
-            "MinigameActionType", "ModuleState", "moveCirclingDirection", "moveExplorationType", "moveLineOfSight",
-            "moveMovementType", "moveSecureFootingFailureReason", "moveSecureFootingFailureType", "NavGenAgentSize",
-            "navNaviPositionType", "operationsMode", "OutcomeMessage", "PackageStatus", "panzerBootupUI",
-            "PaperdollPositionAnimation", "PauseMenuAction", "PaymentStatus", "PerkMenuAttribute", "PersistenceSource",
-            "physicsStateValue", "PlayerVisionModeControllerRefreshPolicyEnum", "PopupPosition", "ProgramEffect",
-            "ProgramType", "ProximityProgressBarOrientation", "ProximityProgressBarState", "PuppetVehicleState",
-            "QuantityPickerActionType", "questJournalAlignmentEventType", "questJournalSizeEventType",
-            "questObjectInspectEventType", "questPhoneCallMode", "questPhoneCallPhase", "questPhoneStatus",
-            "questPhoneTalkingState", "QuickSlotActionType", "QuickSlotItemType", "ReactionZones_Humanoid_Side",
-            "Ref_1_3_3_Colors", "Ref_1_3_3_CustomSize_2", "Ref_2_3_3_Enum32Bit", "RequestType", "RipperdocFilter",
-            "RipperdocModes", "ScannerDataType", "ScannerNetworkState", "ScannerObjectType", "scnDialogLineLanguage",
-            "scnDialogLineType", "scnFastForwardMode", "scnPlayDirection", "scnPlaySpeed", "SecurityEventScopeSettings",
-            "senseEShapeType", "SettingsType", "SignalType", "SignShape", "SignType", "SlotType",
-            "TargetComponentFilterType", "TargetingSet", "telemetryInitalChoiceStage", "telemetryLevelGainReason",
-            "ThrowType", "Tier2WalkType", "TSFMV", "TweakWeaponPose", "UIGameContext", "UIInGameNotificationType",
-            "UIMenuNotificationType", "UIObjectiveEntryType", "vehicleAudioEventAction", "vehicleCameraType",
-            "VehicleDoorInteractionState", "VehicleDoorState", "vehicleELightMode", "vehicleELightType",
-            "vehicleEState", "vehicleExitDirection", "vehicleGarageState", "vehicleQuestUIEnable",
-            "vehicleQuestWindowDestruction", "vehicleRaceUI", "vehicleSummonState", "VendorConfirmationPopupType",
-            "VisionModePatternType", "VisualState", "WeaponPartType", "WorkspotConditionOperators",
-            "WorkspotSlidingBehaviour", "WorkspotWeaponConditionEnum", "workWorkspotDebugMode",
-            "worldgeometryaverageNormalDetectionHelperQueryStatus", "worldgeometryDescriptionQueryFlags",
-            "worldgeometryDescriptionQueryStatus", "worldgeometryProbingStatus", "WorldMapTooltipType",
-            "worldNavigationRequestStatus", "worldOffMeshConnectionType", "worldRainIntensity", "worldTrafficLightColor"
-        };
     }
 }
