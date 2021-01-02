@@ -50,10 +50,10 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     break;
             }
 
-            // The item data only goes until node.Size, afterwards
+            // There should be no bytes left after an item.
             var toRead = node.Size - (reader.BaseStream.Position - node.Offset);
-            Debug.Assert(toRead >= 0);
-            result.TrailingBytes = reader.ReadBytes((int)toRead);
+            Debug.Assert(toRead == 0);
+            //result.TrailingBytes = reader.ReadBytes((int)toRead);
 
             return result;
         }
@@ -166,7 +166,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                             break;
                     }
 
-                    writer.Write(data.TrailingBytes);
+                    //writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
             }

@@ -40,17 +40,25 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             byte[] result;
             var data = (ItemDropStorage)node.Value;
+            var newTrueSize = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(node.Id);
-                    ParserUtils.WriteString(writer, data.UnknownString);
+                    newTrueSize += 4;
+                    newTrueSize += ParserUtils.WriteString(writer, data.UnknownString);
                     writer.Write(data.HeaderBytes);
-                    InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
+                    newTrueSize += data.HeaderBytes.Length;
+                    newTrueSize += InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
+                    //newTrueSize += 8 + 4 + 8 + 4 + 3; // 8 inventory id, 4 item count, 8 tdbid, 4 item id, 3 unknown
                 }
                 result = stream.ToArray();
             }
+
+            node.Size = result.Length;
+            node.TrueSize = newTrueSize;
+
             return result;
         }
     }

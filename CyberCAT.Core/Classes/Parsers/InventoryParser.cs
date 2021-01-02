@@ -84,10 +84,16 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
+
+            node.Size = result.Length;
+            // DO NOT SET TrueSize FOR THE INVENTORY!
+            // The inventory's TrueSize is always 35 bytes!
+            //node.TrueSize = result.Length;
+
             return result;
         }
 
-        public static void WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
+        public static int WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
         {
             writer.Write(subInventory.InventoryId);
             writer.Write(subInventory.NumberOfItems);
@@ -100,6 +106,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 ItemDataParser.WriteNextItemEntry(writer, subInventory.ItemHeaders[i]);
                 writer.Write(parser.Write(inventoryNode.Children[(int) nodeOffset + i], parsers));
             }
+
+            return 8 + 4 + 8 + 4 + 3;
         }
     }
 }

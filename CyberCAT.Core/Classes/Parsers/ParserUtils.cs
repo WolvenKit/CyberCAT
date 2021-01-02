@@ -22,10 +22,11 @@ namespace CyberCAT.Core.Classes.Parsers
             return reader.ReadString(flags.Length);
         }
 
-        public static void WriteString(BinaryWriter writer, string s)
+        public static int WriteString(BinaryWriter writer, string s)
         {
             writer.Write((byte)(s.Length + 128));
             writer.Write(Encoding.ASCII.GetBytes(s));
+            return 1 + Encoding.ASCII.GetBytes(s).Length;
         }
 
         public static void ParseChildren(IEnumerable<NodeEntry> children, BinaryReader reader, List<INodeParser> parsers)
