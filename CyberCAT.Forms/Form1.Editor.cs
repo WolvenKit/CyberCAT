@@ -66,6 +66,8 @@ namespace CyberCAT.Forms
                 BuildVisualSubTree(treeNode, null);
                 EditorTree.Nodes.Add(treeNode);
             }
+
+            splitContainer1.Panel2.Controls.Clear();
         }
 
         private void uncompressedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -103,6 +105,8 @@ namespace CyberCAT.Forms
                 BuildVisualSubTree(treeNode, null);
                 EditorTree.Nodes.Add(treeNode);
             }
+
+            splitContainer1.Panel2.Controls.Clear();
         }
 
         private void savbinCompressedToolStripMenuItem1_Click(object sender, EventArgs e)
