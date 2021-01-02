@@ -247,25 +247,6 @@ namespace CyberCAT.Forms
             splitContainer1.Panel2.Controls.Add(nodeControl);
         }
 
-        private void AddChildrenToTreeNodeWithFilter(NodeEntryTreeNode treeNode, string filter)
-        {
-            if (treeNode.Node.Children.Count > 0)
-            {
-                var nodes = new List<NodeEntryTreeNode>();
-                nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
-
-                foreach (var child in nodes)
-                {
-                    AddChildrenToTreeNodeWithFilter(child, filter);
-                    if (child.Text.ToLowerInvariant().Contains(filter) || child.Nodes.Count > 0)
-                    {
-                        treeNode.Nodes.Add(child);
-                    }
-                }
-            }
-
-        }
-
         private void txtEditorFilter_TextChanged(object sender, EventArgs e)
         {
             if (_activeSaveFile == null)
