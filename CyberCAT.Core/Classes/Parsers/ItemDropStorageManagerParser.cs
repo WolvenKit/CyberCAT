@@ -71,6 +71,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
+
+            node.Size = result.Length;
+            // DO NOT SET TrueSize FOR THE INVENTORY!
+            // The ItemDropStorageManager's TrueSize is always 8 bytes!
+            //node.TrueSize = result.Length;
+
             return result;
         }
     }
