@@ -157,7 +157,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public ItemInnerData Data { get; set; }
 
-        public byte[] TrailingBytes { get; set; }
+        //public byte[] TrailingBytes { get; set; }
 
         public override string ToString()
         {

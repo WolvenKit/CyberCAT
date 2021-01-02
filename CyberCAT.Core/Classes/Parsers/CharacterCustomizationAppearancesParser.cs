@@ -170,7 +170,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-            //node.TrueSize = result.Length;
+
+            // Adjust size as needed
+            node.Size = result.Length;
+            node.TrueSize = result.Length;
+
             return result;
         }
 
