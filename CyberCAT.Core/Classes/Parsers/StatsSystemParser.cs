@@ -31,7 +31,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var dict = MappingHelper.GetMappings("CyberCAT.Core.Classes.Mapping.StatsSystem");
             var result = base.ReadWithMapping(node, reader, parsers, dict);
-
+            var test = new NodeRepresentationWrappers.StatsSystemWrapper((GenericUnknownStruct)result);
             return result;
         }
 

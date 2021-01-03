@@ -17,7 +17,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Wexman.Design;
 using static CyberCAT.Core.Classes.Parsers.StatsSystemParser;
 
 namespace CyberCAT.Forms
@@ -51,7 +50,6 @@ namespace CyberCAT.Forms
 
             //Add Hexeditor as editor for byte arrays
             TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
-            //TypeDescriptor.AddAttributes(typeof(Dictionary<GameStatsObjectID,GameSavedStatsData>),new EditorAttribute(typeof(GenericDictionaryEditor<GameStatsObjectID,GameSavedStatsData>), typeof(UITypeEditor)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));

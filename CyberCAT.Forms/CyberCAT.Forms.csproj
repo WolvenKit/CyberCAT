@@ -36,9 +36,6 @@
     <Reference Include="Be.Windows.Forms.HexBox, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Be.Windows.Forms.HexBox.1.6.1\lib\net40\Be.Windows.Forms.HexBox.dll</HintPath>
     </Reference>
-    <Reference Include="GenericDictionaryEditor, Version=1.1.0.0, Culture=neutral, PublicKeyToken=7f1cce5280f1f8eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\GenDictEdit.1.1.0\lib\net20\GenericDictionaryEditor.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
