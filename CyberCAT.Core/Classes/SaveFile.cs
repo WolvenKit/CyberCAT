@@ -105,7 +105,7 @@ namespace CyberCAT.Core.Classes
                         }
                     }
                     Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
-                    CalculateTrueSizes();
+                    CalculateTrueSizes(Nodes, decompressedFile.Length - activeSaveFile.MetaInformation.RestOfContent.Length);
                     ParserUtils.ParseChildren(Nodes, reader, _parsers);
                 }
             }
@@ -161,7 +161,7 @@ namespace CyberCAT.Core.Classes
                     }
                 }
                 Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
-                CalculateTrueSizes();
+                CalculateTrueSizes(Nodes, LastBlockOffset);
                 ParserUtils.ParseChildren(Nodes, reader, _parsers);
             }
         }
@@ -177,18 +177,17 @@ namespace CyberCAT.Core.Classes
                     var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
                     if (parser != null)
                     {
-                        stream.Write(parser.Write(node, _parsers));
+                        stream.Write(parser.Write(node, _parsers, 0));
                     }
                     else
                     {
                         var fallback = new DefaultParser();
-                        stream.Write(fallback.Write(node, _parsers));
+                        stream.Write(fallback.Write(node, _parsers, 0));
                     }
                 }
                 uncompressedData = stream.ToArray();
             }
 
-            RecalculateOffsets();
             var footerWithoutLast8Bytes= BuildFooterWithoutLastEightBytes();
             var compressor = new SaveFileCompressionHelper();
             var chunks = compressor.CompressToChunkList(uncompressedData);
@@ -224,18 +223,16 @@ namespace CyberCAT.Core.Classes
                     var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
                     if (parser != null)
                     {
-                        stream.Write(parser.Write(node, _parsers));
+                        stream.Write(parser.Write(node, _parsers, 0));
                     }
                     else
                     {
                         var fallback = new DefaultParser();
-                        stream.Write(fallback.Write(node, _parsers));
+                        stream.Write(fallback.Write(node, _parsers, 0));
                     }
                 }
                 uncompressedData = stream.ToArray();
             }
-
-            RecalculateOffsets();
 
             var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes();
             var compressor = new SaveFileCompressionHelper();
@@ -336,26 +333,76 @@ namespace CyberCAT.Core.Classes
             }
             return result;
         }
-        void CalculateTrueSizes()
+        private void CalculateTrueSizes(IReadOnlyList<NodeEntry> nodes, int maxLength)
         {
-            
-            for(int i =0; i < FlatNodes.Count-1; i++)
+            for (var i = 0; i < nodes.Count; ++i)
             {
-                var node = FlatNodes[i];
-                var next = FlatNodes[i + 1];
-                node.TrueSize = next.Offset - node.Offset;
+                var currentNode = nodes[i];
+                var prevNode = i > 0 ? nodes[i] : null;
+                var nextNode = i + 1 < nodes.Count ? nodes[i + 1] : null;
+
+                if (currentNode.Children.Count > 0)
+                {
+                    // Check if there is a blob before the first child
+                    var nextChild = currentNode.Children.First();
+                    var blobSize = nextChild.Offset - currentNode.Offset;
+                    currentNode.DataSize = blobSize;
+                    CalculateTrueSizes(currentNode.Children, maxLength);
+                }
+                else
+                {
+                    currentNode.DataSize = currentNode.Size;
+                }
+
+                if (nextNode != null)
+                {
+                    // There is a node after us. Check if there is a blob in between
+                    var blobSize = nextNode.Offset - (currentNode.Offset + currentNode.Size);
+                    currentNode.TrailingSize = blobSize;
+                }
+                else
+                {
+                    // There might be a blob that is part of the children due to the parents size, check for that
+                    if (currentNode.GetParent() == null)
+                    {
+                        // This is the last node on the root list. Trailing data should have been cought by the last inner child and assigned here but check again.
+                        var lastNodeEnd = currentNode.Offset + currentNode.Size;
+                        Debug.Assert(lastNodeEnd <= maxLength);
+                        if (lastNodeEnd < maxLength)
+                        {
+                            // There is a trailing blob
+                            currentNode.TrailingSize = maxLength - lastNodeEnd;
+                        }
+
+                        continue;
+                    }
+                    nextNode = currentNode.GetParent().GetNextNode();
+                    if (nextNode == null)
+                    {
+                        // This is the last child on the last node. The next valid offset would be the end of the data
+                        // Create a virtual node for this so the code below can grab the offset
+                        nextNode = new NodeEntry();
+                        nextNode.Offset = maxLength;
+                    }
+                    var parentMax = currentNode.GetParent().Offset + currentNode.GetParent().Size;
+                    var childMax = currentNode.Offset + currentNode.Size;
+                    // The parent size should never be smaller than the end of the last child.
+                    Debug.Assert(parentMax >= childMax);
+                    var blobSize = nextNode.Offset - (currentNode.Offset + currentNode.Size);
+                    if (parentMax > childMax)
+                    {
+                        // Blob belongs to this child
+                        currentNode.TrailingSize = blobSize;
+                    }
+                    else if (parentMax == childMax)
+                    {
+                        // Blob belongs to the parent but as trailing.
+                        currentNode.GetParent().TrailingSize = blobSize;
+                    }
+                }
             }
-            FlatNodes[FlatNodes.Count - 1].TrueSize = FlatNodes[FlatNodes.Count - 1].Size;//I believe
         }
-        void RecalculateOffsets()
-        {
-            FlatNodes[0].Offset= Constants.Numbers.DEFAULT_HEADER_SIZE;
-            for (int i =1; i < FlatNodes.Count;i++)
-            {
-                var previousNode = FlatNodes[i - 1];
-                FlatNodes[i].Offset = previousNode.Offset + previousNode.TrueSize;
-            }
-        }
+
         private void FindChildren(List<NodeEntry> nodes, NodeEntry node, int maxNextId)
         {
             if (node.ChildId > -1)

@@ -48,7 +48,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;
             var data = (ItemDropStorageManager)node.Value;
@@ -64,7 +64,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
                     {
-                        writer.Write(parser.Write(node.Children[i], parsers));
+                        writer.Write(parser.Write(node.Children[i], parsers, i == 0 ? (int) writer.BaseStream.Position : 0));
                     }
 
                     writer.Write(data.TrailingBytes);
@@ -72,10 +72,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
 
-            node.Size = result.Length;
-            // DO NOT SET TrueSize FOR THE INVENTORY!
-            // The ItemDropStorageManager's TrueSize is always 8 bytes!
-            //node.TrueSize = result.Length;
+            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }

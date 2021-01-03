@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 
 namespace CyberCAT.Core.Classes.Parsers
@@ -44,6 +43,32 @@ namespace CyberCAT.Core.Classes.Parsers
                     var fallback = new DefaultParser();
                     node.Value = fallback.Read(node, reader, parsers);
                 }
+            }
+        }
+
+        public static void AdjustNodeOffsetDuringWriting(NodeEntry currentNode, int writtenSize, int parentHeaderSize)
+        {
+            currentNode.Size = writtenSize;
+            var prevNode = currentNode.GetPreviousNode();
+
+            if (prevNode == null)
+            {
+                // Check if we have a parent
+                var parent = currentNode.GetParent();
+                if (parent != null)
+                {
+                    currentNode.Offset = parent.Offset + parentHeaderSize;
+                }
+            }
+            else
+            {
+                // There is a node before us. Adjust our offset based on their size.
+                int adjust = parentHeaderSize;
+                if (adjust == 0 && prevNode.TrailingSize > 0)
+                {
+                    adjust = prevNode.TrailingSize;
+                }
+                currentNode.Offset = prevNode.Offset + prevNode.Size + adjust;
             }
         }
 

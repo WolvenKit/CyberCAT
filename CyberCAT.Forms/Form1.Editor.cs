@@ -42,10 +42,9 @@ namespace CyberCAT.Forms
 
             var fileName = fd.FileName;
 
-            var bytes = File.ReadAllBytes(fileName);
-
             try
             {
+                var bytes = File.ReadAllBytes(fileName);
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 newSaveFile.LoadFromCompressedStream(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;

@@ -7,9 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
-using CyberCAT.Core.Classes.Parsers;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
-namespace CyberCAT.Core.Classes.NodeRepresentations
+namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDataParser : INodeParser
     {
@@ -137,7 +137,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             return nextItemEntry;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;
             var data = (ItemData)node.Value;
@@ -170,6 +170,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 }
                 result = stream.ToArray();
             }
+
+            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }
@@ -220,11 +222,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             writer.Write(data.Unknown4);
         }
 
-        public static void WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
+        public static int WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
         {
             writer.Write(nextItem.ItemTdbId);
             writer.Write(nextItem.ItemID);
             writer.Write(nextItem.UnknownBytes);
+            return 8 + 4 + nextItem.UnknownBytes.Length;
         }
     }
 }

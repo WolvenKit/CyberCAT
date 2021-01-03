@@ -65,7 +65,7 @@ namespace CyberCAT.Forms
 
             //Settings
             var interfaceType = typeof(INodeParser);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
             if (File.Exists(SETTINGS_FILE_NAME))
             {
                 _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE_NAME));
@@ -93,18 +93,31 @@ namespace CyberCAT.Forms
         {
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
-            if (data.Node.Value is DefaultRepresentation)
+
+            if (saveDialog.ShowDialog() != DialogResult.OK)
             {
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                return;
+            }
+
+            byte[] bytes;
+            var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    var representation = (DefaultRepresentation)data.Node.Value;
-                    File.WriteAllBytes(saveDialog.FileName, representation.Blob);
+                    var parser = parsers.Where(p => p.ParsableNodeName == data.Node.Name).FirstOrDefault();
+                    if (parser == null)
+                    {
+                        parser = new DefaultParser();
+                    }
+
+                    writer.Write(parser.Write(data.Node, parsers, 0));
                 }
+
+                bytes = stream.ToArray();
             }
-            else
-            {
-                MessageBox.Show("Exporting known structures not supported yet");
-            }
+
+            File.WriteAllBytes(saveDialog.FileName, bytes);
         }
 
         private void uncompressButton_Click(object sender, EventArgs e)
@@ -173,7 +186,7 @@ namespace CyberCAT.Forms
                 File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
             var growableSectionNames = new List<string>();
-            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.TrueSize).Select(n => n.Name));
+            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.DataSize).Select(n => n.Name));
             File.WriteAllLines($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_growableSectionNames.txt", growableSectionNames);
             MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
             foreach (var node in saveFile.Nodes)
@@ -215,11 +228,26 @@ namespace CyberCAT.Forms
             var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{Guid.NewGuid()}");
             foreach(var node in _activeSaveFile.FlatNodes)
             {
-                if(node.Value is DefaultRepresentation)
+                var filename = Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}");
+                byte[] bytes;
+                var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+                using (var stream = new MemoryStream())
                 {
-                    var representation = (DefaultRepresentation)node.Value;
-                    File.WriteAllBytes(Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}"), representation.Blob);
+                    using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                    {
+                        var parser = parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
+                        if (parser == null)
+                        {
+                            parser = new DefaultParser();
+                        }
+
+                        writer.Write(parser.Write(node, parsers, 0));
+                    }
+
+                    bytes = stream.ToArray();
                 }
+
+                File.WriteAllBytes(filename, bytes);
             }
             MessageBox.Show($"Exported All unparsed Nodes to {info.FullName}");
         }

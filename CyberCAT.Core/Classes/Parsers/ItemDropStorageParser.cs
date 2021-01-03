@@ -36,28 +36,25 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;
             var data = (ItemDropStorage)node.Value;
-            var newTrueSize = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    var headerSize = 4;
                     writer.Write(node.Id);
-                    newTrueSize += 4;
-                    newTrueSize += ParserUtils.WriteString(writer, data.UnknownString);
+                    headerSize += ParserUtils.WriteString(writer, data.UnknownString);
                     writer.Write(data.HeaderBytes);
-                    newTrueSize += data.HeaderBytes.Length;
-                    newTrueSize += InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
-                    //newTrueSize += 8 + 4 + 8 + 4 + 3; // 8 inventory id, 4 item count, 8 tdbid, 4 item id, 3 unknown
+                    headerSize += data.HeaderBytes.Length;
+                    InventoryParser.WriteSubInventory(node, 0, headerSize, writer, data.Inventory, parsers);
                 }
                 result = stream.ToArray();
             }
 
-            node.Size = result.Length;
-            node.TrueSize = newTrueSize;
+            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }
