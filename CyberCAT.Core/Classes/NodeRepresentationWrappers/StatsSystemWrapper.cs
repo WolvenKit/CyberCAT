@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.Mapping.Global;
 using CyberCAT.Core.Classes.Mapping.StatsSystem;
+
 namespace CyberCAT.Core.Classes.NodeRepresentationWrappers
 {
     public class StatsSystemWrapper

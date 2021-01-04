@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using CyberCAT.Core.Classes.Mapping;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
@@ -14,7 +16,10 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public class BaseClassEntry
         {
-            
+            public override string ToString()
+            {
+                return this.GetType().Name;
+            }
         }
 
         public class ClassEntry : BaseClassEntry

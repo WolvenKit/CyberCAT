@@ -1,16 +1,8 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
-
-namespace CyberCAT.Core.Classes.Mapping.StatsSystem
+﻿namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 {
     [RealName("gameCurveStatModifierData")]
-    public class GameCurveStatModifierData : GenericUnknownStruct.BaseClassEntry
+    public class GameCurveStatModifierData : GameStatModifierData
     {
-        [RealName("statType")]
-        public DumpedEnums.gamedataStatType StatType { get; set; }
-
-        [RealName("modifierType")]
-        public DumpedEnums.gameStatModifierType ModifierType { get; set; }
-
         [RealName("curveName")]
         [RealType("CName")]
         public string CurveName { get; set; }
@@ -21,9 +13,5 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 
         [RealName("curveStat")]
         public DumpedEnums.gamedataStatType CurveStat { get; set; }
-
-        [RealName("value")]
-        [RealType("Float")]
-        public float Value { get; set; }
     }
 }

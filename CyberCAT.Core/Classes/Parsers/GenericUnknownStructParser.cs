@@ -9,54 +9,31 @@ using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
-using CyberCAT.Core.Classes.Mapping.StatsSystem;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        public const bool DEBUG_WRITING = false;
-
-        private static readonly Dictionary<string, Type> _dumpedEnums = new Dictionary<string, Type>();
-        private List<string> _stringList;
-
         private bool _doMapping;
-        private Dictionary<string, Type> _typeDictionary;
 
-        private void init()
-        {
-            if (_dumpedEnums.Count == 0)
-            {
-                var types = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(s => s.GetTypes())
-                    .Where(p => p.Namespace == "CyberCAT.Core.DumpedEnums" && p.IsEnum);
-
-                foreach (var type in types)
-                {
-                    _dumpedEnums.Add(type.Name, type);
-                }
-            }
-        }
+        private List<string> _stringList;
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             _doMapping = false;
 
-            init();
-
             return internalRead(node, reader, parsers);
         }
 
-        public object ReadWithMapping(NodeEntry node, BinaryReader reader, List<INodeParser> parsers, Dictionary<string, Type> typeDictionary)
+        public object ReadWithMapping(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             _doMapping = true;
-            _typeDictionary = typeDictionary;
-
-            init();
 
             return internalRead(node, reader, parsers);
         }
+
+        private Dictionary<string, List<List<string>>> _classMap;
 
         private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
@@ -66,11 +43,6 @@ namespace CyberCAT.Core.Classes.Parsers
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             var dataBuffer = reader.ReadBytes(readSize);
-
-            if (DEBUG_WRITING)
-            {
-                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", dataBuffer);
-            }
 
             using (var ms = new MemoryStream(dataBuffer))
             {
@@ -128,6 +100,8 @@ namespace CyberCAT.Core.Classes.Parsers
                         pointerList.Add(new KeyValuePair<uint, uint>(br.ReadUInt32(), br.ReadUInt32()));
                     }
 
+                    _classMap = new Dictionary<string, List<List<string>>>();
+
                     // start of dataList
                     Debug.Assert(br.BaseStream.Position == dataListPosition);
 
@@ -156,7 +130,6 @@ namespace CyberCAT.Core.Classes.Parsers
                         {
                             classEntry = new GenericUnknownStruct.ClassEntry();
                             ((GenericUnknownStruct.ClassEntry)classEntry).Name = _stringList[(int)pointerList[i].Key];
-
                         }
 
                         bufferDict.Add(i, br.ReadBytes((int)length));
@@ -198,6 +171,8 @@ namespace CyberCAT.Core.Classes.Parsers
             readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             Debug.Assert(readSize == 0);
 
+            _stringList = null;
+
             return result;
         }
 
@@ -210,9 +185,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private Type GetTypeFromName(string name)
         {
-            if (_typeDictionary.ContainsKey(name))
+            if (MappingHelper.DumpedClasses.ContainsKey(name))
             {
-                return _typeDictionary[name];
+                return MappingHelper.DumpedClasses[name];
             }
 
             return null;
@@ -220,20 +195,20 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private GenericUnknownStruct.BaseClassEntry GetInstanceFromName(string name)
         {
-            if (_typeDictionary.ContainsKey(name))
+            if (MappingHelper.DumpedClasses.ContainsKey(name))
             {
-                var classType = _typeDictionary[name];
+                var classType = MappingHelper.DumpedClasses[name];
                 return (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(classType);
             }
 
             throw new Exception();
         }
 
-        private void SetProperty(GenericUnknownStruct.BaseClassEntry cls, string fieldName, object value)
+        private void SetProperty(GenericUnknownStruct.BaseClassEntry cls, string propertyName, object value)
         {
             foreach (var prop in cls.GetType().GetProperties())
             {
-                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == fieldName);
+                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == propertyName);
                 if (attr != null)
                 {
                     if (prop.PropertyType.IsEnum)
@@ -242,8 +217,11 @@ namespace CyberCAT.Core.Classes.Parsers
                     }
 
                     prop.SetValue(cls, value);
+                    return;
                 }
             }
+
+            throw new PropertyNotFoundException(cls.GetType().Name, propertyName);
         }
 
         private FieldInfo[] ReadFieldInfos(BinaryReader reader)
@@ -262,6 +240,9 @@ namespace CyberCAT.Core.Classes.Parsers
             return fieldArray;
         }
 
+        private Dictionary<string, Dictionary<string, HashSet<object>>> _missingProps =
+            new Dictionary<string, Dictionary<string, HashSet<object>>>();
+
         private object ReadMappedFields(BinaryReader reader, GenericUnknownStruct.BaseClassEntry cls)
         {
             var startPos = reader.BaseStream.Position;
@@ -270,10 +251,6 @@ namespace CyberCAT.Core.Classes.Parsers
             for (int i = 0; i < fieldInfos.Length; i++)
             {
                 reader.BaseStream.Position = startPos + fieldInfos[i].Offset;
-
-                var fieldTypeName = fieldInfos[i].Type;
-                if (fieldTypeName.StartsWith("array:"))
-                    fieldTypeName = fieldTypeName.Substring("array:".Length);
 
                 var ret = ReadMappedFieldValue(reader, cls, fieldInfos[i].Name, fieldInfos[i].Type);
                 SetProperty(cls, fieldInfos[i].Name, ret);
@@ -305,8 +282,31 @@ namespace CyberCAT.Core.Classes.Parsers
             return fieldArray;
         }
 
-        public static List<string> KnownFieldTypes = new List<string>();
-        public static List<string> KnownEnumTypes = new List<string>();
+        private Type GetFieldType(string fieldTypeName)
+        {
+            if (fieldTypeName == "Bool")
+                return typeof(bool);
+
+            if (fieldTypeName == "Float")
+                return typeof(float);
+
+            if (fieldTypeName == "CName")
+                return typeof(string);
+
+            if (fieldTypeName == "NodeRef")
+                return typeof(string);
+
+            if (fieldTypeName == "TweakDBID")
+                return typeof(ulong);
+            
+            if (fieldTypeName.StartsWith("handle:"))
+                return typeof(uint);
+
+            if (MappingHelper.DumpedEnums.ContainsKey(fieldTypeName))
+                return MappingHelper.DumpedEnums[fieldTypeName];
+
+            return GetTypeFromName(fieldTypeName);
+        }
 
         private object ReadMappedFieldValue(BinaryReader reader, GenericUnknownStruct.BaseClassEntry cls, string fieldName, string fieldTypeName)
         {
@@ -319,16 +319,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 else
                     fieldTypeName = fieldTypeName.Substring(fieldTypeName.IndexOf(']') + 1);
 
+                var fieldType = GetFieldType(fieldTypeName);
                 var arraySize = reader.ReadUInt32();
-
-                Type fieldType;
-                if (fieldTypeName.StartsWith("handle:"))
-                    fieldType = typeof(uint);
-                else
-                    fieldType = GetTypeFromName(fieldTypeName);
-
-                if (fieldType == null && _dumpedEnums.ContainsKey(fieldTypeName))
-                    fieldType = _dumpedEnums[fieldTypeName];
 
                 var arr = (IList)Array.CreateInstance(fieldType, arraySize);
 
@@ -338,13 +330,6 @@ namespace CyberCAT.Core.Classes.Parsers
                     if (fieldType.IsEnum)
                     {
                         arr[i] = Enum.Parse(fieldType, (string) val);
-                    }
-                    else if (fieldType == typeof(Handle))
-                    {
-                        arr[i] = new Handle()
-                        {
-                            Pointer = (uint) val
-                        };
                     }
                     else
                     {
@@ -394,19 +379,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "CName":
                     return _stringList[reader.ReadUInt16()];
 
-                // Not needed, but why not
-                case "vehicleVehicleDoorInteractionState":
-                case "gameEHotkey":
-                case "gameStatIDType":
-                case "gameStatPoolDataValueChangeMode":
-                case "gameStatPoolDataStatPoolModificationStatus":
-                case "gameuiHackingMinigameState":
-                case "vehicleVehicleDoorState":
-                case "vehicleEVehicleWindowState":
-                case "vehicleCameraPerspective":
-                    var val = _stringList[reader.ReadUInt16()];
-                    return val;
-
                 // TODO: special cases
                 case "KEEP_FOR_DEBUG":
                     var cPos = reader.BaseStream.Position;
@@ -416,43 +388,13 @@ namespace CyberCAT.Core.Classes.Parsers
                     return new byte[2];
             }
 
-            if (_dumpedEnums.ContainsKey(fieldTypeName) || KnownEnumTypes.Contains(fieldTypeName))
-            {
-                var strIdx = reader.ReadUInt16();
-                return _stringList[strIdx];
-            }
-                
+            if (MappingHelper.DumpedEnums.ContainsKey(fieldTypeName))
+                return _stringList[reader.ReadUInt16()];
 
-            if (KnownFieldTypes.Contains(fieldTypeName))
-            {
-                var subCls = GetInstanceFromName(fieldTypeName);
-                ReadMappedFields(reader, subCls);
-                return subCls;
-            }
 
-            // TODO:
-            var pos2 = reader.BaseStream.Position;
-            try
-            {
-                var subCls = GetInstanceFromName(fieldTypeName);
-                ReadMappedFields(reader, subCls);
-                if (!KnownFieldTypes.Contains(fieldTypeName))
-                {
-                    KnownFieldTypes.Add(fieldTypeName);
-                }
-                return subCls;
-            }
-            catch (Exception e)
-            {
-                reader.BaseStream.Position = pos2;
-
-                var stringValue = _stringList[reader.ReadUInt16()];
-                if (!KnownEnumTypes.Contains(fieldTypeName))
-                {
-                    KnownEnumTypes.Add(fieldTypeName);
-                }
-                return stringValue;
-            }
+            var subCls = GetInstanceFromName(fieldTypeName);
+            ReadMappedFields(reader, subCls);
+            return subCls;
         }
 
         private object ReadUnappedFieldValue(BinaryReader reader, string fieldName, string fieldType)
@@ -519,19 +461,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "CName":
                     return _stringList[reader.ReadUInt16()];
 
-                // Not needed, but why not
-                case "vehicleVehicleDoorInteractionState":
-                case "gameEHotkey":
-                case "gameStatIDType":
-                case "gameStatPoolDataValueChangeMode":
-                case "gameStatPoolDataStatPoolModificationStatus":
-                case "gameuiHackingMinigameState":
-                case "vehicleVehicleDoorState":
-                case "vehicleEVehicleWindowState":
-                case "vehicleCameraPerspective":
-                    var val = _stringList[reader.ReadUInt16()];
-                    return val;
-
                 // TODO: special cases
                 case "KEEP_FOR_DEBUG":
                     var cPos = reader.BaseStream.Position;
@@ -541,43 +470,17 @@ namespace CyberCAT.Core.Classes.Parsers
                     return new byte[2];
             }
 
-            if (_dumpedEnums.ContainsKey(fieldType))
+            if (MappingHelper.DumpedEnums.ContainsKey(fieldType))
                 return _stringList[reader.ReadUInt16()];
 
-            if (KnownFieldTypes.Contains(fieldType))
-                return ReadUnmappedFields(reader);
-
-            if (KnownEnumTypes.Contains(fieldType))
-                return _stringList[reader.ReadUInt16()];
-
-            // TODO:
-            var pos2 = reader.BaseStream.Position;
-            try
-            {
-                var val = ReadUnmappedFields(reader);
-                if (!KnownFieldTypes.Contains(fieldType))
-                {
-                    KnownFieldTypes.Add(fieldType);
-                }
-                return val;
-            }
-            catch (Exception)
-            {
-                reader.BaseStream.Position = pos2;
-
-                var stringValue = _stringList[reader.ReadUInt16()];
-                if (!KnownEnumTypes.Contains(fieldType))
-                {
-                    KnownEnumTypes.Add(fieldType);
-                }
-                return stringValue;
-            }
+            return ReadUnmappedFields(reader);
         }
 
         public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (GenericUnknownStruct)node.Value;
+
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
@@ -599,10 +502,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var pos = writer.BaseStream.Position;
 
-                    var stringList = GenerateStringList(data);
+                    _stringList = GenerateStringList(data);
 
-                    var offset = stringList.Count * 4;
-                    foreach (var str in stringList)
+                    var offset = _stringList.Count * 4;
+                    foreach (var str in _stringList)
                     {
                         writer.WriteInt24(offset);
                         writer.Write((byte)(str.Length + 1));
@@ -611,7 +514,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var stringListOffset = writer.BaseStream.Position - pos;
 
-                    foreach (var str in stringList)
+                    foreach (var str in _stringList)
                     {
                         var bytes = Encoding.ASCII.GetBytes(str);
                         writer.Write(bytes);
@@ -621,15 +524,16 @@ namespace CyberCAT.Core.Classes.Parsers
                     var dataIndexListOffset = writer.BaseStream.Position - pos;
 
                     var bufferList = new byte[data.ClassList.Length][];
+
                     Parallel.For(0, data.ClassList.Length, (index, state) =>
                     {
                         if (_doMapping)
                         {
-                            bufferList[index] = GenerateDataFromMappedFields(data.ClassList[index], stringList);
+                            bufferList[index] = GenerateDataFromMappedFields(data.ClassList[index]);
                         }
                         else
                         {
-                            bufferList[index] = GenerateDataFromUnmappedFields(((GenericUnknownStruct.ClassEntry)data.ClassList[index]).Fields, stringList);
+                            bufferList[index] = GenerateDataFromUnmappedFields(((GenericUnknownStruct.ClassEntry)data.ClassList[index]).Fields);
                         }
                     });
 
@@ -639,12 +543,12 @@ namespace CyberCAT.Core.Classes.Parsers
                     {
                         if (_doMapping)
                         {
-                            var strId = stringList.IndexOf(GetRealNameFromClass(data.ClassList[i]));
+                            var strId = _stringList.IndexOf(GetRealNameFromClass(data.ClassList[i]));
                             writer.Write(strId);
                         }
                         else
                         {
-                            var strId = stringList.IndexOf(((GenericUnknownStruct.ClassEntry)data.ClassList[i]).Name);
+                            var strId = _stringList.IndexOf(((GenericUnknownStruct.ClassEntry)data.ClassList[i]).Name);
                             writer.Write(strId);
                         }
                         writer.Write(classOffset);
@@ -689,12 +593,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 node.TrueSize = result.Length;
             }
 
-            if (DEBUG_WRITING)
-            {
-                var buffer = new byte[result.Length - 4];
-                Array.Copy(result, 4, buffer, 0, buffer.Length);
-                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", buffer);
-            }
+            _stringList = null;
 
             GC.Collect();
             return result;
@@ -739,80 +638,144 @@ namespace CyberCAT.Core.Classes.Parsers
             return result.ToList();
         }
 
-        private string GetRealTypeFromProperty(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo prop)
+        private (string, string) GetTypeStringFromProperty(PropertyInfo propInfo, GenericUnknownStruct.BaseClassEntry cls)
         {
-            string typeName = null;
+            return GetTypeStringFromProperty(propInfo, propInfo.GetValue(cls));
+        }
 
-            var typeAttr = ((RealTypeAttribute[])prop.GetCustomAttributes(typeof(RealTypeAttribute), true)).FirstOrDefault();
+        private (string, string) GetTypeStringFromProperty(PropertyInfo propInfo, object propValue)
+        {
+            var typeAttr = ((RealTypeAttribute[])propInfo.GetCustomAttributes(typeof(RealTypeAttribute), true)).FirstOrDefault();
             if (typeAttr != null)
-                typeName = typeAttr.Type;
+            {
+                var typeStr = typeAttr.Type;
 
-            if (prop.PropertyType.IsEnum && _dumpedEnums.ContainsKey(prop.PropertyType.Name))
-                typeName = prop.PropertyType.Name;
+                if (typeAttr.IsHandle && !typeStr.StartsWith("handle:"))
+                    typeStr = "handle:" + typeStr;
 
-            if (prop.PropertyType.IsArray && prop.PropertyType.GetElementType().IsEnum && _dumpedEnums.ContainsKey(prop.PropertyType.GetElementType().Name))
-                typeName = prop.PropertyType.GetElementType().Name;
+                if (typeAttr.IsArray && !typeStr.StartsWith("["))
+                    return ($"[{((IList)propValue).Count}]" + typeStr, typeAttr.Type);
 
-            if (typeName == null)
-                typeName = _typeDictionary.FirstOrDefault(x => prop.PropertyType.IsArray ? x.Value == prop.PropertyType.GetElementType() : x.Value == prop.PropertyType).Key;
+                if (typeAttr.IsStatic && !typeStr.StartsWith("static:"))
+                    return ($"static:{((IList)propValue).Count}," + typeStr, typeAttr.Type);
 
-            if (typeName == null)
-                throw new Exception();
+                if (propInfo.PropertyType.IsArray)
+                    typeStr = "array:" + typeStr;
 
-            // TODO: static and []
-            if (prop.PropertyType.IsArray)
-                typeName = "array:" + typeName;
+                return (typeStr, typeAttr.Type);
+            }
 
-            return typeName;
+            if (propInfo.PropertyType.IsArray)
+            {
+                if (propInfo.PropertyType.GetElementType().IsEnum && MappingHelper.DumpedEnums.ContainsKey(propInfo.PropertyType.GetElementType().Name))
+                    return ("array:" + propInfo.PropertyType.GetElementType().Name, propInfo.PropertyType.GetElementType().Name);
+
+                var typeStr = MappingHelper.DumpedClasses.FirstOrDefault(x => x.Value == propInfo.PropertyType.GetElementType()).Key;
+                if (typeStr != null)
+                    return ("array:" + typeStr, typeStr);
+            }
+            else
+            {
+                if (propInfo.PropertyType.IsEnum && MappingHelper.DumpedEnums.ContainsKey(propInfo.PropertyType.Name))
+                    return (propInfo.PropertyType.Name, propInfo.PropertyType.Name);
+
+                var typeStr = MappingHelper.DumpedClasses.FirstOrDefault(x => x.Value == propInfo.PropertyType).Key;
+                if (typeStr != null)
+                    return (typeStr, typeStr);
+            }
+
+            throw new Exception();
+        }
+
+        private void GetStringValueFromPropValue(object propValue, string baseType, ref HashSet<string> strings)
+        {
+            if (propValue is GenericUnknownStruct.BaseClassEntry)
+            {
+                GenerateStringListFromMappedFields((GenericUnknownStruct.BaseClassEntry)propValue, ref strings);
+            }
+            else if (propValue is string)
+            {
+                if (baseType == "CName")
+                {
+                    strings.Add((string)propValue);
+                }
+                else if (baseType == "NodeRef")
+                {
+                    return;
+                }
+                else if (MappingHelper.DumpedEnums.ContainsKey(baseType))
+                {
+                    strings.Add((string)propValue);
+                }
+            }
+            else if (propValue.GetType().IsEnum)
+            {
+                strings.Add(propValue.ToString());
+            }
+        }
+
+        private bool CanBeIgnored(PropertyInfo propInfo, object propValue, List<PropertyInfo> otherProps)
+        {
+            if (propInfo.IsDefined(typeof(ParserIgnoreAttribute)))
+                return true;
+
+            if (propValue == null)
+                return true;
+
+            if (propValue is bool && (bool)propValue == false)
+                return true;
+
+            if (propValue is int && (int)propValue == 0)
+                return true;
+
+            if (propValue is uint && (uint)propValue == 0)
+                return true;
+
+            if (propValue is long && (long)propValue == 0)
+                return true;
+
+            if (propValue is ulong && (ulong)propValue == 0)
+                return true;
+
+            if (propValue is float && (float)propValue == 0)
+                return true;
+
+            /*if (propValue.GetType().IsEnum && (int) propValue == 0)
+                return true;*/
+
+            return false;
         }
 
         private void GenerateStringListFromMappedFields(GenericUnknownStruct.BaseClassEntry cls, ref HashSet<string> strings)
         {
-            var props = cls.GetType().GetProperties();
+            var props = new List<PropertyInfo>();
+            foreach (var prop in cls.GetType().GetProperties())
+            {
+                var propValue = prop.GetValue(cls);
+                if (CanBeIgnored(prop, propValue, props))
+                    continue;
+
+                props.Add(prop);
+            }
+
             foreach (var prop in props)
             {
-                var realType = GetRealTypeFromProperty(cls, prop);
-                
+                var propValue = prop.GetValue(cls);
+                var (typeString, baseType) = GetTypeStringFromProperty(prop, propValue);
+
+                strings.Add(GetRealNameFromProperty(prop));
+                strings.Add(typeString);
+
                 if (prop.PropertyType.IsArray)
                 {
-                    var arr = (IList) prop.GetValue(cls);
-                    if (arr != null)
+                    foreach (var val in (IList)propValue)
                     {
-                        strings.Add(GetRealNameFromProperty(prop));
-                        strings.Add(realType);
-                        foreach (var val in arr)
-                        {
-                            if (val is GenericUnknownStruct.BaseClassEntry)
-                            {
-                                GenerateStringListFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, ref strings);
-                            }
-                            else if (val.GetType().IsEnum)
-                            {
-                                strings.Add(val.ToString());
-                            }
-                        }
+                        GetStringValueFromPropValue(val, baseType, ref strings);
                     }
                 }
                 else
                 {
-                    strings.Add(GetRealNameFromProperty(prop));
-                    strings.Add(realType);
-
-                    var val = prop.GetValue(cls);
-                    if (val == null)
-                        continue;
-
-                    if (realType == "CName")
-                        strings.Add((string) val);
-                    if (prop.PropertyType.IsEnum)
-                    {
-                        strings.Add(Enum.GetName(prop.PropertyType, val));
-                    }
-                    
-                    if (val is GenericUnknownStruct.BaseClassEntry)
-                    {
-                        GenerateStringListFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, ref strings);
-                    }
+                    GetStringValueFromPropValue(propValue, baseType, ref strings);
                 }
             }
         }
@@ -857,7 +820,42 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        protected byte[] GenerateDataFromMappedFields(GenericUnknownStruct.BaseClassEntry cls, List<string> strings)
+        private void WriteValueFromPropValue(BinaryWriter writer, object propValue, string baseType, string elementType)
+        {
+            if (propValue is GenericUnknownStruct.BaseClassEntry subCls)
+            {
+                var newBuffer = GenerateDataFromMappedFields(subCls);
+                writer.Write(newBuffer);
+            }
+            else if (!string.IsNullOrEmpty(elementType) && elementType.StartsWith("handle:"))
+            {
+                writer.Write((uint)propValue);
+            }
+            else if (propValue.GetType().IsEnum)
+            {
+                WriteValue(writer, (ushort)_stringList.IndexOf(propValue.ToString()));
+            }
+            else if (propValue is string valStr)
+            {
+                if (baseType == "CName")
+                {
+                    writer.Write((ushort)_stringList.IndexOf(valStr));
+                }
+                else if (baseType == "NodeRef")
+                {
+                    var valBytes = Encoding.ASCII.GetBytes(valStr);
+
+                    writer.Write((ushort)valStr.Length);
+                    writer.Write(valBytes);
+                }
+            }
+            else
+            {
+                WriteValue(writer, propValue);
+            }
+        }
+
+        protected byte[] GenerateDataFromMappedFields(GenericUnknownStruct.BaseClassEntry cls)
         {
             byte[] result;
 
@@ -865,93 +863,51 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    var props = cls.GetType().GetProperties();
+                    var props = new List<PropertyInfo>();
 
-                    var count = 0;
-                    foreach (var prop in props)
+                    foreach (var prop in cls.GetType().GetProperties())
                     {
-                        var val = prop.GetValue(cls);
-                        if (val != null)
-                            count++;
-                    }
-                    writer.Write((ushort)count);
-
-                    foreach (var prop in props)
-                    {
-                        var val = prop.GetValue(cls);
-                        if (val != null)
-                        {
-                            writer.Write((ushort)strings.IndexOf(GetRealNameFromProperty(prop)));
-                            writer.Write((ushort)strings.IndexOf(GetRealTypeFromProperty(cls, prop)));
-                            writer.Write(new byte[4]); // offset
-                        }
-                    }
-
-                    var cnt = 0;
-                    for (int i = 0; i < props.Length; i++)
-                    {
-                        var val1 = props[i].GetValue(cls);
-                        if (val1 == null)
+                        var propValue = prop.GetValue(cls);
+                        if (CanBeIgnored(prop, propValue, props))
                             continue;
 
+                        props.Add(prop);
+                    }
+
+                    writer.Write((ushort)props.Count);
+                    foreach (var prop in props)
+                    {
+                        writer.Write((ushort)_stringList.IndexOf(GetRealNameFromProperty(prop)));
+                        var (typeString, baseType) = GetTypeStringFromProperty(prop, cls);
+                        writer.Write((ushort)_stringList.IndexOf(typeString));
+                        writer.Write(new byte[4]); // offset
+                    }
+
+                    for (int i = 0; i < props.Count; i++)
+                    {
                         var pos = writer.BaseStream.Position;
-                        writer.BaseStream.Position = 6 + (cnt * 8);
-                        cnt++;
+                        writer.BaseStream.Position = 6 + (i * 8);
                         writer.Write((uint)pos);
                         writer.BaseStream.Position = pos;
 
-                        var realType = GetRealTypeFromProperty(cls, props[i]);
+                        var (typeString, baseType) = GetTypeStringFromProperty(props[i], cls);
 
                         if (props[i].PropertyType.IsArray)
                         {
-                            var elementType = realType.Substring("array:".Length);
+                            var elementType = typeString.Substring("array:".Length);
 
                             var arr = (IList)props[i].GetValue(cls);
-                            if (arr != null)
+
+                            writer.Write(arr.Count);
+                            foreach (var val in arr)
                             {
-                                writer.Write(arr.Count);
-                                foreach (var val in arr)
-                                {
-                                    if (val is GenericUnknownStruct.BaseClassEntry)
-                                    {
-                                        var buffer = GenerateDataFromMappedFields((GenericUnknownStruct.BaseClassEntry)val, strings);
-                                        writer.Write(buffer);
-                                    }
-                                    else if (elementType.StartsWith("handle:"))
-                                    {
-                                        writer.Write((uint)val);
-                                    }
-                                    else if (val.GetType().IsEnum)
-                                    {
-                                        WriteValue(writer, (ushort)strings.IndexOf(val.ToString()));
-                                    }
-                                }
+                                WriteValueFromPropValue(writer, val, baseType, elementType);
                             }
                         }
                         else
                         {
-                            if (val1 is GenericUnknownStruct.BaseClassEntry)
-                            {
-                                var buffer = GenerateDataFromMappedFields((GenericUnknownStruct.BaseClassEntry)val1, strings);
-                                writer.Write(buffer);
-                            }
-                            else if (val1 is string)
-                            {
-                                if (realType == "CName")
-                                {
-                                    var idx = (ushort) strings.IndexOf((string)val1);
-                                    writer.Write(idx);
-                                }
-                            }
-                            else if (props[i].PropertyType.IsEnum)
-                            {
-                                var idx = (ushort) strings.IndexOf(val1.ToString());
-                                WriteValue(writer, idx);
-                            }
-                            else
-                            {
-                                WriteValue(writer, val1);
-                            }
+                            var val = props[i].GetValue(cls);
+                            WriteValueFromPropValue(writer, val, baseType, null);
                         }
                     }
                 }
@@ -962,7 +918,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        protected byte[] GenerateDataFromUnmappedFields(GenericUnknownStruct.BaseGenericField[] fields, List<string> stringList)
+        protected byte[] GenerateDataFromUnmappedFields(GenericUnknownStruct.BaseGenericField[] fields)
         {
             byte[] result;
 
@@ -973,8 +929,8 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write((ushort)fields.Length);
                     foreach (var field in fields)
                     {
-                        writer.Write((ushort)stringList.IndexOf(field.Name));
-                        writer.Write((ushort)stringList.IndexOf(field.Type));
+                        writer.Write((ushort)_stringList.IndexOf(field.Name));
+                        writer.Write((ushort)_stringList.IndexOf(field.Type));
                         writer.Write(new byte[4]); // offset
                     }
 
@@ -998,7 +954,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         {
                             if (field.Value is GenericUnknownStruct.BaseGenericField[] subFields1)
                             {
-                                var buffer = GenerateDataFromUnmappedFields(subFields1, stringList);
+                                var buffer = GenerateDataFromUnmappedFields(subFields1);
                                 writer.Write(buffer);
                             }
                             else
@@ -1017,12 +973,12 @@ namespace CyberCAT.Core.Classes.Parsers
                                     }
                                     else if (t1 is GenericUnknownStruct.BaseGenericField[] subFields2)
                                     {
-                                        var buffer = GenerateDataFromUnmappedFields(subFields2, stringList);
+                                        var buffer = GenerateDataFromUnmappedFields(subFields2);
                                         writer.Write(buffer);
                                     }
                                     else if (t1 is String)
                                     {
-                                        writer.Write((ushort)stringList.IndexOf((string)t1));
+                                        writer.Write((ushort)_stringList.IndexOf((string)t1));
                                     }
                                     else
                                     {
@@ -1033,7 +989,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         }
                         else if (field.Value is String)
                         {
-                            writer.Write((ushort)stringList.IndexOf((string)field.Value));
+                            writer.Write((ushort)_stringList.IndexOf((string)field.Value));
                         }
                         else
                         {

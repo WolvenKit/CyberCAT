@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using Newtonsoft.Json;
 
@@ -31,6 +32,9 @@ namespace CyberCAT.Core.Classes
         {
             _parsers = new List<INodeParser>();
             _parsers.AddRange(parsers);
+
+            MappingHelper.LoadDumpedClasses();
+            MappingHelper.LoadDumpedEnums();
         }
         public SaveFile()
         {
@@ -45,6 +49,9 @@ namespace CyberCAT.Core.Classes
             _parsers.Add(new FactsDBParser());
             _parsers.Add(new ItemDropStorageParser());
             _parsers.Add(new ItemDropStorageManagerParser());
+
+            MappingHelper.LoadDumpedClasses();
+            MappingHelper.LoadDumpedEnums();
         }
         public void LoadFromCompressedStream(Stream inputStream)
         {

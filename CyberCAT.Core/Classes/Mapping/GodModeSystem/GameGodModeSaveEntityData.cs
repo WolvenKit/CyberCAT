@@ -1,4 +1,5 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
+﻿using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping.GodModeSystem
 {

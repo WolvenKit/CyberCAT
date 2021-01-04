@@ -1,6 +1,6 @@
 ﻿using CyberCAT.Core.Classes.NodeRepresentations;
 
-namespace CyberCAT.Core.Classes.Mapping.StatsSystem
+namespace CyberCAT.Core.Classes.Mapping.Global
 {
     [RealName("gameStatsObjectID")]
     public class GameStatsObjectID : GenericUnknownStruct.BaseClassEntry

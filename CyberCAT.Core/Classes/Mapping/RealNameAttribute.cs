@@ -2,7 +2,7 @@
 
 namespace CyberCAT.Core.Classes.Mapping
 {
-    [System.AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
+    [System.AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Enum)]
     public class RealNameAttribute : System.Attribute
     {
         public string Name;

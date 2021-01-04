@@ -60,24 +60,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\FactResolver.cs" />
-    <Compile Include="Classes\Mapping\GodModeSystem\EntEntityID.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeEntityData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeSaveData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeSaveEntityData.cs" />
+    <Compile Include="Classes\Mapping\MovingPlatformSystem\GameMovingPlatformSavedData.cs" />
+    <Compile Include="Classes\Mapping\StatsSystem\GameStatModifierData.cs" />
+    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\FactResolver.cs" />
     <Compile Include="Classes\Mapping\MappingHelper.cs" />
+    <Compile Include="Classes\Mapping\MovingPlatformSystem\GameMovingPlatformsSavedState.cs" />
     <Compile Include="Classes\Mapping\ParserIgnoreAttribute.cs" />
+    <Compile Include="Classes\Mapping\PropertyNotFoundException.cs" />
     <Compile Include="Classes\Mapping\RealNameAttribute.cs" />
     <Compile Include="Classes\Mapping\RealTypeAttribute.cs" />
+    <Compile Include="Classes\Mapping\RenderGameplayEffectsManagerSystem\GameCyberspacePixelsortEffectParams.cs" />
+    <Compile Include="Classes\Mapping\RenderGameplayEffectsManagerSystem\GameRenderGameplayEffectsManagerSaveData.cs" />
+    <Compile Include="Classes\Mapping\Global\EntEntityID.cs" />
+    <Compile Include="Classes\Mapping\ScanningContoller\GameScanningControllerSaveData.cs" />
+    <Compile Include="Classes\Mapping\StatPoolsSystem\GameStatPoolData.cs" />
+    <Compile Include="Classes\Mapping\StatPoolsSystem\GameStatPoolModifier.cs" />
+    <Compile Include="Classes\Mapping\StatPoolsSystem\GameStatPoolsSystemSave.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameCombinedStatModifierData.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameConstantStatModifierData.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameCurveStatModifierData.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameSavedStatsData.cs" />
-    <Compile Include="Classes\Mapping\StatsSystem\GameStatsObjectID.cs" />
+    <Compile Include="Classes\Mapping\Global\GameStatsObjectID.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameStatsStateMapStructure.cs" />
-    <Compile Include="Classes\Mapping\StatsSystem\Handle.cs" />
+    <Compile Include="Classes\Mapping\TierSystem\GameGlobalTierSaveData.cs" />
+    <Compile Include="Classes\Mapping\TierSystem\GameSceneTier1Data.cs" />
+    <Compile Include="Classes\Mapping\TierSystem\GameSceneTierData.cs" />
+    <Compile Include="Classes\Mapping\TierSystem\GameTierSaveData.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
     <Compile Include="Classes\Flags.cs" />
@@ -315,6 +328,7 @@
     <Compile Include="Enums\Dumped Enums\DropdownItemDirection.cs" />
     <Compile Include="Enums\Dumped Enums\DropPointPackageStatus.cs" />
     <Compile Include="Enums\Dumped Enums\DynamicTextureDataFormat.cs" />
+    <Compile Include="Enums\Dumped Enums\EActionContext.cs" />
     <Compile Include="Enums\Dumped Enums\EActionInactivityReson.cs" />
     <Compile Include="Enums\Dumped Enums\EActionsSequencerMode.cs" />
     <Compile Include="Enums\Dumped Enums\EActionType.cs" />
@@ -388,10 +402,12 @@
     <Compile Include="Enums\Dumped Enums\EDeviceChallengeSkill.cs" />
     <Compile Include="Enums\Dumped Enums\EDeviceDurabilityState.cs" />
     <Compile Include="Enums\Dumped Enums\EDeviceDurabilityType.cs" />
+    <Compile Include="Enums\Dumped Enums\EDeviceStatus.cs" />
     <Compile Include="Enums\Dumped Enums\EDocumentType.cs" />
     <Compile Include="Enums\Dumped Enums\EDodgeMovementInput.cs" />
     <Compile Include="Enums\Dumped Enums\EDoorOpeningType.cs" />
     <Compile Include="Enums\Dumped Enums\EDoorSkillcheckSide.cs" />
+    <Compile Include="Enums\Dumped Enums\EDoorStatus.cs" />
     <Compile Include="Enums\Dumped Enums\EDoorTriggerSide.cs" />
     <Compile Include="Enums\Dumped Enums\EDoorType.cs" />
     <Compile Include="Enums\Dumped Enums\EDownedType.cs" />
@@ -547,6 +563,7 @@
     <Compile Include="Enums\Dumped Enums\ESecurityGateResponseType.cs" />
     <Compile Include="Enums\Dumped Enums\ESecurityGateScannerIssueType.cs" />
     <Compile Include="Enums\Dumped Enums\ESecurityGateStatus.cs" />
+    <Compile Include="Enums\Dumped Enums\ESecurityNotificationType.cs" />
     <Compile Include="Enums\Dumped Enums\ESecuritySystemState.cs" />
     <Compile Include="Enums\Dumped Enums\ESecurityTurretType.cs" />
     <Compile Include="Enums\Dumped Enums\ESensorDeviceStates.cs" />
@@ -560,6 +577,7 @@
     <Compile Include="Enums\Dumped Enums\EStatusEffects.cs" />
     <Compile Include="Enums\Dumped Enums\EstatusEffectsState.cs" />
     <Compile Include="Enums\Dumped Enums\ESurveillanceCameraState.cs" />
+    <Compile Include="Enums\Dumped Enums\ESurveillanceCameraStatus.cs" />
     <Compile Include="Enums\Dumped Enums\ESwitchAction.cs" />
     <Compile Include="Enums\Dumped Enums\ESystemNotificationTypes.cs" />
     <Compile Include="Enums\Dumped Enums\ESystems.cs" />
@@ -592,6 +610,7 @@
     <Compile Include="Enums\Dumped Enums\EUIStealthIconType.cs" />
     <Compile Include="Enums\Dumped Enums\EUploadProgramState.cs" />
     <Compile Include="Enums\Dumped Enums\EVarDBMode.cs" />
+    <Compile Include="Enums\Dumped Enums\EVehicleWindowState.cs" />
     <Compile Include="Enums\Dumped Enums\EVendorMode.cs" />
     <Compile Include="Enums\Dumped Enums\EViabilityDecision.cs" />
     <Compile Include="Enums\Dumped Enums\EVirtualSystem.cs" />
@@ -751,6 +770,7 @@
     <Compile Include="Enums\Dumped Enums\gameEffectObjectFilter_HitTypeAction.cs" />
     <Compile Include="Enums\Dumped Enums\gameEffectTriggerPositioningType.cs" />
     <Compile Include="Enums\Dumped Enums\gameEffectTriggerRotationType.cs" />
+    <Compile Include="Enums\Dumped Enums\gameEHotkey.cs" />
     <Compile Include="Enums\Dumped Enums\gameEInventoryFlags.cs" />
     <Compile Include="Enums\Dumped Enums\gameELootGenerationType.cs" />
     <Compile Include="Enums\Dumped Enums\gameEMaterialZone.cs" />
@@ -1385,6 +1405,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Classes\Mapping\PSData\" />
+    <Folder Include="Classes\Mapping\ScriptableSystemsContainer\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

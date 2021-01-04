@@ -1,16 +1,8 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
-
-namespace CyberCAT.Core.Classes.Mapping.StatsSystem
+﻿namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 {
     [RealName("gameCombinedStatModifierData")]
-    public class GameCombinedStatModifierData : GenericUnknownStruct.BaseClassEntry
+    public class GameCombinedStatModifierData : GameStatModifierData
     {
-        [RealName("statType")]
-        public DumpedEnums.gamedataStatType StatType { get; set; }
-
-        [RealName("modifierType")]
-        public DumpedEnums.gameStatModifierType ModifierType { get; set; }
-
         [RealName("refStatType")]
         public DumpedEnums.gamedataStatType RefStatType { get; set; }
 

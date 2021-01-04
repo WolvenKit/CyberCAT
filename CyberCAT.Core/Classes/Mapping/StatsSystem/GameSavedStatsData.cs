@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using CyberCAT.Core.Classes.NodeRepresentations;
+﻿using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 {
@@ -7,7 +6,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
     public class GameSavedStatsData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("statModifiers")]
-        [RealType("handle:gameStatModifierData", IsHandle = true)]
+        [RealType("gameStatModifierData", IsHandle = true)]
         public uint[] StatModifiers { get; set; }
 
         [RealName("inactiveStats")]
