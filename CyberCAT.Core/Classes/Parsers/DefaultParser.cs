@@ -30,6 +30,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             return result;
         }
+
         public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;

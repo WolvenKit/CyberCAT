@@ -40,23 +40,36 @@ namespace CyberCAT.Core.Classes
         {
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
-            //TODO do this with dependency injection or Reflection and a Plugin type DLL Folder
             _parsers = new List<INodeParser>();
-            _parsers.Add(new GameSessionConfigParser());
-            _parsers.Add(new CharacterCustomizationAppearancesParser());
-            _parsers.Add(new ItemDataParser());
-            _parsers.Add(new InventoryParser());
-            _parsers.Add(new FactsTableParser());
-            _parsers.Add(new FactsDBParser());
-            _parsers.Add(new ItemDropStorageParser());
-            _parsers.Add(new ItemDropStorageManagerParser());
+            var interfaceType = typeof(INodeParser);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
+            foreach (var type in types)
+            {
+                INodeParser instance = (INodeParser)Activator.CreateInstance(type);
+                _parsers.Add(instance);
+            }
         }
-        public void LoadFromCompressedStream(Stream inputStream)
+        public void LoadPCSaveFile(Stream inputStream)
+        {
+            BeginLoading(inputStream);
+            var activeSaveFile = new SaveFileCompressionHelper();
+            var decompressedFile = activeSaveFile.Decompress(inputStream);
+            LoadFromByteArray(decompressedFile, decompressedFile.Length - activeSaveFile.MetaInformation.RestOfContent.Length);
+        }
+
+        public void LoadPS4SaveFile(Stream inputStream)
+        {
+            BeginLoading(inputStream);
+            LoadFromStream(inputStream, LastBlockOffset);
+        }
+
+        private void BeginLoading(Stream inputStream)
         {
             FlatNodes.Clear();
             Nodes.Clear();
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
+                // TODO: https://discord.com/channels/717692382849663036/789565732726767636/795711671850369105
                 string magic = reader.ReadString(4);
                 Version1 = reader.ReadInt32();
                 Version2 = reader.ReadInt32();
@@ -82,67 +95,19 @@ namespace CyberCAT.Core.Classes
                 }
             }
             inputStream.Seek(0, SeekOrigin.Begin);
-            var activeSaveFile = new SaveFileCompressionHelper();
-            var decompressedFile = activeSaveFile.Decompress(inputStream);
-            using (MemoryStream memoryStream = new MemoryStream(decompressedFile))
+        }
+
+        private void LoadFromByteArray(byte[] data, int dataEnd)
+        {
+            using (MemoryStream memoryStream = new MemoryStream(data))
             {
-                using (BinaryReader reader = new BinaryReader(memoryStream, Encoding.ASCII))
-                {
-                    foreach (var node in FlatNodes)
-                    {
-                        reader.BaseStream.Position = node.Offset;
-                        node.Id = reader.ReadInt32();
-                    }
-                    foreach (var node in FlatNodes)
-                    {
-                        if (!node.IsChild)
-                        {
-                            FindChildren(FlatNodes, node, FlatNodes.Count);
-                        }
-                        if (node.NextId > -1)
-                        {
-                            node.SetNextNode(FlatNodes.Where(n => n.Id == node.NextId).FirstOrDefault());
-                        }
-                    }
-                    Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
-                    CalculateTrueSizes(Nodes, decompressedFile.Length - activeSaveFile.MetaInformation.RestOfContent.Length);
-                    ParserUtils.ParseChildren(Nodes, reader, _parsers);
-                }
+                LoadFromStream(memoryStream, dataEnd);
             }
         }
 
-        public void LoadFromUncompressedStream(Stream inputStream)
+        private void LoadFromStream(Stream stream, int dataEnd)
         {
-            FlatNodes.Clear();
-            Nodes.Clear();
-            using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
-            {
-                string magic = reader.ReadString(4);
-                Version1 = reader.ReadInt32();
-                Version2 = reader.ReadInt32();
-                SkippedHeaderBytes = reader.ReadBytes(9);
-                Version3 = reader.ReadInt32();
-                int blockInfoStart = (int)reader.BaseStream.Position;
-                reader.BaseStream.Seek(-8, SeekOrigin.End);
-                LastBlockOffset = reader.ReadInt32();
-                reader.BaseStream.Seek(LastBlockOffset, SeekOrigin.Begin);
-                string edonMagic = reader.ReadString(4);
-                var flags = new Flags(reader);
-                for (int i = 0; i < flags.Length; i++)
-                {
-                    var tmpFlags = new Flags(reader.ReadByte());
-                    string name = reader.ReadString(tmpFlags.Length);
-                    var entry = new NodeEntry();
-                    entry.NextId = reader.ReadInt32();
-                    entry.ChildId = reader.ReadInt32();
-                    entry.Offset = reader.ReadInt32();
-                    entry.Size = reader.ReadInt32();
-                    entry.Name = name;
-                    FlatNodes.Add(entry);
-                }
-            }
-            inputStream.Seek(0, SeekOrigin.Begin);
-            using (BinaryReader reader = new BinaryReader(inputStream, Encoding.ASCII))
+            using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 foreach (var node in FlatNodes)
                 {
@@ -161,32 +126,14 @@ namespace CyberCAT.Core.Classes
                     }
                 }
                 Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
-                CalculateTrueSizes(Nodes, LastBlockOffset);
+                CalculateTrueSizes(Nodes, dataEnd);
                 ParserUtils.ParseChildren(Nodes, reader, _parsers);
             }
         }
 
-        public byte[] SaveToCompressed()
+        public byte[] SaveToPCSaveFile()
         {
-            byte[] uncompressedData;
-
-            using(var stream = new MemoryStream())
-            {
-                foreach(var node in Nodes)
-                {
-                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
-                    if (parser != null)
-                    {
-                        stream.Write(parser.Write(node, _parsers, 0));
-                    }
-                    else
-                    {
-                        var fallback = new DefaultParser();
-                        stream.Write(fallback.Write(node, _parsers, 0));
-                    }
-                }
-                uncompressedData = stream.ToArray();
-            }
+            var uncompressedData = GetNodeData();
 
             var footerWithoutLast8Bytes= BuildFooterWithoutLastEightBytes();
             var compressor = new SaveFileCompressionHelper();
@@ -212,27 +159,9 @@ namespace CyberCAT.Core.Classes
             return result;
         }
 
-        public byte[] SaveToUncompressed()
+        public byte[] SaveToPS4SaveFile()
         {
-            byte[] uncompressedData;
-
-            using (var stream = new MemoryStream())
-            {
-                foreach (var node in Nodes)
-                {
-                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
-                    if (parser != null)
-                    {
-                        stream.Write(parser.Write(node, _parsers, 0));
-                    }
-                    else
-                    {
-                        var fallback = new DefaultParser();
-                        stream.Write(fallback.Write(node, _parsers, 0));
-                    }
-                }
-                uncompressedData = stream.ToArray();
-            }
+            var uncompressedData = GetNodeData();
 
             var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes();
             var compressor = new SaveFileCompressionHelper();
@@ -268,7 +197,32 @@ namespace CyberCAT.Core.Classes
             return result;
         }
 
-        byte[] BuildHeader(List<Lz4Chunk> chunks)
+        public byte[] GetNodeData()
+        {
+            byte[] uncompressedData;
+
+            using (var stream = new MemoryStream())
+            {
+                foreach (var node in Nodes)
+                {
+                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
+                    if (parser != null)
+                    {
+                        stream.Write(parser.Write(node, _parsers, 0));
+                    }
+                    else
+                    {
+                        var fallback = new DefaultParser();
+                        stream.Write(fallback.Write(node, _parsers, 0));
+                    }
+                }
+                uncompressedData = stream.ToArray();
+            }
+
+            return uncompressedData;
+        }
+
+        private byte[] BuildHeader(List<Lz4Chunk> chunks)
         {
             byte[] result;
             using (var stream = new MemoryStream())
@@ -310,7 +264,7 @@ namespace CyberCAT.Core.Classes
             return result;
         }
 
-        byte[] BuildFooterWithoutLastEightBytes()
+        private byte[] BuildFooterWithoutLastEightBytes()
         {
             byte[] result;
             using (var stream = new MemoryStream())
@@ -333,6 +287,7 @@ namespace CyberCAT.Core.Classes
             }
             return result;
         }
+
         private void CalculateTrueSizes(IReadOnlyList<NodeEntry> nodes, int maxLength)
         {
             for (var i = 0; i < nodes.Count; ++i)
@@ -432,7 +387,6 @@ namespace CyberCAT.Core.Classes
                         }
                         
                     }
-
                 }
             }
         }

@@ -183,7 +183,7 @@ namespace CyberCAT.Forms
             var guid = Guid.NewGuid();
             using (var stream = new MemoryStream(fileBytes))
             {
-                saveFile.LoadFromCompressedStream(stream);
+                saveFile.LoadPCSaveFile(stream);
                 File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
             var growableSectionNames = new List<string>();
