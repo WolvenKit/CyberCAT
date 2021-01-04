@@ -15,14 +15,58 @@ namespace CyberCAT.Core.Classes
 {
     public class SaveFile
     {
-        public int Version1;
-        public int Version2;
-        public int Version3;
-        public byte[] SkippedHeaderBytes;
+        public class SaveFileHeader
+        {
+            public byte[] Magic { get; set; }
+            public uint SaveVersion { get; set; }
+            public uint GameVersion { get; set; }
+            public byte Padding { get; set; }
+            public uint Clock { get; set; }
+            public uint Date { get; set; }
+            public uint ArchiveVersion { get; set; }
+
+            public byte Hour => (byte) (Clock >> 22);
+            public byte Minutes => (byte) ((Clock >> 16) & 63);
+            public byte Seconds => (byte) ((Clock >> 10) & 63);
+            public byte Millis => (byte) (Clock & 1023);
+
+            public byte Year => (byte) (Date >> 22);
+            public byte Month => (byte) (1 + (Date >> 15) % (1 << 5));
+            public byte Day => (byte)(1 + (Date >> 10) % (1 << 5));
+
+            public void ReadSaveFileHeader(BinaryReader reader)
+            {
+                Magic = reader.ReadBytes(4);
+                SaveVersion = reader.ReadUInt32();
+                GameVersion = reader.ReadUInt32();
+                Padding = reader.ReadByte();
+                Clock = reader.ReadUInt32();
+                Date = reader.ReadUInt32();
+                ArchiveVersion = reader.ReadUInt32();
+            }
+
+            public void Write(BinaryWriter writer)
+            {
+                writer.Write(Magic);
+                writer.Write(SaveVersion);
+                writer.Write(GameVersion);
+                writer.Write(Padding);
+                writer.Write(Clock);
+                writer.Write(Date);
+                writer.Write(ArchiveVersion);
+            }
+
+            public override string ToString()
+            {
+                return $"{Year}-{Month}-{Day} {Hour}:{Minutes}:{Seconds}.{Millis}";
+            }
+        }
+
+        public SaveFileHeader Header { get; set; }
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
         public List<NodeEntry> FlatNodes; //flat structure
-        public Guid Guid { get; private set;}
+        public Guid Guid { get; }
         List<INodeParser> _parsers;
         /// <summary>
         /// Creates a new Instance of Save File wich will utilize given parsers
@@ -70,11 +114,8 @@ namespace CyberCAT.Core.Classes
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
                 // TODO: https://discord.com/channels/717692382849663036/789565732726767636/795711671850369105
-                string magic = reader.ReadString(4);
-                Version1 = reader.ReadInt32();
-                Version2 = reader.ReadInt32();
-                SkippedHeaderBytes = reader.ReadBytes(9);
-                Version3 = reader.ReadInt32();
+                Header = new SaveFileHeader();
+                Header.ReadSaveFileHeader(reader);
                 int blockInfoStart = (int)reader.BaseStream.Position;
                 reader.BaseStream.Seek(-8, SeekOrigin.End);
                 LastBlockOffset = reader.ReadInt32();
@@ -229,11 +270,7 @@ namespace CyberCAT.Core.Classes
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.FIRST_FILE_HEADER_MAGIC));
-                    writer.Write(Version1);
-                    writer.Write(Version2);
-                    writer.Write(SkippedHeaderBytes);
-                    writer.Write(Version3);
+                    Header.Write(writer);
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC));
                     writer.Write(chunks.Count);
                     writer.Write(Constants.Numbers.DEFAULT_HEADER_SIZE);
