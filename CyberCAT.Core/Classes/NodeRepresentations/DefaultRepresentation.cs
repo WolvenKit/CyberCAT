@@ -10,6 +10,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
     [JsonObject]
     public class DefaultRepresentation
     {
-        public byte[] Blob { get; set; }
+        public byte[] HeaderBlob { get; set; }
+        public byte[] TrailingBlob { get; set; }
     }
 }

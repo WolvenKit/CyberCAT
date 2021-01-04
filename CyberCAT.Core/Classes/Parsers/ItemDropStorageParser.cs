@@ -36,7 +36,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;
             var data = (ItemDropStorage)node.Value;
@@ -44,13 +44,18 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    var headerSize = 4;
                     writer.Write(node.Id);
-                    ParserUtils.WriteString(writer, data.UnknownString);
+                    headerSize += ParserUtils.WriteString(writer, data.UnknownString);
                     writer.Write(data.HeaderBytes);
-                    InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
+                    headerSize += data.HeaderBytes.Length;
+                    InventoryParser.WriteSubInventory(node, 0, headerSize, writer, data.Inventory, parsers);
                 }
                 result = stream.ToArray();
             }
+
+            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
+
             return result;
         }
     }

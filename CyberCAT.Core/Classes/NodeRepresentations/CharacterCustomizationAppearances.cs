@@ -18,6 +18,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public string SecondString { get; set; }
             public byte[] TrailingBytes { get; set; }
 
+            public HashValueEntry()
+            {
+                TrailingBytes = new byte[8];
+            }
+
             public override string ToString()
             {
                 return $"{FirstString} / {SecondString}";
@@ -29,6 +34,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public string FirstString { get; set; }
             public string SecondString { get; set; }
             public byte[] TrailingBytes { get; set; }
+
+            public ValueEntry()
+            {
+                TrailingBytes = new byte[8];
+            }
 
             public override string ToString()
             {

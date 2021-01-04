@@ -18,7 +18,8 @@ namespace CyberCAT.Core.Classes
         public object Value { get; set; }
         public bool IsChild { get; set; }
         public bool IsFirstChild { get; set; }
-        public int TrueSize { get; set; }
+        public int DataSize { get; set; }
+        public int TrailingSize { get; set; }
         public List<NodeEntry> Children { get; set; }
         private NodeEntry _nextNode;
         private NodeEntry _previousNode;

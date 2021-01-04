@@ -32,7 +32,7 @@ namespace CyberCAT.Core.Classes.Parsers
             result.NumberOfItemDropStorages = reader.ReadUInt32();
             result.ItemDropStorages = new ItemDropStorage[result.NumberOfItemDropStorages];
 
-            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==Constants.NodeNames.ITEM_DROP_STORAGE);
+            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE);
             Debug.Assert(parser != null);
 
             for (var i = 0; i < result.NumberOfItemDropStorages; ++i)
@@ -48,7 +48,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
         {
             byte[] result;
             var data = (ItemDropStorageManager)node.Value;
@@ -59,18 +59,21 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(node.Id);
                     writer.Write(data.NumberOfItemDropStorages);
 
-                    var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==Constants.NodeNames.ITEM_DROP_STORAGE);
+                    var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE);
                     Debug.Assert(parser != null);
 
                     for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
                     {
-                        writer.Write(parser.Write(node.Children[i], parsers));
+                        writer.Write(parser.Write(node.Children[i], parsers, i == 0 ? (int) writer.BaseStream.Position : 0));
                     }
 
                     writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
             }
+
+            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
+
             return result;
         }
     }

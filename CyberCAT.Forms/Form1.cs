@@ -27,9 +27,9 @@ namespace CyberCAT.Forms
         SaveFileCompressionHelper _saveFileCompressionHelper = new SaveFileCompressionHelper();
         List<ParserConfig> _parserConfig = new List<ParserConfig>();
         Settings _settings;
-        string _settingsFileName = "Settings.json";
-        string _itemsFileName = "Items.json";
-        string _factsFileName = "Facts.json";
+        private const string SETTINGS_FILE_NAME = "Settings.json";
+        private const string NAMES_FILE_NAME = "Names.json";
+        private const string FACTS_FILE_NAME = "Facts.json";
 
         private string _selectedFileForDecompression;
         private string _selectedFileForRecompression;
@@ -43,8 +43,8 @@ namespace CyberCAT.Forms
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
-            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_itemsFileName)));
-            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(_factsFileName)));
+            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+            FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(FACTS_FILE_NAME)));
             //Make rightclick select node. Better usability of context menu
             EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
 
@@ -56,20 +56,21 @@ namespace CyberCAT.Forms
             TypeDescriptor.AddAttributes(typeof(ItemData.ItemFlags), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemData.HeaderThing), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.KindData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.Kind1Data), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.Kind2Data), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.Kind2DataNode), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemInnerData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.SimpleItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ModableItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemModData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            //TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(TweakDbId), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
 
             //Settings
             var interfaceType = typeof(INodeParser);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass);
-            if (File.Exists(_settingsFileName))
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
+            if (File.Exists(SETTINGS_FILE_NAME))
             {
-                _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_settingsFileName));
+                _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE_NAME));
                 foreach (var type in types)
                 {
                     var instance = (INodeParser)Activator.CreateInstance(type);
@@ -94,18 +95,31 @@ namespace CyberCAT.Forms
         {
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
-            if (data.Node.Value is DefaultRepresentation)
+
+            if (saveDialog.ShowDialog() != DialogResult.OK)
             {
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                return;
+            }
+
+            byte[] bytes;
+            var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    var representation = (DefaultRepresentation)data.Node.Value;
-                    File.WriteAllBytes(saveDialog.FileName, representation.Blob);
+                    var parser = parsers.Where(p => p.ParsableNodeName == data.Node.Name).FirstOrDefault();
+                    if (parser == null)
+                    {
+                        parser = new DefaultParser();
+                    }
+
+                    writer.Write(parser.Write(data.Node, parsers, 0));
                 }
+
+                bytes = stream.ToArray();
             }
-            else
-            {
-                MessageBox.Show("Exporting known structures not supported yet");
-            }
+
+            File.WriteAllBytes(saveDialog.FileName, bytes);
         }
 
         private void uncompressButton_Click(object sender, EventArgs e)
@@ -170,11 +184,11 @@ namespace CyberCAT.Forms
             var guid = Guid.NewGuid();
             using (var stream = new MemoryStream(fileBytes))
             {
-                saveFile.LoadFromCompressedStream(stream);
+                saveFile.LoadPCSaveFile(stream);
                 File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
             }
             var growableSectionNames = new List<string>();
-            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.TrueSize).Select(n => n.Name));
+            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.DataSize).Select(n => n.Name));
             File.WriteAllLines($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_growableSectionNames.txt", growableSectionNames);
             MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
             foreach (var node in saveFile.Nodes)
@@ -208,19 +222,34 @@ namespace CyberCAT.Forms
         {
             _settings.EnabledParsers.Clear();
             _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
-            File.WriteAllText(_settingsFileName, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+            File.WriteAllText(SETTINGS_FILE_NAME, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
 
         private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Export_{Guid.NewGuid()}");
+            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{Guid.NewGuid()}");
             foreach(var node in _activeSaveFile.FlatNodes)
             {
-                if(node.Value is DefaultRepresentation)
+                var filename = Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}");
+                byte[] bytes;
+                var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+                using (var stream = new MemoryStream())
                 {
-                    var representation = (DefaultRepresentation)node.Value;
-                    File.WriteAllBytes(Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}"), representation.Blob);
+                    using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                    {
+                        var parser = parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
+                        if (parser == null)
+                        {
+                            parser = new DefaultParser();
+                        }
+
+                        writer.Write(parser.Write(node, parsers, 0));
+                    }
+
+                    bytes = stream.ToArray();
                 }
+
+                File.WriteAllBytes(filename, bytes);
             }
             MessageBox.Show($"Exported All unparsed Nodes to {info.FullName}");
         }
@@ -269,8 +298,13 @@ namespace CyberCAT.Forms
             var selectedNode = (NodeEntryTreeNode)EditorTree.SelectedNode;
             var data = (NodeEntry)selectedNode.Node;
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-            
-            File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
+            string folderPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{_activeSaveFile.Guid}";
+            if (!Directory.Exists(folderPath)) ;
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            File.WriteAllText($"{folderPath}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json", json);
+            MessageBox.Show($"Exported selected node to {folderPath}\\{selectedNode.Node.Id}_{selectedNode.Node.Value}.json");
         }
     }
 }

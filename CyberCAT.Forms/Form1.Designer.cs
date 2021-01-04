@@ -48,12 +48,11 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtEditorFilter = new System.Windows.Forms.TextBox();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.LoadSave = new System.Windows.Forms.Button();
             this.EditorTree = new System.Windows.Forms.TreeView();
             this.editorTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.experimentalTabPage = new System.Windows.Forms.TabPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.label5 = new System.Windows.Forms.Label();
@@ -64,7 +63,13 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.label6 = new System.Windows.Forms.Label();
             this.saveSettingsButton = new System.Windows.Forms.Button();
-            this.exportJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.savbinCompressedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uncompressedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.savbinCompressedToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.uncompressedToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.compressionTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -81,19 +86,22 @@
             this.experimentalTabPage.SuspendLayout();
             this.settingsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.compressionTabPage);
             this.tabControl1.Controls.Add(this.editorTabPage);
             this.tabControl1.Controls.Add(this.experimentalTabPage);
             this.tabControl1.Controls.Add(this.settingsTabPage);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Location = new System.Drawing.Point(0, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(757, 455);
+            this.tabControl1.Size = new System.Drawing.Size(757, 430);
             this.tabControl1.TabIndex = 0;
             // 
             // compressionTabPage
@@ -103,7 +111,7 @@
             this.compressionTabPage.Location = new System.Drawing.Point(4, 22);
             this.compressionTabPage.Name = "compressionTabPage";
             this.compressionTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.compressionTabPage.Size = new System.Drawing.Size(749, 429);
+            this.compressionTabPage.Size = new System.Drawing.Size(749, 404);
             this.compressionTabPage.TabIndex = 0;
             this.compressionTabPage.Text = "Compression";
             this.compressionTabPage.UseVisualStyleBackColor = true;
@@ -246,7 +254,7 @@
             this.editorTabPage.Location = new System.Drawing.Point(4, 22);
             this.editorTabPage.Name = "editorTabPage";
             this.editorTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.editorTabPage.Size = new System.Drawing.Size(749, 429);
+            this.editorTabPage.Size = new System.Drawing.Size(749, 404);
             this.editorTabPage.TabIndex = 2;
             this.editorTabPage.Text = "Editor";
             this.editorTabPage.UseVisualStyleBackColor = true;
@@ -254,13 +262,14 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(743, 423);
+            this.splitContainer1.Size = new System.Drawing.Size(743, 398);
             this.splitContainer1.SplitterDistance = 247;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -276,44 +285,22 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.txtEditorFilter);
-            this.splitContainer2.Panel1.Controls.Add(this.saveButton);
-            this.splitContainer2.Panel1.Controls.Add(this.LoadSave);
-            this.splitContainer2.Panel1MinSize = 60;
+            this.splitContainer2.Panel1MinSize = 30;
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.EditorTree);
-            this.splitContainer2.Size = new System.Drawing.Size(247, 423);
-            this.splitContainer2.SplitterDistance = 60;
+            this.splitContainer2.Size = new System.Drawing.Size(247, 398);
+            this.splitContainer2.SplitterDistance = 30;
             this.splitContainer2.TabIndex = 0;
             // 
             // txtEditorFilter
             // 
-            this.txtEditorFilter.Location = new System.Drawing.Point(3, 32);
+            this.txtEditorFilter.Location = new System.Drawing.Point(3, 3);
             this.txtEditorFilter.Name = "txtEditorFilter";
             this.txtEditorFilter.Size = new System.Drawing.Size(156, 20);
             this.txtEditorFilter.TabIndex = 2;
             this.txtEditorFilter.TextChanged += new System.EventHandler(this.txtEditorFilter_TextChanged);
-            // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(84, 3);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 1;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
-            // 
-            // LoadSave
-            // 
-            this.LoadSave.Location = new System.Drawing.Point(3, 3);
-            this.LoadSave.Name = "LoadSave";
-            this.LoadSave.Size = new System.Drawing.Size(75, 23);
-            this.LoadSave.TabIndex = 0;
-            this.LoadSave.Text = "Load";
-            this.LoadSave.UseVisualStyleBackColor = true;
-            this.LoadSave.Click += new System.EventHandler(this.EditorLoad_Click);
             // 
             // EditorTree
             // 
@@ -322,7 +309,7 @@
             this.EditorTree.HideSelection = false;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
-            this.EditorTree.Size = new System.Drawing.Size(247, 359);
+            this.EditorTree.Size = new System.Drawing.Size(247, 364);
             this.EditorTree.TabIndex = 0;
             this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
             // 
@@ -333,22 +320,29 @@
             this.exportAllToolStripMenuItem,
             this.exportJSONToolStripMenuItem});
             this.editorTreeContextMenu.Name = "editorTreeContextMenu";
-            this.editorTreeContextMenu.Size = new System.Drawing.Size(181, 92);
+            this.editorTreeContextMenu.Size = new System.Drawing.Size(140, 70);
             this.editorTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.editorTreeContextMenu_Opening);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Enabled = false;
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // exportAllToolStripMenuItem
             // 
             this.exportAllToolStripMenuItem.Name = "exportAllToolStripMenuItem";
-            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.exportAllToolStripMenuItem.Text = "Export All";
             this.exportAllToolStripMenuItem.Click += new System.EventHandler(this.exportAllToolStripMenuItem_Click);
+            // 
+            // exportJSONToolStripMenuItem
+            // 
+            this.exportJSONToolStripMenuItem.Name = "exportJSONToolStripMenuItem";
+            this.exportJSONToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.exportJSONToolStripMenuItem.Text = "Export JSON";
+            this.exportJSONToolStripMenuItem.Click += new System.EventHandler(this.exportJSONToolStripMenuItem_Click);
             // 
             // experimentalTabPage
             // 
@@ -360,7 +354,7 @@
             this.experimentalTabPage.Location = new System.Drawing.Point(4, 22);
             this.experimentalTabPage.Name = "experimentalTabPage";
             this.experimentalTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.experimentalTabPage.Size = new System.Drawing.Size(749, 429);
+            this.experimentalTabPage.Size = new System.Drawing.Size(749, 404);
             this.experimentalTabPage.TabIndex = 1;
             this.experimentalTabPage.Text = "Experimental";
             this.experimentalTabPage.UseVisualStyleBackColor = true;
@@ -417,7 +411,7 @@
             this.settingsTabPage.Controls.Add(this.saveSettingsButton);
             this.settingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.settingsTabPage.Name = "settingsTabPage";
-            this.settingsTabPage.Size = new System.Drawing.Size(749, 429);
+            this.settingsTabPage.Size = new System.Drawing.Size(749, 404);
             this.settingsTabPage.TabIndex = 3;
             this.settingsTabPage.Text = "Settings";
             this.settingsTabPage.UseVisualStyleBackColor = true;
@@ -449,18 +443,69 @@
             this.saveSettingsButton.UseVisualStyleBackColor = true;
             this.saveSettingsButton.Click += new System.EventHandler(this.saveSettingsButton_Click);
             // 
-            // exportJSONToolStripMenuItem
+            // menuStrip1
             // 
-            this.exportJSONToolStripMenuItem.Name = "exportJSONToolStripMenuItem";
-            this.exportJSONToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportJSONToolStripMenuItem.Text = "Export JSON";
-            this.exportJSONToolStripMenuItem.Click += new System.EventHandler(this.exportJSONToolStripMenuItem_Click);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadToolStripMenuItem,
+            this.saveToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(757, 24);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.savbinCompressedToolStripMenuItem,
+            this.uncompressedToolStripMenuItem});
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
+            this.loadToolStripMenuItem.Text = "Load";
+            // 
+            // savbinCompressedToolStripMenuItem
+            // 
+            this.savbinCompressedToolStripMenuItem.Name = "savbinCompressedToolStripMenuItem";
+            this.savbinCompressedToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.savbinCompressedToolStripMenuItem.Text = "PC sav.dat, compressed";
+            this.savbinCompressedToolStripMenuItem.Click += new System.EventHandler(this.savbinCompressedToolStripMenuItem_Click);
+            // 
+            // uncompressedToolStripMenuItem
+            // 
+            this.uncompressedToolStripMenuItem.Name = "uncompressedToolStripMenuItem";
+            this.uncompressedToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.uncompressedToolStripMenuItem.Text = "PS4 sav.dat, uncompressed";
+            this.uncompressedToolStripMenuItem.Click += new System.EventHandler(this.uncompressedToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.savbinCompressedToolStripMenuItem1,
+            this.uncompressedToolStripMenuItem1});
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.saveToolStripMenuItem.Text = "Save";
+            // 
+            // savbinCompressedToolStripMenuItem1
+            // 
+            this.savbinCompressedToolStripMenuItem1.Name = "savbinCompressedToolStripMenuItem1";
+            this.savbinCompressedToolStripMenuItem1.Size = new System.Drawing.Size(309, 22);
+            this.savbinCompressedToolStripMenuItem1.Text = "PC sav.dat, compressed";
+            this.savbinCompressedToolStripMenuItem1.Click += new System.EventHandler(this.savbinCompressedToolStripMenuItem1_Click);
+            // 
+            // uncompressedToolStripMenuItem1
+            // 
+            this.uncompressedToolStripMenuItem1.Name = "uncompressedToolStripMenuItem1";
+            this.uncompressedToolStripMenuItem1.Size = new System.Drawing.Size(309, 22);
+            this.uncompressedToolStripMenuItem1.Text = "PS4 sav.dat, uncompressed (EXPERIMENTAL)";
+            this.uncompressedToolStripMenuItem1.Click += new System.EventHandler(this.uncompressedToolStripMenuItem1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(757, 455);
+            this.ClientSize = new System.Drawing.Size(757, 459);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
             this.Text = "CyberCAT";
@@ -485,7 +530,10 @@
             this.settingsTabPage.ResumeLayout(false);
             this.settingsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -504,9 +552,7 @@
         private System.Windows.Forms.TabPage editorTabPage;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.Button LoadSave;
         private System.Windows.Forms.TreeView EditorTree;
-        private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.ContextMenuStrip editorTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.TabPage settingsTabPage;
@@ -527,6 +573,13 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtEditorFilter;
         private System.Windows.Forms.ToolStripMenuItem exportJSONToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem savbinCompressedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uncompressedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem savbinCompressedToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem uncompressedToolStripMenuItem1;
     }
 }
 
