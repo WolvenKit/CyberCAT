@@ -37,7 +37,7 @@ namespace CyberCAT.Core.Classes
                 idBytes[2] = rawBytes[2];
                 idBytes[3] = rawBytes[3];
                 Id = BitConverter.ToUInt32(idBytes, 0);
-                Length = idBytes[4];
+                Length = rawBytes[4];
                 Padding = new byte[3];
                 Padding[0] = rawBytes[5];
                 Padding[1] = rawBytes[6];
