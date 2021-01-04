@@ -32,7 +32,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); // Skip Id
 
-            result.ItemTdbId = reader.ReadUInt64();
+            result.ItemTdbId = reader.ReadTweakDbId();
             result.Header = ReadHeaderThing(reader);
             result.Flags = new ItemData.ItemFlags(reader.ReadByte());
             result.CreationTime = reader.ReadUInt32();
@@ -95,7 +95,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var result = new ItemData.ModableItemData();
 
-            result.TdbId1 = reader.ReadUInt64();
+            result.TdbId1 = reader.ReadTweakDbId();
             result.Unknown2 = reader.ReadUInt32();
             result.Unknown3 = reader.ReadUInt32();
             result.RootNode = ReadKind2DataNode(reader);
@@ -107,7 +107,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var result = new ItemData.ItemModData();
 
-            result.ItemTdbId = reader.ReadUInt64();
+            result.ItemTdbId = reader.ReadTweakDbId();
             result.Header = ReadHeaderThing(reader);
             result.UnknownString = ParserUtils.ReadString(reader);
             result.AttachmentSlotTdbId = reader.ReadUInt64();
@@ -119,7 +119,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
 
             result.Unknown2 = reader.ReadUInt32();
-            result.TdbId2 = reader.ReadUInt64();
+            result.TdbId2 = reader.ReadTweakDbId();
             result.Unknown3 = reader.ReadUInt32();
             result.Unknown4 = reader.ReadUInt32();
 
@@ -130,7 +130,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var nextItemEntry = new ItemData.NextItemEntry();
 
-            nextItemEntry.ItemTdbId = reader.ReadUInt64();
+            nextItemEntry.ItemTdbId = reader.ReadTweakDbId();
             nextItemEntry.ItemID = reader.ReadUInt32();
             nextItemEntry.UnknownBytes = reader.ReadBytes(3);
 

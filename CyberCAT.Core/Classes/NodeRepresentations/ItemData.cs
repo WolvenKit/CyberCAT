@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
     {
         public class NextItemEntry
         {
-            public ulong ItemTdbId { get; set; }
+            public TweakDbId ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
@@ -79,7 +79,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         [JsonObject]
         public class ModableItemData : ItemInnerData
         {
-            public ulong TdbId1 { get; set; }
+            public TweakDbId TdbId1 { get; set; }
             public string TdbId1Name => NameResolver.GetName(TdbId1);
             public uint Unknown2 { get; set; }
             public uint Unknown3 { get; set; }
@@ -99,7 +99,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         [JsonObject]
         public class ItemModData
         {
-            public ulong ItemTdbId { get; set; }
+            public TweakDbId ItemTdbId { get; set; }
             public string ItemName => NameResolver.GetName(ItemTdbId);
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
@@ -110,7 +110,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public int ChildrenCount => Children?.Length ?? 0;
             public ItemModData[] Children { get; set; }
             public uint Unknown2 { get; set; }
-            public ulong TdbId2 { get; set; }
+            public TweakDbId TdbId2 { get; set; }
             public string TdbId2Name => NameResolver.GetName(TdbId2);
             public uint Unknown3 { get; set; }
             public uint Unknown4 { get; set; }
@@ -146,7 +146,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
-        public ulong ItemTdbId { get; set; }
+        public TweakDbId ItemTdbId { get; set; }
         public string ItemName => NameResolver.GetName(ItemTdbId);
         public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
         public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);

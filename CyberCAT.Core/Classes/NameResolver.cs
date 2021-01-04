@@ -26,6 +26,15 @@ namespace CyberCAT.Core.Classes
             return $"Unknown_{hash:X}";
         }
 
+        public static string GetName(TweakDbId tdbid)
+        {
+            if (_items.ContainsKey(tdbid.Raw64))
+            {
+                return _items[tdbid.Raw64].Name;
+            }
+            return $"Unknown_{tdbid}";
+        }
+
         public static string GetGameName(ulong hash)
         {
             if (_items.ContainsKey(hash))
@@ -35,11 +44,29 @@ namespace CyberCAT.Core.Classes
             return $"";
         }
 
+        public static string GetGameName(TweakDbId tdbid)
+        {
+            if (_items.ContainsKey(tdbid.Raw64))
+            {
+                return _items[tdbid.Raw64].GameName;
+            }
+            return $"";
+        }
+
         public static string GetGameDescription(ulong hash)
         {
             if (_items.ContainsKey(hash))
             {
                 return _items[hash].GameDescription;
+            }
+            return $"";
+        }
+
+        public static string GetGameDescription(TweakDbId tdbid)
+        {
+            if (_items.ContainsKey(tdbid.Raw64))
+            {
+                return _items[tdbid.Raw64].GameDescription;
             }
             return $"";
         }
