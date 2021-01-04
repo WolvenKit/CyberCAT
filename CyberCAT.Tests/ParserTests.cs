@@ -78,14 +78,7 @@ namespace CyberCAT.Tests
             var newBytes = newSaveFile.SaveToCompressed();
 
             Assert.That(newBytes.Length, Is.EqualTo(bytes.Length));
-            //Assert.That(newBytes, Is.EquivalentTo(bytes));
-            /*
-            for (var i = 0; i < newBytes.Length; ++i) // Find a better way, this is slow...
-            {
-                Assert.That(newBytes[i], Is.EqualTo(bytes[i]));
-            }
-            */
-            Assert.That(Utils.ByteArrayCompare(newBytes, bytes), Is.True);
+            Assert.That(newBytes.SequenceEqual(bytes), Is.True);
         }
     }
 
@@ -126,14 +119,7 @@ namespace CyberCAT.Tests
             var newBytes = newSaveFile.SaveToUncompressed();
 
             Assert.That(newBytes.Length, Is.EqualTo(bytes.Length));
-            //Assert.That(newBytes, Is.EquivalentTo(bytes));
-            /*
-            for (var i = 0; i < newBytes.Length; ++i) // Find a better way, this is slow...
-            {
-                Assert.That(newBytes[i], Is.EqualTo(bytes[i]));
-            }
-            */
-            Assert.That(Utils.ByteArrayCompare(newBytes, bytes), Is.True);
+            Assert.That(newBytes.SequenceEqual(bytes), Is.True);
         }
     }
 }
