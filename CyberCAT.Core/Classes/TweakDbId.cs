@@ -51,10 +51,7 @@ namespace CyberCAT.Core.Classes
 
         public override string ToString()
         {
-            var idBytes = BitConverter.GetBytes(Id);
-            Array.Reverse(idBytes);
-            var id = BitConverter.ToUInt32(idBytes, 0);
-            return $"{id:X8}:{Length:X2}";
+            return $"{Id:X8}:{Length:X2}";
         }
     }
 
