@@ -11,6 +11,19 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
     public class CharacterCustomizationAppearances
     {
         [JsonObject]
+        public class StringTriple
+        {
+            public string FirstString { get; set; }
+            public string SecondString { get; set; }
+            public string ThirdString { get; set; }
+
+            public override string ToString()
+            {
+                return $"{FirstString} / {SecondString} / {ThirdString}";
+            }
+        }
+
+        [JsonObject]
         public class HashValueEntry
         {
             public ulong Hash { get; set; }
@@ -28,6 +41,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{FirstString} / {SecondString}";
             }
         }
+
         [JsonObject]
         public class ValueEntry
         {
@@ -45,6 +59,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{FirstString} / {SecondString}";
             }
         }
+
         [JsonObject]
         public class AppearanceSection
         {
@@ -63,6 +78,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 return $"{SectionName} ({MainList.Count} / {AdditionalList.Count})";
             }
         }
+
         [JsonObject]
         public class Section
         {
@@ -79,21 +95,23 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
+        public bool DataExists { get; set; }
+        public uint Unknown1 { get; set; }
         public byte[] UnknownFirstBytes { get; set; }
 
         public Section FirstSection { get; set; }
         public Section SecondSection { get; set; }
         public Section ThirdSection { get; set; }
 
-        /// <summary>
-        /// Bytes that are not yet parsed into representation
-        /// </summary>
-        public byte[] TrailingBytes { get; set; }
+        public List<StringTriple> StringTriples { get; set; }
+        public List<string> Strings { get; set; }
 
         public CharacterCustomizationAppearances()
         {
             FirstSection = new Section();
             SecondSection = new Section();
+            StringTriples = new List<StringTriple>();
+            Strings = new List<string>();
         }
        
     }

@@ -9,21 +9,15 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     class ParserUtils
     {
-        public static string ReadString(BinaryReader reader, out Flags flags)
-        {
-            flags = new Flags(reader.ReadByte());
-            return reader.ReadString(flags.Length);
-        }
-
         public static string ReadString(BinaryReader reader)
         {
-            var flags = new Flags(reader.ReadByte());
-            return reader.ReadString(flags.Length);
+            var length = ReadPackedLong(reader);
+            return reader.ReadString((int)-length);
         }
 
         public static int WriteString(BinaryWriter writer, string s)
         {
-            writer.Write((byte)(s.Length + 128));
+            WritePackedLong(writer, -s.Length);
             writer.Write(Encoding.ASCII.GetBytes(s));
             return 1 + Encoding.ASCII.GetBytes(s).Length;
         }

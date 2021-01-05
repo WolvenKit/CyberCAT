@@ -113,7 +113,6 @@ namespace CyberCAT.Core.Classes
             Nodes.Clear();
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
-                // TODO: https://discord.com/channels/717692382849663036/789565732726767636/795711671850369105
                 Header = new SaveFileHeader();
                 Header.ReadSaveFileHeader(reader);
                 int blockInfoStart = (int)reader.BaseStream.Position;
@@ -121,11 +120,10 @@ namespace CyberCAT.Core.Classes
                 LastBlockOffset = reader.ReadInt32();
                 reader.BaseStream.Seek(LastBlockOffset, SeekOrigin.Begin);
                 string edonMagic = reader.ReadString(4);
-                var flags = new Flags(reader);
-                for (int i = 0; i < flags.Length; i++)
+                var length = ParserUtils.ReadPackedLong(reader);
+                for (int i = 0; i < length; i++)
                 {
-                    var tmpFlags = new Flags(reader.ReadByte());
-                    string name = reader.ReadString(tmpFlags.Length);
+                    var name = ParserUtils.ReadString(reader);
                     var entry = new NodeEntry();
                     entry.NextId = reader.ReadInt32();
                     entry.ChildId = reader.ReadInt32();
@@ -312,8 +310,7 @@ namespace CyberCAT.Core.Classes
                     writer.WriteBit6(FlatNodes.Count);
                     foreach (var node in FlatNodes)
                     {
-                        writer.Write((byte)(node.Name.Length + 128));
-                        writer.Write(Encoding.ASCII.GetBytes(node.Name));
+                        ParserUtils.WriteString(writer, node.Name);
                         writer.Write(node.NextId);
                         writer.Write(node.ChildId);
                         writer.Write(node.Offset);

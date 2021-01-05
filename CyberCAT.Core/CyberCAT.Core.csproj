@@ -64,7 +64,6 @@
     <Compile Include="Classes\FactResolver.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
-    <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NameResolver.cs" />
     <Compile Include="Classes\NodeEntry.cs" />
