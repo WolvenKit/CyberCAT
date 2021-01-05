@@ -27,6 +27,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
             reader.Skip(4);
 
             var result = new FactsDB();
@@ -65,8 +66,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length - data.TrailingBytes.Length, parentHeaderSize);
 
             return result;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -70,13 +71,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            if (node.Name != ParsableNodeName)
-            {
-                throw new Exception("Unexpected SectionName");
-            }
+            node.Parser = this;
             var result = new CharacterCustomizationAppearances();
             reader.Skip(4); //skip Id
-
             result.DataExists = reader.ReadBoolean();
             result.Unknown1 = reader.ReadUInt32();
 
@@ -87,9 +84,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
             result.UnknownFirstBytes = reader.ReadBytes(6);
 
-            result.FirstSection = ReadSection(reader, ExpectedFirstSectionNames);
-            result.SecondSection = ReadSection(reader, ExpectedSecondSectionNames);
-            result.ThirdSection = ReadSection(reader, ExpectedThirdSectionNames);
+            ReadSection(reader, result.FirstSection, ExpectedFirstSectionNames);
+            ReadSection(reader, result.SecondSection, ExpectedSecondSectionNames);
+            ReadSection(reader, result.ThirdSection, ExpectedThirdSectionNames);
 
             var count = reader.ReadUInt32();
             for (var i = 0; i < count; ++i)
@@ -106,20 +103,18 @@ namespace CyberCAT.Core.Classes.Parsers
 
             Debug.Assert(node.Size - (reader.BaseStream.Position - node.Offset) == 0);
 
+            result.Node = node;
             return result;
         }
 
-        private CharacterCustomizationAppearances.Section ReadSection(BinaryReader reader, List<string> expectedSectionNames)
+        private void ReadSection(BinaryReader reader, CharacterCustomizationAppearances.Section section, List<string> expectedSectionNames)
         {
             var count = reader.ReadUInt32();
 
-            var section = new CharacterCustomizationAppearances.Section();
             for (uint i = 0; i < count; ++i)
             {
                 section.AppearanceSections.Add(ReadAppearanceSection(reader, expectedSectionNames));
             }
-
-            return section;
         }
 
         private CharacterCustomizationAppearances.AppearanceSection ReadAppearanceSection(BinaryReader reader, List<string> expectedNames)
@@ -133,21 +128,20 @@ namespace CyberCAT.Core.Classes.Parsers
             int count = reader.ReadInt32();
             if (count > 0)
             {
-                appearanceSection.MainList.AddRange(ReadHashValueSection(reader, count));
+                ReadHashValueSection(reader, appearanceSection.MainList, count);
             }
 
             count = reader.ReadInt32();
             if (count > 0)
             {
-                appearanceSection.AdditionalList.AddRange(ReadValueSection(reader, count));
+                ReadValueSection(reader, appearanceSection.AdditionalList, count);
             }
 
             return appearanceSection;
         }
 
-        private List<CharacterCustomizationAppearances.HashValueEntry> ReadHashValueSection(BinaryReader reader, int count)
+        private void ReadHashValueSection(BinaryReader reader, ObservableCollection<CharacterCustomizationAppearances.HashValueEntry> collection, int count)
         {
-            var result = new List<CharacterCustomizationAppearances.HashValueEntry>();
             for(int i = 0; i < count; i++)
             {
                 var entry = new CharacterCustomizationAppearances.HashValueEntry();
@@ -157,23 +151,20 @@ namespace CyberCAT.Core.Classes.Parsers
                 entry.FirstString = ParserUtils.ReadString(reader);
                 entry.SecondString = ParserUtils.ReadString(reader);
                 entry.TrailingBytes = reader.ReadBytes(8);
-                result.Add(entry);
+                collection.Add(entry);
             }
-            return result;
         }
 
-        private List<CharacterCustomizationAppearances.ValueEntry> ReadValueSection(BinaryReader reader, int count)
+        private void ReadValueSection(BinaryReader reader, ObservableCollection<CharacterCustomizationAppearances.ValueEntry> collection, int count)
         {
-            var result = new List<CharacterCustomizationAppearances.ValueEntry>();
             for (int i = 0; i < count; i++)
             {
                 var entry = new CharacterCustomizationAppearances.ValueEntry();
                 entry.FirstString = ParserUtils.ReadString(reader);
                 entry.SecondString = ParserUtils.ReadString(reader);
                 entry.TrailingBytes = reader.ReadBytes(8);
-                result.Add(entry);
+                collection.Add(entry);
             }
-            return result;
         }
 
         private CharacterCustomizationAppearances.StringTriple ReadStringTriple(BinaryReader reader)
@@ -220,8 +211,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }

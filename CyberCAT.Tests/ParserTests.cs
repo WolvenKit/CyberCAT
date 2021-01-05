@@ -119,6 +119,9 @@ namespace CyberCAT.Tests
             var tpp = value.FirstSection.AppearanceSections[0];
             tpp.AdditionalList.Add(new CharacterCustomizationAppearances.ValueEntry {FirstString = "eyes", SecondString = "h071"});
 
+            // TODO: Temporary, make this automatic
+            //cas.MySizeChanged();
+
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assing a variable inside the delegate
             Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
 
@@ -143,6 +146,47 @@ namespace CyberCAT.Tests
                 // Each node offset after CAS should have moved by 18 bytes.
                 Assert.That(node.Offset, Is.EqualTo(prevOffsets[node.Id] + addedBytes));
             }
+        }
+
+        [Test]
+        public void RemovingItemModTest()
+        {
+            var filePath = Utils.GetFullPathToFile("saves/pc/midgame_1.5.dat");
+            var bytes = File.ReadAllBytes(filePath);
+
+            var fileStream = new MemoryStream(bytes);
+
+            var saveFile = new SaveFile();
+            saveFile.LoadPCSaveFile(fileStream);
+
+            var prevNodeCount = saveFile.Nodes.Count;
+
+            // Find johnny's glasses in the save.
+            var item = saveFile.FlatNodes.FirstOrDefault(_ => _.Id == 349);
+            Assert.That(item, Is.Not.Null);
+            var itemData = (ItemData) item.Value;
+
+            var genericData = itemData.Data;
+            Assert.That(genericData, Is.AssignableTo(typeof(ItemData.ModableItemData)));
+            var moddableItem = (ItemData.ModableItemData) genericData;
+
+            // Remove the second mod.
+            var children = moddableItem.RootNode.Children;
+            Array.Resize(ref children, 1);
+            moddableItem.RootNode.Children = children;
+
+            // TODO: make this automatic
+            item.MySizeChanged();
+
+            List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+            saveFile = new SaveFile();
+            using (var stream = new MemoryStream(newSave[0]))
+            {
+                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+            }
+
+            Assert.That(saveFile.Nodes.Count, Is.EqualTo(prevNodeCount));
         }
     }
 

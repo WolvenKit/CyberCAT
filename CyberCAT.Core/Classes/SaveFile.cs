@@ -152,6 +152,7 @@ namespace CyberCAT.Core.Classes
                 {
                     reader.BaseStream.Position = node.Offset;
                     node.Id = reader.ReadInt32();
+                    node.Parsers = _parsers;
                 }
                 foreach (var node in FlatNodes)
                 {
@@ -166,6 +167,7 @@ namespace CyberCAT.Core.Classes
                 }
                 Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
                 CalculateTrueSizes(Nodes, dataEnd);
+                ConnectNodeEvents(Nodes);
                 ParserUtils.ParseChildren(Nodes, reader, _parsers);
             }
         }
@@ -244,16 +246,12 @@ namespace CyberCAT.Core.Classes
             {
                 foreach (var node in Nodes)
                 {
-                    var parser = _parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
-                    if (parser != null)
+                    var parser = _parsers.FirstOrDefault(p => p.ParsableNodeName == node.Name);
+                    if (parser == null)
                     {
-                        stream.Write(parser.Write(node, _parsers, 0));
+                        parser = new DefaultParser();
                     }
-                    else
-                    {
-                        var fallback = new DefaultParser();
-                        stream.Write(fallback.Write(node, _parsers, 0));
-                    }
+                    stream.Write(parser.Write(node, _parsers, 0));
                 }
                 uncompressedData = stream.ToArray();
             }
@@ -389,6 +387,30 @@ namespace CyberCAT.Core.Classes
                         currentNode.GetParent().TrailingSize = blobSize;
                     }
                 }
+            }
+        }
+
+        private void ConnectNodeEvents(List<NodeEntry> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                // Register myself at the previous node
+                var prev = node.GetPreviousNode();
+                if (prev != null)
+                {
+                    prev.NodeSizeChanged += node.OnPreviousNodeSizeChanged;
+                    prev.NodeOffsetChanged += node.OnPreviousNodeOffsetChanged;
+                }
+
+                // Ask my parent if their offset changes, but only if I'm the first child
+                var parent = node.GetParent();
+                if (parent != null && node.IsFirstChild)
+                {
+                    parent.NodeOffsetChanged += node.OnParentNodeOffsetChanged;
+                }
+
+                // Do the same for my children
+                ConnectNodeEvents(node.Children);
             }
         }
 

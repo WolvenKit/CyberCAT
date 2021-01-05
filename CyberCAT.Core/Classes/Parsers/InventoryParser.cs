@@ -27,6 +27,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
             var result = new Inventory();
 
             reader.Skip(4); //skip Id
@@ -93,8 +94,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }

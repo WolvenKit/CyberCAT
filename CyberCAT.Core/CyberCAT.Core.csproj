@@ -72,6 +72,8 @@
     <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
     <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
+    <Compile Include="Classes\NodeRepresentations\NodeRepresentation.cs" />
+    <Compile Include="Classes\NotifyingObservableCollection.cs" />
     <Compile Include="Classes\Parsers\FactsDBParser.cs" />
     <Compile Include="Classes\Parsers\FactsTableParser.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemDropStorage.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\SaveFileSectionType.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

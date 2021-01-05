@@ -28,6 +28,8 @@ namespace CyberCAT.Core.Classes.Parsers
             Debug.Assert(node.TrailingSize >= 0);
             result.TrailingBlob = reader.ReadBytes(node.TrailingSize);
 
+            result.Node = node;
+
             return result;
         }
 
@@ -61,8 +63,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length - data.TrailingBlob.Length, parentHeaderSize);
 
             return result;
         }

@@ -25,10 +25,7 @@ namespace CyberCAT.Core.Classes.Parsers
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            if (node.Name != ParsableNodeName)
-            {
-                throw new Exception("Unexpected SectionName");
-            }
+            node.Parser = this;
             var result = new GameSessionConfig();
             reader.BaseStream.Position = node.Offset;
             reader.Skip(4);//Skip the ID
@@ -58,8 +55,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
 
             return result;
         }

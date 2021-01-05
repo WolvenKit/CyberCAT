@@ -298,7 +298,7 @@ namespace CyberCAT.Forms
             var data = (NodeEntry)selectedNode.Node;
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             string folderPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{_activeSaveFile.Guid}";
-            if (!Directory.Exists(folderPath)) ;
+            if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
