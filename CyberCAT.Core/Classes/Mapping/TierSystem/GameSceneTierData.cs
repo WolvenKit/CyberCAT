@@ -6,7 +6,7 @@ namespace CyberCAT.Core.Classes.Mapping.TierSystem
     public class GameSceneTierData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("tier")]
-        public DumpedEnums.GameplayTier Tier { get; set; }
+        public DumpedEnums.GameplayTier? Tier { get; set; }
 
         [RealName("emptyHands")]
         [RealType("Bool")]

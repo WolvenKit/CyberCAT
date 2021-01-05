@@ -23,7 +23,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var result = base.ReadWithMapping(node, reader, parsers);
 
-            var test = new NodeRepresentationWrappers.StatsSystemWrapper((GenericUnknownStruct)result);
+            //var test = new NodeRepresentationWrappers.StatsSystemWrapper((GenericUnknownStruct)result);
 
             return result;
         }

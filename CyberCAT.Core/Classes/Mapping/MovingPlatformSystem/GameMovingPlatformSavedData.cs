@@ -1,4 +1,5 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
+﻿using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping.MovingPlatformSystem
 {
@@ -7,7 +8,7 @@ namespace CyberCAT.Core.Classes.Mapping.MovingPlatformSystem
     {
         [RealName("movement")]
         [RealType("gameIMovingPlatformMovement", IsHandle = true)]
-        public uint Movement { get; set; }
+        public Handle<GameIMovingPlatformMovement> Movement { get; set; }
 
         [RealName("destinationName")]
         [RealType("CName")]

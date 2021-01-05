@@ -10,6 +10,6 @@ namespace CyberCAT.Core.Classes.Mapping.Global
         public ulong EntityHash { get; set; }
 
         [RealName("idType")]
-        public DumpedEnums.gameStatIDType IdType { get; set; }
+        public DumpedEnums.gameStatIDType? IdType { get; set; }
     }
 }

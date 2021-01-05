@@ -14,7 +14,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
         public ulong RecordID { get; set; }
         
         [RealName("type")]
-        public DumpedEnums.gamedataStatPoolType Type { get; set; }
+        public DumpedEnums.gamedataStatPoolType? Type { get; set; }
         
         [RealName("modifiers")]
         [RealType("gameStatPoolModifier", IsArray = true)]
@@ -25,7 +25,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
         public ulong[] AlternativeModifierRecords { get; set; }
 
         [RealName("stat")]
-        public DumpedEnums.gamedataStatType Stat { get; set; }
+        public DumpedEnums.gamedataStatType? Stat { get; set; }
         
         [RealName("maxValue")]
         [RealType("Float")]
@@ -36,7 +36,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
         public float CustomLimitValue { get; set; }
 
         [RealName("changeMode")]
-        public DumpedEnums.gameStatPoolDataValueChangeMode ChangeMode { get; set; }
+        public DumpedEnums.gameStatPoolDataValueChangeMode? ChangeMode { get; set; }
 
         [RealName("bonus")]
         [RealType("Float")]
@@ -44,7 +44,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
 
         [ParserIgnore]
         [RealName("bonusType")]
-        public DumpedEnums.gameStatPoolDataBonusType BonusType { get; set; }
+        public DumpedEnums.gameStatPoolDataBonusType? BonusType { get; set; }
 
         [RealName("currentValue")]
         [RealType("Float")]
@@ -55,6 +55,6 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
         public float ModificationDelay { get; set; }
 
         [RealName("modificationStatus")]
-        public DumpedEnums.gameStatPoolDataStatPoolModificationStatus ModificationStatus { get; set; }
+        public DumpedEnums.gameStatPoolDataStatPoolModificationStatus? ModificationStatus { get; set; }
     }
 }

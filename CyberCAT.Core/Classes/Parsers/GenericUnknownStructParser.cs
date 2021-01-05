@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
+using CyberCAT.Core.Classes.Mapping.Global;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
@@ -33,7 +34,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return internalRead(node, reader, parsers);
         }
 
-        private Dictionary<string, List<List<string>>> _classMap;
+        private List<IHandle> _handles;
 
         private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
@@ -100,8 +101,6 @@ namespace CyberCAT.Core.Classes.Parsers
                         pointerList.Add(new KeyValuePair<uint, uint>(br.ReadUInt32(), br.ReadUInt32()));
                     }
 
-                    _classMap = new Dictionary<string, List<List<string>>>();
-
                     // start of dataList
                     Debug.Assert(br.BaseStream.Position == dataListPosition);
 
@@ -137,6 +136,8 @@ namespace CyberCAT.Core.Classes.Parsers
                         result.ClassList[i] = classEntry;
                     }
 
+                    _handles = new List<IHandle>();
+
                     Parallel.ForEach(bufferDict, (pair) =>
                     {
                         using (var ms2 = new MemoryStream(pair.Value))
@@ -150,6 +151,9 @@ namespace CyberCAT.Core.Classes.Parsers
                             }
                         }
                     });
+
+                    SetHandlesValue(result);
+                    _handles = null;
 
                     // end of mainData
                     Debug.Assert((br.BaseStream.Position - 4) == result.TotalLength);
@@ -174,6 +178,33 @@ namespace CyberCAT.Core.Classes.Parsers
             _stringList = null;
 
             return result;
+        }
+
+        private void SetHandlesValue(GenericUnknownStruct data)
+        {
+            var usedIndexes = new HashSet<uint>();
+            foreach (var handle in _handles)
+            {
+                var id = handle.GetId();
+                handle.SetValue(data.ClassList[id]);
+                handle.SetId(0);
+
+                usedIndexes.Add(id);
+            }
+
+            foreach (var index in usedIndexes)
+            {
+                data.ClassList[index] = null;
+            }
+
+            var newClassList = new List<GenericUnknownStruct.BaseClassEntry>();
+            foreach (var classEntry in data.ClassList)
+            {
+                if (classEntry != null)
+                    newClassList.Add(classEntry);
+            }
+
+            data.ClassList = newClassList.ToArray();
         }
 
         private class FieldInfo
@@ -213,7 +244,20 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     if (prop.PropertyType.IsEnum)
                     {
-                        value = (int)Enum.Parse(prop.PropertyType, (string)value);
+                        value = Enum.Parse(prop.PropertyType, (string)value);
+                    }
+                    else if (typeof(IHandle).IsAssignableFrom(prop.PropertyType))
+                    {
+                        value = Activator.CreateInstance(prop.PropertyType, new[] { value });
+                        _handles.Add((IHandle) value);
+                    }
+                    else if (Nullable.GetUnderlyingType(prop.PropertyType) != null)
+                    {
+                        var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType);
+                        if (underlyingType.IsEnum)
+                        {
+                            value = Enum.Parse(underlyingType, (string)value);
+                        }
                     }
 
                     prop.SetValue(cls, value);
@@ -282,8 +326,17 @@ namespace CyberCAT.Core.Classes.Parsers
             return fieldArray;
         }
 
-        private Type GetFieldType(string fieldTypeName)
+        private Type GetFieldType(GenericUnknownStruct.BaseClassEntry cls, string fieldName, string fieldTypeName)
         {
+            foreach (var property in cls.GetType().GetProperties())
+            {
+                var attr = (RealNameAttribute)Attribute.GetCustomAttribute(property.PropertyType, typeof(RealNameAttribute));
+                if (attr != null && attr.Name == fieldName)
+                {
+
+                }
+            }
+
             if (fieldTypeName == "Bool")
                 return typeof(bool);
 
@@ -298,12 +351,21 @@ namespace CyberCAT.Core.Classes.Parsers
 
             if (fieldTypeName == "TweakDBID")
                 return typeof(ulong);
-            
+
             if (fieldTypeName.StartsWith("handle:"))
-                return typeof(uint);
+            {
+                var tmpTypeName = fieldTypeName.Substring("handle:".Length);
+                var tmpType = GetTypeFromName(tmpTypeName);
+
+                return typeof(Handle<>).MakeGenericType(tmpType);
+            }
 
             if (MappingHelper.DumpedEnums.ContainsKey(fieldTypeName))
-                return MappingHelper.DumpedEnums[fieldTypeName];
+            {
+                var enumType = MappingHelper.DumpedEnums[fieldTypeName];
+                return typeof(Nullable<>).MakeGenericType(enumType);
+            }
+                
 
             return GetTypeFromName(fieldTypeName);
         }
@@ -319,7 +381,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 else
                     fieldTypeName = fieldTypeName.Substring(fieldTypeName.IndexOf(']') + 1);
 
-                var fieldType = GetFieldType(fieldTypeName);
+                var fieldType = GetFieldType(cls, fieldName, fieldTypeName);
                 var arraySize = reader.ReadUInt32();
 
                 var arr = (IList)Array.CreateInstance(fieldType, arraySize);
@@ -330,6 +392,19 @@ namespace CyberCAT.Core.Classes.Parsers
                     if (fieldType.IsEnum)
                     {
                         arr[i] = Enum.Parse(fieldType, (string) val);
+                    }
+                    else if (typeof(IHandle).IsAssignableFrom(fieldType))
+                    {
+                        arr[i] = Activator.CreateInstance(fieldType, new[] { val });
+                        _handles.Add((IHandle) arr[i]);
+                    }
+                    else if (Nullable.GetUnderlyingType(fieldType) != null)
+                    {
+                        var underlyingType = Nullable.GetUnderlyingType(fieldType);
+                        if (underlyingType.IsEnum)
+                        {
+                            arr[i] = Enum.Parse(underlyingType, (string)val);
+                        }
                     }
                     else
                     {
@@ -485,6 +560,16 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    GenericUnknownStruct.BaseClassEntry[] classList = null;
+                    if (_doMapping)
+                    {
+                        classList = SetHandlesIndex(data);
+                    }
+                    else
+                    {
+                        classList = data.ClassList;
+                    }
+
                     writer.Write(new byte[4]);
                     writer.Write(data.Unknown1);
                     writer.Write(data.Unknown2);
@@ -502,7 +587,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var pos = writer.BaseStream.Position;
 
-                    _stringList = GenerateStringList(data);
+                    _stringList = GenerateStringList(classList);
 
                     var offset = _stringList.Count * 4;
                     foreach (var str in _stringList)
@@ -523,32 +608,31 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var dataIndexListOffset = writer.BaseStream.Position - pos;
 
-                    var bufferList = new byte[data.ClassList.Length][];
-
-                    Parallel.For(0, data.ClassList.Length, (index, state) =>
+                    var bufferList = new byte[classList.Length][];
+                    Parallel.For(0, classList.Length, (index, state) =>
                     {
                         if (_doMapping)
                         {
-                            bufferList[index] = GenerateDataFromMappedFields(data.ClassList[index]);
+                            bufferList[index] = GenerateDataFromMappedFields(classList[index]);
                         }
                         else
                         {
-                            bufferList[index] = GenerateDataFromUnmappedFields(((GenericUnknownStruct.ClassEntry)data.ClassList[index]).Fields);
+                            bufferList[index] = GenerateDataFromUnmappedFields(((GenericUnknownStruct.ClassEntry)classList[index]).Fields);
                         }
                     });
 
-                    var dataListOffset = writer.BaseStream.Position - pos + (data.ClassList.Length * 8);
+                    var dataListOffset = writer.BaseStream.Position - pos + (classList.Length * 8);
                     int classOffset = (int)dataListOffset;
-                    for (int i = 0; i < data.ClassList.Length; i++)
+                    for (int i = 0; i < classList.Length; i++)
                     {
                         if (_doMapping)
                         {
-                            var strId = _stringList.IndexOf(GetRealNameFromClass(data.ClassList[i]));
+                            var strId = _stringList.IndexOf(GetRealNameFromClass(classList[i]));
                             writer.Write(strId);
                         }
                         else
                         {
-                            var strId = _stringList.IndexOf(((GenericUnknownStruct.ClassEntry)data.ClassList[i]).Name);
+                            var strId = _stringList.IndexOf(((GenericUnknownStruct.ClassEntry)classList[i]).Name);
                             writer.Write(strId);
                         }
                         writer.Write(classOffset);
@@ -599,6 +683,74 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
+        private void AddHandle(IHandle handle, ref List<GenericUnknownStruct.BaseClassEntry> root)
+        {
+            var obj = handle.GetValue();
+            
+            if (!root.Contains(obj))
+                root.Add(obj);
+
+            var index = root.IndexOf(obj);
+            handle.SetId((uint) index);
+            handle.SetValue(null);
+        }
+
+        private void SetClassHandlesIndex(GenericUnknownStruct.BaseClassEntry cls, ref List<GenericUnknownStruct.BaseClassEntry> root)
+        {
+            foreach (var property in cls.GetType().GetProperties())
+            {
+                if (property.PropertyType.IsArray)
+                {
+                    var arr = (IList) property.GetValue(cls);
+                    if (arr == null)
+                        continue;
+
+                    foreach (var val in arr)
+                    {
+                        if (val is GenericUnknownStruct.BaseClassEntry subCls)
+                        {
+                            SetClassHandlesIndex(subCls, ref root);
+                        }
+                        else if (val is IHandle handle)
+                        {
+                            AddHandle(handle, ref root);
+                        }
+                    }
+                }
+                else
+                {
+                    var val = property.GetValue(cls);
+                    if (val == null)
+                        continue;
+
+                    if (val is GenericUnknownStruct.BaseClassEntry subCls)
+                    {
+                        SetClassHandlesIndex(subCls, ref root);
+                    }
+                    else if (val is IHandle handle)
+                    {
+                        AddHandle(handle, ref root);
+                    }
+                }
+            }
+        }
+
+        private GenericUnknownStruct.BaseClassEntry[] SetHandlesIndex(GenericUnknownStruct data)
+        {
+            var newClassList = new List<GenericUnknownStruct.BaseClassEntry>();
+            foreach (var classEntry in data.ClassList)
+            {
+                newClassList.Add(classEntry);
+            }
+
+            foreach (var classEntry in data.ClassList)
+            {
+                SetClassHandlesIndex(classEntry, ref newClassList);
+            }
+
+            return newClassList.ToArray();
+        }
+
         private string GetRealNameFromClass(GenericUnknownStruct.BaseClassEntry cls)
         {
             var attr = (RealNameAttribute)Attribute.GetCustomAttribute(cls.GetType(), typeof(RealNameAttribute));
@@ -617,11 +769,11 @@ namespace CyberCAT.Core.Classes.Parsers
             return nameAttr.Name;
         }
 
-        protected List<string> GenerateStringList(GenericUnknownStruct data)
+        protected List<string> GenerateStringList(GenericUnknownStruct.BaseClassEntry[] classes)
         {
             var result = new HashSet<string>();
 
-            foreach (var classEntry in data.ClassList)
+            foreach (var classEntry in classes)
             {
                 if (_doMapping)
                 {
@@ -667,12 +819,17 @@ namespace CyberCAT.Core.Classes.Parsers
 
             if (propInfo.PropertyType.IsArray)
             {
-                if (propInfo.PropertyType.GetElementType().IsEnum && MappingHelper.DumpedEnums.ContainsKey(propInfo.PropertyType.GetElementType().Name))
-                    return ("array:" + propInfo.PropertyType.GetElementType().Name, propInfo.PropertyType.GetElementType().Name);
+                var elementType = propInfo.PropertyType.GetElementType();
 
-                var typeStr = MappingHelper.DumpedClasses.FirstOrDefault(x => x.Value == propInfo.PropertyType.GetElementType()).Key;
+                if (elementType.IsEnum && MappingHelper.DumpedEnums.ContainsKey(elementType.Name))
+                    return ("array:" + elementType.Name, elementType.Name);
+
+                var typeStr = MappingHelper.DumpedClasses.FirstOrDefault(x => x.Value == elementType).Key;
                 if (typeStr != null)
                     return ("array:" + typeStr, typeStr);
+
+                if (Nullable.GetUnderlyingType(elementType) != null)
+                    return ("array:" + Nullable.GetUnderlyingType(elementType).Name, Nullable.GetUnderlyingType(elementType).Name);
             }
             else
             {
@@ -682,6 +839,9 @@ namespace CyberCAT.Core.Classes.Parsers
                 var typeStr = MappingHelper.DumpedClasses.FirstOrDefault(x => x.Value == propInfo.PropertyType).Key;
                 if (typeStr != null)
                     return (typeStr, typeStr);
+
+                if (Nullable.GetUnderlyingType(propInfo.PropertyType) != null)
+                    return (Nullable.GetUnderlyingType(propInfo.PropertyType).Name, Nullable.GetUnderlyingType(propInfo.PropertyType).Name);
             }
 
             throw new Exception();
@@ -758,6 +918,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 props.Add(prop);
             }
 
+            props = props.OrderBy(p => p.MetadataToken).ToList();
+
             foreach (var prop in props)
             {
                 var propValue = prop.GetValue(cls);
@@ -827,9 +989,9 @@ namespace CyberCAT.Core.Classes.Parsers
                 var newBuffer = GenerateDataFromMappedFields(subCls);
                 writer.Write(newBuffer);
             }
-            else if (!string.IsNullOrEmpty(elementType) && elementType.StartsWith("handle:"))
+            else if (propValue is IHandle handle)
             {
-                writer.Write((uint)propValue);
+                writer.Write(handle.GetId());
             }
             else if (propValue.GetType().IsEnum)
             {
@@ -873,6 +1035,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                         props.Add(prop);
                     }
+                    props = props.OrderBy(p => p.MetadataToken).ToList();
 
                     writer.Write((ushort)props.Count);
                     foreach (var prop in props)

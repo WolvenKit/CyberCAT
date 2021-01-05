@@ -12,6 +12,6 @@
         public string ColumnName { get; set; }
 
         [RealName("curveStat")]
-        public DumpedEnums.gamedataStatType CurveStat { get; set; }
+        public DumpedEnums.gamedataStatType? CurveStat { get; set; }
     }
 }

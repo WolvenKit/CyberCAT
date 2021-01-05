@@ -1,4 +1,5 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
+﻿using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 {
@@ -7,10 +8,10 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
     {
         [RealName("statModifiers")]
         [RealType("gameStatModifierData", IsHandle = true)]
-        public uint[] StatModifiers { get; set; }
+        public Handle<GameStatModifierData>[] StatModifiers { get; set; }
 
         [RealName("inactiveStats")]
-        public DumpedEnums.gamedataStatType[] InactiveStats { get; set; }
+        public DumpedEnums.gamedataStatType?[] InactiveStats { get; set; }
 
         [RealName("recordID")]
         [RealType("TweakDBID")]

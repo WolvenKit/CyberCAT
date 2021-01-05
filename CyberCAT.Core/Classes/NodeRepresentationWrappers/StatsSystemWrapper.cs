@@ -37,8 +37,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentationWrappers
             {
                 foreach (var reference in entry.StatModifiers)
                 {
-                    var modifier = _sourceStruct.ClassList[reference];
-                    result.AddModifier(modifier, reference);
+                    //var modifier = _sourceStruct.ClassList[reference];
+                    //result.AddModifier(modifier, reference);
                 }
             }
             return result;
@@ -55,7 +55,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentationWrappers
                     if (entry.StatModifiers != null)
                     {
                         var referenceList = entry.StatModifiers.ToList();
-                        referenceList.Add((uint)_sourceStruct.ClassList.Length - 1);
+                        //referenceList.Add((uint)_sourceStruct.ClassList.Length - 1);
                         entry.StatModifiers = referenceList.ToArray();
                     }
                    

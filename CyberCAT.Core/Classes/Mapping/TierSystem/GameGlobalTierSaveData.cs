@@ -1,4 +1,5 @@
-﻿using CyberCAT.Core.Classes.NodeRepresentations;
+﻿using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping.TierSystem
 {
@@ -6,10 +7,10 @@ namespace CyberCAT.Core.Classes.Mapping.TierSystem
     public class GameGlobalTierSaveData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("subtype")]
-        public DumpedEnums.gameGlobalTierSubtype Subtype { get; set; }
+        public DumpedEnums.gameGlobalTierSubtype? Subtype { get; set; }
 
         [RealName("data")]
         [RealType("gameSceneTierData", IsHandle = true)]
-        public uint Data { get; set; }
+        public Handle<GameSceneTierData> Data { get; set; }
     }
 }

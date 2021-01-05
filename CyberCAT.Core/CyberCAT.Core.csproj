@@ -60,10 +60,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Interfaces\IHandle.cs" />
+    <Compile Include="Classes\Mapping\Global\Handle.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeEntityData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeSaveData.cs" />
     <Compile Include="Classes\Mapping\GodModeSystem\GameGodModeSaveEntityData.cs" />
+    <Compile Include="Classes\Mapping\MovingPlatformSystem\GameIMovingPlatformMovement.cs" />
+    <Compile Include="Classes\Mapping\MovingPlatformSystem\GameIMovingPlatformMovementInitData.cs" />
     <Compile Include="Classes\Mapping\MovingPlatformSystem\GameMovingPlatformSavedData.cs" />
     <Compile Include="Classes\Mapping\StatsSystem\GameStatModifierData.cs" />
     <Compile Include="Classes\Extensions.cs" />

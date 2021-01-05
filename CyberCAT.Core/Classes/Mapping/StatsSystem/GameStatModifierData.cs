@@ -6,9 +6,9 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
     public class GameStatModifierData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("statType")]
-        public DumpedEnums.gamedataStatType StatType { get; set; }
+        public DumpedEnums.gamedataStatType? StatType { get; set; }
 
         [RealName("modifierType")]
-        public DumpedEnums.gameStatModifierType ModifierType { get; set; }
+        public DumpedEnums.gameStatModifierType? ModifierType { get; set; }
     }
 }
