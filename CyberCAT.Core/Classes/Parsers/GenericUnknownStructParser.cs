@@ -10,12 +10,15 @@ using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
+        private const bool DEBUG = true;
+
         private bool _doMapping;
 
         private List<string> _stringList;
@@ -34,6 +37,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return internalRead(node, reader, parsers);
         }
 
+        private object _handlesLock = new object();
         private List<IHandle> _handles;
 
         private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
@@ -44,6 +48,11 @@ namespace CyberCAT.Core.Classes.Parsers
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
             var dataBuffer = reader.ReadBytes(readSize);
+
+            if (DEBUG)
+            {
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}.bin", dataBuffer);
+            }
 
             using (var ms = new MemoryStream(dataBuffer))
             {
@@ -187,8 +196,6 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 var id = handle.GetId();
                 handle.SetValue(data.ClassList[id]);
-                handle.SetId(0);
-
                 usedIndexes.Add(id);
             }
 
@@ -249,7 +256,11 @@ namespace CyberCAT.Core.Classes.Parsers
                     else if (typeof(IHandle).IsAssignableFrom(prop.PropertyType))
                     {
                         value = Activator.CreateInstance(prop.PropertyType, new[] { value });
-                        _handles.Add((IHandle) value);
+
+                        lock (_handlesLock)
+                        {
+                            _handles.Add((IHandle)value);
+                        }
                     }
                     else if (Nullable.GetUnderlyingType(prop.PropertyType) != null)
                     {
@@ -396,7 +407,11 @@ namespace CyberCAT.Core.Classes.Parsers
                     else if (typeof(IHandle).IsAssignableFrom(fieldType))
                     {
                         arr[i] = Activator.CreateInstance(fieldType, new[] { val });
-                        _handles.Add((IHandle) arr[i]);
+
+                        lock (_handlesLock)
+                        {
+                            _handles.Add((IHandle)arr[i]);
+                        }
                     }
                     else if (Nullable.GetUnderlyingType(fieldType) != null)
                     {
@@ -560,7 +575,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    GenericUnknownStruct.BaseClassEntry[] classList = null;
+                    GenericUnknownStruct.BaseClassEntry[] classList;
                     if (_doMapping)
                     {
                         classList = SetHandlesIndex(data);
@@ -657,6 +672,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
 
+            if (DEBUG)
+            {
+                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", result);
+            }
+
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
@@ -683,19 +703,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        private void AddHandle(IHandle handle, ref List<GenericUnknownStruct.BaseClassEntry> root)
-        {
-            var obj = handle.GetValue();
-            
-            if (!root.Contains(obj))
-                root.Add(obj);
-
-            var index = root.IndexOf(obj);
-            handle.SetId((uint) index);
-            handle.SetValue(null);
-        }
-
-        private void SetClassHandlesIndex(GenericUnknownStruct.BaseClassEntry cls, ref List<GenericUnknownStruct.BaseClassEntry> root)
+        private void GetHandles(GenericUnknownStruct.BaseClassEntry cls)
         {
             foreach (var property in cls.GetType().GetProperties())
             {
@@ -709,11 +717,15 @@ namespace CyberCAT.Core.Classes.Parsers
                     {
                         if (val is GenericUnknownStruct.BaseClassEntry subCls)
                         {
-                            SetClassHandlesIndex(subCls, ref root);
+                            GetHandles(subCls);
                         }
                         else if (val is IHandle handle)
                         {
-                            AddHandle(handle, ref root);
+                            if (!_handles.Contains(handle))
+                            {
+                                _handles.Add(handle);
+                                GetHandles(handle.GetValue());
+                            }
                         }
                     }
                 }
@@ -725,11 +737,15 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     if (val is GenericUnknownStruct.BaseClassEntry subCls)
                     {
-                        SetClassHandlesIndex(subCls, ref root);
+                        GetHandles(subCls);
                     }
                     else if (val is IHandle handle)
                     {
-                        AddHandle(handle, ref root);
+                        if (!_handles.Contains(handle))
+                        {
+                            _handles.Add(handle);
+                            GetHandles(handle.GetValue());
+                        }
                     }
                 }
             }
@@ -738,15 +754,38 @@ namespace CyberCAT.Core.Classes.Parsers
         private GenericUnknownStruct.BaseClassEntry[] SetHandlesIndex(GenericUnknownStruct data)
         {
             var newClassList = new List<GenericUnknownStruct.BaseClassEntry>();
-            foreach (var classEntry in data.ClassList)
-            {
-                newClassList.Add(classEntry);
-            }
 
             foreach (var classEntry in data.ClassList)
             {
-                SetClassHandlesIndex(classEntry, ref newClassList);
+                if (classEntry == null)
+                    continue;
+
+                newClassList.Add(classEntry);
             }
+
+            _handles = new List<IHandle>();
+            foreach (var classEntry in newClassList)
+            {
+                GetHandles(classEntry);
+            }
+
+            for (int i = 0; i < _handles.Count; i++)
+            {
+                if (_handles[i].GetId() == 0)
+                {
+                    throw new Exception();
+                }
+            }
+
+            _handles = _handles.OrderBy(h => h.GetId()).ToList();
+
+            for (int i = 0; i < _handles.Count; i++)
+            {
+                newClassList.Add(_handles[i].GetValue());
+                _handles[i].SetValue(null);
+            }
+
+            _handles = null;
 
             return newClassList.ToArray();
         }
@@ -830,6 +869,22 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 if (Nullable.GetUnderlyingType(elementType) != null)
                     return ("array:" + Nullable.GetUnderlyingType(elementType).Name, Nullable.GetUnderlyingType(elementType).Name);
+
+                if (typeof(IHandle).IsAssignableFrom(elementType))
+                {
+                    var genericType = elementType.GetGenericArguments()[0];
+                    var nameAttr = ((RealNameAttribute[])genericType.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
+                    if (nameAttr != null)
+                    {
+                        return ("array:handle:" + nameAttr.Name, nameAttr.Name);
+                    }
+                    else
+                    {
+                        return ("array:handle:" + genericType.Name, genericType.Name);
+                    }
+                }
+
+                throw new Exception();
             }
             else
             {
@@ -842,6 +897,22 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 if (Nullable.GetUnderlyingType(propInfo.PropertyType) != null)
                     return (Nullable.GetUnderlyingType(propInfo.PropertyType).Name, Nullable.GetUnderlyingType(propInfo.PropertyType).Name);
+
+                if (typeof(IHandle).IsAssignableFrom(propInfo.PropertyType))
+                {
+                    var genericType = propInfo.PropertyType.GetGenericArguments()[0];
+                    var nameAttr = ((RealNameAttribute[])genericType.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
+                    if (nameAttr != null)
+                    {
+                        return ("handle:" + nameAttr.Name, nameAttr.Name);
+                    }
+                    else
+                    {
+                        return ("handle:" + genericType.Name, genericType.Name);
+                    }
+                }
+
+                throw new Exception();
             }
 
             throw new Exception();
@@ -897,8 +968,17 @@ namespace CyberCAT.Core.Classes.Parsers
             if (propValue is ulong && (ulong)propValue == 0)
                 return true;
 
-            if (propValue is float && (float)propValue == 0)
-                return true;
+            if (propValue is float)
+            {
+                if (propInfo.Name == "PriceMultiplier")
+                {
+                    return (float) propValue == 1;
+                }
+                else
+                {
+                    return (float)propValue == 0;
+                }
+            }
 
             /*if (propValue.GetType().IsEnum && (int) propValue == 0)
                 return true;*/
