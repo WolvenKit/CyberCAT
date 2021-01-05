@@ -10,14 +10,13 @@ using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.Mapping.Global;
-using CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        private const bool DEBUG = true;
+        private const bool DEBUG = false;
 
         private bool _doMapping;
 
