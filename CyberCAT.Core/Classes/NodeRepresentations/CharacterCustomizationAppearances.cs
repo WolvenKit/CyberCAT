@@ -220,25 +220,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 }
             }
 
-            public ObservableCollection<HashValueEntry> MainList
-            {
-                get => _mainList;
-                set
-                {
-                    _mainList = value;
-                    OnPropertyChanged();
-                }
-            }
+            public ObservableCollection<HashValueEntry> MainList => _mainList;
 
-            public ObservableCollection<ValueEntry> AdditionalList
-            {
-                get => _additionalList;
-                set
-                {
-                    _additionalList = value;
-                    OnPropertyChanged();
-                }
-            }
+            public ObservableCollection<ValueEntry> AdditionalList => _additionalList;
 
             public AppearanceSection()
             {
@@ -274,15 +258,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             private ObservableCollection<AppearanceSection> _appearanceSections;
 
-            public ObservableCollection<AppearanceSection> AppearanceSections
-            {
-                get => _appearanceSections;
-                set
-                {
-                    _appearanceSections = value;
-                    OnPropertyChanged();
-                }
-            }
+            public ObservableCollection<AppearanceSection> AppearanceSections => _appearanceSections;
 
             public Section()
             {
@@ -337,64 +313,15 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
-        public Section FirstSection
-        {
-            get => _firstSection;
-            set
-            {
-                _firstSection = value;
-                _firstSection.PropertyChanged += (sender, args) =>
-                {
-                    OnPropertyChanged(nameof(FirstSection));
-                };
-            }
-        }
+        public Section FirstSection => _firstSection;
 
-        public Section SecondSection
-        {
-            get => _secondSection;
-            set
-            {
-                _secondSection = value;
-                _secondSection.PropertyChanged += (sender, args) =>
-                {
-                    OnPropertyChanged(nameof(SecondSection));
-                };
-            }
-        }
+        public Section SecondSection => _secondSection;
 
-        public Section ThirdSection
-        {
-            get => _thirdSection;
-            set
-            {
-                _thirdSection = value;
-                _thirdSection.PropertyChanged += (sender, args) =>
-                {
-                    OnPropertyChanged(nameof(ThirdSection));
-                };
-            }
-        }
+        public Section ThirdSection => _thirdSection;
 
-        public ObservableCollection<StringTriple> StringTriples
-        {
-            get => _stringTriples;
-            set
-            {
-                _stringTriples = value;
-                OnPropertyChanged();
-            }
-        }
+        public ObservableCollection<StringTriple> StringTriples => _stringTriples;
 
-        public ObservableCollection<string> Strings
-        {
-            get => _strings;
-            set
-            {
-                _strings = value;
-                OnPropertyChanged();
-            }
-        }
+        public ObservableCollection<string> Strings => _strings;
 
         public CharacterCustomizationAppearances()
         {
