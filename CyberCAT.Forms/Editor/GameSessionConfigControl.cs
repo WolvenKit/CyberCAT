@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Core.Classes;
 
 namespace CyberCAT.Forms.Editor
 {
     public partial class GameSessionConfigControl : UserControl
     {
-        public GameSessionConfigControl(GameSessionConfig data)
+        public GameSessionConfigControl(GameSessionConfig data, SaveFile saveFile)
         {
             InitializeComponent();
 

@@ -33,5 +33,9 @@ namespace CyberCAT.Core.Classes.Mapping.Global
         {
             Value = (T) value;
         }
+        public override string ToString()
+        {
+            return $"({Id}) {Value}";
+        }
     }
 }

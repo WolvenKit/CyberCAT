@@ -2,6 +2,8 @@
 using CyberCAT.Core.ChunkedLz4;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.Interfaces;
+using CyberCAT.Core.Classes.Mapping.Global;
+using CyberCAT.Core.Classes.Mapping.StatsSystem;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Core.Classes.Parsers;
 using CyberCAT.Forms.Classes;
@@ -62,7 +64,8 @@ namespace CyberCAT.Forms
             TypeDescriptor.AddAttributes(typeof(ItemData.Kind2DataNode), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            //TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(Handle<GameSavedStatsData>), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
 
             //Settings
             var interfaceType = typeof(INodeParser);

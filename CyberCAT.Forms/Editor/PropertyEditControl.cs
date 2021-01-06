@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Forms.Classes;
+using CyberCAT.Core.Classes;
 
 namespace CyberCAT.Forms.Editor
 {
     public partial class PropertyEditControl : UserControl
     {
-        public PropertyEditControl(object data)
+        public PropertyEditControl(object data, SaveFile saveFile)
         {
             InitializeComponent();
             var propertyGrid = new PropertyGrid

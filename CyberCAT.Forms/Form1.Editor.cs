@@ -21,7 +21,7 @@ namespace CyberCAT.Forms
             { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances.Section), typeof(PropertyEditControl) },
             { typeof(CharacterCustomizationAppearances.AppearanceSection), typeof(PropertyEditControl) },
-            { typeof(ItemData), typeof(PropertyEditControl) },
+            { typeof(ItemData), typeof(ItemEditorControl) },
             { typeof(Inventory), typeof(PropertyEditControl) },
             { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
             { typeof(FactsTable), typeof(PropertyEditControl) },
@@ -163,7 +163,7 @@ namespace CyberCAT.Forms
                 return;
             }
 
-            var instance = Activator.CreateInstance(control, node.Value);
+            var instance = Activator.CreateInstance(control, node.Value,_activeSaveFile);
             var nodeControl = instance as Control;
             if (nodeControl == null)
             {

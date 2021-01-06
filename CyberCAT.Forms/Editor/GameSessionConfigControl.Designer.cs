@@ -32,11 +32,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.textValue = new System.Windows.Forms.TextBox();
             this.hash1 = new System.Windows.Forms.TextBox();
             this.hash2 = new System.Windows.Forms.TextBox();
             this.hash3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textValue = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,6 +96,14 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(404, 113);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
+            // textValue
+            // 
+            this.textValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textValue.Location = new System.Drawing.Point(205, 78);
+            this.textValue.Name = "textValue";
+            this.textValue.Size = new System.Drawing.Size(196, 20);
+            this.textValue.TabIndex = 7;
+            // 
             // hash1
             // 
             this.hash1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -129,14 +137,6 @@
             this.label4.Size = new System.Drawing.Size(196, 38);
             this.label4.TabIndex = 6;
             this.label4.Text = "Text Value (??)";
-            // 
-            // textValue
-            // 
-            this.textValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textValue.Location = new System.Drawing.Point(205, 78);
-            this.textValue.Name = "textValue";
-            this.textValue.Size = new System.Drawing.Size(196, 20);
-            this.textValue.TabIndex = 7;
             // 
             // GameSessionConfigControl
             // 

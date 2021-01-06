@@ -1,4 +1,5 @@
 ﻿using CyberCAT.Core.Classes.NodeRepresentations;
+using System;
 
 namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 {
@@ -10,5 +11,16 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 
         [RealName("modifierType")]
         public DumpedEnums.gameStatModifierType? ModifierType { get; set; }
+        public override string ToString()
+        {
+            if (StatType.HasValue)
+            {
+                return Enum.GetName(typeof(DumpedEnums.gamedataStatType), StatType);
+            }
+            else
+            {
+                return "gamedataStatType";
+            }
+        }
     }
 }
