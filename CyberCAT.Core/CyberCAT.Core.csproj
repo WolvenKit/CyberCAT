@@ -310,6 +310,7 @@
     <Compile Include="Classes\SaveFileCompressionHelper.cs" />
     <Compile Include="Classes\Lz4Chunk.cs" />
     <Compile Include="Classes\SaveFileMetaInformation.cs" />
+    <Compile Include="Classes\Tweakdb.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\Dumped Enums\ActiveMode.cs" />
     <Compile Include="Enums\Dumped Enums\ActorVisibilityStatus.cs" />
