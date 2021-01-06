@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("weaponID")]
         [RealType("TweakDBID")]
-        public ulong WeaponID { get; set; }
+        public TweakDbId WeaponID { get; set; }
         
         [RealName("hasPlayedFirstEquip")]
         [RealType("Bool")]

@@ -14,7 +14,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("SlotID")]
         [RealType("TweakDBID")]
-        public ulong SlotID { get; set; }
+        public TweakDbId SlotID { get; set; }
         
         [RealName("Name")]
         [RealType("String")]
@@ -174,7 +174,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("PlacementSlots")]
         [RealType("TweakDBID")]
-        public ulong[] PlacementSlots { get; set; }
+        public TweakDbId[] PlacementSlots { get; set; }
         
         [RealName("PrimaryStats")]
         public GameStatViewData[] PrimaryStats { get; set; }

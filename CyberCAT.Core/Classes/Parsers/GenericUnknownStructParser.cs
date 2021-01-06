@@ -360,7 +360,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 return typeof(string);
 
             if (fieldTypeName == "TweakDBID")
-                return typeof(ulong);
+                return typeof(TweakDbId);
 
             if (fieldTypeName.StartsWith("handle:"))
             {
@@ -454,8 +454,10 @@ namespace CyberCAT.Core.Classes.Parsers
                     return reader.ReadInt64();
 
                 case "Uint64":
-                case "TweakDBID":
                     return reader.ReadUInt64();
+
+                case "TweakDBID":
+                    return reader.ReadTweakDbId();
 
                 case "Float":
                     return reader.ReadSingle();
@@ -536,8 +538,10 @@ namespace CyberCAT.Core.Classes.Parsers
                     return reader.ReadInt64();
 
                 case "Uint64":
-                case "TweakDBID":
                     return reader.ReadUInt64();
+
+                case "TweakDBID":
+                    return reader.ReadTweakDbId();
 
                 case "Float":
                     return reader.ReadSingle();
@@ -702,6 +706,8 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
+        private HashSet<uint> _handlesIdx;
+
         private void GetHandles(GenericUnknownStruct.BaseClassEntry cls)
         {
             foreach (var property in cls.GetType().GetProperties())
@@ -720,7 +726,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         }
                         else if (val is IHandle handle)
                         {
-                            if (!_handles.Contains(handle))
+                            if (!_handles.Contains(handle) && _handlesIdx.Add(handle.GetId()))
                             {
                                 _handles.Add(handle);
                                 GetHandles(handle.GetValue());
@@ -740,7 +746,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     }
                     else if (val is IHandle handle)
                     {
-                        if (!_handles.Contains(handle))
+                        if (!_handles.Contains(handle) && _handlesIdx.Add(handle.GetId()))
                         {
                             _handles.Add(handle);
                             GetHandles(handle.GetValue());
@@ -762,6 +768,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 newClassList.Add(classEntry);
             }
 
+            _handlesIdx = new HashSet<uint>();
             _handles = new List<IHandle>();
             foreach (var classEntry in newClassList)
             {
@@ -1287,6 +1294,10 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 case "System.Single":
                     writer.Write((float)value);
+                    break;
+
+                case "CyberCAT.Core.Classes.TweakDbId":
+                    writer.Write((TweakDbId)value);
                     break;
 
                 default:

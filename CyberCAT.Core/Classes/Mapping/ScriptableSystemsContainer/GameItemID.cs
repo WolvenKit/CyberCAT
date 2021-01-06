@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("id")]
         [RealType("TweakDBID")]
-        public ulong Id { get; set; }
+        public TweakDbId Id { get; set; }
         
         [RealName("rngSeed")]
         [RealType("Uint32")]

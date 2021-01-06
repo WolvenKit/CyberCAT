@@ -45,19 +45,19 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("virtualNetworkShapeID")]
         [RealType("TweakDBID")]
-        public ulong VirtualNetworkShapeID { get; set; }
+        public TweakDbId VirtualNetworkShapeID { get; set; }
         
         [RealName("tweakDBRecord")]
         [RealType("TweakDBID")]
-        public ulong TweakDBRecord { get; set; }
+        public TweakDbId TweakDBRecord { get; set; }
         
         [RealName("tweakDBDescriptionRecord")]
         [RealType("TweakDBID")]
-        public ulong TweakDBDescriptionRecord { get; set; }
+        public TweakDbId TweakDBDescriptionRecord { get; set; }
         
         [RealName("contentScale")]
         [RealType("TweakDBID")]
-        public ulong ContentScale { get; set; }
+        public TweakDbId ContentScale { get; set; }
         
         [RealName("skillCheckContainer")]
         public Handle<BaseSkillCheckContainer> SkillCheckContainer { get; set; }
@@ -91,7 +91,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("minigameDefinition")]
         [RealType("TweakDBID")]
-        public ulong MinigameDefinition { get; set; }
+        public TweakDbId MinigameDefinition { get; set; }
         
         [RealName("minigameAttempt")]
         [RealType("Int32")]
@@ -135,7 +135,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("personalLinkCustomInteraction")]
         [RealType("TweakDBID")]
-        public ulong PersonalLinkCustomInteraction { get; set; }
+        public TweakDbId PersonalLinkCustomInteraction { get; set; }
         
         [RealName("personalLinkStatus")]
         public DumpedEnums.EPersonalLinkConnectionStatus? PersonalLinkStatus { get; set; }
@@ -233,7 +233,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("actionsWithDisabledRPGChecks")]
         [RealType("TweakDBID")]
-        public ulong[] ActionsWithDisabledRPGChecks { get; set; }
+        public TweakDbId[] ActionsWithDisabledRPGChecks { get; set; }
         
         [RealName("availableSpiderbotActions")]
         [RealType("CName")]
@@ -301,7 +301,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("quickHackVulnerabilties")]
         [RealType("TweakDBID")]
-        public ulong[] QuickHackVulnerabilties { get; set; }
+        public TweakDbId[] QuickHackVulnerabilties { get; set; }
         
         [RealName("quickHackVulnerabiltiesInitialized")]
         [RealType("Bool")]

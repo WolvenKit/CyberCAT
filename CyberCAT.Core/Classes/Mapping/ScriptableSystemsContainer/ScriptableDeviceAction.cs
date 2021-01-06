@@ -41,15 +41,15 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("attachedProgram")]
         [RealType("TweakDBID")]
-        public ulong AttachedProgram { get; set; }
+        public TweakDbId AttachedProgram { get; set; }
         
         [RealName("activeStatusEffect")]
         [RealType("TweakDBID")]
-        public ulong ActiveStatusEffect { get; set; }
+        public TweakDbId ActiveStatusEffect { get; set; }
         
         [RealName("interactionIconType")]
         [RealType("TweakDBID")]
-        public ulong InteractionIconType { get; set; }
+        public TweakDbId InteractionIconType { get; set; }
         
         [RealName("hasInteraction")]
         [RealType("Bool")]

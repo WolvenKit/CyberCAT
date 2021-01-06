@@ -18,7 +18,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("vendorItemID")]
         [RealType("TweakDBID")]
-        public ulong VendorItemID { get; set; }
+        public TweakDbId VendorItemID { get; set; }
         
         [RealName("isAvailable")]
         [RealType("Bool")]

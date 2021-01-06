@@ -19,7 +19,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("clueRecord")]
         [RealType("TweakDBID")]
-        public ulong ClueRecord { get; set; }
+        public TweakDbId ClueRecord { get; set; }
         
         [RealName("extendedClueRecords")]
         public ClueRecordData[] ExtendedClueRecords { get; set; }

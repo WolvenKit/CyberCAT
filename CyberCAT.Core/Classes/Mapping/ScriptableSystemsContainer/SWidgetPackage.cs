@@ -32,11 +32,11 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("bckgroundTextureID")]
         [RealType("TweakDBID")]
-        public ulong BckgroundTextureID { get; set; }
+        public TweakDbId BckgroundTextureID { get; set; }
         
         [RealName("iconTextureID")]
         [RealType("TweakDBID")]
-        public ulong IconTextureID { get; set; }
+        public TweakDbId IconTextureID { get; set; }
         
         [RealName("textData")]
         public Handle<TextTextParameterSet> TextData { get; set; }

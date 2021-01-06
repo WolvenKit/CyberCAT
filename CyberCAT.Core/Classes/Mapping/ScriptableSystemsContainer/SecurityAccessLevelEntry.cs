@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("keycard")]
         [RealType("TweakDBID")]
-        public ulong Keycard { get; set; }
+        public TweakDbId Keycard { get; set; }
         
         [RealName("password")]
         [RealType("CName")]

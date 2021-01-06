@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
         
         [RealName("recordID")]
         [RealType("TweakDBID")]
-        public ulong RecordID { get; set; }
+        public TweakDbId RecordID { get; set; }
         
         [RealName("type")]
         public DumpedEnums.gamedataStatPoolType? Type { get; set; }
@@ -22,7 +22,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatPoolsSystem
 
         [RealName("alternativeModifierRecords")]
         [RealType("TweakDBID", IsArray = true)]
-        public ulong[] AlternativeModifierRecords { get; set; }
+        public TweakDbId[] AlternativeModifierRecords { get; set; }
 
         [RealName("stat")]
         public DumpedEnums.gamedataStatType? Stat { get; set; }

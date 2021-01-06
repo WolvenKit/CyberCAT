@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("tweakDBID")]
         [RealType("TweakDBID")]
-        public ulong TweakDBID { get; set; }
+        public TweakDbId TweakDBID { get; set; }
         
         [RealName("type")]
         public GameinteractionsChoiceTypeWrapper Type { get; set; }

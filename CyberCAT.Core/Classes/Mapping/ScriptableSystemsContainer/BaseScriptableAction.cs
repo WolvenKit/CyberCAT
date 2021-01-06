@@ -11,11 +11,11 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("objectActionID")]
         [RealType("TweakDBID")]
-        public ulong ObjectActionID { get; set; }
+        public TweakDbId ObjectActionID { get; set; }
         
         [RealName("inkWidgetID")]
         [RealType("TweakDBID")]
-        public ulong InkWidgetID { get; set; }
+        public TweakDbId InkWidgetID { get; set; }
         
         [RealName("interactionChoice")]
         public GameinteractionsChoice InteractionChoice { get; set; }

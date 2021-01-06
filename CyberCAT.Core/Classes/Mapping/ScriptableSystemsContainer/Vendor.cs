@@ -11,7 +11,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("tweakID")]
         [RealType("TweakDBID")]
-        public ulong TweakID { get; set; }
+        public TweakDbId TweakID { get; set; }
         
         [RealName("lastInteractionTime")]
         [RealType("Float")]

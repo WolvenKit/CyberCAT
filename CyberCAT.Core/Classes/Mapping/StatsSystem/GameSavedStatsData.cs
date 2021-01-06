@@ -15,7 +15,7 @@ namespace CyberCAT.Core.Classes.Mapping.StatsSystem
 
         [RealName("recordID")]
         [RealType("TweakDBID")]
-        public ulong RecordID { get; set; }
+        public TweakDbId RecordID { get; set; }
 
         [RealName("seed")]
         [RealType("Uint32")]

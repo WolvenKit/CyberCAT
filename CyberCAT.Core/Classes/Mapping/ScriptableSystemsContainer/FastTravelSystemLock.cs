@@ -11,6 +11,6 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("linkedStatusEffectID")]
         [RealType("TweakDBID")]
-        public ulong LinkedStatusEffectID { get; set; }
+        public TweakDbId LinkedStatusEffectID { get; set; }
     }
 }

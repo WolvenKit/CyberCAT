@@ -120,19 +120,19 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("currentPreventionPreset")]
         [RealType("TweakDBID")]
-        public ulong CurrentPreventionPreset { get; set; }
+        public TweakDbId CurrentPreventionPreset { get; set; }
         
         [RealName("failsafePoliceRecordT1")]
         [RealType("TweakDBID")]
-        public ulong FailsafePoliceRecordT1 { get; set; }
+        public TweakDbId FailsafePoliceRecordT1 { get; set; }
         
         [RealName("failsafePoliceRecordT2")]
         [RealType("TweakDBID")]
-        public ulong FailsafePoliceRecordT2 { get; set; }
+        public TweakDbId FailsafePoliceRecordT2 { get; set; }
         
         [RealName("failsafePoliceRecordT3")]
         [RealType("TweakDBID")]
-        public ulong FailsafePoliceRecordT3 { get; set; }
+        public TweakDbId FailsafePoliceRecordT3 { get; set; }
         
         [RealName("blinkReasonsStack")]
         [RealType("CName")]

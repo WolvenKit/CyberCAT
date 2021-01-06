@@ -10,7 +10,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("equipSlot")]
         [RealType("TweakDBID")]
-        public ulong EquipSlot { get; set; }
+        public TweakDbId EquipSlot { get; set; }
         
         [RealName("visualTag")]
         [RealType("CName")]

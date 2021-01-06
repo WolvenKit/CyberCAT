@@ -6,7 +6,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("itemID")]
         [RealType("TweakDBID")]
-        public ulong ItemID { get; set; }
+        public TweakDbId ItemID { get; set; }
         
         [RealName("status")]
         public DumpedEnums.DropPointPackageStatus? Status { get; set; }

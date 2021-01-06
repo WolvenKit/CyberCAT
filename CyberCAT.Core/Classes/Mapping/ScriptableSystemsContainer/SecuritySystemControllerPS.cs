@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("attitudeGroup")]
         [RealType("TweakDBID")]
-        public ulong AttitudeGroup { get; set; }
+        public TweakDbId AttitudeGroup { get; set; }
         
         [RealName("suppressAbilityToModifyAttitude")]
         [RealType("Bool")]

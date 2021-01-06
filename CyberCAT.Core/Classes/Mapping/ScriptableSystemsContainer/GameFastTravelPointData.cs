@@ -8,7 +8,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("pointRecord")]
         [RealType("TweakDBID")]
-        public ulong PointRecord { get; set; }
+        public TweakDbId PointRecord { get; set; }
         
         [RealName("markerRef")]
         [RealType("NodeRef")]

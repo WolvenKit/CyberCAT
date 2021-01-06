@@ -6,7 +6,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("skillToCheck")]
         [RealType("TweakDBID")]
-        public ulong SkillToCheck { get; set; }
+        public TweakDbId SkillToCheck { get; set; }
         
         [RealName("difficulty")]
         public DumpedEnums.EGameplayChallengeLevel? Difficulty { get; set; }

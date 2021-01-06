@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
     {
         [RealName("targetItem")]
         [RealType("TweakDBID")]
-        public ulong TargetItem { get; set; }
+        public TweakDbId TargetItem { get; set; }
         
         [RealName("isHidden")]
         [RealType("Bool")]

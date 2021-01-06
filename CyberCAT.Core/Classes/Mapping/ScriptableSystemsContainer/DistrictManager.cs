@@ -10,6 +10,6 @@ namespace CyberCAT.Core.Classes.Mapping.ScriptableSystemsContainer
         
         [RealName("visitedDistricts")]
         [RealType("TweakDBID")]
-        public ulong[] VisitedDistricts { get; set; }
+        public TweakDbId[] VisitedDistricts { get; set; }
     }
 }
