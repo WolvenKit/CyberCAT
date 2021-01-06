@@ -569,7 +569,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return ReadUnmappedFields(reader);
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (GenericUnknownStruct)node.Value;
@@ -697,7 +697,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
                 node.Size = result.Length;
-                node.DataSize = result.Length;
+                node.TrueSize = result.Length;
             }
 
             _stringList = null;

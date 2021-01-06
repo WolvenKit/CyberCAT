@@ -32,21 +32,19 @@ namespace CyberCAT.Core.Classes.Parsers
 
             var count = ParserUtils.ReadPackedLong(reader);
 
-            var tmpFactList = new uint[count];
+            var tmpFactList = new List<uint>();
             for (int i = 0; i < count; i++)
             {
-                tmpFactList[i] = reader.ReadUInt32();
+                tmpFactList.Add(reader.ReadUInt32());
             }
 
-            result.FactEntries = new FactsTable.FactEntry[count];
-
             for (int i = 0; i < count; i++)
             {
-                result.FactEntries[i] = new FactsTable.FactEntry()
+                result.FactEntries.Add(new FactsTable.FactEntry()
                 {
                     Hash = tmpFactList[i],
                     Value = reader.ReadUInt32()
-                };
+                });
             }
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
@@ -54,7 +52,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (FactsTable)node.Value;
@@ -64,7 +62,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
 
-                    ParserUtils.WritePackedLong(writer, data.FactEntries.Length);
+                    ParserUtils.WritePackedLong(writer, data.FactEntries.Count);
 
                     foreach (var fact in data.FactEntries)
                     {
@@ -78,9 +76,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
-
             return result;
         }
     }

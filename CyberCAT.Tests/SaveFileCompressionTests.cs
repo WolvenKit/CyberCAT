@@ -18,7 +18,7 @@ namespace CyberCAT.Tests
 
         public SaveFileCompressionTests(string saveFile)
         {
-            _saveFile = Utils.GetFullPathToFile(saveFile);
+            _saveFile = saveFile;
         }
 
         [SetUp]
@@ -51,9 +51,8 @@ namespace CyberCAT.Tests
         public void Can_recompress_file()
         {
             var activeSaveFile = new SaveFileCompressionHelper();
-            var recompressedFilePath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}";
-            activeSaveFile.CompressFromSingleFile(_binPath, _jsonPath, recompressedFilePath);
-            _recompressedBinPath = Path.Combine(recompressedFilePath, $"{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"); ;
+            activeSaveFile.CompressFromSingleFile(_binPath, _jsonPath, out var recompressedFilePath);
+            _recompressedBinPath = recompressedFilePath;
         }
         /// <summary>
         /// Not that it could be possible that this fails due to slight differences in compression setting but still be a valid file

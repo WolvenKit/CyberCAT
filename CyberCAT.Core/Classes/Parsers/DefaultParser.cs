@@ -7,31 +7,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    public class DefaultParser : INodeParser
+    public class DefaultParser
     {
-        public string DisplayName { get; }
-        public Guid Guid { get; }
-        public string ParsableNodeName { get; }
-
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             reader.Skip(4); // Skip Id
             var result = new DefaultRepresentation();
-            result.HeaderBlob = reader.ReadBytes(node.DataSize - 4);
+            result.Blob = reader.ReadBytes(node.TrueSize - 4);
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
 
-            Debug.Assert(node.TrailingSize >= 0);
-            result.TrailingBlob = reader.ReadBytes(node.TrailingSize);
-
             return result;
         }
-
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (DefaultRepresentation)node.Value;
@@ -40,30 +31,32 @@ namespace CyberCAT.Core.Classes.Parsers
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(node.Id);
-                    writer.Write(data.HeaderBlob);
+                    writer.Write(data.Blob);
 
                     if (node.Children.Count > 0)
                     {
-                        var first = true;
                         foreach (var child in node.Children)
                         {
-                            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == child.Name);
-                            if (parser == null)
+                            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==child.Name);
+                            if (parser != null)
                             {
-                                parser = new DefaultParser();
+                                writer.Write(parser.Write(child, parsers));
                             }
-                            writer.Write(parser.Write(child, parsers, first ? (int)writer.BaseStream.Position : 0));
-                            first = false;
+                            else
+                            {
+                                var fallback = new DefaultParser();
+                                writer.Write(fallback.Write(child, parsers));
+                            }
                         }
                     }
-
-                    writer.Write(data.TrailingBlob);
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length - data.TrailingBlob.Length, parentHeaderSize);
-
+            //we are recalculating the size while writing
+            if (node.TrueSize == 0)//dont have their ID written
+            {
+                result = new byte[4];
+            }
             return result;
         }
     }

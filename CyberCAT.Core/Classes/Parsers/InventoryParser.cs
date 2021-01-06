@@ -65,7 +65,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return subInventory;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (Inventory)node.Value;
@@ -76,32 +76,19 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(node.Id);
                     writer.Write(data.NumberOfInventories);
                     var offset = 0u;
-                    var bytesBefore = 4 + 4;
                     for (var i = 0; i < data.NumberOfInventories; ++i)
                     {
-                        WriteSubInventory(node, offset, bytesBefore, writer, data.SubInventories[i], parsers);
-                        if (data.SubInventories[i].Items.Length == 0)
-                        {
-                            bytesBefore += 8 + 4;
-                        }
-                        else
-                        {
-                            bytesBefore = 0;
-                        }
+                        WriteSubInventory(node, offset, writer, data.SubInventories[i], parsers);
                         offset += data.SubInventories[i].NumberOfItems;
                     }
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
-
             return result;
         }
 
-        public static int WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, int bytesBefore, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
+        public static void WriteSubInventory(NodeEntry inventoryNode, uint nodeOffset, BinaryWriter writer, Inventory.SubInventory subInventory, List<INodeParser> parsers)
         {
-            var subInventoryLength = 8 + 4;
             writer.Write(subInventory.InventoryId);
             writer.Write(subInventory.NumberOfItems);
 
@@ -110,14 +97,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
             for (var i = 0; i < subInventory.NumberOfItems; ++i)
             {
-                var written = ItemDataParser.WriteNextItemEntry(writer, subInventory.ItemHeaders[i]);
-                subInventoryLength += written;
-                var buffer = parser.Write(inventoryNode.Children[(int) nodeOffset + i], parsers, i == 0 ? 8 + 4 + bytesBefore + written : written);
-                writer.Write(buffer);
-                subInventoryLength += buffer.Length;
+                ItemDataParser.WriteNextItemEntry(writer, subInventory.ItemHeaders[i]);
+                writer.Write(parser.Write(inventoryNode.Children[(int) nodeOffset + i], parsers));
             }
-
-            return subInventoryLength;
         }
     }
 }

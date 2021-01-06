@@ -84,7 +84,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             result.ThirdSection = ReadSection(reader, ExpectedThirdSectionNames);
 
-            int readSize = node.DataSize - ((int)reader.BaseStream.Position - node.Offset);
+            int readSize = node.TrueSize - ((int)reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes(readSize);
             return result;
         }
@@ -151,7 +151,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (CharacterCustomizationAppearances)node.Value;
@@ -170,9 +170,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length, parentHeaderSize);
-
+            //node.TrueSize = result.Length;
             return result;
         }
 

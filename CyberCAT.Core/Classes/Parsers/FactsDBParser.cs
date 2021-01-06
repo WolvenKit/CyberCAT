@@ -35,12 +35,15 @@ namespace CyberCAT.Core.Classes.Parsers
             ParserUtils.ParseChildren(node.Children, reader, parsers);
 
             // There is a blob between the last factstable and the next node in questsystem
-            result.TrailingBytes = reader.ReadBytes(node.TrailingSize);
+            var nextNode = node.GetNextNode();
+            var toRead = nextNode.Offset - reader.BaseStream.Position;
+            Debug.Assert(toRead >= 0);
+            result.TrailingBytes = reader.ReadBytes((int)toRead);
 
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (FactsDB)node.Value;
@@ -54,20 +57,15 @@ namespace CyberCAT.Core.Classes.Parsers
                     var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==Constants.NodeNames.FACTS_TABLE);
                     Debug.Assert(parser != null);
 
-                    var first = true;
                     foreach (var child in node.Children)
                     {
-                        writer.Write(parser.Write(child, parsers, first ? 5 : 0));
-                        first = false;
+                        writer.Write(parser.Write(child, parsers));
                     }
                    
                     writer.Write(data.TrailingBytes);
                 }
                 result = stream.ToArray();
             }
-
-            ParserUtils.AdjustNodeOffsetDuringWriting(node, result.Length - data.TrailingBytes.Length, parentHeaderSize);
-
             return result;
         }
     }
