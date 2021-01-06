@@ -82,6 +82,78 @@ namespace CyberCAT.Tests
             Assert.That(newBytes.Length, Is.EqualTo(bytes.Length));
             Assert.That(newBytes.SequenceEqual(bytes), Is.True);
         }
+
+        [Test]
+        public void FactsAddingTest()
+        {
+            var bytes = File.ReadAllBytes(_filename);
+
+            var saveFile = new SaveFile(_parsers);
+            saveFile.LoadPCSaveFile(new MemoryStream(bytes));
+
+            var prevNodeCount = saveFile.FlatNodes.Count;
+            var fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
+            Assert.That(fdb, Is.Not.Null);
+
+            var firstTable = ((FactsDB)fdb.Value).FactsTables[0];
+            firstTable.FactEntries.Add(new FactsTable.FactEntry { Hash = 0x42424242, Value = 1}); // Bogus data for testing
+            var factCount = firstTable.FactEntries.Count;
+
+            List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+
+            saveFile = new SaveFile();
+            using (var stream = new MemoryStream(newSave[0]))
+            {
+                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+            }
+
+            Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
+
+            fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
+            Assert.That(fdb, Is.Not.Null);
+
+            firstTable = ((FactsDB)fdb.Value).FactsTables[0];
+            var newFactCount = firstTable.FactEntries.Count;
+
+            Assert.That(factCount, Is.EqualTo(newFactCount));
+        }
+
+        [Test]
+        public void FactsRemovingTest()
+        {
+            var bytes = File.ReadAllBytes(_filename);
+
+            var saveFile = new SaveFile(_parsers);
+            saveFile.LoadPCSaveFile(new MemoryStream(bytes));
+
+            var prevNodeCount = saveFile.FlatNodes.Count;
+            var fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
+            Assert.That(fdb, Is.Not.Null);
+
+            var firstTable = ((FactsDB)fdb.Value).FactsTables[0];
+            firstTable.FactEntries.RemoveAt(0);
+            var factCount = firstTable.FactEntries.Count;
+
+            List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+
+            saveFile = new SaveFile();
+            using (var stream = new MemoryStream(newSave[0]))
+            {
+                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+            }
+
+            Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
+
+            fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
+            Assert.That(fdb, Is.Not.Null);
+
+            firstTable = ((FactsDB)fdb.Value).FactsTables[0];
+            var newFactCount = firstTable.FactEntries.Count;
+
+            Assert.That(factCount, Is.EqualTo(newFactCount));
+        }
     }
 
     class SpecificSaveFileTests
@@ -99,7 +171,7 @@ namespace CyberCAT.Tests
             var saveFile = new SaveFile();
             saveFile.LoadPCSaveFile(fileStream);
 
-            var prevNodeCount = saveFile.Nodes.Count;
+            var prevNodeCount = saveFile.FlatNodes.Count;
 
             var cas = saveFile.Nodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.CHARACTER_CUSTOMIZATION_APPEARANCES_NODE);
             Assert.That(cas, Is.Not.Null);
@@ -119,10 +191,7 @@ namespace CyberCAT.Tests
             var tpp = value.FirstSection.AppearanceSections[0];
             tpp.AdditionalList.Add(new CharacterCustomizationAppearances.ValueEntry {FirstString = "eyes", SecondString = "h071"});
 
-            // TODO: Temporary, make this automatic
-            //cas.MySizeChanged();
-
-            List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assing a variable inside the delegate
+            List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
             Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
 
             saveFile = new SaveFile();
@@ -131,7 +200,7 @@ namespace CyberCAT.Tests
                 Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
             }
 
-            Assert.That(saveFile.Nodes.Count, Is.EqualTo(prevNodeCount));
+            Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
 
             var addedBytes = 18; // The new entry adds 5 + 5 + 8 = 18 bytes
 

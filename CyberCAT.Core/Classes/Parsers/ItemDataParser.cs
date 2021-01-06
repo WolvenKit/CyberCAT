@@ -29,6 +29,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             node.Parser = this;
+            node.WritesOwnTrailingSize = false;
             var result = new ItemData();
 
             reader.Skip(4); // Skip Id
@@ -54,7 +55,7 @@ namespace CyberCAT.Core.Classes.Parsers
             // There should be no bytes left after an item.
             var toRead = node.Size - (reader.BaseStream.Position - node.Offset);
             Debug.Assert(toRead == 0);
-            //result.TrailingBytes = reader.ReadBytes((int)toRead);
+            // There are trailing bytes, but these are handled by the inventory!
 
             return result;
         }

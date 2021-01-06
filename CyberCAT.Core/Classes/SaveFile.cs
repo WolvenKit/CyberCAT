@@ -402,11 +402,17 @@ namespace CyberCAT.Core.Classes
                     prev.NodeOffsetChanged += node.OnPreviousNodeOffsetChanged;
                 }
 
-                // Ask my parent if their offset changes, but only if I'm the first child
+                // I need to now if my parent offset changed, but only if I'm the first child
                 var parent = node.GetParent();
                 if (parent != null && node.IsFirstChild)
                 {
                     parent.NodeOffsetChanged += node.OnParentNodeOffsetChanged;
+                }
+
+                // If I'm a child, I need to notify my parent if my size changes
+                if (parent != null)
+                {
+                    node.ChildSizeChanged += parent.OnChildSizeChanged;
                 }
 
                 // Do the same for my children

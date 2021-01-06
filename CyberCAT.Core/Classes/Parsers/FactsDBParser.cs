@@ -31,12 +31,27 @@ namespace CyberCAT.Core.Classes.Parsers
             reader.Skip(4);
 
             var result = new FactsDB();
-            result.FactsTableCount = reader.ReadByte();
+            var count = reader.ReadByte();
 
-            ParserUtils.ParseChildren(node.Children, reader, parsers);
+            // There should be count many children
+            if (count != node.Children.Count)
+            {
+                throw new InvalidDataException($"Expected {count} FactsTable but found {node.Children.Count}.");
+            }
+
+            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.FACTS_TABLE).FirstOrDefault();
+            Debug.Assert(parser != null);
+
+            foreach (var child in node.Children)
+            {
+                child.Value = (FactsTable) parser.Read(child, reader, parsers);
+                result.FactsTables.Add((FactsTable) child.Value);
+            }
 
             // There is a blob between the last factstable and the next node in questsystem
             result.TrailingBytes = reader.ReadBytes(node.TrailingSize);
+
+            result.Node = node;
 
             return result;
         }
@@ -50,6 +65,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(node.Id);
+
+                    if (data.FactsTableCount != node.Children.Count)
+                    {
+                        throw new InvalidDataException($"Expected {data.FactsTableCount} FactsTable but found {node.Children.Count}.");
+                    }
+
                     writer.Write(data.FactsTableCount);
 
                     var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.FACTS_TABLE).FirstOrDefault();

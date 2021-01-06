@@ -21,6 +21,7 @@ namespace CyberCAT.Core.Classes
         public bool IsFirstChild { get; set; }
         public int DataSize { get; set; }
         public int TrailingSize { get; set; }
+        public bool WritesOwnTrailingSize { get; set; }
         public List<NodeEntry> Children { get; set; }
         private NodeEntry _nextNode;
         private NodeEntry _previousNode;
@@ -40,6 +41,7 @@ namespace CyberCAT.Core.Classes
 
         public NodeEntry()
         {
+            WritesOwnTrailingSize = true;
             Children = new List<NodeEntry>();
         }
 
@@ -106,21 +108,18 @@ namespace CyberCAT.Core.Classes
 
             // But first, actually determine my new size.
             var newSize = Parser.Write(this, Parsers, 0).Length;
+            newSize -= (WritesOwnTrailingSize ? TrailingSize : 0);
             var sizeChange = newSize - Size;
 
             if (sizeChange == 0)
             {
                 // Nothing changed, do nothing.
+                return;
             }
 
             Size = newSize;
             NodeSizeChanged?.Invoke(this, sizeChange);
-
-            var parent = GetParent();
-            if (parent != null)
-            {
-                parent.MySizeChanged();
-            }
+            ChildSizeChanged?.Invoke(this);
         }
 
         public virtual void OnPreviousNodeSizeChanged(NodeEntry previousNode, int sizeChange)
@@ -142,6 +141,13 @@ namespace CyberCAT.Core.Classes
             Offset += offsetChange;
 
             NodeOffsetChanged?.Invoke(this, offsetChange);
+        }
+
+        public virtual void OnChildSizeChanged(NodeEntry childNode)
+        {
+            // A child changed their size. The child has notified all the nodes after it.
+            // I need to adjust my size.
+            MySizeChanged();
         }
     }
 }

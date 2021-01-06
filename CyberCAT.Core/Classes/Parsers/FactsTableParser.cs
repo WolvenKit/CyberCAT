@@ -39,19 +39,18 @@ namespace CyberCAT.Core.Classes.Parsers
                 tmpFactList[i] = reader.ReadUInt32();
             }
 
-            result.FactEntries = new FactsTable.FactEntry[count];
-
             for (int i = 0; i < count; i++)
             {
-                result.FactEntries[i] = new FactsTable.FactEntry()
+                result.FactEntries.Add(new FactsTable.FactEntry
                 {
                     Hash = tmpFactList[i],
                     Value = reader.ReadUInt32()
-                };
+                });
             }
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
 
+            result.Node = node;
             return result;
         }
 
@@ -65,7 +64,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
 
-                    ParserUtils.WritePackedLong(writer, data.FactEntries.Length);
+                    ParserUtils.WritePackedLong(writer, data.FactEntries.Count);
 
                     foreach (var fact in data.FactEntries)
                     {
