@@ -28,6 +28,10 @@ namespace CyberCAT.Core.Classes
 
         public static string GetName(TweakDbId tdbid)
         {
+            if (tdbid == null)
+            {
+                return "<null>";
+            }
             if (_items.ContainsKey(tdbid.Raw64))
             {
                 return _items[tdbid.Raw64].Name;
@@ -46,6 +50,10 @@ namespace CyberCAT.Core.Classes
 
         public static string GetGameName(TweakDbId tdbid)
         {
+            if (tdbid == null)
+            {
+                return "<null>";
+            }
             if (_items.ContainsKey(tdbid.Raw64))
             {
                 return _items[tdbid.Raw64].GameName;
@@ -64,6 +72,10 @@ namespace CyberCAT.Core.Classes
 
         public static string GetGameDescription(TweakDbId tdbid)
         {
+            if (tdbid == null)
+            {
+                return "<null>";
+            }
             if (_items.ContainsKey(tdbid.Raw64))
             {
                 return _items[tdbid.Raw64].GameDescription;

@@ -122,6 +122,11 @@ namespace CyberCAT.Core.Classes
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public TweakDbId()
+        {
+            _padding = new byte[3];
+        }
     }
 
     public static class TweakDbIdExtensions

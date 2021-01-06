@@ -92,6 +92,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 return new NextItemEntry { _itemTdbId = item.ItemTdbId, Header = item.Header };
             }
+
+            public NextItemEntry()
+            {
+                _itemTdbId = new TweakDbId();
+                _header = new HeaderThing();
+            }
         }
 
         [JsonObject]
@@ -275,6 +281,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public override string ToString()
             {
                 return $"{TdbId1Name}";
+            }
+
+            public ModableItemData()
+            {
+                _tdbId1 = new TweakDbId();
+                _rootNode = new ItemModData();
             }
         }
 
@@ -465,6 +477,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public ItemModData()
             {
+                _itemTdbId = new TweakDbId();
+                _header = new HeaderThing();
+                _unknownString = "";
+                _attachmentSlotTdbId = new TweakDbId();
+                _tdbId2 = new TweakDbId();
                 _children = new NotifyingObservableCollection<ItemModData>();
                 _children.CollectionChanged += (sender, args) =>
                 {
@@ -671,6 +688,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public override string ToString()
         {
             return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
+        }
+
+        public ItemData()
+        {
+            _itemTdbId = new TweakDbId();
+            _header = new HeaderThing();
+            _flags = new ItemFlags(0);
         }
     }
 }
