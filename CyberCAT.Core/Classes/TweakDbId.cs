@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Annotations;
 
 namespace CyberCAT.Core.Classes
 {
-    public class TweakDbId
+    public class TweakDbId : INotifyPropertyChanged
     {
+        private uint _id;
+        private byte _length;
+        private byte[] _padding;
+
         public ulong Raw64
         {
             get
@@ -42,16 +49,58 @@ namespace CyberCAT.Core.Classes
                 Padding[0] = rawBytes[5];
                 Padding[1] = rawBytes[6];
                 Padding[2] = rawBytes[7];
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Id));
+                OnPropertyChanged(nameof(Length));
+                OnPropertyChanged(nameof(Padding));
             }
         }
 
-        public uint Id { get; set; }
-        public byte Length { get; set; }
-        public byte[] Padding { get; set; }
+        public uint Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        public byte Length
+        {
+            get => _length;
+            set
+            {
+                _length = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        public byte[] Padding
+        {
+            get => _padding;
+            set
+            {
+                _padding = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
 
         public override string ToString()
         {
             return $"{Id:X8}:{Length:X2}";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

@@ -57,6 +57,7 @@ namespace CyberCAT.Core.Classes.Parsers
             Debug.Assert(toRead == 0);
             // There are trailing bytes, but these are handled by the inventory!
 
+            result.Node = node;
             return result;
         }
 
@@ -112,12 +113,11 @@ namespace CyberCAT.Core.Classes.Parsers
             result.ItemTdbId = reader.ReadTweakDbId();
             result.Header = ReadHeaderThing(reader);
             result.UnknownString = ParserUtils.ReadString(reader);
-            result.AttachmentSlotTdbId = reader.ReadUInt64();
+            result.AttachmentSlotTdbId = reader.ReadTweakDbId();
             var count = ParserUtils.ReadPackedLong(reader);
-            result.Children = new ItemData.ItemModData[count];
             for(var i = 0; i < count; ++i)
             {
-                result.Children[i] = ReadKind2DataNode(reader);
+                result.Children.Add(ReadKind2DataNode(reader));
             }
 
             result.Unknown2 = reader.ReadUInt32();
@@ -133,7 +133,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var nextItemEntry = new ItemData.NextItemEntry();
 
             nextItemEntry.ItemTdbId = reader.ReadTweakDbId();
-            nextItemEntry.ItemID = reader.ReadUInt32();
+            nextItemEntry.ItemId = reader.ReadUInt32();
             nextItemEntry.UnknownBytes = reader.ReadBytes(3);
 
             return nextItemEntry;
@@ -225,7 +225,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public static int WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
         {
             writer.Write(nextItem.ItemTdbId);
-            writer.Write(nextItem.ItemID);
+            writer.Write(nextItem.ItemId);
             writer.Write(nextItem.UnknownBytes);
             return 8 + 4 + nextItem.UnknownBytes.Length;
         }

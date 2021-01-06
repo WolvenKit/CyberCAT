@@ -241,11 +241,7 @@ namespace CyberCAT.Tests
 
             // Remove the second mod.
             var children = moddableItem.RootNode.Children;
-            Array.Resize(ref children, 1);
-            moddableItem.RootNode.Children = children;
-
-            // TODO: make this automatic
-            item.MySizeChanged();
+            moddableItem.RootNode.Children.RemoveAt(1);
 
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
             Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });

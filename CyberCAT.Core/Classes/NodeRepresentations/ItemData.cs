@@ -1,27 +1,104 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using CyberCAT.Core.Annotations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     [JsonObject]
-    public class ItemData
+    public class ItemData : NodeRepresentation
     {
-        public class NextItemEntry
+        private TweakDbId _itemTdbId;
+        private HeaderThing _header;
+        private ItemFlags _flags;
+        private uint _creationTime;
+        private ItemInnerData _data;
+
+        public class NextItemEntry : INotifyPropertyChanged
         {
-            public TweakDbId ItemTdbId { get; set; }
+            private TweakDbId _itemTdbId;
+            private uint _itemId;
+            private byte[] _unknownBytes;
+
+            public TweakDbId ItemTdbId
+            {
+                get => _itemTdbId;
+                set
+                {
+                    if (_itemTdbId != null)
+                    {
+                        _itemTdbId.PropertyChanged -= ItemTdbIdChanged;
+                    }
+                    _itemTdbId = value;
+                    if (_itemTdbId != null)
+                    {
+                        _itemTdbId.PropertyChanged += ItemTdbIdChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void ItemTdbIdChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(ItemTdbId));
+            }
+
             public string ItemName => NameResolver.GetName(ItemTdbId);
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
-            public uint ItemID { get; set; }
-            public byte[] UnknownBytes { get; set; }
+
+            public uint ItemId
+            {
+                get => _itemId;
+                set
+                {
+                    _itemId = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public byte[] UnknownBytes
+            {
+                get => _unknownBytes;
+                set
+                {
+                    _unknownBytes = value;
+                    OnPropertyChanged();
+                }
+            }
+
             public override string ToString()
             {
                 return $"{ItemName} ({ItemGameName})";
             }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            [NotifyPropertyChangedInvocator]
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
+
         [JsonObject]
-        public class ItemFlags
+        public class ItemFlags : INotifyPropertyChanged
         {
-            public byte Raw { get; set; }
+            private byte _raw;
+
+            public byte Raw
+            {
+                get => _raw;
+                set
+                {
+                    _raw = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsQuestItem));
+                    OnPropertyChanged(nameof(Unknown2));
+                }
+            }
+
             public bool IsQuestItem
             {
                 get => (Raw & 0x01) == 0x01;
@@ -33,6 +110,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     } else {
                         Raw &= byte.MaxValue ^ (0x01);
                     }
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Raw));
                 } 
             }
             public bool Unknown2
@@ -48,42 +127,138 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     {
                         Raw &= byte.MaxValue ^ (0x02);
                     }
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Raw));
                 }
             }
 
             public ItemFlags(byte raw)
             {
-                Raw = raw;
+                _raw = raw;
             }
 
             public override string ToString()
             {
                 return $"[......{(Unknown2 ? '?' : '.')}{(IsQuestItem ? 'Q' : '.')}]";
             }
-        }
-        [JsonObject]
-        public class ItemInnerData
-        {
 
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            [NotifyPropertyChangedInvocator]
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
+
+        [JsonObject]
+        public class ItemInnerData : INotifyPropertyChanged
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            [NotifyPropertyChangedInvocator]
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         [JsonObject]
         public class SimpleItemData : ItemInnerData
         {
-            public uint Quantity { get; set; }
+            private uint _quantity;
+
+            public uint Quantity
+            {
+                get => _quantity;
+                set
+                {
+                    _quantity = value;
+                    OnPropertyChanged();
+                }
+            }
 
             public override string ToString()
             {
                 return $"{Quantity}x";
             }
         }
+
         [JsonObject]
         public class ModableItemData : ItemInnerData
         {
-            public TweakDbId TdbId1 { get; set; }
+            private TweakDbId _tdbId1;
+            private uint _unknown2;
+            private uint _unknown3;
+            private ItemModData _rootNode;
+
+            public TweakDbId TdbId1
+            {
+                get => _tdbId1;
+                set
+                {
+                    if (_tdbId1 != null)
+                    {
+                        _tdbId1.PropertyChanged -= ItemTdbIdChanged;
+                    }
+                    _tdbId1 = value;
+                    if (_tdbId1 != null)
+                    {
+                        _tdbId1.PropertyChanged += ItemTdbIdChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void ItemTdbIdChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(ItemTdbId));
+            }
+
             public string TdbId1Name => NameResolver.GetName(TdbId1);
-            public uint Unknown2 { get; set; }
-            public uint Unknown3 { get; set; }
-            public ItemModData RootNode { get; set; }
+
+            public uint Unknown2
+            {
+                get => _unknown2;
+                set
+                {
+                    _unknown2 = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public uint Unknown3
+            {
+                get => _unknown3;
+                set
+                {
+                    _unknown3 = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public ItemModData RootNode
+            {
+                get => _rootNode;
+                set
+                {
+                    if (_rootNode != null)
+                    {
+                        _rootNode.PropertyChanged -= RootNodeChanged;
+                    }
+                    _rootNode = value;
+                    if (_rootNode != null)
+                    {
+                        _rootNode.PropertyChanged += RootNodeChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void RootNodeChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(RootNode));
+            }
 
             public override string ToString()
             {
@@ -94,37 +269,234 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         [JsonObject]
         public class ModableItemWithQuantityData : ModableItemData
         {
-            public uint Quantity { get; set; }
+            private uint _quantity;
+
+            public uint Quantity
+            {
+                get => _quantity;
+                set
+                {
+                    _quantity = value;
+                    OnPropertyChanged();
+                }
+            }
         }
+
         [JsonObject]
-        public class ItemModData
+        public class ItemModData : INotifyPropertyChanged
         {
-            public TweakDbId ItemTdbId { get; set; }
+            private TweakDbId _itemTdbId;
+            private HeaderThing _header;
+            private string _unknownString;
+            private TweakDbId _attachmentSlotTdbId;
+            private ObservableCollection<ItemModData> _children;
+            private uint _unknown2;
+            private TweakDbId _tdbId2;
+            private uint _unknown3;
+            private uint _unknown4;
+
+            public TweakDbId ItemTdbId
+            {
+                get => _itemTdbId;
+                set
+                {
+                    if (_itemTdbId != null)
+                    {
+                        _itemTdbId.PropertyChanged -= ItemTdbIdChanged;
+                    }
+                    _itemTdbId = value;
+                    if (_itemTdbId != null)
+                    {
+                        _itemTdbId.PropertyChanged -= ItemTdbIdChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void ItemTdbIdChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(ItemTdbId));
+            }
+
             public string ItemName => NameResolver.GetName(ItemTdbId);
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
-            public HeaderThing Header { get; set; }
-            public string UnknownString { get; set; }
-            public ulong AttachmentSlotTdbId { get; set; }
+
+            public HeaderThing Header
+            {
+                get => _header;
+                set
+                {
+                    if (_header != null)
+                    {
+                        _header.PropertyChanged -= HeaderChanged;
+                    }
+                    _header = value;
+                    if (_header != null)
+                    {
+                        _header.PropertyChanged += HeaderChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void HeaderChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(Header));
+            }
+
+            public string UnknownString
+            {
+                get => _unknownString;
+                set
+                {
+                    _unknownString = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public TweakDbId AttachmentSlotTdbId
+            {
+                get => _attachmentSlotTdbId;
+                set
+                {
+                    if (_attachmentSlotTdbId != null)
+                    {
+                        _attachmentSlotTdbId.PropertyChanged -= AttachmentSlotTdbIdChanged;
+                    }
+                    _attachmentSlotTdbId = value;
+                    if (_attachmentSlotTdbId != null)
+                    {
+                        _attachmentSlotTdbId.PropertyChanged += AttachmentSlotTdbIdChanged;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void AttachmentSlotTdbIdChanged(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(AttachmentSlotTdbId));
+            }
+
             public string AttachmentSlotName => NameResolver.GetName(AttachmentSlotTdbId);
-            public int ChildrenCount => Children?.Length ?? 0;
-            public ItemModData[] Children { get; set; }
-            public uint Unknown2 { get; set; }
-            public TweakDbId TdbId2 { get; set; }
+            public int ChildrenCount => Children?.Count ?? 0;
+
+            public ObservableCollection<ItemModData> Children => _children;
+
+            public uint Unknown2
+            {
+                get => _unknown2;
+                set
+                {
+                    _unknown2 = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public TweakDbId TdbId2
+            {
+                get => _tdbId2;
+                set
+                {
+                    if (_tdbId2 != null)
+                    {
+                        _tdbId2.PropertyChanged -= TdbId2Changed;
+                    }
+                    _tdbId2 = value;
+                    if (_tdbId2 != null)
+                    {
+                        _tdbId2.PropertyChanged += TdbId2Changed;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
+            private void TdbId2Changed(object sender, PropertyChangedEventArgs args)
+            {
+                OnPropertyChanged(nameof(TdbId2));
+            }
+
             public string TdbId2Name => NameResolver.GetName(TdbId2);
-            public uint Unknown3 { get; set; }
-            public uint Unknown4 { get; set; }
+
+            public uint Unknown3
+            {
+                get => _unknown3;
+                set
+                {
+                    _unknown3 = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public uint Unknown4
+            {
+                get => _unknown4;
+                set
+                {
+                    _unknown4 = value;
+                    OnPropertyChanged();
+                }
+            }
+
             public override string ToString()
             {
                 return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
             }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            [NotifyPropertyChangedInvocator]
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public ItemModData()
+            {
+                _children = new NotifyingObservableCollection<ItemModData>();
+                _children.CollectionChanged += (sender, args) =>
+                {
+                    OnPropertyChanged(nameof(Children));
+                };
+            }
         }
+
         [JsonObject]
-        public class HeaderThing
+        public class HeaderThing : INotifyPropertyChanged
         {
-            public uint ItemId { get; set; }
-            public byte UnknownBytes1 { get; set; }
-            public ushort UnknownBytes2 { get; set; }
+            private uint _itemId;
+            private byte _unknownBytes1;
+            private ushort _unknownBytes2;
+
+            public uint ItemId
+            {
+                get => _itemId;
+                set
+                {
+                    _itemId = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public byte UnknownBytes1
+            {
+                get => _unknownBytes1;
+                set
+                {
+                    _unknownBytes1 = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public ushort UnknownBytes2
+            {
+                get => _unknownBytes2;
+                set
+                {
+                    _unknownBytes2 = value;
+                    OnPropertyChanged();
+                }
+            }
 
             public byte Kind
             {
@@ -144,20 +516,121 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 return $"Type: {Kind} | {ItemId:X8}";
             }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            [NotifyPropertyChangedInvocator]
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
-        public TweakDbId ItemTdbId { get; set; }
+        public TweakDbId ItemTdbId
+        {
+            get => _itemTdbId;
+            set
+            {
+                if (_itemTdbId != null)
+                {
+                    _itemTdbId.PropertyChanged -= ItemTdbIdChanged;
+                }
+                _itemTdbId = value;
+                if (_itemTdbId != null)
+                {
+                    _itemTdbId.PropertyChanged += ItemTdbIdChanged;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        private void ItemTdbIdChanged(object sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(nameof(ItemTdbId));
+        }
+
         public string ItemName => NameResolver.GetName(ItemTdbId);
         public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
         public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
-        public HeaderThing Header { get; set; }
-        public ItemFlags Flags { get; set; }
-        public uint CreationTime { get; set; }
+        public HeaderThing Header
+        {
+            get => _header;
+            set
+            {
+                if (_header != null)
+                {
+                    _header.PropertyChanged -= HeaderChanged;
+                }
+                _header = value;
+                if (_header != null)
+                {
+                    _header.PropertyChanged += HeaderChanged;
+                }
+                OnPropertyChanged();
+            }
+        }
 
-        public ItemInnerData Data { get; set; }
+        private void HeaderChanged(object sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(nameof(Header));
+        }
 
-        //public byte[] TrailingBytes { get; set; }
+        public ItemFlags Flags
+        {
+            get => _flags;
+            set
+            {
+                if (_flags != null)
+                {
+                    _flags.PropertyChanged -= FlagsChanged;
+                }
+                _flags = value;
+                if (_flags != null)
+                {
+                    _flags.PropertyChanged += FlagsChanged;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        private void FlagsChanged(object sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(nameof(Flags));
+        }
+
+        public uint CreationTime
+        {
+            get => _creationTime;
+            set
+            {
+                _creationTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ItemInnerData Data
+        {
+            get => _data;
+            set
+            {
+                if (_data != null)
+                {
+                    _data.PropertyChanged -= ItemInnerDataChanged;
+                }
+                _data = value;
+                if (_data != null)
+                {
+                    _data.PropertyChanged += ItemInnerDataChanged;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        private void ItemInnerDataChanged(object sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(nameof(ItemInnerData));
+        }
 
         public override string ToString()
         {
