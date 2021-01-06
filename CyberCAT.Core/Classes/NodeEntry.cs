@@ -107,7 +107,7 @@ namespace CyberCAT.Core.Classes
             // I do not have to tell my children because if I had children, my size can only change because one of their sizes changed. (Is this really true?)
 
             // But first, actually determine my new size.
-            var newSize = Parser.Write(this, Parsers, 0).Length;
+            var newSize = Parser.Write(this, Parsers).Length;
             newSize -= (WritesOwnTrailingSize ? TrailingSize : 0);
             var sizeChange = newSize - Size;
 

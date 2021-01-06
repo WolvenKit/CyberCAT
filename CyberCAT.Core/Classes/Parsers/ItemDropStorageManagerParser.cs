@@ -49,7 +49,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (ItemDropStorageManager)node.Value;
@@ -65,7 +65,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
                     {
-                        writer.Write(parser.Write(node.Children[i], parsers, i == 0 ? (int) writer.BaseStream.Position : 0));
+                        writer.Write(parser.Write(node.Children[i], parsers));
                     }
 
                     writer.Write(data.TrailingBytes);

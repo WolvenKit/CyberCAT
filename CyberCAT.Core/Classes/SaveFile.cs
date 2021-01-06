@@ -251,7 +251,7 @@ namespace CyberCAT.Core.Classes
                     {
                         parser = new DefaultParser();
                     }
-                    stream.Write(parser.Write(node, _parsers, 0));
+                    stream.Write(parser.Write(node, _parsers));
                 }
                 uncompressedData = stream.ToArray();
             }

@@ -33,7 +33,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (DefaultRepresentation)node.Value;
@@ -46,7 +46,6 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     if (node.Children.Count > 0)
                     {
-                        var first = true;
                         foreach (var child in node.Children)
                         {
                             var parser = parsers.Where(p => p.ParsableNodeName == child.Name).FirstOrDefault();
@@ -54,8 +53,7 @@ namespace CyberCAT.Core.Classes.Parsers
                             {
                                 parser = new DefaultParser();
                             }
-                            writer.Write(parser.Write(child, parsers, first ? (int)writer.BaseStream.Position : 0));
-                            first = false;
+                            writer.Write(parser.Write(child, parsers));
                         }
                     }
 

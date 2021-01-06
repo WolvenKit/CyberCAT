@@ -11,11 +11,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageParser :INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public ItemDropStorageParser()
         {
@@ -37,7 +37,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (ItemDropStorage)node.Value;
@@ -50,7 +50,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     headerSize += ParserUtils.WriteString(writer, data.UnknownString);
                     writer.Write(data.HeaderBytes);
                     headerSize += data.HeaderBytes.Length;
-                    InventoryParser.WriteSubInventory(node, 0, headerSize, writer, data.Inventory, parsers);
+                    InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
                 }
                 result = stream.ToArray();
             }

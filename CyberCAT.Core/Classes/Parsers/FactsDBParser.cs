@@ -56,7 +56,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers, int parentHeaderSize)
+        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
         {
             byte[] result;
             var data = (FactsDB)node.Value;
@@ -76,11 +76,9 @@ namespace CyberCAT.Core.Classes.Parsers
                     var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.FACTS_TABLE).FirstOrDefault();
                     Debug.Assert(parser != null);
 
-                    var first = true;
                     foreach (var child in node.Children)
                     {
-                        writer.Write(parser.Write(child, parsers, first ? 5 : 0));
-                        first = false;
+                        writer.Write(parser.Write(child, parsers));
                     }
                    
                     writer.Write(data.TrailingBytes);

@@ -112,7 +112,7 @@ namespace CyberCAT.Forms
                         parser = new DefaultParser();
                     }
 
-                    writer.Write(parser.Write(data.Node, parsers, 0));
+                    writer.Write(parser.Write(data.Node, parsers));
                 }
 
                 bytes = stream.ToArray();
@@ -242,7 +242,7 @@ namespace CyberCAT.Forms
                             parser = new DefaultParser();
                         }
 
-                        writer.Write(parser.Write(node, parsers, 0));
+                        writer.Write(parser.Write(node, parsers));
                     }
 
                     bytes = stream.ToArray();
