@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using CyberCAT.Core.Annotations;
 
 namespace CyberCAT.Core.Classes
@@ -87,6 +83,30 @@ namespace CyberCAT.Core.Classes
                 _padding = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        protected bool Equals(TweakDbId other)
+        {
+            return _id == other._id && _length == other._length && _padding.SequenceEqual(other._padding);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TweakDbId) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (int) _id;
+                hashCode = (hashCode * 397) ^ _length.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_padding != null ? _padding.GetHashCode() : 0);
+                return hashCode;
             }
         }
 

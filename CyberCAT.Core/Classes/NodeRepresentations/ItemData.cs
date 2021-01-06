@@ -18,8 +18,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class NextItemEntry : INotifyPropertyChanged
         {
             private TweakDbId _itemTdbId;
-            private uint _itemId;
-            private byte[] _unknownBytes;
+            private HeaderThing _header;
 
             public TweakDbId ItemTdbId
             {
@@ -48,24 +47,27 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
-            public uint ItemId
+            public HeaderThing Header
             {
-                get => _itemId;
+                get => _header;
                 set
                 {
-                    _itemId = value;
+                    if (_header != null)
+                    {
+                        _header.PropertyChanged -= HeaderChanged;
+                    }
+                    _header = value;
+                    if (_header != null)
+                    {
+                        _header.PropertyChanged += HeaderChanged;
+                    }
                     OnPropertyChanged();
                 }
             }
 
-            public byte[] UnknownBytes
+            private void HeaderChanged(object sender, PropertyChangedEventArgs args)
             {
-                get => _unknownBytes;
-                set
-                {
-                    _unknownBytes = value;
-                    OnPropertyChanged();
-                }
+                OnPropertyChanged(nameof(Header));
             }
 
             public override string ToString()
@@ -79,6 +81,16 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public bool BelongsToItemData(ItemData item)
+            {
+                return _itemTdbId.Equals(item.ItemTdbId) && _header.Equals(item.Header);
+            }
+
+            public static NextItemEntry GenerateFromItem(ItemData item)
+            {
+                return new NextItemEntry { _itemTdbId = item.ItemTdbId, Header = item.Header };
             }
         }
 
@@ -465,7 +477,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class HeaderThing : INotifyPropertyChanged
         {
             private uint _itemId;
-            private byte _unknownBytes1;
+            private byte _unknownByte1;
             private ushort _unknownBytes2;
 
             public uint ItemId
@@ -478,12 +490,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 }
             }
 
-            public byte UnknownBytes1
+            public byte UnknownByte1
             {
-                get => _unknownBytes1;
+                get => _unknownByte1;
                 set
                 {
-                    _unknownBytes1 = value;
+                    _unknownByte1 = value;
                     OnPropertyChanged();
                 }
             }
@@ -502,11 +514,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 get
                 {
-                    if (UnknownBytes1 == 1)
+                    if (UnknownByte1 == 1)
                         return 2;
-                    if (UnknownBytes1 == 2)
+                    if (UnknownByte1 == 2)
                         return 1;
-                    if (UnknownBytes1 == 3)
+                    if (UnknownByte1 == 3)
                         return 0;
                     return (byte)(ItemId != 2 ? 2 : 1);
                 }
@@ -523,6 +535,30 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            protected bool Equals(HeaderThing other)
+            {
+                return _itemId == other._itemId && _unknownByte1 == other._unknownByte1 && _unknownBytes2 == other._unknownBytes2;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((HeaderThing) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = (int) _itemId;
+                    hashCode = (hashCode * 397) ^ _unknownByte1.GetHashCode();
+                    hashCode = (hashCode * 397) ^ _unknownBytes2.GetHashCode();
+                    return hashCode;
+                }
             }
         }
 

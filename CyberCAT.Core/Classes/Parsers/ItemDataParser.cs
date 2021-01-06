@@ -66,7 +66,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new ItemData.HeaderThing();
 
             result.ItemId = reader.ReadUInt32();
-            result.UnknownBytes1 = reader.ReadByte();
+            result.UnknownByte1 = reader.ReadByte();
             result.UnknownBytes2 = reader.ReadUInt16();
             return result;
         }
@@ -133,8 +133,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var nextItemEntry = new ItemData.NextItemEntry();
 
             nextItemEntry.ItemTdbId = reader.ReadTweakDbId();
-            nextItemEntry.ItemId = reader.ReadUInt32();
-            nextItemEntry.UnknownBytes = reader.ReadBytes(3);
+            nextItemEntry.Header = ReadHeaderThing(reader);
 
             return nextItemEntry;
         }
@@ -179,7 +178,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public static void WriteHeaderThing(BinaryWriter writer, ItemData.HeaderThing data)
         {
             writer.Write(data.ItemId);
-            writer.Write(data.UnknownBytes1);
+            writer.Write(data.UnknownByte1);
             writer.Write(data.UnknownBytes2);
         }
 
@@ -222,12 +221,11 @@ namespace CyberCAT.Core.Classes.Parsers
             writer.Write(data.Unknown4);
         }
 
-        public static int WriteNextItemEntry(BinaryWriter writer, ItemData.NextItemEntry nextItem)
+        public static void WriteNextItemEntryFromItem(BinaryWriter writer, ItemData item)
         {
+            var nextItem = ItemData.NextItemEntry.GenerateFromItem(item);
             writer.Write(nextItem.ItemTdbId);
-            writer.Write(nextItem.ItemId);
-            writer.Write(nextItem.UnknownBytes);
-            return 8 + 4 + nextItem.UnknownBytes.Length;
+            WriteHeaderThing(writer, nextItem.Header);
         }
     }
 }
