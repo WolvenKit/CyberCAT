@@ -2,7 +2,7 @@
   "0": {
     "gameDescription": "",
     "gameName": "",
-    "name": ""
+    "name": "None"
   },
   "100003754986": {
     "gameDescription": "",
@@ -5984,11 +5984,6 @@
     "gameName": "",
     "name": "Achievements.Bladerunner"
   },
-  "107208630994": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVestRecip"
-  },
   "107218774202": {
     "gameDescription": "",
     "gameName": "Silber Irbis Bolero GMO-Weaver Bomber",
@@ -6813,11 +6808,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Props.q201_prop_treadmill"
-  },
-  "108203460621": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryPantsRecip"
   },
   "108214661439": {
     "gameDescription": "",
@@ -9269,11 +9259,6 @@
     "gameName": "",
     "name": "Items.CommonTesteraRecipe"
   },
-  "110839735609": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVisorRecip"
-  },
   "110840436808": {
     "gameDescription": "",
     "gameName": "Nami Balaclava with Polyamide-insulated lining.",
@@ -11529,11 +11514,6 @@
     "gameName": "",
     "name": "Items.Pants_13_old_02_Epic"
   },
-  "113338681640": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryTShirtRecip"
-  },
   "113346830981": {
     "gameDescription": "",
     "gameName": "Biotech \u03a3 MK.2",
@@ -13548,11 +13528,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Items.w_hammer_kanabo_grip"
-  },
-  "115457531986": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryShortsRecip"
   },
   "115459396776": {
     "gameDescription": "",
@@ -18739,11 +18714,6 @@
     "gameName": "Gin No Neo-Silk Shirt & Vest",
     "name": "Items.FormalShirt_01_rich_05"
   },
-  "120542532112": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.sq030_old_gu_Legendary"
-  },
   "120546214528": {
     "gameDescription": "",
     "gameName": "",
@@ -23763,11 +23733,6 @@
     "gameDescription": "Instantly restores 30% Stamina when you defeat an enemy.",
     "gameName": "Adrenal Booster",
     "name": "Items.StaminaRegenBoosterRare"
-  },
-  "124838494258": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVestRecip_Epic"
   },
   "124842593158": {
     "gameDescription": "",
@@ -28814,11 +28779,6 @@
     "gameName": "",
     "name": "Items.UncommonKukriRecipe_Epic"
   },
-  "129551946445": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryPantsRecip_Epic"
-  },
   "129553099792": {
     "gameDescription": "",
     "gameName": "",
@@ -30188,11 +30148,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Items.UncommonShirtRecipe_Epic"
-  },
-  "130852407455": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVisorRecip_Epic"
   },
   "130853025687": {
     "gameDescription": "Fires explosive rounds. The modified automated targeting system guides bullets to up to 3 targets while aiming. Perfect for when you're outnumbered.",
@@ -37164,11 +37119,6 @@
     "gameName": "",
     "name": "Items.ma_cct_dtn_01_onscreen_01"
   },
-  "136461957542": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryTShirtRecip_Epic"
-  },
   "136463984163": {
     "gameDescription": "",
     "gameName": "",
@@ -37653,11 +37603,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Items.ma_wat_lch_06_onscreen_01"
-  },
-  "136808482086": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryShortsRecip_Epic"
   },
   "136814591536": {
     "gameDescription": "",
@@ -49664,11 +49609,6 @@
     "gameName": "",
     "name": "Items.Jumpsuit_02_old_01_Legendary"
   },
-  "148440958540": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVestRecip_Legendary"
-  },
   "148445558361": {
     "gameDescription": "",
     "gameName": "",
@@ -51734,11 +51674,6 @@
     "gameName": "Ashtray",
     "name": "Items.CasinoPoorJunkItem3_Legendary"
   },
-  "150822052679": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryVisorRecip_Legendary"
-  },
   "150826180465": {
     "gameDescription": "",
     "gameName": "",
@@ -52293,11 +52228,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Items.ValentinosJunkItem2_Legendary"
-  },
-  "151423347730": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryPantsRecip_Legendary"
   },
   "151426143653": {
     "gameDescription": "",
@@ -55419,11 +55349,6 @@
     "gameName": "",
     "name": "Items.crowd_int_medical_002__syringe"
   },
-  "154744189198": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryShortsRecip_Legendary"
-  },
   "154745667420": {
     "gameDescription": "",
     "gameName": "",
@@ -56798,11 +56723,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Props.q000_corpo_performance_booster"
-  },
-  "156318628928": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.LegendaryTShirtRecip_Legendary"
   },
   "156332187827": {
     "gameDescription": "",
@@ -85004,11 +84924,6 @@
     "gameName": "",
     "name": "UIIcon.food_tajine"
   },
-  "78113129515": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.sq030_old_gu"
-  },
   "78123999179": {
     "gameDescription": "",
     "gameName": "",
@@ -95313,11 +95228,6 @@
     "gameDescription": "",
     "gameName": "",
     "name": "Items.UncommonCapRecipe"
-  },
-  "99141883480": {
-    "gameDescription": "",
-    "gameName": "",
-    "name": "Items.sq030_old_gu_Epic"
   },
   "99148905597": {
     "gameDescription": "",
