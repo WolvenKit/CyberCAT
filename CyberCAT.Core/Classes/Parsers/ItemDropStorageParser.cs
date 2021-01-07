@@ -11,11 +11,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageParser :INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public ItemDropStorageParser()
         {
@@ -25,6 +25,7 @@ namespace CyberCAT.Core.Classes.Parsers
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
             var result = new ItemDropStorage();
 
             reader.Skip(4); // Skip Id
@@ -44,13 +45,16 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
+                    var headerSize = 4;
                     writer.Write(node.Id);
-                    ParserUtils.WriteString(writer, data.UnknownString);
+                    headerSize += ParserUtils.WriteString(writer, data.UnknownString);
                     writer.Write(data.HeaderBytes);
+                    headerSize += data.HeaderBytes.Length;
                     InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
                 }
                 result = stream.ToArray();
             }
+
             return result;
         }
     }

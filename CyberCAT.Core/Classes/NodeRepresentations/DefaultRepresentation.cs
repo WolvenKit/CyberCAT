@@ -1,15 +1,31 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     [JsonObject]
-    public class DefaultRepresentation
+    public class DefaultRepresentation : NodeRepresentation
     {
-        public byte[] Blob { get; set; }
+        private byte[] _headerBlob;
+        private byte[] _trailingBlob;
+
+        public byte[] HeaderBlob
+        {
+            get => _headerBlob;
+            set
+            {
+                _headerBlob = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public byte[] TrailingBlob
+        {
+            get => _trailingBlob;
+            set
+            {
+                _trailingBlob = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

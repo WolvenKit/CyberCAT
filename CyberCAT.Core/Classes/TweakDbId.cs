@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using CyberCAT.Core.Annotations;
 
 namespace CyberCAT.Core.Classes
 {
-    public class TweakDbId
+    public class TweakDbId : INotifyPropertyChanged
     {
+        private uint _id;
+        private byte _length;
+        private byte[] _padding;
+
         public ulong Raw64
         {
             get
@@ -42,16 +45,87 @@ namespace CyberCAT.Core.Classes
                 Padding[0] = rawBytes[5];
                 Padding[1] = rawBytes[6];
                 Padding[2] = rawBytes[7];
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Id));
+                OnPropertyChanged(nameof(Length));
+                OnPropertyChanged(nameof(Padding));
             }
         }
 
-        public uint Id { get; set; }
-        public byte Length { get; set; }
-        public byte[] Padding { get; set; }
+        public uint Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        public byte Length
+        {
+            get => _length;
+            set
+            {
+                _length = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        public byte[] Padding
+        {
+            get => _padding;
+            set
+            {
+                _padding = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Raw64));
+            }
+        }
+
+        protected bool Equals(TweakDbId other)
+        {
+            return _id == other._id && _length == other._length && _padding.SequenceEqual(other._padding);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TweakDbId) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (int) _id;
+                hashCode = (hashCode * 397) ^ _length.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_padding != null ? _padding.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
 
         public override string ToString()
         {
             return $"{Id:X8}:{Length:X2}";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public TweakDbId()
+        {
+            _padding = new byte[3];
         }
     }
 

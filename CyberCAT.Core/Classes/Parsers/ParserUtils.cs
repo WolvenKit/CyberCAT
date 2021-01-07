@@ -3,29 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     class ParserUtils
     {
-        public static string ReadString(BinaryReader reader, out Flags flags)
-        {
-            flags = new Flags(reader.ReadByte());
-            return reader.ReadString(flags.Length);
-        }
-
         public static string ReadString(BinaryReader reader)
         {
-            var flags = new Flags(reader.ReadByte());
-            return reader.ReadString(flags.Length);
+            var length = ReadPackedLong(reader);
+            return reader.ReadString((int)-length);
         }
 
-        public static void WriteString(BinaryWriter writer, string s)
+        public static int WriteString(BinaryWriter writer, string s)
         {
-            writer.Write((byte)(s.Length + 128));
+            WritePackedLong(writer, -s.Length);
             writer.Write(Encoding.ASCII.GetBytes(s));
+            return 1 + Encoding.ASCII.GetBytes(s).Length;
         }
 
         public static void ParseChildren(IEnumerable<NodeEntry> children, BinaryReader reader, List<INodeParser> parsers)
@@ -33,16 +27,13 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var node in children)
             {
                 reader.BaseStream.Position = node.Offset;
-                var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==node.Name);
-                if (parser != null)
+                var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == node.Name);
+                if (parser == null)
                 {
-                    node.Value = parser.Read(node, reader, parsers);
+                    parser = new DefaultParser();
                 }
-                else
-                {
-                    var fallback = new DefaultParser();
-                    node.Value = fallback.Read(node, reader, parsers);
-                }
+                node.Value = parser.Read(node, reader, parsers);
+                node.Parser = parser;
             }
         }
 

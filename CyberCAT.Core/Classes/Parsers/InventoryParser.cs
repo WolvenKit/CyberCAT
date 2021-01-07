@@ -12,11 +12,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class InventoryParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public InventoryParser()
         {
@@ -27,19 +27,21 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
             var result = new Inventory();
 
             reader.Skip(4); //skip Id
-            result.NumberOfInventories = reader.ReadUInt32();
+            var count = reader.ReadUInt32();
 
-            result.SubInventories = new Inventory.SubInventory[result.NumberOfInventories];
             var offset = 0u;
-            for (var i = 0; i < result.NumberOfInventories; ++i)
+            for (var i = 0; i < count; ++i)
             {
-                result.SubInventories[i] = ReadSubInventory(node, offset, reader, parsers);
-                offset += result.SubInventories[i].NumberOfItems;
+                var subInventory = ReadSubInventory(node, offset, reader, parsers);
+                result.SubInventories.Add(subInventory);
+                offset += subInventory.NumberOfItems;
             }
 
+            result.Node = node;
             return result;
         }
 
@@ -48,18 +50,24 @@ namespace CyberCAT.Core.Classes.Parsers
             var subInventory = new Inventory.SubInventory();
 
             subInventory.InventoryId = reader.ReadUInt64();
-            subInventory.NumberOfItems = reader.ReadUInt32();
+            var count = reader.ReadUInt32();
 
-            subInventory.ItemHeaders = new ItemData.NextItemEntry[subInventory.NumberOfItems];
-            subInventory.Items = new ItemData[subInventory.NumberOfItems];
-            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==Constants.NodeNames.ITEM_DATA);
+            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DATA).FirstOrDefault();
             Debug.Assert(parser != null);
 
-            for (var i = 0; i < subInventory.NumberOfItems; ++i)
+            for (var i = 0; i < count; ++i)
             {
-                subInventory.ItemHeaders[i] = ItemDataParser.ReadNextItemEntry(reader);
-                subInventory.Items[i] = (ItemData) parser.Read(inventoryNode.Children[(int)nodeOffset + i], reader, parsers);
-                inventoryNode.Children[(int) nodeOffset + i].Value = subInventory.Items[i];
+                var nextItemHeader = ItemDataParser.ReadNextItemEntry(reader);
+                var item = (ItemData) parser.Read(inventoryNode.Children[(int)nodeOffset + i], reader, parsers);
+
+                if (!nextItemHeader.BelongsToItemData(item))
+                {
+                    throw new InvalidDataException($"Expected next item to be '{nextItemHeader}' but found '{item}'");
+                }
+
+                subInventory.Items.Add(item);
+
+                inventoryNode.Children[(int) nodeOffset + i].Value = item;
             }
 
             return subInventory;
@@ -84,6 +92,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
                 result = stream.ToArray();
             }
+
             return result;
         }
 
@@ -92,13 +101,15 @@ namespace CyberCAT.Core.Classes.Parsers
             writer.Write(subInventory.InventoryId);
             writer.Write(subInventory.NumberOfItems);
 
-            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName==Constants.NodeNames.ITEM_DATA);
+            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DATA).FirstOrDefault();
             Debug.Assert(parser != null);
 
             for (var i = 0; i < subInventory.NumberOfItems; ++i)
             {
-                ItemDataParser.WriteNextItemEntry(writer, subInventory.ItemHeaders[i]);
-                writer.Write(parser.Write(inventoryNode.Children[(int) nodeOffset + i], parsers));
+                var nextItem = subInventory.Items[i];
+                ItemDataParser.WriteNextItemEntryFromItem(writer, nextItem);
+                var buffer = parser.Write(inventoryNode.Children[(int) nodeOffset + i], parsers);
+                writer.Write(buffer);
             }
         }
     }

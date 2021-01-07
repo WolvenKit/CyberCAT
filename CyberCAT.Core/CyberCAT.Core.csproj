@@ -570,7 +570,6 @@
     <Compile Include="Classes\Mapping\RealTypeAttribute.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
-    <Compile Include="Classes\Flags.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />
     <Compile Include="Classes\NameResolver.cs" />
     <Compile Include="Classes\NodeEntry.cs" />
@@ -582,6 +581,8 @@
     <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
     <Compile Include="Classes\NodeRepresentations\StatsSystem.cs" />
     <Compile Include="Classes\NodeRepresentationWrappers\StatsSystemWrapper.cs" />
+    <Compile Include="Classes\NodeRepresentations\NodeRepresentation.cs" />
+    <Compile Include="Classes\NotifyingObservableCollection.cs" />
     <Compile Include="Classes\Parsers\FactsDBParser.cs" />
     <Compile Include="Classes\Parsers\FactsTableParser.cs" />
     <Compile Include="Classes\NodeRepresentations\ItemDropStorage.cs" />
@@ -1881,6 +1882,7 @@
     <Compile Include="Enums\Dumped Enums\worlduiEntryVisibility.cs" />
     <Compile Include="Enums\SaveFileSectionType.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
