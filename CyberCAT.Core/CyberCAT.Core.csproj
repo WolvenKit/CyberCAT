@@ -74,6 +74,7 @@
     <Compile Include="Classes\DumpedClasses\AIbehaviorWorkspotList.cs" />
     <Compile Include="Classes\DumpedClasses\AIBoolArgumentInstancePS.cs" />
     <Compile Include="Classes\DumpedClasses\AICommandQueuePS.cs" />
+    <Compile Include="Classes\DumpedClasses\AIFollowerRole.cs" />
     <Compile Include="Classes\DumpedClasses\AIHumanComponentPS.cs" />
     <Compile Include="Classes\DumpedClasses\AIInt64ArgumentInstancePS.cs" />
     <Compile Include="Classes\DumpedClasses\AIISerializableArgumentInstancePS.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Classes\DumpedClasses\FuseBoxControllerPS.cs" />
     <Compile Include="Classes\DumpedClasses\FuseControllerPS.cs" />
     <Compile Include="Classes\DumpedClasses\FuseData.cs" />
+    <Compile Include="Classes\DumpedClasses\GameAttachmentSlotsScriptListener.cs" />
     <Compile Include="Classes\DumpedClasses\GameAttitudeAgentPS.cs" />
     <Compile Include="Classes\DumpedClasses\GamebbID.cs" />
     <Compile Include="Classes\DumpedClasses\GamebbScriptDefinition.cs" />
@@ -235,6 +237,7 @@
     <Compile Include="Classes\DumpedClasses\GameEffectRef.cs" />
     <Compile Include="Classes\DumpedClasses\GameEffectSet.cs" />
     <Compile Include="Classes\DumpedClasses\GameEffectSettings.cs" />
+    <Compile Include="Classes\DumpedClasses\GameEntityReference.cs" />
     <Compile Include="Classes\DumpedClasses\GameEntityStubComponentPS.cs" />
     <Compile Include="Classes\DumpedClasses\GameFastTravelPointData.cs" />
     <Compile Include="Classes\DumpedClasses\GameFxInstance.cs" />
@@ -244,6 +247,7 @@
     <Compile Include="Classes\DumpedClasses\GameGodModeEntityData.cs" />
     <Compile Include="Classes\DumpedClasses\GameGodModeSaveData.cs" />
     <Compile Include="Classes\DumpedClasses\GameGodModeSaveEntityData.cs" />
+    <Compile Include="Classes\DumpedClasses\GameIAttachmentSlotsListener.cs" />
     <Compile Include="Classes\DumpedClasses\GameIBlackboard.cs" />
     <Compile Include="Classes\DumpedClasses\GameIGameSystem.cs" />
     <Compile Include="Classes\DumpedClasses\GameIInventoryListener.cs" />
@@ -289,6 +293,7 @@
     <Compile Include="Classes\DumpedClasses\GameScanningComponentPS.cs" />
     <Compile Include="Classes\DumpedClasses\GameScanningControllerSaveData.cs" />
     <Compile Include="Classes\DumpedClasses\GameSceneTier1Data.cs" />
+    <Compile Include="Classes\DumpedClasses\GameSceneTier2Data.cs" />
     <Compile Include="Classes\DumpedClasses\GameSceneTierData.cs" />
     <Compile Include="Classes\DumpedClasses\GameScriptableSystem.cs" />
     <Compile Include="Classes\DumpedClasses\GameScriptableSystemRequest.cs" />
