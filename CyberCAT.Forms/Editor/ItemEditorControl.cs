@@ -23,12 +23,12 @@ namespace CyberCAT.Forms.Editor
             if (data is ItemData)
             {
                 _saveFile = saveFile;
-                var parts = new List<ItemData.Kind2DataNode>();
+                var parts = new List<ItemData.ItemModData>();
                 _itemData = (ItemData)data;
-                if(_itemData.Data is ItemData.Kind2Data)
+                if(_itemData.Data is ItemData.ModableItemData itemData)
                 {
-                    parts.Add(((ItemData.Kind2Data)_itemData.Data).RootNode);
-                    foreach(var part in ((ItemData.Kind2Data)_itemData.Data).RootNode.Children)
+                    parts.Add(itemData.RootNode);
+                    foreach(var part in itemData.RootNode.Children)
                     {
                         parts.Add(part);
                     }
@@ -56,7 +56,7 @@ namespace CyberCAT.Forms.Editor
                     throw new Exception("Unexpected Structure");
                 }
                 _mapStructure = (GameStatsStateMapStructure)mapStructure;
-                var statsData = _mapStructure.Values.Where(v => v.RecordID.Raw64 == _itemData.ItemTdbId && v.Seed == _itemData.Header.ItemId);
+                var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(_itemData.ItemTdbId) && v.Seed == _itemData.Header.ItemId);
                 _gameStatModifierData = statsData.FirstOrDefault()?.StatModifiers;
                 if (_gameStatModifierData != null)
                 {
@@ -71,7 +71,7 @@ namespace CyberCAT.Forms.Editor
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var part = (ItemData.Kind2DataNode)partListBox.SelectedItem;
+            var part = (ItemData.ItemModData)partListBox.SelectedItem;
             
             
         }
@@ -100,7 +100,7 @@ namespace CyberCAT.Forms.Editor
         {
             statsListBox.Items.Clear();
             var stats = _gameStatModifierData.ToList();
-            var statsData = _mapStructure.Values.Where(v => v.RecordID.Raw64 == _itemData.ItemTdbId).FirstOrDefault();
+            var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(_itemData.ItemTdbId)).FirstOrDefault();
             
             stats.Add(new Handle<GameStatModifierData>(new GameConstantStatModifierData()));
             _gameStatModifierData = stats.ToArray();
