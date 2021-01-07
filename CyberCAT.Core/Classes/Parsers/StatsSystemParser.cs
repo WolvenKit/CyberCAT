@@ -8,9 +8,9 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class StatsSystemParser : GenericUnknownStructParser, INodeParser
     {
-        public string ParsableNodeName { get; private set; }
-        public string DisplayName { get; private set; }
-        public Guid Guid { get; private set; }
+        public string ParsableNodeName { get; }
+        public string DisplayName { get; }
+        public Guid Guid { get; }
 
         public StatsSystemParser()
         {
@@ -21,7 +21,15 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public new object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            var result = base.ReadWithMapping(node, reader, parsers);
+            node.Parsers = parsers;
+            node.Parser = this;
+
+            var result = ReadWithMapping(node, reader, parsers);
+
+            if (result is NodeRepresentation nr)
+            {
+                nr.Node = node;
+            }
 
             //var test = new NodeRepresentationWrappers.StatsSystemWrapper((GenericUnknownStruct)result);
 

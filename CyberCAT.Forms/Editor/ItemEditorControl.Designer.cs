@@ -34,6 +34,7 @@ namespace CyberCAT.Forms.Editor
             this.label1 = new System.Windows.Forms.Label();
             this.statsListBox = new System.Windows.Forms.ListBox();
             this.addStatButton = new System.Windows.Forms.Button();
+            this.tmpSave = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // itemNameLabel
@@ -86,10 +87,21 @@ namespace CyberCAT.Forms.Editor
             this.addStatButton.UseVisualStyleBackColor = true;
             this.addStatButton.Click += new System.EventHandler(this.addStatButton_Click);
             // 
+            // tmpSave
+            // 
+            this.tmpSave.Location = new System.Drawing.Point(314, 357);
+            this.tmpSave.Name = "tmpSave";
+            this.tmpSave.Size = new System.Drawing.Size(88, 22);
+            this.tmpSave.TabIndex = 5;
+            this.tmpSave.Text = "FIXME: Save";
+            this.tmpSave.UseVisualStyleBackColor = true;
+            this.tmpSave.Click += new System.EventHandler(this.tmpSave_Click);
+            // 
             // ItemEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.tmpSave);
             this.Controls.Add(this.addStatButton);
             this.Controls.Add(this.statsListBox);
             this.Controls.Add(this.label1);
@@ -109,5 +121,6 @@ namespace CyberCAT.Forms.Editor
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox statsListBox;
         private System.Windows.Forms.Button addStatButton;
+        private System.Windows.Forms.Button tmpSave;
     }
 }

@@ -4,7 +4,7 @@ using CyberCAT.Core.Classes.Mapping;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
-    public class GenericUnknownStruct
+    public class GenericUnknownStruct : NodeRepresentation
     {
         public uint TotalLength { get; set; }
         public byte[] Unknown1 { get; set; }
@@ -18,7 +18,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             public override string ToString()
             {
-                return this.GetType().Name;
+                return GetType().Name;
             }
         }
 

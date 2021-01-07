@@ -25,20 +25,20 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             _doMapping = false;
 
-            return internalRead(node, reader, parsers);
+            return InternalRead(node, reader, parsers);
         }
 
         public object ReadWithMapping(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             _doMapping = true;
 
-            return internalRead(node, reader, parsers);
+            return InternalRead(node, reader, parsers);
         }
 
         private object _handlesLock = new object();
         private List<IHandle> _handles;
 
-        private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
+        private object InternalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             var result = new GenericUnknownStruct();
 

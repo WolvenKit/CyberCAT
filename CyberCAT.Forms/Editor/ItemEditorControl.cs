@@ -16,8 +16,12 @@ namespace CyberCAT.Forms.Editor
         ItemData _itemData;
         Handle<GameStatModifierData>[] _gameStatModifierData;
         GameStatsStateMapStructure _mapStructure;
+
+        private NodeEntry _statsSystemNode;
+
         public ItemEditorControl(object data, SaveFile saveFile)
         {
+            _statsSystemNode = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.STATS_SYSTEM);
             var type = data.GetType();
             InitializeComponent();
             if (data is ItemData)
@@ -109,6 +113,11 @@ namespace CyberCAT.Forms.Editor
             {
                 statsListBox.Items.Add(modifier);
             }
+        }
+
+        private void tmpSave_Click(object sender, EventArgs e)
+        {
+            _statsSystemNode?.MySizeChanged();
         }
     }
 }
