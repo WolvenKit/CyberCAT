@@ -16,7 +16,7 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        private const bool DEBUG = true;
+        private const bool DEBUG = false;
 
         private bool _doMapping;
 
