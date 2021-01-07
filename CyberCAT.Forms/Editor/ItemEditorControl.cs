@@ -62,7 +62,7 @@ namespace CyberCAT.Forms.Editor
                     throw new Exception("Unexpected Structure");
                 }
                 _mapStructure = (GameStatsStateMapStructure)mapStructure;
-                var statsData = _mapStructure.Values.Where(v => v.RecordID.Raw64 == _itemData.ItemTdbId);
+                var statsData = _mapStructure.Values.Where(v => v.RecordID.Raw64 == _itemData.ItemTdbId && v.Seed == _itemData.Header.ItemId);
                 _gameStatModifierData = statsData.FirstOrDefault()?.StatModifiers;
                 if (_gameStatModifierData != null)
                 {
@@ -106,24 +106,9 @@ namespace CyberCAT.Forms.Editor
         {
             statsListBox.Items.Clear();
             var stats = _gameStatModifierData.ToList();
-            uint max = 0;
-            foreach (var modifierArray in _mapStructure.Values)
-            {
-                if (modifierArray.StatModifiers != null)
-                {
-                    foreach (var modifierHande in modifierArray.StatModifiers)
-                    {
-
-                        if (modifierHande.Id > max)
-                        {
-                            max = modifierHande.Id;
-                        }
-                    }
-                }
-            }
             var statsData = _mapStructure.Values.Where(v => v.RecordID.Raw64 == _itemData.ItemTdbId).FirstOrDefault();
             
-            stats.Add(new Handle<GameStatModifierData>(max+1) {Value=new GameConstantStatModifierData()});
+            stats.Add(new Handle<GameStatModifierData>(new GameConstantStatModifierData()));
             _gameStatModifierData = stats.ToArray();
             statsData.StatModifiers = _gameStatModifierData;
             foreach (var modifier in _gameStatModifierData)

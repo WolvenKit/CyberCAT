@@ -5,9 +5,9 @@ namespace CyberCAT.Core.Classes.Mapping.Global
 {
     public class Handle<T> : IHandle where T : GenericUnknownStruct.BaseClassEntry
     {
-        public uint Id { get; }
+        public uint Id { get; private set; }
 
-        public T Value { get; set; }
+        public T Value { get; private set; }
 
         public Handle()
         {
@@ -19,9 +19,19 @@ namespace CyberCAT.Core.Classes.Mapping.Global
             Id = handleId;
         }
 
+        public Handle(T value)
+        {
+            Value = value;
+        }
+
         public uint GetId()
         {
             return Id;
+        }
+
+        public void SetId(uint handleId)
+        {
+            Id = handleId;
         }
 
         public GenericUnknownStruct.BaseClassEntry GetValue()

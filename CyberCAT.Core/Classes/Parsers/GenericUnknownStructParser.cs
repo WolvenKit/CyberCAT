@@ -775,23 +775,28 @@ namespace CyberCAT.Core.Classes.Parsers
                 GetHandles(classEntry);
             }
 
-            for (int i = 0; i < _handles.Count; i++)
+            if (_handles.Count > 0)
             {
-                if (_handles[i].GetId() == 0)
+                var maxId = _handles.Max(h => h.GetId());
+                foreach (var handle in _handles)
                 {
-                    throw new Exception();
+                    if (handle.GetId() == 0)
+                    {
+                        maxId++;
+                        handle.SetId(maxId);
+                    }
                 }
+
+                _handles = _handles.OrderBy(h => h.GetId()).ToList();
+
+                foreach (var handle in _handles)
+                {
+                    newClassList.Add(handle.GetValue());
+                    handle.SetValue(null);
+                }
+
+                _handles = null;
             }
-
-            _handles = _handles.OrderBy(h => h.GetId()).ToList();
-
-            for (int i = 0; i < _handles.Count; i++)
-            {
-                newClassList.Add(_handles[i].GetValue());
-                _handles[i].SetValue(null);
-            }
-
-            _handles = null;
 
             return newClassList.ToArray();
         }
