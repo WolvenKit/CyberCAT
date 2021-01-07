@@ -757,13 +757,12 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write(result);
                 }
                 result = stream.ToArray();
-                node.Size = result.Length;
-                node.DataSize = result.Length;
             }
 
             _stringList = null;
 
             GC.Collect();
+            ParserUtils.UpdateNodeSize(node, result.Length);
             return result;
         }
 

@@ -79,6 +79,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
 
+            ParserUtils.UpdateNodeSize(node, result.Length);
             return result;
         }
     }

@@ -261,7 +261,58 @@ namespace CyberCAT.Core.Classes
                 uncompressedData = stream.ToArray();
             }
 
+            // Recalculate all node offsets
+            //Nodes.FirstOrDefault()?.MySizeChanged();
+            RecalculateNodeOffsets(Nodes, 0);
+
             return uncompressedData;
+        }
+
+        private void RecalculateNodeOffsets(IEnumerable<NodeEntry> nodes, int offset)
+        {
+            foreach (var node in nodes)
+            {
+                /*
+                var prevNode = node.GetPreviousNode();
+                if (prevNode == null)
+                {
+                    // First node that is either a child node or not.
+                    var parent = node.GetParent();
+                    if (parent == null)
+                    {
+                        // Very first node, our offset does not change
+                        // If I have children, these need to be changed, too
+                        RecalculateNodeOffsets(node.Children, offset);
+                    }
+                    else
+                    {
+                        // First child node.
+                        // Adjust my own size and offset
+                        // If I have children, these need to be changed, too
+                        node.Size += node.SizeChange;
+                        RecalculateNodeOffsets(node.Children, offset);
+                        node.Offset += offset;
+                        offset += node.SizeChange;
+                    }
+                }
+                else
+                {
+                    // Adjust my own size and offset
+                    // If I have children, these need to be changed, too
+                    node.Size += node.SizeChange;
+                    RecalculateNodeOffsets(node.Children, offset);
+                    node.Offset += offset;
+                    offset += node.SizeChange;
+                }
+                */
+                node.Size += node.SizeChange;
+                node.Offset += offset;
+                RecalculateNodeOffsets(node.Children, offset);
+                offset += node.SizeChange;
+                var prevNode = node.GetPreviousNode();
+                if (prevNode != null)
+                    Debug.Assert(prevNode.Offset + prevNode.Size <= node.Offset);
+            }
         }
 
         private byte[] BuildHeader(List<Lz4Chunk> chunks)
@@ -350,6 +401,10 @@ namespace CyberCAT.Core.Classes
                 {
                     // There is a node after us. Check if there is a blob in between
                     var blobSize = nextNode.Offset - (currentNode.Offset + currentNode.Size);
+                    if (blobSize < 0)
+                    {
+                        throw new InvalidDataException("Found a datablob with negative size");
+                    }
                     currentNode.TrailingSize = blobSize;
                 }
                 else
@@ -381,6 +436,10 @@ namespace CyberCAT.Core.Classes
                     // The parent size should never be smaller than the end of the last child.
                     Debug.Assert(parentMax >= childMax);
                     var blobSize = nextNode.Offset - (currentNode.Offset + currentNode.Size);
+                    if (blobSize < 0)
+                    {
+                        throw new InvalidDataException("Found a datablob with negative size");
+                    }
                     if (parentMax > childMax)
                     {
                         // Blob belongs to this child

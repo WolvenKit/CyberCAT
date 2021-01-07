@@ -26,6 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             node.Parser = this;
+            node.WritesOwnTrailingSize = false;
             var result = new ItemDropStorage();
 
             reader.Skip(4); // Skip Id
@@ -55,6 +56,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 result = stream.ToArray();
             }
 
+            ParserUtils.UpdateNodeSize(node, result.Length);
             return result;
         }
     }

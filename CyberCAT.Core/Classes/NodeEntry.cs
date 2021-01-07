@@ -22,6 +22,7 @@ namespace CyberCAT.Core.Classes
         public int DataSize { get; set; }
         public int TrailingSize { get; set; }
         public bool WritesOwnTrailingSize { get; set; }
+        public int SizeChange { get; set; }
         public List<NodeEntry> Children { get; set; }
         private NodeEntry _nextNode;
         private NodeEntry _previousNode;
@@ -107,6 +108,8 @@ namespace CyberCAT.Core.Classes
             // I do not have to tell my children because if I had children, my size can only change because one of their sizes changed. (Is this really true?)
 
             // But first, actually determine my new size.
+
+            /*
             var newSize = Parser.Write(this, Parsers).Length;
             newSize -= (WritesOwnTrailingSize ? TrailingSize : 0);
             var sizeChange = newSize - Size;
@@ -118,29 +121,52 @@ namespace CyberCAT.Core.Classes
             }
 
             Size = newSize;
-            NodeSizeChanged?.Invoke(this, sizeChange);
+
+            NodeSizeChanged?.Invoke(this, SizeChange);
             ChildSizeChanged?.Invoke(this);
+            */
         }
 
         public virtual void OnPreviousNodeSizeChanged(NodeEntry previousNode, int sizeChange)
         {
-            Offset += sizeChange;
+            //Offset += sizeChange;
 
-            NodeOffsetChanged?.Invoke(this, sizeChange);
+            if (SizeChange != 0)
+            {
+                MySizeChanged();
+            }
+            else
+            {
+                NodeOffsetChanged?.Invoke(this, sizeChange);
+            }
         }
 
         public virtual void OnPreviousNodeOffsetChanged(NodeEntry previousNode, int offsetChange)
         {
-            Offset += offsetChange;
+            //Offset += offsetChange;
 
-            NodeOffsetChanged?.Invoke(this, offsetChange);
+            if (SizeChange != 0)
+            {
+                MySizeChanged();
+            }
+            else
+            {
+                NodeOffsetChanged?.Invoke(this, offsetChange);
+            }
         }
 
         public virtual void OnParentNodeOffsetChanged(NodeEntry parentNode, int offsetChange)
         {
-            Offset += offsetChange;
+            //Offset += offsetChange;
 
-            NodeOffsetChanged?.Invoke(this, offsetChange);
+            if (SizeChange != 0)
+            {
+                MySizeChanged();
+            }
+            else
+            {
+                NodeOffsetChanged?.Invoke(this, offsetChange);
+            }
         }
 
         public virtual void OnChildSizeChanged(NodeEntry childNode)

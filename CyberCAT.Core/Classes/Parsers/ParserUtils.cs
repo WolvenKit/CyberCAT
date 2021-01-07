@@ -37,6 +37,12 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
+        public static void UpdateNodeSize(NodeEntry node, int newLength)
+        {
+            var newSize = newLength - (node.WritesOwnTrailingSize ? node.TrailingSize : 0);
+            node.SizeChange = newSize - node.Size;
+        }
+
         // a 1:1 copy of PixelRicks cpp implementation, could probably be better...
         public static long ReadPackedLong(BinaryReader reader)
         {

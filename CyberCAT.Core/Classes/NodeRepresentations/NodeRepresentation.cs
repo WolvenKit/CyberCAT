@@ -13,17 +13,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
     {
         public NodeEntry Node { get; set; }
 
-        protected void UpdateNodeSize()
-        {
-            Node?.MySizeChanged();
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            UpdateNodeSize();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
