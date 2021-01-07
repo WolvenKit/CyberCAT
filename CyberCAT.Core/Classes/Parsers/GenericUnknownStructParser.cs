@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
-using CyberCAT.Core.Classes.Mapping.Global;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
@@ -664,8 +663,19 @@ namespace CyberCAT.Core.Classes.Parsers
                         writer.Write(buffer);
                     }
 
+                    var totalLength = (int) writer.BaseStream.Length - 4;
+
+                    if (data.CNameHashes2 != null && data.CNameHashes2.Length > 0)
+                    {
+                        writer.Write(data.CNameHashes2.Length);
+                        foreach (var hash in data.CNameHashes2)
+                        {
+                            writer.Write(hash);
+                        }
+                    }
+
                     writer.BaseStream.Position = 0;
-                    writer.Write((int)writer.BaseStream.Length - 4);
+                    writer.Write(totalLength);
                     writer.BaseStream.Position += 12;
                     writer.Write((int)stringListOffset);
                     writer.Write((int)dataIndexListOffset);
@@ -686,14 +696,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(node.Id);
                     writer.Write(result);
-                    if (data.CNameHashes2 != null && data.CNameHashes2.Length > 0)
-                    {
-                        writer.Write(data.CNameHashes2.Length);
-                        foreach (var hash in data.CNameHashes2)
-                        {
-                            writer.Write(hash);
-                        }
-                    }
                 }
                 result = stream.ToArray();
                 node.Size = result.Length;
@@ -1009,7 +1011,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 props.Add(prop);
             }
 
-            props = props.OrderBy(p => p.MetadataToken).ToList();
+            props = props
+                .GroupBy(p => p.DeclaringType)
+                .Reverse()
+                .SelectMany(g => g)
+                .ToList();
 
             foreach (var prop in props)
             {
@@ -1126,7 +1132,11 @@ namespace CyberCAT.Core.Classes.Parsers
 
                         props.Add(prop);
                     }
-                    props = props.OrderBy(p => p.MetadataToken).ToList();
+                    props = props
+                        .GroupBy(p => p.DeclaringType)
+                        .Reverse()
+                        .SelectMany(g => g)
+                        .ToList();
 
                     writer.Write((ushort)props.Count);
                     foreach (var prop in props)

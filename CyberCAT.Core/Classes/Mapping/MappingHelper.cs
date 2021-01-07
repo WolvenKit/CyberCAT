@@ -16,7 +16,7 @@ namespace CyberCAT.Core.Classes.Mapping
             var type = typeof(GenericUnknownStruct.BaseClassEntry);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => p.Namespace != null && p.Namespace.StartsWith("CyberCAT.Core.Classes.Mapping") && type.IsAssignableFrom(p) && p.IsClass);
+                .Where(p => p.Namespace != null && p.Namespace.StartsWith("CyberCAT.Core.Classes.DumpedClasses") && type.IsAssignableFrom(p) && p.IsClass);
 
             DumpedClasses = new Dictionary<string, Type>();
             foreach (var type1 in types)

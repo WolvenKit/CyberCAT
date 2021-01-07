@@ -2,8 +2,6 @@
 using CyberCAT.Core.ChunkedLz4;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.Interfaces;
-using CyberCAT.Core.Classes.Mapping.Global;
-using CyberCAT.Core.Classes.Mapping.StatsSystem;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Core.Classes.Parsers;
 using CyberCAT.Forms.Classes;
@@ -19,6 +17,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Mapping;
 using static CyberCAT.Core.Classes.Parsers.StatsSystemParser;
 
 namespace CyberCAT.Forms

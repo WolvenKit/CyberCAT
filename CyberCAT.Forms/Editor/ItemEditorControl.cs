@@ -1,18 +1,12 @@
 ﻿using CyberCAT.Core;
 using CyberCAT.Core.Classes;
-using CyberCAT.Core.Classes.Mapping.Global;
-using CyberCAT.Core.Classes.Mapping.StatsSystem;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Mapping;
 
 namespace CyberCAT.Forms.Editor
 {

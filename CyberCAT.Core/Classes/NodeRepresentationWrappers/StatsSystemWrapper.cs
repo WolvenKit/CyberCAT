@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CyberCAT.Core.Classes.Mapping.Global;
-using CyberCAT.Core.Classes.Mapping.StatsSystem;
+using CyberCAT.Core.Classes.DumpedClasses;
 
 namespace CyberCAT.Core.Classes.NodeRepresentationWrappers
 {
