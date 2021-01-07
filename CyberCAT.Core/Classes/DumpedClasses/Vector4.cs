@@ -21,5 +21,14 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("W")]
         [RealType("Float")]
         public float W { get; set; }
+
+        public Vector4()
+        {
+            // TODO: Verify this
+            X = float.NaN;
+            Y = float.NaN;
+            Z = float.NaN;
+            W = float.NaN;
+        }
     }
 }

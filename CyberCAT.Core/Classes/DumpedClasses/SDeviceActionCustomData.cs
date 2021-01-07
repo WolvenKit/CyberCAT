@@ -52,5 +52,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("callbackID")]
         [RealType("Uint32")]
         public uint CallbackID { get; set; }
+
+        public SDeviceActionCustomData()
+        {
+            On = true;
+            Off = true;
+        }
     }
 }

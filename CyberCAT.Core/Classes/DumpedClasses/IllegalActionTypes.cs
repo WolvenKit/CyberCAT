@@ -17,5 +17,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("skillChecks")]
         [RealType("Bool")]
         public bool SkillChecks { get; set; }
+
+        public IllegalActionTypes()
+        {
+            SkillChecks = true;
+        }
     }
 }

@@ -21,5 +21,14 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("r")]
         [RealType("Float")]
         public float R { get; set; }
+
+        public Quaternion()
+        {
+            // TODO: Verify this
+            I = float.NaN;
+            J = float.NaN;
+            K = float.NaN;
+            R = float.NaN;
+        }
     }
 }

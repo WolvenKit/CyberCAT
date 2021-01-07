@@ -30,5 +30,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("isInSleepMode")]
         [RealType("Bool")]
         public bool IsInSleepMode { get; set; }
+
+        public ComputerControllerPS()
+        {
+            AutoToggleQuestMark = true;
+            IsInteractive = true;
+        }
     }
 }

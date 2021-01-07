@@ -41,5 +41,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("openingTokens")]
         public EntEntityID[] OpeningTokens { get; set; }
+
+        public DoorControllerPS()
+        {
+            AutoToggleQuestMark = true;
+        }
     }
 }

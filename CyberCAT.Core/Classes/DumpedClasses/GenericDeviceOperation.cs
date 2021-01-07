@@ -44,5 +44,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("playerWorkspot")]
         public SWorkspotData PlayerWorkspot { get; set; }
+
+        public GenericDeviceOperation()
+        {
+            IsEnabled = true;
+        }
     }
 }

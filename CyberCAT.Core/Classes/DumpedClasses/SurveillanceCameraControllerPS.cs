@@ -45,5 +45,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("cameraSkillChecks")]
         public Handle<EngDemoContainer> CameraSkillChecks { get; set; }
+
+        public SurveillanceCameraControllerPS()
+        {
+            AutoToggleQuestMark = true;
+        }
     }
 }

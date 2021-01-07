@@ -14,5 +14,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("stationsInitialized")]
         [RealType("Bool")]
         public bool StationsInitialized { get; set; }
+
+        public RadioControllerPS()
+        {
+            AutoToggleQuestMark = true;
+            IsInteractive = true;
+        }
     }
 }

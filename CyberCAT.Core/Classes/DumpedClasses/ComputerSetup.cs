@@ -46,5 +46,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("animationState")]
         public DumpedEnums.EComputerAnimationState? AnimationState { get; set; }
+
+        public ComputerSetup()
+        {
+            MailsMenu = true;
+            FilesMenu = true;
+            InternetMenu = true;
+            SystemMenu = true;
+        }
     }
 }

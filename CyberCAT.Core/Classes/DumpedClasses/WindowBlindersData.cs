@@ -20,5 +20,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("hasQuickHack")]
         [RealType("Bool")]
         public bool HasQuickHack { get; set; }
+
+        public WindowBlindersData()
+        {
+            HasOpenInteraction = true;
+            HasQuickHack = true;
+        }
     }
 }

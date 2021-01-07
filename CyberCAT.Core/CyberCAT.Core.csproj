@@ -564,10 +564,10 @@
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\FactResolver.cs" />
     <Compile Include="Classes\Mapping\MappingHelper.cs" />
-    <Compile Include="Classes\Mapping\ParserIgnoreAttribute.cs" />
+    <Compile Include="Classes\Mapping\Attributes\ParserIgnoreAttribute.cs" />
     <Compile Include="Classes\Mapping\PropertyNotFoundException.cs" />
-    <Compile Include="Classes\Mapping\RealNameAttribute.cs" />
-    <Compile Include="Classes\Mapping\RealTypeAttribute.cs" />
+    <Compile Include="Classes\Mapping\Attributes\RealNameAttribute.cs" />
+    <Compile Include="Classes\Mapping\Attributes\RealTypeAttribute.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
     <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
     <Compile Include="Classes\Interfaces\INodeParser.cs" />

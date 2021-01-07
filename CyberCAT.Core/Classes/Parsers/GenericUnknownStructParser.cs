@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
     public class GenericUnknownStructParser
     {
-        private const bool DEBUG = false;
+        private const bool DEBUG = true;
 
         private bool _doMapping;
 
@@ -25,20 +26,20 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             _doMapping = false;
 
-            return InternalRead(node, reader, parsers);
+            return internalRead(node, reader, parsers);
         }
 
         public object ReadWithMapping(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             _doMapping = true;
 
-            return InternalRead(node, reader, parsers);
+            return internalRead(node, reader, parsers);
         }
 
         private object _handlesLock = new object();
         private List<IHandle> _handles;
 
-        private object InternalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
+        private object internalRead(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             var result = new GenericUnknownStruct();
 
@@ -120,7 +121,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         long length;
                         if (i < result.ClassList.Length - 1)
                         {
-                            length = pointerList[i+1].Value - pointerList[i].Value;
+                            length = pointerList[i + 1].Value - pointerList[i].Value;
                         }
                         else
                         {
@@ -130,7 +131,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         GenericUnknownStruct.BaseClassEntry classEntry;
                         if (_doMapping)
                         {
-                            classEntry = GetInstanceFromName(_stringList[(int) pointerList[i].Key]);
+                            classEntry = GetInstanceFromName(_stringList[(int)pointerList[i].Key]);
                         }
                         else
                         {
@@ -159,13 +160,19 @@ namespace CyberCAT.Core.Classes.Parsers
                         }
                     });
 
+                    if (DEBUG)
+                    {
+                        var tmp = JsonConvert.SerializeObject(_defaultValues);
+                        File.WriteAllText($"C:\\Dev\\T1\\values.json", tmp);
+                    }
+
                     SetHandlesValue(result);
                     _handles = null;
 
                     // end of mainData
                     Debug.Assert((br.BaseStream.Position - 4) == result.TotalLength);
 
-                    readSize = (int) (br.BaseStream.Length - br.BaseStream.Position);
+                    readSize = (int)(br.BaseStream.Length - br.BaseStream.Position);
                     if (readSize > 0)
                     {
                         var count1 = br.ReadInt32();
@@ -296,6 +303,42 @@ namespace CyberCAT.Core.Classes.Parsers
         private Dictionary<string, Dictionary<string, HashSet<object>>> _missingProps =
             new Dictionary<string, Dictionary<string, HashSet<object>>>();
 
+        private bool CompareValues(object valueA, object valueB)
+        {
+            bool result;
+            IComparable selfValueComparer;
+
+            selfValueComparer = valueA as IComparable;
+
+            if (valueA == null && valueB != null || valueA != null && valueB == null)
+                result = false; // one of the values is null
+            else if (selfValueComparer != null && selfValueComparer.CompareTo(valueB) != 0)
+                result = false; // the comparison using IComparable failed
+            else if (!object.Equals(valueA, valueB))
+                result = false; // the comparison using Equals failed
+            else
+                result = true; // match
+
+            return result;
+        }
+
+        private bool CheckProperty(GenericUnknownStruct.BaseClassEntry cls, string propertyName, object value)
+        {
+            foreach (var prop in cls.GetType().GetProperties())
+            {
+                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == propertyName);
+                if (attr != null)
+                {
+                    var defaultValue = prop.GetValue(cls);
+                    return CompareValues(defaultValue, value);
+                }
+            }
+
+            throw new Exception();
+        }
+
+        private static object _defaultValuesLock = new object();
+        private static Dictionary<string, List<string>> _defaultValues = new Dictionary<string, List<string>>();
         private object ReadMappedFields(BinaryReader reader, GenericUnknownStruct.BaseClassEntry cls)
         {
             var startPos = reader.BaseStream.Position;
@@ -306,6 +349,22 @@ namespace CyberCAT.Core.Classes.Parsers
                 reader.BaseStream.Position = startPos + fieldInfos[i].Offset;
 
                 var ret = ReadMappedFieldValue(reader, cls, fieldInfos[i].Name, fieldInfos[i].Type);
+
+                if (DEBUG)
+                {
+                    if (CheckProperty(cls, fieldInfos[i].Name, ret))
+                    {
+                        lock (_defaultValuesLock)
+                        {
+                            if (!_defaultValues.ContainsKey(cls.GetType().Name))
+                                _defaultValues.Add(cls.GetType().Name, new List<string>());
+
+                            if (!_defaultValues[cls.GetType().Name].Contains(fieldInfos[i].Name))
+                                _defaultValues[cls.GetType().Name].Add(fieldInfos[i].Name);
+                        }
+                    }
+                }
+
                 SetProperty(cls, fieldInfos[i].Name, ret);
             }
 
@@ -374,7 +433,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 var enumType = MappingHelper.DumpedEnums[fieldTypeName];
                 return typeof(Nullable<>).MakeGenericType(enumType);
             }
-                
+
 
             return GetTypeFromName(fieldTypeName);
         }
@@ -400,7 +459,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     var val = ReadMappedFieldValue(reader, cls, fieldName, fieldTypeName);
                     if (fieldType.IsEnum)
                     {
-                        arr[i] = Enum.Parse(fieldType, (string) val);
+                        arr[i] = Enum.Parse(fieldType, (string)val);
                     }
                     else if (typeof(IHandle).IsAssignableFrom(fieldType))
                     {
@@ -663,7 +722,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         writer.Write(buffer);
                     }
 
-                    var totalLength = (int) writer.BaseStream.Length - 4;
+                    var totalLength = (int)writer.BaseStream.Length - 4;
 
                     if (data.CNameHashes2 != null && data.CNameHashes2.Length > 0)
                     {
@@ -716,7 +775,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 if (property.PropertyType.IsArray)
                 {
-                    var arr = (IList) property.GetValue(cls);
+                    var arr = (IList)property.GetValue(cls);
                     if (arr == null)
                         continue;
 
@@ -794,7 +853,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 foreach (var handle in _handles)
                 {
                     newClassList.Add(handle.GetValue());
-                    handle.SetValue(null);
                 }
 
                 _handles = null;
@@ -958,10 +1016,28 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        private bool CanBeIgnored(PropertyInfo propInfo, object propValue, List<PropertyInfo> otherProps)
+        private Dictionary<string, object> _defaultValueMap = new Dictionary<string, object>();
+
+        private object GetDefaultValue(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo)
+        {
+            var fullName = $"{cls.GetType().Name}.{propInfo.Name}";
+            if (_defaultValueMap.ContainsKey(fullName))
+                return _defaultValueMap[fullName];
+
+            var nCls = Activator.CreateInstance(cls.GetType());
+            var nVal = propInfo.GetValue(nCls);
+
+            _defaultValueMap.Add(fullName, nVal);
+            return nVal;
+        }
+
+        private bool CanBeIgnored(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo, object propValue)
         {
             if (propInfo.IsDefined(typeof(ParserIgnoreAttribute)))
                 return true;
+
+            var defaultVal = GetDefaultValue(cls, propInfo);
+            return CompareValues(propValue, defaultVal);
 
             if (propValue == null)
                 return true;
@@ -985,7 +1061,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 if (propInfo.Name == "PriceMultiplier")
                 {
-                    return (float) propValue == 1;
+                    return (float)propValue == 1;
                 }
                 else
                 {
@@ -1005,7 +1081,7 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var prop in cls.GetType().GetProperties())
             {
                 var propValue = prop.GetValue(cls);
-                if (CanBeIgnored(prop, propValue, props))
+                if (CanBeIgnored(cls, prop, propValue))
                     continue;
 
                 props.Add(prop);
@@ -1067,7 +1143,7 @@ namespace CyberCAT.Core.Classes.Parsers
                             }
                             else if (t1 is String)
                             {
-                                strings.Add((string) t1);
+                                strings.Add((string)t1);
                             }
                         }
                     }
@@ -1127,7 +1203,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var prop in cls.GetType().GetProperties())
                     {
                         var propValue = prop.GetValue(cls);
-                        if (CanBeIgnored(prop, propValue, props))
+                        if (CanBeIgnored(cls, prop, propValue))
                             continue;
 
                         props.Add(prop);

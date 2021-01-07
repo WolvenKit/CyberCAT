@@ -7,5 +7,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("components")]
         public SComponentOperationData[] Components { get; set; }
+
+        public ToggleComponentsDeviceOperation()
+        {
+            IsEnabled = true;
+        }
     }
 }

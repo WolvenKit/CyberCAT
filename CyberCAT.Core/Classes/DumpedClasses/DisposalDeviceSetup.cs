@@ -25,5 +25,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("nonlethalTakedownActionName")]
         [RealType("TweakDBID")]
         public TweakDbId NonlethalTakedownActionName { get; set; }
+
+        public DisposalDeviceSetup()
+        {
+            // TODO: Verify this
+            NumberOfUses = 1;
+        }
     }
 }

@@ -12,5 +12,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("accessible")]
         [RealType("Bool")]
         public bool Accessible { get; set; }
+
+        public GameInventoryPS()
+        {
+            Accessible = true;
+        }
     }
 }

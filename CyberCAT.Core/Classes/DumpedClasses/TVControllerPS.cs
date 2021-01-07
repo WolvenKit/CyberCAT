@@ -20,5 +20,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("backupCustomChannels")]
         public STvChannel[] BackupCustomChannels { get; set; }
+
+        public TVControllerPS()
+        {
+            AutoToggleQuestMark = true;
+            IsInteractive = true;
+        }
     }
 }

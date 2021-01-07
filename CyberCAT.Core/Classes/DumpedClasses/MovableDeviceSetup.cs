@@ -9,5 +9,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("numberOfUses")]
         [RealType("Int32")]
         public int NumberOfUses { get; set; }
+
+        public MovableDeviceSetup()
+        {
+            // TODO: Verify this
+            NumberOfUses = 1;
+        }
     }
 }

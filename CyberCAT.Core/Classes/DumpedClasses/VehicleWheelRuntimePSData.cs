@@ -25,5 +25,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("previousDampedSpringForce")]
         [RealType("Float")]
         public float PreviousDampedSpringForce { get; set; }
+
+        public VehicleWheelRuntimePSData()
+        {
+            // TODO: Verify this
+            PreviousLogicalSpringCompression = 1F;
+            PreviousDampedSpringForce = 1F;
+            PreviousSwaybarDisplacement = 1F;
+        }
     }
 }

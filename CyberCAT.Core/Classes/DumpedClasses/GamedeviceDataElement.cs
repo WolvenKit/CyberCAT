@@ -46,5 +46,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("isEnabled")]
         [RealType("Bool")]
         public bool IsEnabled { get; set; }
+
+        public GamedeviceDataElement()
+        {
+            IsEnabled = true;
+        }
     }
 }

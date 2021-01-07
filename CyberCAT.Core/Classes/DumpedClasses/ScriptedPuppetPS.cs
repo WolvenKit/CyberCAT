@@ -82,5 +82,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("rightHandLoadout")]
         public GameItemID RightHandLoadout { get; set; }
+
+        public ScriptedPuppetPS()
+        {
+            IsDefeatMechanicActive = true;
+        }
     }
 }

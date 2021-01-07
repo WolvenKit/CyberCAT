@@ -66,5 +66,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("exposeQuickHacksIfNotConnectedToAP")]
         [RealType("Bool")]
         public bool ExposeQuickHacksIfNotConnectedToAP { get; set; }
+
+        public DoorSetup()
+        {
+            AutomaticallyClosesItself = true;
+        }
     }
 }

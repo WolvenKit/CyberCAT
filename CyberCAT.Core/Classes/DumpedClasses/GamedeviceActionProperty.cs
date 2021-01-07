@@ -12,18 +12,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("typeName")]
         [RealType("CName")]
         public string TypeName { get; set; }
-        
-        // TODO
+
+        // TODO: Check type
         [RealName("first")]
         [RealType("Variant")]
         public dynamic First { get; set; }
 
-        // TODO
+        // TODO: Check type
         [RealName("second")]
         [RealType("Variant")]
         public dynamic Second { get; set; }
 
-        // TODO
+        // TODO: Check type
         [RealName("third")]
         [RealType("Variant")]
         public dynamic Third { get; set; }

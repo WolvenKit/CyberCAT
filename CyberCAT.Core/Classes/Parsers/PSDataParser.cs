@@ -21,7 +21,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public new object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             //var result = base.ReadWithMapping(node, reader, parsers);
-            var result = base.Read(node, reader, parsers);
+            var result = base.ReadWithMapping(node, reader, parsers);
 
             return result;
         }

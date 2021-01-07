@@ -12,5 +12,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("health")]
         [RealType("Float")]
         public float Health { get; set; }
+
+        public VehicleUnlockedVehicle()
+        {
+            // TODO: Verify this
+            Health = 1F;
+        }
     }
 }

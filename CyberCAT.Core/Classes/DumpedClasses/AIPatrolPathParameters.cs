@@ -39,5 +39,14 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("patrolAction")]
         [RealType("TweakDBID")]
         public TweakDbId PatrolAction { get; set; }
+
+        public AIPatrolPathParameters()
+        {
+            IsInfinite = true;
+            EnterClosest = true;
+            SortPatrolPoints = true;
+            // TODO: Verify this
+            NumberOfLoops = 1;
+        }
     }
 }

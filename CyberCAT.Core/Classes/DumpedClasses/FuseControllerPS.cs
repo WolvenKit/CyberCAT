@@ -30,5 +30,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("isCLSInitialized")]
         [RealType("Bool")]
         public bool IsCLSInitialized { get; set; }
+
+        public FuseControllerPS()
+        {
+            AutoToggleQuestMark = true;
+        }
     }
 }

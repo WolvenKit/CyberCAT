@@ -61,5 +61,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("applicationSource")]
         [RealType("CName")]
         public string ApplicationSource { get; set; }
+
+        public GameStatusEffect()
+        {
+            // TODO: Verify this
+            Duration = 1F;
+        }
     }
 }

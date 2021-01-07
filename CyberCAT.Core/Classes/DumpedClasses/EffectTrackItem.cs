@@ -12,8 +12,8 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("timeDuration")]
         [RealType("Float")]
         public float TimeDuration { get; set; }
-        
-        // TODO
+
+        // TODO: Check type
         [RealName("ruid")]
         [RealType("CRUID")]
         public dynamic Ruid { get; set; }

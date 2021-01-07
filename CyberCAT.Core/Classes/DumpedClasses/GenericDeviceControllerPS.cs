@@ -26,5 +26,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("performedCustomActionsIDs")]
         [RealType("CName")]
         public string[] PerformedCustomActionsIDs { get; set; }
+
+        public GenericDeviceControllerPS()
+        {
+            AutoToggleQuestMark = true;
+        }
     }
 }

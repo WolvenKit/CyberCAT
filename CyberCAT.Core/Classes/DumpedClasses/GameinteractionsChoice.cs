@@ -13,7 +13,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("captionParts")]
         public GameinteractionsChoiceCaption CaptionParts { get; set; }
 
-        // TODO
+        // TODO: Check type
         [RealName("data")]
         [RealType("Variant")]
         public dynamic[] Data { get; set; }

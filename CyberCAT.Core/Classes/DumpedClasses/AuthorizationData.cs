@@ -16,5 +16,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("authorizationDataEntry")]
         public SecurityAccessLevelEntryClient AuthorizationDataEntry { get; set; }
+
+        public AuthorizationData()
+        {
+            IsAuthorizationModuleOn = true;
+        }
     }
 }

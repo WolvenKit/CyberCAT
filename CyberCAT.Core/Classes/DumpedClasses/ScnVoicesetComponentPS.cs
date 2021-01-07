@@ -26,5 +26,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("areVoicesetGruntsEnabled")]
         [RealType("Bool")]
         public bool AreVoicesetGruntsEnabled { get; set; }
+
+        public ScnVoicesetComponentPS()
+        {
+            AreVoicesetLinesEnabled = true;
+            AreVoicesetGruntsEnabled = true;
+        }
     }
 }

@@ -7,5 +7,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("facts")]
         public SFactOperationData[] Facts { get; set; }
+
+        public FactsDeviceOperation()
+        {
+            IsEnabled = true;
+        }
     }
 }
