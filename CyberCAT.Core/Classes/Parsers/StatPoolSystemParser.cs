@@ -5,7 +5,7 @@ using System.IO;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class StatPoolSystemParser : GenericUnknownStructParser, INodeParser
+    public class StatPoolSystemParser : GenericUnknownStructParser, INodeParser
     {
         public string ParsableNodeName { get; private set; }
         public string DisplayName { get; private set; }

@@ -7,7 +7,7 @@ using CyberCAT.Core.Classes.Interfaces;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class ParserUtils
+    internal class ParserUtils
     {
         public static string ReadString(BinaryReader reader)
         {

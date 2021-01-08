@@ -5,7 +5,7 @@ using System.IO;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    class MovingPlatformSystemParser: GenericUnknownStructParser, INodeParser
+    public class MovingPlatformSystemParser : GenericUnknownStructParser, INodeParser
     {
         public string ParsableNodeName { get; private set; }
         public string DisplayName { get; private set; }
