@@ -6,11 +6,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Annotations;
+using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class NodeRepresentation : INotifyPropertyChanged
     {
+        [JsonIgnore]
         public NodeEntry Node { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
