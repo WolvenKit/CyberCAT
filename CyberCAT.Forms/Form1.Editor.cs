@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CyberCAT.Core.Classes;
+using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Forms.Classes;
 using CyberCAT.Forms.Editor;
+using Control = System.Windows.Forms.Control;
 
 namespace CyberCAT.Forms
 {
@@ -16,24 +20,31 @@ namespace CyberCAT.Forms
         private SaveFile _activeSaveFile;
         private Dictionary<Type, Type> ParsedToControlMap = new Dictionary<Type, Type>()
         {
-            { typeof(DefaultRepresentation), typeof(PropertyEditControl) },
-            { typeof(GameSessionConfig), typeof(PropertyEditControl) },
-            { typeof(CharacterCustomizationAppearances), typeof(PropertyEditControl) },
-            { typeof(CharacterCustomizationAppearances.Section), typeof(PropertyEditControl) },
-            { typeof(CharacterCustomizationAppearances.AppearanceSection), typeof(PropertyEditControl) },
             { typeof(ItemData), typeof(ItemEditorControl) },
-            { typeof(Inventory), typeof(PropertyEditControl) },
-            { typeof(Inventory.SubInventory), typeof(PropertyEditControl) },
-            { typeof(FactsTable.FactEntry), typeof(PropertyEditControl) },
-            { typeof(FactsTable), typeof(PropertyEditControl) },
-            { typeof(FactsDB), typeof(PropertyEditControl) },
-            { typeof(ItemDropStorage), typeof(PropertyEditControl) },
-            { typeof(ItemDropStorageManager), typeof(PropertyEditControl) },
-            { typeof(GenericUnknownStruct), typeof(PropertyEditControl) },
-            { typeof(StatsSystem), typeof(PropertyEditControl) },
         };
 
-        private void savbinCompressedToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetPropertyEditControlSettings()
+        {
+            TypeDescriptor.AddAttributes(typeof(byte[]), new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
+            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemFlags), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.HeaderThing), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemInnerData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.SimpleItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ModableItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemData.ItemModData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(TweakDbId), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(Handle<GameSavedStatsData>), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+        }
+
+        private void LoadPcSaveClick(object sender, EventArgs e)
         {
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
 
@@ -68,10 +79,10 @@ namespace CyberCAT.Forms
                 EditorTree.Nodes.Add(treeNode);
             }
 
-            splitContainer1.Panel2.Controls.Clear();
+            mainContainer.Panel2.Controls.Clear();
         }
 
-        private void uncompressedToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadPs4SaveClick(object sender, EventArgs e)
         {
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
 
@@ -107,10 +118,10 @@ namespace CyberCAT.Forms
                 EditorTree.Nodes.Add(treeNode);
             }
 
-            splitContainer1.Panel2.Controls.Clear();
+            mainContainer.Panel2.Controls.Clear();
         }
 
-        private void savbinCompressedToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void SavePcSaveClick(object sender, EventArgs e)
         {
             if (_activeSaveFile == null)
             {
@@ -124,7 +135,7 @@ namespace CyberCAT.Forms
             }
         }
 
-        private void uncompressedToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void SavePs4SaveClick(object sender, EventArgs e)
         {
             if (_activeSaveFile == null)
             {
@@ -224,28 +235,32 @@ namespace CyberCAT.Forms
             var node = (e.Node as NodeEntryTreeNode)?.Node;
             if (node?.Value == null)
             {
-                splitContainer1.Panel2.Controls.Clear();
+                mainContainer.Panel2.Controls.Clear();
                 return;
             }
+
+            var tabControl = new TabControl() {Dock = DockStyle.Fill};
+            var propertyEditTabPage = new TabPage {Text = "Advanced"};
+            var propertyEdit = new PropertyEditControl(node.Value, _activeSaveFile) {Dock = DockStyle.Fill};
+            propertyEditTabPage.Controls.Add(propertyEdit);
 
             ParsedToControlMap.TryGetValue(node.Value.GetType(), out var control);
-            if (control == null)
+            if (control != null)
             {
-                splitContainer1.Panel2.Controls.Clear();
-                return;
+                var instance = Activator.CreateInstance(control, node.Value, _activeSaveFile);
+                if (instance is Control nodeControl)
+                {
+                    nodeControl.Dock = DockStyle.Fill;
+                    var simpleTabPage = new TabPage {Text = "Simple"};
+                    simpleTabPage.Controls.Add(nodeControl);
+                    tabControl.TabPages.Add(simpleTabPage);
+                }
             }
 
-            var instance = Activator.CreateInstance(control, node.Value, _activeSaveFile);
-            var nodeControl = instance as Control;
-            if (nodeControl == null)
-            {
-                splitContainer1.Panel2.Controls.Clear();
-                return;
-            }
+            tabControl.TabPages.Add(propertyEditTabPage);
 
-            splitContainer1.Panel2.Controls.Clear();
-            nodeControl.Dock = DockStyle.Fill;
-            splitContainer1.Panel2.Controls.Add(nodeControl);
+            mainContainer.Panel2.Controls.Clear();
+            mainContainer.Panel2.Controls.Add(tabControl);
         }
 
         private void txtEditorFilter_TextChanged(object sender, EventArgs e)

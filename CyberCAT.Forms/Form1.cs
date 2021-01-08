@@ -50,24 +50,7 @@ namespace CyberCAT.Forms
             //Make rightclick select node. Better usability of context menu
             EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
 
-            //Add Hexeditor as editor for byte arrays
-            TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
-            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemFlags), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.HeaderThing), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemInnerData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.SimpleItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ModableItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemModData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(TweakDbId), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(Handle<GameSavedStatsData>), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            SetPropertyEditControlSettings();
 
             //Settings
             var interfaceType = typeof(INodeParser);
@@ -162,44 +145,6 @@ namespace CyberCAT.Forms
             }
         }
 
-        private void appearanceUncompressedSaveFilePathTextbox_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-            {
-                e.Effect = DragDropEffects.All;
-            }
-        }
-
-        private void appearanceUncompressedSaveFilePathTextbox_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Length != 0)
-            {
-                appearanceUncompressedSaveFilePathTextbox.Text = files[0];
-            }
-        }
-
-        private void loadAppearanceSectionButton_Click(object sender, EventArgs e)
-        {
-            var saveFile = new SaveFile();
-            var fileBytes = File.ReadAllBytes(appearanceUncompressedSaveFilePathTextbox.Text);
-            var guid = Guid.NewGuid();
-            using (var stream = new MemoryStream(fileBytes))
-            {
-                saveFile.LoadPCSaveFile(stream);
-                File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
-            }
-            var growableSectionNames = new List<string>();
-            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.DataSize).Select(n => n.Name));
-            File.WriteAllLines($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_growableSectionNames.txt", growableSectionNames);
-            MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
-            foreach (var node in saveFile.Nodes)
-            {
-                var treeNode = new NodeEntryTreeNode(node);
-                AddChildrenToTreeNode(treeNode);
-                treeView1.Nodes.Add(treeNode);
-            }
-        }
         private void AddChildrenToTreeNode(NodeEntryTreeNode treeNode)
         {
             if (treeNode.Node.Children.Count > 0)
