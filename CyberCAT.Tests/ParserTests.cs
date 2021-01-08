@@ -84,6 +84,23 @@ namespace CyberCAT.Tests
         }
 
         [Test]
+        public void UncompressedRewritingTest()
+        {
+            var compressedInputStream = File.ReadAllBytes(_filename);
+
+            var sfch = new SaveFileCompressionHelper();
+            sfch.Decompress(new MemoryStream(compressedInputStream));
+            var decompressedFile = sfch.GetChunkBytes();
+
+            var newSaveFile = new SaveFile(_parsers);
+            newSaveFile.LoadPCSaveFile(new MemoryStream(compressedInputStream));
+
+            var uncompressedRewrite = newSaveFile.GetNodeData();
+            
+            Assert.That(decompressedFile.SequenceEqual(uncompressedRewrite), Is.True);
+        }
+
+        [Test]
         public void FactsAddingTest()
         {
             var bytes = File.ReadAllBytes(_filename);

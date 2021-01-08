@@ -23,6 +23,7 @@ namespace CyberCAT.Core.Classes
             MetaInformation = new SaveFileMetaInformation();
             MetaInformation.FileGuid = Guid.NewGuid();
         }
+
         private void ReadHeader(Stream input)
         {
             using (var reader = new BinaryReader(input, Encoding.ASCII, true))
@@ -51,6 +52,7 @@ namespace CyberCAT.Core.Classes
             }
             
         }
+
         public byte[] Decompress(Stream input)
         {
             ReadHeader(input);
@@ -76,18 +78,31 @@ namespace CyberCAT.Core.Classes
                 input.Position = 0;
                 input.Read(header, 0, MetaInformation.HeaderSize);
                 stream.Write(header);
-                foreach (var chunk in Table.Chunks)
-                {
-                    //File.WriteAllBytes($"chunk_{chunk.ChunkGuid}.bin", chunk.DecompressedData);
 
-                    stream.Write(chunk.DecompressedData, 0, chunk.DecompressedData.Length);
-                    index++;
-                }
+                var chunkBytes = GetChunkBytes();
+                stream.Write(chunkBytes, 0, chunkBytes.Length);
                 stream.Write(MetaInformation.RestOfContent);
                 result = stream.ToArray();
             }
             return result;
         }
+
+        public byte[] GetChunkBytes()
+        {
+            byte[] result;
+            using (var stream = new MemoryStream())
+            {
+                foreach (var chunk in Table.Chunks)
+                {
+                    stream.Write(chunk.DecompressedData, 0, chunk.DecompressedData.Length);
+                }
+
+                result = stream.ToArray();
+            }
+
+            return result;
+        }
+
         public List<Lz4Chunk> CompressToChunkList(byte[] uncomressedBody)
         {
             var result = new List<Lz4Chunk>();
