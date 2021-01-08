@@ -196,6 +196,8 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private void SetHandlesValue(GenericUnknownStruct data)
         {
+            data.Handles = _handles;
+
             var usedIndexes = new HashSet<uint>();
             foreach (var handle in _handles)
             {
@@ -766,56 +768,6 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        private HashSet<uint> _handlesIdx;
-
-        private void GetHandles(GenericUnknownStruct.BaseClassEntry cls)
-        {
-            foreach (var property in cls.GetType().GetProperties())
-            {
-                if (property.PropertyType.IsArray)
-                {
-                    var arr = (IList)property.GetValue(cls);
-                    if (arr == null)
-                        continue;
-
-                    foreach (var val in arr)
-                    {
-                        if (val is GenericUnknownStruct.BaseClassEntry subCls)
-                        {
-                            GetHandles(subCls);
-                        }
-                        else if (val is IHandle handle)
-                        {
-                            if (!_handles.Contains(handle) && _handlesIdx.Add(handle.GetId()))
-                            {
-                                _handles.Add(handle);
-                                GetHandles(handle.GetValue());
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    var val = property.GetValue(cls);
-                    if (val == null)
-                        continue;
-
-                    if (val is GenericUnknownStruct.BaseClassEntry subCls)
-                    {
-                        GetHandles(subCls);
-                    }
-                    else if (val is IHandle handle)
-                    {
-                        if (!_handles.Contains(handle) && _handlesIdx.Add(handle.GetId()))
-                        {
-                            _handles.Add(handle);
-                            GetHandles(handle.GetValue());
-                        }
-                    }
-                }
-            }
-        }
-
         private GenericUnknownStruct.BaseClassEntry[] SetHandlesIndex(GenericUnknownStruct data)
         {
             var newClassList = new List<GenericUnknownStruct.BaseClassEntry>();
@@ -828,33 +780,19 @@ namespace CyberCAT.Core.Classes.Parsers
                 newClassList.Add(classEntry);
             }
 
-            _handlesIdx = new HashSet<uint>();
-            _handles = new List<IHandle>();
-            foreach (var classEntry in newClassList)
+            if (data.Handles.Count > 0)
             {
-                GetHandles(classEntry);
-            }
+                var handles = data.Handles.OrderBy(h => h.GetId()).ToList();
 
-            if (_handles.Count > 0)
-            {
-                var maxId = _handles.Max(h => h.GetId());
-                foreach (var handle in _handles)
+                var usedIds = new HashSet<uint>();
+                foreach (var handle in handles)
                 {
-                    if (handle.GetId() == 0)
-                    {
-                        maxId++;
-                        handle.SetId(maxId);
-                    }
-                }
+                    if (usedIds.Contains(handle.GetId()))
+                        continue;
 
-                _handles = _handles.OrderBy(h => h.GetId()).ToList();
-
-                foreach (var handle in _handles)
-                {
                     newClassList.Add(handle.GetValue());
+                    usedIds.Add(handle.GetId());
                 }
-
-                _handles = null;
             }
 
             return newClassList.ToArray();
@@ -1015,6 +953,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
+        private Dictionary<string, bool> _ignorePropertyCache = new Dictionary<string, bool>();
         private Dictionary<string, object> _defaultValueMap = new Dictionary<string, object>();
 
         private object GetDefaultValue(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo)
@@ -1032,46 +971,15 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private bool CanBeIgnored(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo, object propValue)
         {
-            if (propInfo.IsDefined(typeof(ParserIgnoreAttribute)))
+            var fullName = $"{cls.GetType().Name}.{propInfo.Name}";
+            if (!_ignorePropertyCache.ContainsKey(fullName))
+                _ignorePropertyCache.Add(fullName, propInfo.IsDefined(typeof(ParserIgnoreAttribute)));
+
+            if (_ignorePropertyCache[fullName])
                 return true;
 
             var defaultVal = GetDefaultValue(cls, propInfo);
             return CompareValues(propValue, defaultVal);
-
-            if (propValue == null)
-                return true;
-
-            if (propValue is bool && (bool)propValue == false)
-                return true;
-
-            if (propValue is int && (int)propValue == 0)
-                return true;
-
-            if (propValue is uint && (uint)propValue == 0)
-                return true;
-
-            if (propValue is long && (long)propValue == 0)
-                return true;
-
-            if (propValue is ulong && (ulong)propValue == 0)
-                return true;
-
-            if (propValue is float)
-            {
-                if (propInfo.Name == "PriceMultiplier")
-                {
-                    return (float)propValue == 1;
-                }
-                else
-                {
-                    return (float)propValue == 0;
-                }
-            }
-
-            /*if (propValue.GetType().IsEnum && (int) propValue == 0)
-                return true;*/
-
-            return false;
         }
 
         private void GenerateStringListFromMappedFields(GenericUnknownStruct.BaseClassEntry cls, ref HashSet<string> strings)

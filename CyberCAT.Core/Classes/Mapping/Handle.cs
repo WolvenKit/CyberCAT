@@ -24,6 +24,12 @@ namespace CyberCAT.Core.Classes.Mapping
             Value = value;
         }
 
+        public Handle(uint handleId, T value)
+        {
+            Id = handleId;
+            Value = value;
+        }
+
         public uint GetId()
         {
             return Id;

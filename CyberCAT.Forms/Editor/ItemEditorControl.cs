@@ -12,6 +12,8 @@ namespace CyberCAT.Forms.Editor
 {
     public partial class ItemEditorControl : UserControl
     {
+        private GenericUnknownStruct _rootData;
+
         SaveFile _saveFile;
         ItemData _itemData;
         Handle<GameStatModifierData>[] _gameStatModifierData;
@@ -53,7 +55,8 @@ namespace CyberCAT.Forms.Editor
             var statsNode = _saveFile.Nodes.FirstOrDefault(n => n.Name == Constants.NodeNames.STATS_SYSTEM);
             if (statsNode != null)
             {
-                var mapStructure = ((GenericUnknownStruct)statsNode.Value).ClassList[0];
+                _rootData = (GenericUnknownStruct) statsNode.Value;
+                var mapStructure = _rootData.ClassList[0];
                 
                 if (!(mapStructure is GameStatsStateMapStructure))
                 {
@@ -105,8 +108,8 @@ namespace CyberCAT.Forms.Editor
             statsListBox.Items.Clear();
             var stats = _gameStatModifierData.ToList();
             var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(_itemData.ItemTdbId)).FirstOrDefault();
-            
-            stats.Add(new Handle<GameStatModifierData>(new GameConstantStatModifierData()));
+
+            stats.Add(_rootData.CreateHandle<GameStatModifierData>(new GameConstantStatModifierData()));
             _gameStatModifierData = stats.ToArray();
             statsData.StatModifiers = _gameStatModifierData;
             foreach (var modifier in _gameStatModifierData)
