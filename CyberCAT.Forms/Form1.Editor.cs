@@ -61,7 +61,7 @@ namespace CyberCAT.Forms
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 newSaveFile.LoadPCSaveFile(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;
-                Text = $"CyberCAT: {fileName}";
+                footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
             }
             catch (Exception exception)
             {
@@ -100,7 +100,7 @@ namespace CyberCAT.Forms
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 newSaveFile.LoadPS4SaveFile(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;
-                Text = $"CyberCAT: {fileName}";
+                footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
             }
             catch (Exception exception)
             {

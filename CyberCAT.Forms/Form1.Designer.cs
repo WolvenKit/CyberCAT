@@ -98,7 +98,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(757, 410);
+            this.tabControl1.Size = new System.Drawing.Size(734, 412);
             this.tabControl1.TabIndex = 0;
             // 
             // compressionTabPage
@@ -251,7 +251,7 @@
             this.editorTabPage.Location = new System.Drawing.Point(4, 22);
             this.editorTabPage.Name = "editorTabPage";
             this.editorTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.editorTabPage.Size = new System.Drawing.Size(749, 384);
+            this.editorTabPage.Size = new System.Drawing.Size(726, 386);
             this.editorTabPage.TabIndex = 2;
             this.editorTabPage.Text = "Editor";
             this.editorTabPage.UseVisualStyleBackColor = true;
@@ -266,7 +266,7 @@
             // mainContainer.Panel1
             // 
             this.mainContainer.Panel1.Controls.Add(this.leftContainer);
-            this.mainContainer.Size = new System.Drawing.Size(743, 378);
+            this.mainContainer.Size = new System.Drawing.Size(720, 380);
             this.mainContainer.SplitterDistance = 247;
             this.mainContainer.TabIndex = 0;
             // 
@@ -288,7 +288,7 @@
             // leftContainer.Panel2
             // 
             this.leftContainer.Panel2.Controls.Add(this.EditorTree);
-            this.leftContainer.Size = new System.Drawing.Size(247, 378);
+            this.leftContainer.Size = new System.Drawing.Size(247, 380);
             this.leftContainer.SplitterDistance = 27;
             this.leftContainer.TabIndex = 0;
             // 
@@ -307,7 +307,7 @@
             this.EditorTree.HideSelection = false;
             this.EditorTree.Location = new System.Drawing.Point(0, 0);
             this.EditorTree.Name = "EditorTree";
-            this.EditorTree.Size = new System.Drawing.Size(247, 347);
+            this.EditorTree.Size = new System.Drawing.Size(247, 349);
             this.EditorTree.TabIndex = 0;
             this.EditorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EditorTree_AfterSelect);
             // 
@@ -389,7 +389,7 @@
             this.infoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(757, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(734, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -449,9 +449,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.footerLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 437);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 439);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(757, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(734, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -474,10 +474,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(757, 459);
+            this.ClientSize = new System.Drawing.Size(734, 461);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabControl1);
+            this.MinimumSize = new System.Drawing.Size(750, 500);
             this.Name = "Form1";
             this.Text = "CyberCAT";
             this.tabControl1.ResumeLayout(false);

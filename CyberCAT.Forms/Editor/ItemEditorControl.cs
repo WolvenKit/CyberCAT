@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using CyberCAT.Core.Classes.DumpedClasses;
 using CyberCAT.Core.Classes.Mapping;
 
@@ -19,37 +20,46 @@ namespace CyberCAT.Forms.Editor
         Handle<GameStatModifierData>[] _gameStatModifierData;
         GameStatsStateMapStructure _mapStructure;
 
-        private NodeEntry _statsSystemNode;
-
         public ItemEditorControl(object data, SaveFile saveFile)
         {
-            _statsSystemNode = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.STATS_SYSTEM);
-            var type = data.GetType();
-            InitializeComponent();
-            if (data is ItemData)
-            {
-                _saveFile = saveFile;
-                var parts = new List<ItemData.ItemModData>();
-                _itemData = (ItemData)data;
-                if(_itemData.Data is ItemData.ModableItemData itemData)
-                {
-                    parts.Add(itemData.RootNode);
-                    foreach(var part in itemData.RootNode.Children)
-                    {
-                        parts.Add(part);
-                    }
-                    partListBox.Items.AddRange(parts.ToArray());
-                    FillStatsList();
-
-                }
-                itemNameLabel.Text = NameResolver.GetName(_itemData.ItemTdbId);
-
-            }
-            else
+            if (!(data is ItemData))
             {
                 throw new Exception("Unexected data type");
             }
+            InitializeComponent();
+
+            _saveFile = saveFile;
+            var parts = new List<ItemData.ItemModData>();
+            _itemData = (ItemData)data;
+            if(_itemData.Data is ItemData.ModableItemData itemData)
+            {
+                parts.Add(itemData.RootNode);
+                foreach(var part in itemData.RootNode.Children)
+                {
+                    parts.Add(part);
+                }
+                partListBox.Items.AddRange(parts.ToArray());
+                FillStatsList();
+            }
+
+            lblGameName.Text = NameResolver.GetGameName(_itemData.ItemTdbId);
+            lblItemName.Text = NameResolver.GetName(_itemData.ItemTdbId);
+            cbQuestItem.Checked = _itemData.Flags.IsQuestItem;
+            cbUnequippable.Checked = _itemData.Flags.IsNotUnequippable;
+            nudQuantity.Maximum = uint.MaxValue;
+
+            if (_itemData.Data is ItemData.SimpleItemData sid)
+            {
+                nudQuantity.Enabled = true;
+                nudQuantity.Value = sid.Quantity;
+            }
+            else if (_itemData.Data is ItemData.ModableItemWithQuantityData miwqd)
+            {
+                nudQuantity.Enabled = true;
+                nudQuantity.Value = miwqd.Quantity;
+            }
         }
+
         private void FillStatsList()
         {
             var statsNode = _saveFile.Nodes.FirstOrDefault(n => n.Name == Constants.NodeNames.STATS_SYSTEM);
@@ -57,7 +67,7 @@ namespace CyberCAT.Forms.Editor
             {
                 _rootData = (GenericUnknownStruct) statsNode.Value;
                 var mapStructure = _rootData.ClassList[0];
-                
+
                 if (!(mapStructure is GameStatsStateMapStructure))
                 {
                     throw new Exception("Unexpected Structure");
@@ -76,6 +86,7 @@ namespace CyberCAT.Forms.Editor
 
             }
         }
+
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             var part = (ItemData.ItemModData)partListBox.SelectedItem;
@@ -118,9 +129,26 @@ namespace CyberCAT.Forms.Editor
             }
         }
 
-        private void tmpSave_Click(object sender, EventArgs e)
+        private void cbQuestItem_CheckedChanged(object sender, EventArgs e)
         {
-            _statsSystemNode?.MySizeChanged();
+            _itemData.Flags.IsQuestItem = cbQuestItem.Checked;
+        }
+
+        private void cbUnequippable_CheckedChanged(object sender, EventArgs e)
+        {
+            _itemData.Flags.IsNotUnequippable = cbUnequippable.Checked;
+        }
+
+        private void nudQuantity_ValueChanged(object sender, EventArgs e)
+        {
+            if (_itemData.Data is ItemData.SimpleItemData sid)
+            {
+                sid.Quantity = (uint) nudQuantity.Value;
+            }
+            else if (_itemData.Data is ItemData.ModableItemWithQuantityData miwqd)
+            {
+                miwqd.Quantity = (uint)nudQuantity.Value;
+            }
         }
     }
 }
