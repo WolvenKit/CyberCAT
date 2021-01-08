@@ -31,7 +31,7 @@ namespace CyberCAT.Core.Classes
             public byte Seconds => (byte) ((Clock >> 10) & 63);
             public byte Millis => (byte) (Clock & 1023);
 
-            public byte Year => (byte) (Date >> 22);
+            public short Year => (short) (Date >> 20);
             public byte Month => (byte) (1 + (Date >> 15) % (1 << 5));
             public byte Day => (byte)(1 + (Date >> 10) % (1 << 5));
 
@@ -59,7 +59,7 @@ namespace CyberCAT.Core.Classes
 
             public override string ToString()
             {
-                return $"{Year}-{Month}-{Day} {Hour}:{Minutes}:{Seconds}.{Millis}";
+                return $"v{SaveVersion}_{GameVersion}_{ArchiveVersion} saved at {Year}-{Month}-{Day} {Hour}:{Minutes}:{Seconds}.{Millis}";
             }
         }
 
