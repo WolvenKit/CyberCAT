@@ -263,6 +263,12 @@
     "guessed": false,
     "name": "Items.SouvenirJunkItem1"
   },
+  "100292412039": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "scanning.pulse.duration"
+  },
   "100293410140": {
     "gameDescription": "",
     "gameName": "",
@@ -382,6 +388,12 @@
     "gameName": "",
     "guessed": false,
     "name": "DeviceFXPackage.Default"
+  },
+  "100424918231": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "rumble.world.heavy_slow"
   },
   "100440673515": {
     "gameDescription": "",
@@ -3497,6 +3509,12 @@
     "guessed": true,
     "name": "Items.RareHatRecipe_Epic"
   },
+  "103660681473": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posAimZ"
+  },
   "103663308114": {
     "gameDescription": "",
     "gameName": "",
@@ -3544,6 +3562,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.SmartLinkEpic_Epic"
+  },
+  "103724136780": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotAimY"
   },
   "103734181881": {
     "gameDescription": "",
@@ -3604,6 +3628,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Attacks.PlasmaProjectile"
+  },
+  "103789185443": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "rumble.local.medium_slow"
   },
   "103789420054": {
     "gameDescription": "Bullets have a higher chance to apply bleeding, But keep an eye on your wallet! Every shot cost you eddies.",
@@ -3893,6 +3923,12 @@
     "guessed": false,
     "name": "Items.Jacket_02_basic_02"
   },
+  "104055468474": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "rumble.local.medium_fast"
+  },
   "104055690820": {
     "gameDescription": "",
     "gameName": "",
@@ -4115,6 +4151,12 @@
     "guessed": false,
     "name": "Items.EpicOvertureRecipe"
   },
+  "104306869479": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "rumble.local.heavy_pulse"
+  },
   "104309177504": {
     "gameDescription": "increases armor by 140",
     "gameName": "Subdermal Armor",
@@ -4264,6 +4306,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Props.sq018_funeral_belt"
+  },
+  "104446003674": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotAimX"
   },
   "104453120066": {
     "gameDescription": "",
@@ -5555,6 +5603,12 @@
     "guessed": false,
     "name": "Attacks.EMPPanzerGrenade"
   },
+  "105632836792": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "rumble.local.light_pulse"
+  },
   "105646694967": {
     "gameDescription": "",
     "gameName": "Rammmmen",
@@ -6119,6 +6173,12 @@
     "guessed": false,
     "name": "UIIcon.DemolitionTrait01"
   },
+  "106227116219": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posAimY"
+  },
   "106237293243": {
     "gameDescription": "",
     "gameName": "",
@@ -6202,6 +6262,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Props.q101_booster_pills"
+  },
+  "106291652854": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotAimZ"
   },
   "106291945440": {
     "gameDescription": "",
@@ -6400,6 +6466,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Props.q110_whiskey_glass"
+  },
+  "106512652333": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posAimX"
   },
   "106521443495": {
     "gameDescription": "",
@@ -8044,6 +8116,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Items.ma_wat_nid_30_shard"
+  },
+  "108097641804": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.stepValZ"
   },
   "108098709265": {
     "gameDescription": "",
@@ -9911,6 +9989,12 @@
     "guessed": false,
     "name": "Items.GoodQualityAlcohol6"
   },
+  "109779047103": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.delay"
+  },
   "109783437396": {
     "gameDescription": "",
     "gameName": "",
@@ -10613,6 +10697,12 @@
     "guessed": false,
     "name": "Items.Preset_Nova_Default"
   },
+  "110361988342": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.stepValY"
+  },
   "110376171863": {
     "gameDescription": "",
     "gameName": "",
@@ -10966,6 +11056,12 @@
     "gameName": "",
     "guessed": false,
     "name": "AIActionTarget.TargetItem"
+  },
+  "110680439904": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.stepValX"
   },
   "110698353674": {
     "gameDescription": "",
@@ -13385,6 +13481,12 @@
     "guessed": true,
     "name": "Items.Pants_04_old_03_Epic"
   },
+  "112879445490": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.baseSpeed"
+  },
   "112881288709": {
     "gameDescription": "",
     "gameName": "",
@@ -14512,6 +14614,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.PlayerMaTppHead_Epic"
+  },
+  "113927006006": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.speedMult"
   },
   "113927407871": {
     "gameDescription": "",
@@ -20963,6 +21071,12 @@
     "guessed": false,
     "name": "Props.q004_bd_yorinobu_pill"
   },
+  "119349761047": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.enabled"
+  },
   "119352071316": {
     "gameDescription": "",
     "gameName": "Anti-Puncture Nanoweave Tongues",
@@ -21094,6 +21208,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.CasualShoes_Legendary"
+  },
+  "119434007824": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.stepValYaw"
   },
   "119440064171": {
     "gameDescription": "",
@@ -27683,6 +27803,12 @@
     "guessed": true,
     "name": "Items.Boots_03_basic_01_Epic"
   },
+  "124281452369": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.duration"
+  },
   "124284559466": {
     "gameDescription": "",
     "gameName": "",
@@ -32819,6 +32945,12 @@
     "guessed": false,
     "name": "UIIcon.NorthOaks_Kerry_Estate"
   },
+  "128165433038": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.stepValPitch"
+  },
   "128165578271": {
     "gameDescription": "",
     "gameName": "Epic Upgrade Componets",
@@ -34253,6 +34385,12 @@
     "guessed": false,
     "name": "ProjectileLaunchModes.Tracking"
   },
+  "129242229067": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserTPP.padX"
+  },
   "129242328445": {
     "gameDescription": "",
     "gameName": "",
@@ -35657,6 +35795,12 @@
     "guessed": false,
     "name": "UIIcon.cw_skeleton_cyberrotors"
   },
+  "130466503133": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserTPP.padY"
+  },
   "130471933345": {
     "gameDescription": "",
     "gameName": "",
@@ -36712,6 +36856,12 @@
     "gameName": "",
     "guessed": false,
     "name": "UIIcon.LootingShadow_Cyberware"
+  },
+  "131332286014": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.turnRateMouse"
   },
   "131344880361": {
     "gameDescription": "",
@@ -39197,6 +39347,12 @@
     "guessed": true,
     "name": "Items.Vest_04_rich_01_Legendary"
   },
+  "133253214345": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.E3_grenade.damageRadius"
+  },
   "133253747897": {
     "gameDescription": "",
     "gameName": "",
@@ -41398,6 +41554,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Items.ma_std_arr_13_onscreen_01"
+  },
+  "134512330040": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.easeInCurve"
   },
   "134513590930": {
     "gameDescription": "",
@@ -44201,6 +44363,12 @@
     "guessed": false,
     "name": "Items.ma_pac_cvi_05_onscreen_01"
   },
+  "136238145727": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "FreeCameraParams.turnRateAnalog"
+  },
   "136238584226": {
     "gameDescription": "",
     "gameName": "",
@@ -45550,6 +45718,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.SixthStreetJunkItem3_Epic"
+  },
+  "137087546228": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.delay"
   },
   "137089604414": {
     "gameDescription": "",
@@ -47141,6 +47315,12 @@
     "guessed": true,
     "name": "Items.TShirt_07_old_02_Legendary"
   },
+  "138151836025": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserTPP.mouseX"
+  },
   "138152621409": {
     "gameDescription": "",
     "gameName": "",
@@ -48202,6 +48382,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.Scarf_02_rich_01_Legendary"
+  },
+  "139007265263": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserTPP.mouseY"
   },
   "139010149391": {
     "gameDescription": "",
@@ -49883,6 +50069,12 @@
     "guessed": false,
     "name": "StatusEffectAIBehaviorType.Basic"
   },
+  "140258584566": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.easeOutCurve"
+  },
   "140273772373": {
     "gameDescription": "",
     "gameName": "",
@@ -50140,6 +50332,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.RareQuasarRecipe_Legendary"
+  },
+  "140417211233": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHit.timeDilation"
   },
   "140421581764": {
     "gameDescription": "",
@@ -53134,6 +53332,12 @@
     "gameName": "",
     "guessed": false,
     "name": "PhotoModePoses.idle__shotgun_dual"
+  },
+  "142808919478": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.enabled"
   },
   "142813398028": {
     "gameDescription": "",
@@ -56549,6 +56753,12 @@
     "guessed": false,
     "name": "UIIcon.base_junk_item_guitar_pick"
   },
+  "145542400353": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "ItemFactory.HairColors.hairColors"
+  },
   "145563035367": {
     "gameDescription": "",
     "gameName": "",
@@ -58133,6 +58343,12 @@
     "guessed": true,
     "name": "Items.w_handgun_silencer_Legendary"
   },
+  "146968685528": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.boomRoll"
+  },
   "146971303055": {
     "gameDescription": "",
     "gameName": "",
@@ -58438,6 +58654,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.Preset_Quasar_Pimp_Legendary"
+  },
+  "147347487702": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.duration"
   },
   "147349095483": {
     "gameDescription": "",
@@ -59560,6 +59782,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.Shorts_03_basic_03_Legendary"
+  },
+  "148456140944": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.idleTime"
   },
   "148478776098": {
     "gameDescription": "",
@@ -63173,6 +63401,12 @@
     "guessed": false,
     "name": "Items.ma_bls_ina_se5_11_onscreen_01"
   },
+  "151858889195": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.cameraYaw"
+  },
   "151865178889": {
     "gameDescription": "",
     "gameName": "Ergonomic Safety 32D1 Military Shades",
@@ -65488,6 +65722,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.sts_std_arr_01_shard_001_Epic"
+  },
+  "153869990545": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.boomPitch"
   },
   "153873385842": {
     "gameDescription": "",
@@ -68489,6 +68729,12 @@
     "guessed": true,
     "name": "Items.Recipe_EMPOverloadProgram_Epic"
   },
+  "156658210068": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.boomLength"
+  },
   "156661781139": {
     "gameDescription": "",
     "gameName": "",
@@ -68584,6 +68830,12 @@
     "gameName": "",
     "guessed": false,
     "name": "player.camera.meleeCameraShakeWeight"
+  },
+  "156771476576": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.settleTime"
   },
   "156772963538": {
     "gameDescription": "",
@@ -70109,6 +70361,12 @@
     "guessed": false,
     "name": "BaseStats.SmartGunNPCLockingAngleYaw"
   },
+  "158195312222": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.cameraRoll"
+  },
   "158201828025": {
     "gameDescription": "",
     "gameName": "",
@@ -71038,6 +71296,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.generic_wysiwyg_shard_Legendary"
+  },
+  "159080831123": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserVehicleFPP.padX"
   },
   "159098301031": {
     "gameDescription": "Deafens the target, Reducing their ability to detect enemy sounds. Prevents target from communicating with their allies about your activity. Excludes the target from their allies' audio and visual preception systems, Causing them to be completely ignored.",
@@ -72641,6 +72905,12 @@
     "guessed": true,
     "name": "Items.ma_wat_kabs_12_onscreen_02_Epic"
   },
+  "161043703813": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserVehicleFPP.padY"
+  },
   "161046183457": {
     "gameDescription": "",
     "gameName": "",
@@ -72802,6 +73072,12 @@
     "gameName": "Rubber-Reinforced Athletic Shoes",
     "guessed": true,
     "name": "Items.CasualShoes_05_old_02_Legendary"
+  },
+  "161271615827": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.easeInCurve"
   },
   "161272869899": {
     "gameDescription": "",
@@ -73810,6 +74086,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Items.generic_q115_afterlife_goatfuck"
+  },
+  "162527949897": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.cameraPitch"
   },
   "162534539433": {
     "gameDescription": "",
@@ -75749,6 +76031,12 @@
     "guessed": true,
     "name": "Items.Rockerboy_01_Set_Pants_Legendary"
   },
+  "165007664485": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.timeDilation"
+  },
   "165031725306": {
     "gameDescription": "",
     "gameName": "",
@@ -75838,6 +76126,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.OuterChestClothingBase_Legendary"
+  },
+  "165132737010": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.meleeHitStrong.easeOutCurve"
   },
   "165144962156": {
     "gameDescription": "",
@@ -76186,6 +76480,12 @@
     "gameName": "",
     "guessed": false,
     "name": "BaseStats.RecoilUseDifferentStatsInADS"
+  },
+  "165614944009": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.rotateEntity"
   },
   "165626297328": {
     "gameDescription": "Non-Leathal. Deals moderate damage to the target. Very effective against drones, mechs, robots, and targets with a weakspot. Applies an EMP effect to the target for 4 sec.",
@@ -76546,6 +76846,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.sts_hey_rey_09_coolant_Legendary"
+  },
+  "166094293598": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.pivotOffsetZ"
   },
   "166095818061": {
     "gameDescription": "",
@@ -77111,6 +77417,12 @@
     "guessed": false,
     "name": "BaseStats.SmartGunNPCLockingAnglePitch"
   },
+  "166821350640": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.quickHackScreen.easeInCurve"
+  },
   "166822533268": {
     "gameDescription": "",
     "gameName": "",
@@ -77284,6 +77596,12 @@
     "gameName": "",
     "guessed": false,
     "name": "BaseStats.SmartGunHipTagLockAnglePitch"
+  },
+  "167082557591": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "timeSystem.nanoWireBreach.easeOutCurve"
   },
   "167084909753": {
     "gameDescription": "",
@@ -78047,6 +78365,12 @@
     "guessed": true,
     "name": "Items.sts_std_rcr_03_shard_02_Legendary"
   },
+  "168346970319": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserVehicleFPP.mouseX"
+  },
   "168366479515": {
     "gameDescription": "",
     "gameName": "",
@@ -78244,6 +78568,12 @@
     "gameName": "Stabilizer",
     "guessed": true,
     "name": "Items.Recipe_PowerWeaponMod05_Legendary"
+  },
+  "168665929817": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "SensitivityConfig.UserVehicleFPP.mouseY"
   },
   "168673545926": {
     "gameDescription": "",
@@ -80699,6 +81029,12 @@
     "guessed": true,
     "name": "Items.ValentinosMeleeWeaponMod_Legendary"
   },
+  "172696028446": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.activationTime"
+  },
   "172707947256": {
     "gameDescription": "",
     "gameName": "",
@@ -81484,6 +81820,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Items.Recipe_Preset_Katana_Cocktail_Epic"
+  },
+  "173891206453": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.E3_grenade.physicalImpulseRadius"
   },
   "173893429754": {
     "gameDescription": "",
@@ -84845,6 +85187,12 @@
     "guessed": false,
     "name": "AttachmentSlots.InnerChestFabricEnhancer1"
   },
+  "178604815637": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "WeaponFxPackage.sfx_impact_context_pierce"
+  },
   "178611634445": {
     "gameDescription": "",
     "gameName": "",
@@ -86261,6 +86609,12 @@
     "guessed": false,
     "name": "Items.generic_supernova_lizzy_wizzy_shard"
   },
+  "180332539308": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Screenshot360CameraParams.screenshotCount"
+  },
   "180339111805": {
     "gameDescription": "",
     "gameName": "",
@@ -87107,6 +87461,12 @@
     "guessed": false,
     "name": "player.damageThresholds.lowDamageThreshold"
   },
+  "183324683053": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIGeneralSettings.actionMappingWeaponSlots"
+  },
   "183337002717": {
     "gameDescription": "",
     "gameName": "",
@@ -87539,6 +87899,12 @@
     "guessed": true,
     "name": "Items.generic_aledcaldos_rebuild_shard_Epic"
   },
+  "184902156247": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.weaponPoseTweak.positionSensitivity"
+  },
   "184956870268": {
     "gameDescription": "",
     "gameName": "",
@@ -87652,6 +88018,12 @@
     "gameName": "",
     "guessed": false,
     "name": "AIGeneralSettings.workspotReactionExitDelay"
+  },
+  "185391585826": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.weaponPoseTweak.rotationSensitivity"
   },
   "185408940175": {
     "gameDescription": "",
@@ -88042,6 +88414,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Weakspots.Smasher_Plate_Weakspot_shoulder_l"
+  },
+  "186494069666": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "WeaponFxPackage.sfx_impact_context_ricochet"
   },
   "186498198471": {
     "gameDescription": "",
@@ -88792,6 +89170,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.ProjectileLauncherRoundBase_Legendary"
+  },
+  "188844656747": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIGeneralSettings.actionMappingWeaponSlotId"
   },
   "188846567030": {
     "gameDescription": "",
@@ -91138,6 +91522,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Props.q105_12a_braindance_voodooqueen_bdsetup"
+  },
+  "196794957676": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIGeneralSettings.baseActionParamsPackageName"
   },
   "196813970810": {
     "gameDescription": "",
@@ -93677,6 +94067,12 @@
     "guessed": true,
     "name": "Items.crowd_int_misc_001__paint_spray_c_Legendary"
   },
+  "211723237496": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.general.usePositionAndRotationFromTweakDB"
+  },
   "211781083080": {
     "gameDescription": "",
     "gameName": "",
@@ -94823,6 +95219,12 @@
     "guessed": true,
     "name": "Items.w_submachinegun__darra_pulsar__rcv1_Legendary"
   },
+  "222265922322": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Interactions.config.interactionVisualizerFreezeTime"
+  },
   "22227162071": {
     "gameDescription": "",
     "gameName": "",
@@ -95405,6 +95807,12 @@
     "guessed": false,
     "name": "GameplayRestriction.PhoneCallDeviceActionRestrictions"
   },
+  "230262192120": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.weaponPoseTweak.rotationSensitivityFineTuning"
+  },
   "230266534082": {
     "gameDescription": "",
     "gameName": "",
@@ -95476,6 +95884,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.generic_parallel_lives_plutarch_shard_Legendary"
+  },
+  "231345352330": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.weaponPoseTweak.positionSensitivityFineTuning"
   },
   "231353517745": {
     "gameDescription": "",
@@ -96401,6 +96815,12 @@
     "guessed": false,
     "name": "playerStateMachineMelee.meleeBendBullets.animProgressToAdd"
   },
+  "251469521543": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIGeneralSettings.cover.blockedByDynamicCollisionTimeLimit"
+  },
   "251745767623": {
     "gameDescription": "",
     "gameName": "",
@@ -96442,6 +96862,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.generic_major_religions_and_cyberware_shard_Legendary"
+  },
+  "253956011333": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "WeaponFxPackage.Settings.characterPseudoPiercingMaxDistance"
   },
   "253961508953": {
     "gameDescription": "",
@@ -96526,6 +96952,12 @@
     "gameName": "",
     "guessed": true,
     "name": "Items.locomotion_crowd_int_apparel_002__umbrella_small_Epic"
+  },
+  "256330449495": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIDirector.AIDirectorTensionAnalyzerConfig.tensionPerSecond"
   },
   "256466756005": {
     "gameDescription": "",
@@ -96779,6 +97211,12 @@
     "guessed": true,
     "name": "Items.crowd_int_food_001__mixed_fast_food_i_hotdog_half_Legendary"
   },
+  "283852319749": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "WeaponFxPackage.Settings.characterDismembermentPiercingMaxDistance"
+  },
   "284605055195": {
     "gameDescription": "",
     "gameName": "",
@@ -96797,6 +97235,18 @@
     "guessed": true,
     "name": "Items.crowd_int_dining_accessories_001__kitchen_utensil_b_Legendary"
   },
+  "289030027285": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "IdleActions.MoveOnSplineWithCompanionParams.catchUpRunSpeedDistance"
+  },
+  "290205251717": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "IdleActions.MoveOnSplineWithCompanionParams.catchUpTeleportDistance"
+  },
   "29253138074": {
     "gameDescription": "",
     "gameName": "",
@@ -96808,6 +97258,12 @@
     "gameName": "",
     "guessed": false,
     "name": ".level"
+  },
+  "294665839077": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIDirector.AIDirectorTensionAnalyzerConfig.tensionPerMeterOfProgress"
   },
   "29692911619": {
     "gameDescription": "",
@@ -96857,6 +97313,12 @@
     "guessed": false,
     "name": ".rarity"
   },
+  "303592266244": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "IdleActions.MoveOnSplineWithCompanionParams.catchUpSprintSpeedDistance"
+  },
   "30526248944": {
     "gameDescription": "",
     "gameName": "",
@@ -96868,6 +97330,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Crowds.DefaultMovementvehicles.temp_combat_prototype.strafing_max_range"
+  },
+  "306241606297": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "IdleActions.MoveOnSplineWithCompanionParams.moveToFrontRunSpeedDistance"
   },
   "30640592574": {
     "gameDescription": "",
@@ -96935,6 +97403,12 @@
     "guessed": false,
     "name": "Recipes"
   },
+  "320237294255": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "IdleActions.MoveOnSplineWithCompanionParams.moveToFrontSprintSpeedDistance"
+  },
   "32044221208": {
     "gameDescription": "",
     "gameName": "",
@@ -96970,6 +97444,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Weapons"
+  },
+  "327531230583": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "AIDirector.AIDirectorTensionAnalyzerConfig.receivedDamageToTensionMultiplier"
   },
   "331995335153": {
     "gameDescription": "",
@@ -97343,6 +97823,12 @@
     "guessed": false,
     "name": "Query.Mask"
   },
+  "44117334148": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Items.Mine"
+  },
   "44239630136": {
     "gameDescription": "",
     "gameName": "",
@@ -97414,6 +97900,12 @@
     "gameName": "",
     "guessed": false,
     "name": ".hitSource"
+  },
+  "44826276137": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Items.Drug"
   },
   "44863259158": {
     "gameDescription": "",
@@ -97798,6 +98290,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Query.Scarf"
+  },
+  "51018712459": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Query.Skirt"
   },
   "51152403674": {
     "gameDescription": "",
@@ -98422,6 +98920,12 @@
     "gameName": "",
     "guessed": false,
     "name": "UIIcon.Watson"
+  },
+  "58930279576": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "Vehicle.Mahir"
   },
   "59006941974": {
     "gameDescription": "",
@@ -99335,6 +99839,12 @@
     "guessed": false,
     "name": "Items.cellphone"
   },
+  "65680301641": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": true,
+    "name": "Items.Mine_Epic"
+  },
   "65709264348": {
     "gameDescription": "",
     "gameName": "",
@@ -99760,6 +100270,12 @@
     "gameName": "",
     "guessed": false,
     "name": ".activeDuration"
+  },
+  "68446465104": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": true,
+    "name": "Items.Drug_Epic"
   },
   "68512050499": {
     "gameDescription": "",
@@ -104729,6 +105245,12 @@
     "guessed": true,
     "name": "Items.KERS_Legendary"
   },
+  "86647595368": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": true,
+    "name": "Items.Mine_Legendary"
+  },
   "86655087822": {
     "gameDescription": "",
     "gameName": "",
@@ -106439,6 +106961,12 @@
     "guessed": false,
     "name": ".walkTiltCoefficient"
   },
+  "90008156002": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": true,
+    "name": "Items.Drug_Legendary"
+  },
   "90013965978": {
     "gameDescription": "",
     "gameName": "",
@@ -106655,6 +107183,12 @@
     "guessed": false,
     "name": "Items.Base_Copperhead"
   },
+  "90392986649": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posY"
+  },
   "90393481716": {
     "gameDescription": "",
     "gameName": "Anti-Chem Winter Work Boots",
@@ -106828,6 +107362,12 @@
     "gameName": "",
     "guessed": false,
     "name": "Items.Vest_10_rich_01"
+  },
+  "90616358563": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "PhotoModeEffects.luc3"
   },
   "90623486358": {
     "gameDescription": "",
@@ -107056,6 +107596,12 @@
     "gameName": "",
     "guessed": false,
     "name": "ItemType.Prt_Fragment"
+  },
+  "90951805907": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotZ"
   },
   "90964415922": {
     "gameDescription": "",
@@ -108125,6 +108671,12 @@
     "guessed": false,
     "name": "AttachmentSlots.Torso"
   },
+  "92288365711": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posX"
+  },
   "92288909990": {
     "gameDescription": "",
     "gameName": "",
@@ -108484,6 +109036,12 @@
     "gameName": "",
     "guessed": false,
     "name": "UIIcon.bloody_bandage"
+  },
+  "92658390435": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.position.posZ"
   },
   "92676240548": {
     "gameDescription": "",
@@ -108881,6 +109439,12 @@
     "guessed": false,
     "name": "Items.CyberRotorsRare"
   },
+  "93217307241": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotY"
+  },
   "93220875784": {
     "gameDescription": "",
     "gameName": "",
@@ -109006,6 +109570,12 @@
     "gameName": "",
     "guessed": false,
     "name": "UIIconCensorFlag.Gore"
+  },
+  "93468494591": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "weapons.rotation.rotX"
   },
   "93484563776": {
     "gameDescription": "",
@@ -109642,6 +110212,12 @@
     "gameName": "",
     "guessed": false,
     "name": "AdamSmasher.Emergency"
+  },
+  "94341007247": {
+    "gameDescription": "",
+    "gameName": "",
+    "guessed": false,
+    "name": "PhotoModeEffects.luc1"
   },
   "94341233387": {
     "gameDescription": "",
