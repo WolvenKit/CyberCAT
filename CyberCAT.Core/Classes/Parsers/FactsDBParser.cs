@@ -56,38 +56,23 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (FactsDB)node.Value;
-            using (var stream = new MemoryStream())
+
+            if (data.FactsTableCount != node.Children.Count)
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-
-                    if (data.FactsTableCount != node.Children.Count)
-                    {
-                        throw new InvalidDataException($"Expected {data.FactsTableCount} FactsTable but found {node.Children.Count}.");
-                    }
-
-                    writer.Write(data.FactsTableCount);
-
-                    var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.FACTS_TABLE).FirstOrDefault();
-                    Debug.Assert(parser != null);
-
-                    foreach (var child in node.Children)
-                    {
-                        writer.Write(parser.Write(child, parsers));
-                    }
-                   
-                    writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
+                throw new InvalidDataException($"Expected {data.FactsTableCount} FactsTable but found {node.Children.Count}.");
             }
 
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
+            writer.Write(data.FactsTableCount);
+
+            foreach (var child in node.Children)
+            {
+                writer.Write(child);
+            }
+
+            writer.Write(data.TrailingBytes);
         }
     }
 }

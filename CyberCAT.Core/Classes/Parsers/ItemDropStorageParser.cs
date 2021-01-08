@@ -38,26 +38,13 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (ItemDropStorage)node.Value;
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    var headerSize = 4;
-                    writer.Write(node.Id);
-                    headerSize += ParserUtils.WriteString(writer, data.UnknownString);
-                    writer.Write(data.HeaderBytes);
-                    headerSize += data.HeaderBytes.Length;
-                    InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
-                }
-                result = stream.ToArray();
-            }
 
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
+            ParserUtils.WriteString(writer, data.UnknownString);
+            writer.Write(data.HeaderBytes);
+            InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory);
         }
     }
 }

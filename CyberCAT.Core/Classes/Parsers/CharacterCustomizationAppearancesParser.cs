@@ -176,44 +176,33 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (CharacterCustomizationAppearances)node.Value;
-            using(var stream = new MemoryStream())
+
+            writer.Write(data.DataExists);
+            writer.Write(data.Unknown1);
+            if (data.DataExists)
             {
-                using(var writer = new BinaryWriter(stream,Encoding.ASCII))
+                writer.Write(data.UnknownFirstBytes);
+
+                WriteSection(writer, data.FirstSection);
+                WriteSection(writer, data.SecondSection);
+                WriteSection(writer, data.ThirdSection);
+
+                writer.Write(data.StringTriples.Count);
+                foreach (var st in data.StringTriples)
                 {
-                    writer.Write(node.Id);
-                    writer.Write(data.DataExists);
-                    writer.Write(data.Unknown1);
-                    if (data.DataExists)
-                    {
-                        writer.Write(data.UnknownFirstBytes);
-
-                        WriteSection(writer, data.FirstSection);
-                        WriteSection(writer, data.SecondSection);
-                        WriteSection(writer, data.ThirdSection);
-
-                        writer.Write(data.StringTriples.Count);
-                        foreach (var st in data.StringTriples)
-                        {
-                            WriteStringTriple(writer, st);
-                        }
-
-                        // Only when SaveVersion > 171
-                        ParserUtils.WritePackedLong(writer, data.Strings.Count);
-                        foreach (var s in data.Strings)
-                        {
-                            ParserUtils.WriteString(writer, s);
-                        }
-                    }
+                    WriteStringTriple(writer, st);
                 }
-                result = stream.ToArray();
-            }
 
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
+                // Only when SaveVersion > 171
+                ParserUtils.WritePackedLong(writer, data.Strings.Count);
+                foreach (var s in data.Strings)
+                {
+                    ParserUtils.WriteString(writer, s);
+                }
+            }
         }
 
         private void WriteSection(BinaryWriter writer, CharacterCustomizationAppearances.Section section)

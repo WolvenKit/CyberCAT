@@ -108,15 +108,9 @@ namespace CyberCAT.Forms
             var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
             using (var stream = new MemoryStream())
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                using (var writer = new NodeWriter(stream, parsers))
                 {
-                    var parser = parsers.Where(p => p.ParsableNodeName == data.Node.Name).FirstOrDefault();
-                    if (parser == null)
-                    {
-                        parser = new DefaultParser();
-                    }
-
-                    writer.Write(parser.Write(data.Node, parsers));
+                    writer.Write(data.Node);
                 }
 
                 bytes = stream.ToArray();
@@ -237,15 +231,9 @@ namespace CyberCAT.Forms
                 var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
                 using (var stream = new MemoryStream())
                 {
-                    using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                    using (var writer = new NodeWriter(stream, parsers))
                     {
-                        var parser = parsers.Where(p => p.ParsableNodeName == node.Name).FirstOrDefault();
-                        if (parser == null)
-                        {
-                            parser = new DefaultParser();
-                        }
-
-                        writer.Write(parser.Write(node, parsers));
+                        writer.Write(node);
                     }
 
                     bytes = stream.ToArray();

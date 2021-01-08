@@ -41,26 +41,15 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (GameSessionConfig)node.Value;
-            using(var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream,Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    writer.Write(data.Hash1);
-                    writer.Write(data.Hash2);
-                    ParserUtils.WriteString(writer, data.TextValue);
-                    writer.Write(data.Hash3);
-                    writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
-            }
 
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
+            writer.Write(data.Hash1);
+            writer.Write(data.Hash2);
+            ParserUtils.WriteString(writer, data.TextValue);
+            writer.Write(data.Hash3);
+            writer.Write(data.TrailingBytes);
         }
     }
 }
