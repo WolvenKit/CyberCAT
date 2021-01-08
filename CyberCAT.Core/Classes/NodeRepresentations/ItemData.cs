@@ -113,7 +113,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     _raw = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(IsQuestItem));
-                    OnPropertyChanged(nameof(Unknown2));
+                    OnPropertyChanged(nameof(IsNotUnequippable));
                 }
             }
 
@@ -132,7 +132,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     OnPropertyChanged(nameof(Raw));
                 } 
             }
-            public bool Unknown2
+            public bool IsNotUnequippable
             {
                 get => (Raw & 0x02) == 0x02;
                 set
@@ -157,7 +157,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"[......{(Unknown2 ? '?' : '.')}{(IsQuestItem ? 'Q' : '.')}]";
+                return $"[......{(IsNotUnequippable ? 'U' : '.')}{(IsQuestItem ? 'Q' : '.')}]";
             }
 
             public event PropertyChangedEventHandler PropertyChanged;

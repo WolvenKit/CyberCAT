@@ -80,11 +80,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 {
                     writer.Write(new byte[4]);
                     writer.Write(data.Unknown1);
-                    writer.Write(data.Unknown2);
+                    writer.Write(data.IsNotUnequippable);
                     writer.Write(data.Unknown3);
                     writer.Write(new byte[12]);
 
-                    if (data.Unknown2 > 1)
+                    if (data.IsNotUnequippable > 1)
                     {
                         writer.Write(data.CNameHashes1.Length);
                         foreach (var hash in data.CNameHashes1)
