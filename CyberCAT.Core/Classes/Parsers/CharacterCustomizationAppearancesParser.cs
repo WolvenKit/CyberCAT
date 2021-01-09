@@ -101,8 +101,6 @@ namespace CyberCAT.Core.Classes.Parsers
                 result.Strings.Add(ParserUtils.ReadString(reader));
             }
 
-            //Debug.Assert(node.Size - (reader.BaseStream.Position - node.Offset) == 0);
-
             result.Node = node;
             return result;
         }

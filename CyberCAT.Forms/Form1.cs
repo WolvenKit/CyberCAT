@@ -84,6 +84,18 @@ namespace CyberCAT.Forms
         {
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
 
+            if (data.Node is VirtualNodeEntry)
+            {
+                MessageBox.Show("This is a visual node and cannot be exported.\nVisual nodes are inserted to create more structure in the node tree and are denoted by the [V] prefix.");
+                return;
+            }
+
+            if (data.Node.Children.Count > 0)
+            {
+                MessageBox.Show("Currently, nodes with children cannot be binary exported due to technical reasons.\nWell, we could export them but cannot import them.");
+                return;
+            }
+
             byte[] bytes;
             var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
             using (var stream = new MemoryStream())
@@ -109,6 +121,18 @@ namespace CyberCAT.Forms
         {
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
 
+            if (data.Node is VirtualNodeEntry)
+            {
+                MessageBox.Show("This is a visual node and cannot be imported into.\nVisual nodes are inserted to create more structure in the node tree and are denoted by the [V] prefix.");
+                return;
+            }
+
+            if (data.Node.Children.Count > 0)
+            {
+                MessageBox.Show("Currently, nodes with children cannot be binary imported due to technical reasons.");
+                return;
+            }
+
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
 
             if (fd.ShowDialog() != DialogResult.OK)
@@ -123,6 +147,12 @@ namespace CyberCAT.Forms
                 var bytes = File.ReadAllBytes(fileName);
                 var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
                 var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == data.Node.Name) ?? throw new Exception("No parser for this node!");
+                data.Node.Offset = 0;
+                data.Node.Size = bytes.Length;
+                if (data.Node.WritesOwnTrailingSize)
+                {
+                    data.Node.Size -= data.Node.TrailingSize;
+                }
                 using (var stream = new MemoryStream(bytes))
                 {
                     using (var reader = new BinaryReader(stream))

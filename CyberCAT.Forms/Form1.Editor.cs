@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Forms.Classes;
@@ -40,8 +41,8 @@ namespace CyberCAT.Forms
             TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
             TypeDescriptor.AddAttributes(typeof(TweakDbId), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(GameSavedStatsData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(Handle<GameSavedStatsData>), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(GenericUnknownStruct.BaseClassEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            TypeDescriptor.AddAttributes(typeof(IHandle), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
         }
 
         private void LoadPcSaveClick(object sender, EventArgs e)
