@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCAT.Tests", "CyberCAT.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberCAT.Core", "CyberCAT.Core\CyberCAT.Core.csproj", "{A83180D6-83F6-4A67-810C-48A2D16646AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberCAT.Wpf", "CyberCAT.Wpf\CyberCAT.Wpf\CyberCAT.Wpf.csproj", "{33F8D201-28B3-4C1D-9122-1357BC79B06B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberCAT.Wpf", "CyberCAT.Wpf\CyberCAT.Wpf.csproj", "{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{A83180D6-83F6-4A67-810C-48A2D16646AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A83180D6-83F6-4A67-810C-48A2D16646AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A83180D6-83F6-4A67-810C-48A2D16646AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33F8D201-28B3-4C1D-9122-1357BC79B06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33F8D201-28B3-4C1D-9122-1357BC79B06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33F8D201-28B3-4C1D-9122-1357BC79B06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33F8D201-28B3-4C1D-9122-1357BC79B06B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
