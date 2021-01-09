@@ -17,6 +17,8 @@ namespace CyberCAT.Core.Classes
         }
 
         static Dictionary<ulong, NameStruct> _items = new Dictionary<ulong, NameStruct>();
+        private static Dictionary<string, ulong> _nameToHash = new Dictionary<string, ulong>();
+
         public static string GetName(ulong hash)
         {
             if (_items.ContainsKey(hash))
@@ -83,9 +85,15 @@ namespace CyberCAT.Core.Classes
             return $"";
         }
 
+        public static ulong GetHash(string itemName)
+        {
+            return _nameToHash.ContainsKey(itemName) ? _nameToHash[itemName] : 0;
+        }
+
         public static void UseDictionary(Dictionary<ulong, NameStruct> dictionary)
         {
             _items = dictionary;
+            _nameToHash = dictionary.ToDictionary(pair => pair.Value.Name, pair => pair.Key);
         }
     }
     

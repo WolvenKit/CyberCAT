@@ -65,7 +65,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var result = new ItemData.HeaderThing();
 
-            result.ItemId = reader.ReadUInt32();
+            result.Seed = reader.ReadUInt32();
             result.UnknownByte1 = reader.ReadByte();
             result.UnknownBytes2 = reader.ReadUInt16();
             return result;
@@ -100,7 +100,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             result.TdbId1 = reader.ReadTweakDbId();
             result.Unknown2 = reader.ReadUInt32();
-            result.Unknown3 = reader.ReadUInt32();
+            result.Unknown3 = reader.ReadSingle();
             result.RootNode = ReadKind2DataNode(reader);
 
             return result;
@@ -123,7 +123,7 @@ namespace CyberCAT.Core.Classes.Parsers
             result.Unknown2 = reader.ReadUInt32();
             result.TdbId2 = reader.ReadTweakDbId();
             result.Unknown3 = reader.ReadUInt32();
-            result.Unknown4 = reader.ReadUInt32();
+            result.Unknown4 = reader.ReadSingle();
 
             return result;
         }
@@ -178,7 +178,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public static void WriteHeaderThing(BinaryWriter writer, ItemData.HeaderThing data)
         {
-            writer.Write(data.ItemId);
+            writer.Write(data.Seed);
             writer.Write(data.UnknownByte1);
             writer.Write(data.UnknownBytes2);
         }

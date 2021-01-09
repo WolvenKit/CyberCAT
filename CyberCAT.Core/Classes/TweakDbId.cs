@@ -110,6 +110,8 @@ namespace CyberCAT.Core.Classes
             }
         }
 
+        public string Name => NameResolver.GetName(this);
+
         public override string ToString()
         {
             return $"{Id:X8}:{Length:X2}";
@@ -121,6 +123,18 @@ namespace CyberCAT.Core.Classes
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public static TweakDbId FromName(string name)
+        {
+            return new TweakDbId {Raw64 = NameResolver.GetHash(name)};
+        }
+
+        public static TweakDbId None => new TweakDbId {Raw64 = 0};
+
+        public TweakDbId Clone()
+        {
+            return new TweakDbId {Id = _id, Length = _length};
         }
 
         public TweakDbId()
