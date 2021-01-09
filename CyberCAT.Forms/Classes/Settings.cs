@@ -9,6 +9,7 @@ namespace CyberCAT.Forms.Classes
     class Settings
     {
         public List<Guid> EnabledParsers {get; set;}
+        public bool StartInSavesFolder { get; set; }
         public Settings()
         {
             EnabledParsers = new List<Guid>();

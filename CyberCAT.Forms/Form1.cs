@@ -62,6 +62,7 @@ namespace CyberCAT.Forms
                 {
                     var instance = (INodeParser)Activator.CreateInstance(type);
                     _parserConfig.Add(new ParserConfig(instance, _settings.EnabledParsers.Contains(instance.Guid)));
+                    cbStartInSaves.Checked = _settings.StartInSavesFolder;
                 }
             }
             else
@@ -139,18 +140,6 @@ namespace CyberCAT.Forms
             }
         }
 
-        private void AddChildrenToTreeNode(NodeEntryTreeNode treeNode)
-        {
-            if (treeNode.Node.Children.Count > 0)
-            {
-                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
-                foreach(var child in treeNode.Nodes)
-                {
-                    AddChildrenToTreeNode((NodeEntryTreeNode)child);
-                }
-            }
-        }
-
         private void editorTreeContextMenu_Opening(object sender, CancelEventArgs e)
         {
             if (EditorTree.SelectedNode !=null)
@@ -162,7 +151,8 @@ namespace CyberCAT.Forms
         private void saveSettingsButton_Click(object sender, EventArgs e)
         {
             _settings.EnabledParsers.Clear();
-            _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
+            _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled == true).Select(p => p.Parser.Guid));
+            _settings.StartInSavesFolder = cbStartInSaves.Checked;
             File.WriteAllText(SETTINGS_FILE_NAME, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
 

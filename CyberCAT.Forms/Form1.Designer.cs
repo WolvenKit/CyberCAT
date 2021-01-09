@@ -47,6 +47,7 @@
             this.editorTabPage = new System.Windows.Forms.TabPage();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.leftContainer = new System.Windows.Forms.SplitContainer();
+            this.label2 = new System.Windows.Forms.Label();
             this.txtEditorFilter = new System.Windows.Forms.TextBox();
             this.EditorTree = new System.Windows.Forms.TreeView();
             this.editorTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -67,7 +68,7 @@
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.footerLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label2 = new System.Windows.Forms.Label();
+            this.cbStartInSaves = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.compressionTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -108,7 +109,7 @@
             this.compressionTabPage.Location = new System.Drawing.Point(4, 22);
             this.compressionTabPage.Name = "compressionTabPage";
             this.compressionTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.compressionTabPage.Size = new System.Drawing.Size(749, 384);
+            this.compressionTabPage.Size = new System.Drawing.Size(726, 386);
             this.compressionTabPage.TabIndex = 0;
             this.compressionTabPage.Text = "Compression";
             this.compressionTabPage.UseVisualStyleBackColor = true;
@@ -292,6 +293,15 @@
             this.leftContainer.SplitterDistance = 27;
             this.leftContainer.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Filter:";
+            // 
             // txtEditorFilter
             // 
             this.txtEditorFilter.Location = new System.Drawing.Point(43, 3);
@@ -344,22 +354,25 @@
             // 
             // settingsTabPage
             // 
+            this.settingsTabPage.Controls.Add(this.cbStartInSaves);
             this.settingsTabPage.Controls.Add(this.dataGridView1);
             this.settingsTabPage.Controls.Add(this.label6);
             this.settingsTabPage.Controls.Add(this.saveSettingsButton);
             this.settingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.settingsTabPage.Name = "settingsTabPage";
-            this.settingsTabPage.Size = new System.Drawing.Size(749, 384);
+            this.settingsTabPage.Size = new System.Drawing.Size(726, 386);
             this.settingsTabPage.TabIndex = 3;
             this.settingsTabPage.Text = "Settings";
             this.settingsTabPage.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(11, 26);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(252, 395);
+            this.dataGridView1.Size = new System.Drawing.Size(252, 357);
             this.dataGridView1.TabIndex = 4;
             // 
             // label6
@@ -373,7 +386,8 @@
             // 
             // saveSettingsButton
             // 
-            this.saveSettingsButton.Location = new System.Drawing.Point(666, 398);
+            this.saveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveSettingsButton.Location = new System.Drawing.Point(643, 360);
             this.saveSettingsButton.Name = "saveSettingsButton";
             this.saveSettingsButton.Size = new System.Drawing.Size(75, 23);
             this.saveSettingsButton.TabIndex = 1;
@@ -461,14 +475,15 @@
             this.footerLabel.Size = new System.Drawing.Size(88, 17);
             this.footerLabel.Text = "No save loaded";
             // 
-            // label2
+            // cbStartInSaves
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Filter:";
+            this.cbStartInSaves.AutoSize = true;
+            this.cbStartInSaves.Location = new System.Drawing.Point(290, 26);
+            this.cbStartInSaves.Name = "cbStartInSaves";
+            this.cbStartInSaves.Size = new System.Drawing.Size(250, 17);
+            this.cbStartInSaves.TabIndex = 5;
+            this.cbStartInSaves.Text = "Start Open/Save dialogs in CP2077 save folder";
+            this.cbStartInSaves.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -550,6 +565,7 @@
         private System.Windows.Forms.ToolStripStatusLabel footerLabel;
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox cbStartInSaves;
     }
 }
 
