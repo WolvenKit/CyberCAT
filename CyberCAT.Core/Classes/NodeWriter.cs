@@ -92,6 +92,8 @@ namespace CyberCAT.Core.Classes
             parser.Write(this, node);
 
             nodeInfo.Size = FakedPosition() - nodeInfo.Offset;
+            if (node.WritesOwnTrailingSize)
+                nodeInfo.Size -= node.TrailingSize;
 
             _currentDepth--;
         }
