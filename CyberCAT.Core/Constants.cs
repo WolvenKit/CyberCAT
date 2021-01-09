@@ -84,6 +84,15 @@ namespace CyberCAT.Core
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
             public const string FACTS_TABLE = "FactsTable";
             public const string FACTSDB = "FactsDB";
+            public const string SCRIPTABLE_SYSTEMS_CONTAINER = "ScriptableSystemsContainer";
+            public const string MOVING_PLATFORM_SYSTEM = "MovingPlatformSystem";
+            public const string STAT_POOLS_SYSTEM = "StatPoolsSystem";
+            public const string STATS_SYSTEM = "StatsSystem";
+            public const string GOD_MODE_SYSTEM = "godModeSystem";
+            public const string TIER_SYSTEM = "tierSystem";
+            public const string RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM = "RenderGameplayEffectsManagerSystem";
+            public const string PS_DATA = "PSData";
+            public const string SCANNING_CONTROLLER = "scanningController";
         }
         public static class Numbers
         {

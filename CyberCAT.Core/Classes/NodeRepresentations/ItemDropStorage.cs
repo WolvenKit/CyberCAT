@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     [JsonObject]
-    public class ItemDropStorage
+    public class ItemDropStorage : NodeRepresentation
     {
         public string UnknownString { get; set; }
         public byte[] HeaderBytes { get; set; }

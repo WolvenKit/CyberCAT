@@ -39,6 +39,8 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -64,6 +66,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ByteProvider.cs" />
@@ -72,6 +75,12 @@
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
     <Compile Include="Classes\ParserConfig.cs" />
     <Compile Include="Classes\VirtualNodeEntry.cs" />
+    <Compile Include="Editor\ItemEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\ItemEditorControl.Designer.cs">
+      <DependentUpon>ItemEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\PropertyEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -107,6 +116,19 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Licenses\LSystem.Runtime.CompilerServices.Unsafe.ICENSE.TXT" />
+    <Content Include="Licenses\Microsoft.CSharp.LICENSE.txt" />
+    <Content Include="Licenses\NUnit.LICENSE.txt" />
+    <Content Include="Licenses\System.Buffers.LICENSE.TXT" />
+    <Content Include="Licenses\System.Buffers.txt" />
+    <Content Include="Licenses\System.Diagnostics.Debug.LICENSE.txt" />
+    <Content Include="Licenses\System.IO.LICENSE.txt" />
+    <Content Include="Licenses\System.Memory.LICENSE.TXT" />
+    <Content Include="Licenses\System.Numerics.Vectors.LICENSE.TXT" />
+    <Content Include="Licenses\System.ObjectModel.LICENSE.txt" />
+    <EmbeddedResource Include="Editor\ItemEditorControl.resx">
+      <DependentUpon>ItemEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editor\PropertyEditControl.resx">
       <DependentUpon>PropertyEditControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +157,8 @@
     <Content Include="Licenses\Be.HexEditor.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Licenses\Be.Windows.Forms.HexBox.LICENSE.txt" />
+    <Content Include="Licenses\CyberCAT.LICENSE.txt" />
     <Content Include="Licenses\K4os.Compression.LZ4.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -144,6 +168,7 @@
     <None Include="Items.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Licenses\Newtonsoft.Json.LICENSE.md" />
     <None Include="Names.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -162,15 +187,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj">
-      <Project>{B9B66C23-5477-40A0-9121-85A6134B74EF}</Project>
-      <Name>CyberCAT.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Licenses\LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj">
+      <Project>{a83180d6-83f6-4a67-810c-48a2d16646ad}</Project>
+      <Name>CyberCAT.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

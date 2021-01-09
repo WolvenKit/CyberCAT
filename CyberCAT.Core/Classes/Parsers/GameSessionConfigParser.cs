@@ -11,11 +11,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class GameSessionConfigParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public GameSessionConfigParser()
         {
@@ -25,41 +25,31 @@ namespace CyberCAT.Core.Classes.Parsers
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            if (node.Name != ParsableNodeName)
-            {
-                throw new Exception("Unexpected SectionName");
-            }
+            node.Parser = this;
+
             var result = new GameSessionConfig();
             reader.BaseStream.Position = node.Offset;
             reader.Skip(4);//Skip the ID
             result.Hash1 = reader.ReadUInt64();
             result.Hash2 = reader.ReadUInt64();
-            var flags = new Flags(reader.ReadByte());
-            result.TextValue = reader.ReadString(flags.Length);
+            result.TextValue = ParserUtils.ReadString(reader);
             result.Hash3 = reader.ReadUInt64();
-            result.TrailingBytes = reader.ReadBytes(node.Size - (29 + flags.Length));
+            var trailing = node.Size - (reader.BaseStream.Position - node.Offset);
+            result.TrailingBytes = reader.ReadBytes((int)trailing);
+
+            result.Node = node;
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (GameSessionConfig)node.Value;
-            using(var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream,Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    writer.Write(data.Hash1);
-                    writer.Write(data.Hash2);
-                    writer.Write((byte)(data.TextValue.Length+128));
-                    writer.Write(Encoding.ASCII.GetBytes(data.TextValue));
-                    writer.Write(data.Hash3);
-                    writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
-            }
-            return result;
+
+            writer.Write(data.Hash1);
+            writer.Write(data.Hash2);
+            ParserUtils.WriteString(writer, data.TextValue);
+            writer.Write(data.Hash3);
+            writer.Write(data.TrailingBytes);
         }
     }
 }

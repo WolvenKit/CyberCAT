@@ -11,11 +11,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageParser :INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public ItemDropStorageParser()
         {
@@ -25,6 +25,8 @@ namespace CyberCAT.Core.Classes.Parsers
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
+            node.WritesOwnTrailingSize = false;
             var result = new ItemDropStorage();
 
             reader.Skip(4); // Skip Id
@@ -33,25 +35,17 @@ namespace CyberCAT.Core.Classes.Parsers
             result.HeaderBytes = reader.ReadBytes(25);
             result.Inventory = InventoryParser.ReadSubInventory(node, 0, reader, parsers);
 
+            result.Node = node;
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (ItemDropStorage)node.Value;
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    ParserUtils.WriteString(writer, data.UnknownString);
-                    writer.Write(data.HeaderBytes);
-                    InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory, parsers);
-                }
-                result = stream.ToArray();
-            }
-            return result;
+
+            ParserUtils.WriteString(writer, data.UnknownString);
+            writer.Write(data.HeaderBytes);
+            InventoryParser.WriteSubInventory(writer, data.Inventory);
         }
     }
 }

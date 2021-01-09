@@ -1,104 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B9B66C23-5477-40A0-9121-85A6134B74EF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CyberCAT.Core</RootNamespace>
-    <AssemblyName>CyberCAT.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="K4os.Compression.LZ4, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
-      <HintPath>..\packages\K4os.Compression.LZ4.1.2.6\lib\net46\K4os.Compression.LZ4.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\FactResolver.cs" />
-    <Compile Include="Classes\NodeRepresentations\FactsDB.cs" />
-    <Compile Include="Classes\NodeRepresentations\FactsTable.cs" />
-    <Compile Include="Classes\Flags.cs" />
-    <Compile Include="Classes\Interfaces\INodeParser.cs" />
-    <Compile Include="Classes\NameResolver.cs" />
-    <Compile Include="Classes\NodeEntry.cs" />
-    <Compile Include="Classes\NodeRepresentations\CharacterCustomizationAppearances.cs" />
-    <Compile Include="Classes\NodeRepresentations\DefaultRepresentation.cs" />
-    <Compile Include="Classes\NodeRepresentations\GameSessionConfig.cs" />
-    <Compile Include="Classes\NodeRepresentations\Inventory.cs" />
-    <Compile Include="Classes\NodeRepresentations\ItemData.cs" />
-    <Compile Include="Classes\Parsers\FactsDBParser.cs" />
-    <Compile Include="Classes\Parsers\FactsTableParser.cs" />
-    <Compile Include="Classes\NodeRepresentations\ItemDropStorage.cs" />
-    <Compile Include="Classes\NodeRepresentations\ItemDropStorageManager.cs" />
-    <Compile Include="Classes\Parsers\InventoryParser.cs" />
-    <Compile Include="Classes\Parsers\ItemDataParser.cs" />
-    <Compile Include="Classes\Parsers\CharacterCustomizationAppearancesParser.cs" />
-    <Compile Include="Classes\Parsers\DefaultParser.cs" />
-    <Compile Include="Classes\Parsers\GameSessionConfigParser.cs" />
-    <Compile Include="Classes\Parsers\ItemDropStorageManagerParser.cs" />
-    <Compile Include="Classes\Parsers\ItemDropStorageParser.cs" />
-    <Compile Include="Classes\Parsers\ParserUtils.cs" />
-    <Compile Include="Classes\SaveFile.cs" />
-    <Compile Include="Classes\ChunkedLz4FileTable.cs" />
-    <Compile Include="Classes\SaveFileCompressionHelper.cs" />
-    <Compile Include="Classes\Lz4Chunk.cs" />
-    <Compile Include="Classes\SaveFileMetaInformation.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Enums\SaveFileSectionType.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.6" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

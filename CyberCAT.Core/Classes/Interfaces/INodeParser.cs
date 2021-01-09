@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CyberCAT.Core.Classes.Interfaces
 {
@@ -13,6 +10,6 @@ namespace CyberCAT.Core.Classes.Interfaces
         Guid Guid { get;}
         string ParsableNodeName { get;}
         object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers);
-        byte[] Write(NodeEntry node, List<INodeParser> parsers);
+        void Write(NodeWriter writer, NodeEntry node);
     }
 }

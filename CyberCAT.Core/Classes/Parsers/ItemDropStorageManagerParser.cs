@@ -12,11 +12,11 @@ namespace CyberCAT.Core.Classes.Parsers
 {
     public class ItemDropStorageManagerParser : INodeParser
     {
-        public string ParsableNodeName { get; private set; }
+        public string ParsableNodeName { get; }
 
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
         public ItemDropStorageManagerParser()
         {
@@ -26,13 +26,14 @@ namespace CyberCAT.Core.Classes.Parsers
         }
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
+            node.Parser = this;
             var result = new ItemDropStorageManager();
             reader.Skip(4); // Skip Id
 
             result.NumberOfItemDropStorages = reader.ReadUInt32();
             result.ItemDropStorages = new ItemDropStorage[result.NumberOfItemDropStorages];
 
-            var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE).FirstOrDefault();
+            var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE);
             Debug.Assert(parser != null);
 
             for (var i = 0; i < result.NumberOfItemDropStorages; ++i)
@@ -45,33 +46,22 @@ namespace CyberCAT.Core.Classes.Parsers
             Debug.Assert(readSize >= 0);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
+            result.Node = node;
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (ItemDropStorageManager)node.Value;
-            using (var stream = new MemoryStream())
+
+            writer.Write(data.NumberOfItemDropStorages);
+
+            for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    writer.Write(data.NumberOfItemDropStorages);
-
-                    var parser = parsers.Where(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE).FirstOrDefault();
-                    Debug.Assert(parser != null);
-
-                    for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
-                    {
-                        writer.Write(parser.Write(node.Children[i], parsers));
-                    }
-
-                    writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
+                writer.Write(node.Children[i]);
             }
-            return result;
+
+            writer.Write(data.TrailingBytes);
         }
     }
 }

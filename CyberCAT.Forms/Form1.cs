@@ -17,6 +17,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Mapping;
+using static CyberCAT.Core.Classes.Parsers.StatsSystemParser;
 
 namespace CyberCAT.Forms
 {
@@ -42,30 +45,17 @@ namespace CyberCAT.Forms
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
+            tsmiImport.Click += ImportBinaryClick;
             NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
             FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(FACTS_FILE_NAME)));
             //Make rightclick select node. Better usability of context menu
             EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
 
-            //Add Hexeditor as editor for byte arrays
-            TypeDescriptor.AddAttributes(typeof(byte[]),new EditorAttribute(typeof(HexEditor), typeof(UITypeEditor)));
-            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.AppearanceSection), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(CharacterCustomizationAppearances.Section), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.NextItemEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemFlags), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.HeaderThing), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemInnerData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.SimpleItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ModableItemData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemData.ItemModData), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(Inventory.SubInventory), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(ItemDropStorage), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
-            TypeDescriptor.AddAttributes(typeof(FactsTable.FactEntry), new TypeConverterAttribute(typeof(ExpandableObjectConverter)));
+            SetPropertyEditControlSettings();
 
             //Settings
             var interfaceType = typeof(INodeParser);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
             if (File.Exists(SETTINGS_FILE_NAME))
             {
                 _settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE_NAME));
@@ -73,6 +63,7 @@ namespace CyberCAT.Forms
                 {
                     var instance = (INodeParser)Activator.CreateInstance(type);
                     _parserConfig.Add(new ParserConfig(instance, _settings.EnabledParsers.Contains(instance.Guid)));
+                    cbStartInSaves.Checked = _settings.StartInSavesFolder;
                 }
             }
             else
@@ -91,19 +82,100 @@ namespace CyberCAT.Forms
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
-            if (data.Node.Value is DefaultRepresentation)
+
+            if (data.Node is VirtualNodeEntry)
             {
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                MessageBox.Show("This is a visual node and cannot be exported.\nVisual nodes are inserted to create more structure in the node tree and are denoted by the [V] prefix.");
+                return;
+            }
+
+            if (data.Node.Children.Count > 0)
+            {
+                MessageBox.Show("Currently, nodes with children cannot be binary exported due to technical reasons.\nWell, we could export them but cannot import them.");
+                return;
+            }
+
+            byte[] bytes;
+            var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new NodeWriter(stream, parsers))
                 {
-                    var representation = (DefaultRepresentation)data.Node.Value;
-                    File.WriteAllBytes(saveDialog.FileName, representation.Blob);
+                    writer.Write(data.Node);
+                }
+
+                bytes = stream.ToArray();
+            }
+
+            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(saveDialog.FileName, bytes);
+            }
+        }
+
+        private void ImportBinaryClick(object sender, EventArgs e)
+        {
+            var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
+
+            if (data.Node is VirtualNodeEntry)
+            {
+                MessageBox.Show("This is a visual node and cannot be imported into.\nVisual nodes are inserted to create more structure in the node tree and are denoted by the [V] prefix.");
+                return;
+            }
+
+            if (data.Node.Children.Count > 0)
+            {
+                MessageBox.Show("Currently, nodes with children cannot be binary imported due to technical reasons.");
+                return;
+            }
+
+            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var fileName = fd.FileName;
+
+            try
+            {
+                var bytes = File.ReadAllBytes(fileName);
+                var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+                var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == data.Node.Name) ?? throw new Exception("No parser for this node!");
+                data.Node.Offset = 0;
+                data.Node.Size = bytes.Length;
+                if (data.Node.WritesOwnTrailingSize)
+                {
+                    data.Node.Size -= data.Node.TrailingSize;
+                }
+                using (var stream = new MemoryStream(bytes))
+                {
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        var newObject = parser.Read(data.Node, reader, parsers);
+                        data.Node.Value = newObject;
+                    }
                 }
             }
-            else
+            catch (Exception exception)
             {
-                MessageBox.Show("Exporting known structures not supported yet");
+                MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
+            }
+
+            EditorTree.Nodes.Clear();
+            txtEditorFilter.Text = "";
+
+            foreach (var node in _activeSaveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+                BuildVisualSubTree(treeNode, null);
+                EditorTree.Nodes.Add(treeNode);
             }
         }
 
@@ -127,6 +199,7 @@ namespace CyberCAT.Forms
                 MessageBox.Show(Constants.Messages.MISSING_FILE_TEXT, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void recompressButton_Click(object sender, EventArgs e)
         {
             if (File.Exists(_selectedFileForRecompression))
@@ -145,56 +218,6 @@ namespace CyberCAT.Forms
             }
         }
 
-        private void appearanceUncompressedSaveFilePathTextbox_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-            {
-                e.Effect = DragDropEffects.All;
-            }
-        }
-
-        private void appearanceUncompressedSaveFilePathTextbox_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Length != 0)
-            {
-                appearanceUncompressedSaveFilePathTextbox.Text = files[0];
-            }
-        }
-
-        private void loadAppearanceSectionButton_Click(object sender, EventArgs e)
-        {
-            var saveFile = new SaveFile();
-            var fileBytes = File.ReadAllBytes(appearanceUncompressedSaveFilePathTextbox.Text);
-            var guid = Guid.NewGuid();
-            using (var stream = new MemoryStream(fileBytes))
-            {
-                saveFile.LoadFromCompressedStream(stream);
-                File.WriteAllText($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json", JsonConvert.SerializeObject(saveFile, Formatting.Indented));
-            }
-            var growableSectionNames = new List<string>();
-            growableSectionNames.AddRange(saveFile.Nodes.Where(n => n.Size == n.TrueSize).Select(n => n.Name));
-            File.WriteAllLines($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_growableSectionNames.txt", growableSectionNames);
-            MessageBox.Show($"Generated {Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{guid}_dump.json");
-            foreach (var node in saveFile.Nodes)
-            {
-                var treeNode = new NodeEntryTreeNode(node);
-                AddChildrenToTreeNode(treeNode);
-                treeView1.Nodes.Add(treeNode);
-            }
-        }
-        private void AddChildrenToTreeNode(NodeEntryTreeNode treeNode)
-        {
-            if (treeNode.Node.Children.Count > 0)
-            {
-                treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(treeNode.Node.Children).ToArray());
-                foreach(var child in treeNode.Nodes)
-                {
-                    AddChildrenToTreeNode((NodeEntryTreeNode)child);
-                }
-            }
-        }
-
         private void editorTreeContextMenu_Opening(object sender, CancelEventArgs e)
         {
             if (EditorTree.SelectedNode !=null)
@@ -206,19 +229,27 @@ namespace CyberCAT.Forms
         private void saveSettingsButton_Click(object sender, EventArgs e)
         {
             _settings.EnabledParsers.Clear();
-            _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled== true).Select(p => p.Parser.Guid));
+            _settings.EnabledParsers.AddRange(_parserConfig.Where(p => p.Enabled == true).Select(p => p.Parser.Guid));
+            _settings.StartInSavesFolder = cbStartInSaves.Checked;
             File.WriteAllText(SETTINGS_FILE_NAME, JsonConvert.SerializeObject(_settings, Formatting.Indented));
         }
 
         private void exportAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{Guid.NewGuid()}");
+            var info = Directory.CreateDirectory($"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\Export_{Guid.NewGuid()}");
             foreach(var node in _activeSaveFile.FlatNodes)
             {
-                if(node.Value is DefaultRepresentation)
+                var filename = Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}");
+                byte[] bytes;
+                var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+                using (var stream = new MemoryStream())
                 {
-                    var representation = (DefaultRepresentation)node.Value;
-                    File.WriteAllBytes(Path.Combine(info.FullName, $"{node.Id}_{string.Concat(node.Name.Split(Path.GetInvalidFileNameChars()))}"), representation.Blob);
+                    using (var writer = new NodeWriter(stream, parsers))
+                    {
+                        writer.Write(node);
+                    }
+
+                    bytes = stream.ToArray();
                 }
             }
             MessageBox.Show($"Exported All unparsed Nodes to {info.FullName}");
@@ -269,7 +300,7 @@ namespace CyberCAT.Forms
             var data = (NodeEntry)selectedNode.Node;
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             string folderPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\export_{_activeSaveFile.Guid}";
-            if (!Directory.Exists(folderPath)) ;
+            if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }

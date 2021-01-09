@@ -14,23 +14,14 @@ namespace CyberCAT.Forms.Editor
 {
     public partial class HexEditorControl : UserControl
     {
-        private DefaultRepresentation _data;
-
-        public HexEditorControl(DefaultRepresentation data)
+        public HexEditorControl(byte[] data)
         {
-            _data = data;
             InitializeComponent();
 
             var byteviewer = new ByteViewer();
             byteviewer.Dock = DockStyle.Fill;
-            if (data.Blob == null)
-            {
-                byteviewer.SetBytes(new byte[] {});
-            }
-            else
-            {
-                byteviewer.SetBytes(data.Blob);
-            }
+
+            byteviewer.SetBytes(data);
 
             byteviewer.SetDisplayMode(DisplayMode.Hexdump);
 
