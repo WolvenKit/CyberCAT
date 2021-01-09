@@ -116,6 +116,16 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Licenses\LSystem.Runtime.CompilerServices.Unsafe.ICENSE.TXT" />
+    <Content Include="Licenses\Microsoft.CSharp.LICENSE.txt" />
+    <Content Include="Licenses\NUnit.LICENSE.txt" />
+    <Content Include="Licenses\System.Buffers.LICENSE.TXT" />
+    <Content Include="Licenses\System.Buffers.txt" />
+    <Content Include="Licenses\System.Diagnostics.Debug.LICENSE.txt" />
+    <Content Include="Licenses\System.IO.LICENSE.txt" />
+    <Content Include="Licenses\System.Memory.LICENSE.TXT" />
+    <Content Include="Licenses\System.Numerics.Vectors.LICENSE.TXT" />
+    <Content Include="Licenses\System.ObjectModel.LICENSE.txt" />
     <EmbeddedResource Include="Editor\ItemEditorControl.resx">
       <DependentUpon>ItemEditorControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,6 +157,8 @@
     <Content Include="Licenses\Be.HexEditor.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Licenses\Be.Windows.Forms.HexBox.LICENSE.txt" />
+    <Content Include="Licenses\CyberCAT.LICENSE.txt" />
     <Content Include="Licenses\K4os.Compression.LZ4.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -156,6 +168,7 @@
     <None Include="Items.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Licenses\Newtonsoft.Json.LICENSE.md" />
     <None Include="Names.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -180,7 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj">
-      <Project>{b9b66c23-5477-40a0-9121-85a6134b74ef}</Project>
+      <Project>{a83180d6-83f6-4a67-810c-48a2d16646ad}</Project>
       <Name>CyberCAT.Core</Name>
     </ProjectReference>
   </ItemGroup>
