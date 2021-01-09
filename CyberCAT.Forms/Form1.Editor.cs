@@ -48,6 +48,11 @@ namespace CyberCAT.Forms
         {
             var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
 
+            if (_settings.StartInSavesFolder)
+            {
+                fd.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved games", "CD Projekt Red", "Cyberpunk 2077");
+            }
+
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -129,6 +134,12 @@ namespace CyberCAT.Forms
             }
 
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+
+            if (_settings.StartInSavesFolder)
+            {
+                saveDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved games", "CD Projekt Red", "Cyberpunk 2077");
+            }
+
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.SaveToPCSaveFile());

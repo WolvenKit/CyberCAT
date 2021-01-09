@@ -24,7 +24,7 @@ namespace CyberCAT.Forms.Editor
         private uint SelectedPartSeed { get; set; }
         private TweakDbId SelectedPartTweakDbId { get; set; }
 
-        private static Random _random = new Random();
+        private static readonly Random Random = new Random();
 
         private static readonly List<TweakDbId> AttachmentSlots = new List<TweakDbId>
         {
@@ -220,6 +220,7 @@ namespace CyberCAT.Forms.Editor
             InitializeComponent();
 
             cbAttachmentSlot.DisplayMember = "Name";
+            cbMod.DisplayMember = "ItemGameName";
 
             _saveFile = saveFile;
             _itemData = (ItemData)data;
@@ -418,7 +419,7 @@ namespace CyberCAT.Forms.Editor
             uint seed;
             while (true)
             {
-                _random.NextBytes(bytes);
+                Random.NextBytes(bytes);
                 seed = BitConverter.ToUInt32(bytes, 0);
                 if (seed == 2)
                 {

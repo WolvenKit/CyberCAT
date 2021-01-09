@@ -95,7 +95,7 @@ namespace CyberCAT.Tests
             var newSaveFile = new SaveFile(_parsers);
             newSaveFile.LoadPCSaveFile(new MemoryStream(compressedInputStream));
 
-            var uncompressedRewrite = newSaveFile.GetNodeData();
+            var uncompressedRewrite = newSaveFile.GetNodeData(out var nodeInfos);
             
             Assert.That(decompressedFile.SequenceEqual(uncompressedRewrite), Is.True);
         }

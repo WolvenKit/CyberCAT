@@ -63,6 +63,8 @@ namespace CyberCAT.Core.Classes
             }
         }
 
+        private List<NodeInfo> _nodeInfos;
+
         public SaveFileHeader Header { get; set; }
         public List<NodeEntry> Nodes;
         public int LastBlockOffset;
@@ -70,7 +72,7 @@ namespace CyberCAT.Core.Classes
         public Guid Guid { get; }
         List<INodeParser> _parsers;
         /// <summary>
-        /// Creates a new Instance of Save File wich will utilize given parsers
+        /// Creates a new Instance of Save File which will utilize given parsers
         /// </summary>
         /// <param name="parsers">The parsers that will be used for parsing</param>
         public SaveFile(IEnumerable<INodeParser> parsers)
@@ -78,6 +80,7 @@ namespace CyberCAT.Core.Classes
             _parsers = new List<INodeParser>();
             _parsers.AddRange(parsers);
             Guid = Guid.NewGuid();
+            _nodeInfos = new List<NodeInfo>();
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
             MappingHelper.LoadDumpedClasses();
@@ -85,6 +88,7 @@ namespace CyberCAT.Core.Classes
         }
         public SaveFile()
         {
+            _nodeInfos = new List<NodeInfo>();
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
             _parsers = new List<INodeParser>();
@@ -114,6 +118,7 @@ namespace CyberCAT.Core.Classes
 
         private void BeginLoading(Stream inputStream)
         {
+            _nodeInfos.Clear();
             FlatNodes.Clear();
             Nodes.Clear();
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
@@ -136,6 +141,14 @@ namespace CyberCAT.Core.Classes
                     entry.Size = reader.ReadInt32();
                     entry.Name = name;
                     FlatNodes.Add(entry);
+
+                    var info = new NodeInfo();
+                    info.NextId = entry.NextId;
+                    info.ChildId = entry.ChildId;
+                    info.Offset = entry.Offset;
+                    info.Size = entry.Size;
+                    info.Name = name;
+                    _nodeInfos.Add(info);
                 }
             }
             inputStream.Seek(0, SeekOrigin.Begin);
@@ -179,9 +192,9 @@ namespace CyberCAT.Core.Classes
 
         public byte[] SaveToPCSaveFile()
         {
-            var uncompressedData = GetNodeData();
+            var uncompressedData = GetNodeData(out var nodeInfos);
 
-            var footerWithoutLast8Bytes= BuildFooterWithoutLastEightBytes();
+            var footerWithoutLast8Bytes= BuildFooterWithoutLastEightBytes(nodeInfos);
             var compressor = new SaveFileCompressionHelper();
             var chunks = compressor.CompressToChunkList(uncompressedData);
             var header = BuildHeader(chunks);
@@ -207,9 +220,9 @@ namespace CyberCAT.Core.Classes
 
         public byte[] SaveToPS4SaveFile()
         {
-            var uncompressedData = GetNodeData();
+            var uncompressedData = GetNodeData(out var nodeInfos);
 
-            var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes();
+            var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes(nodeInfos);
             var compressor = new SaveFileCompressionHelper();
             var chunks = compressor.CompressToChunkList(uncompressedData);
             foreach (var chunk in chunks)
@@ -243,76 +256,25 @@ namespace CyberCAT.Core.Classes
             return result;
         }
 
-        public byte[] GetNodeData()
+        public byte[] GetNodeData(out List<NodeInfo> nodeInfos)
         {
             byte[] uncompressedData;
 
-            using (var stream = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                foreach (var node in Nodes)
+                using (var nw = new NodeWriter(ms, _parsers))
                 {
-                    var parser = _parsers.FirstOrDefault(p => p.ParsableNodeName == node.Name);
-                    if (parser == null)
+                    foreach (var node in Nodes)
                     {
-                        parser = new DefaultParser();
+                        nw.Write(node);
                     }
-                    stream.Write(parser.Write(node, _parsers));
-                }
-                uncompressedData = stream.ToArray();
-            }
 
-            // Recalculate all node offsets
-            //Nodes.FirstOrDefault()?.MySizeChanged();
-            RecalculateNodeOffsets(Nodes, 0);
+                    nodeInfos = nw.GetFinalizedInfos();
+                }
+                uncompressedData = ms.ToArray();
+            }
 
             return uncompressedData;
-        }
-
-        private void RecalculateNodeOffsets(IEnumerable<NodeEntry> nodes, int offset)
-        {
-            foreach (var node in nodes)
-            {
-                /*
-                var prevNode = node.GetPreviousNode();
-                if (prevNode == null)
-                {
-                    // First node that is either a child node or not.
-                    var parent = node.GetParent();
-                    if (parent == null)
-                    {
-                        // Very first node, our offset does not change
-                        // If I have children, these need to be changed, too
-                        RecalculateNodeOffsets(node.Children, offset);
-                    }
-                    else
-                    {
-                        // First child node.
-                        // Adjust my own size and offset
-                        // If I have children, these need to be changed, too
-                        node.Size += node.SizeChange;
-                        RecalculateNodeOffsets(node.Children, offset);
-                        node.Offset += offset;
-                        offset += node.SizeChange;
-                    }
-                }
-                else
-                {
-                    // Adjust my own size and offset
-                    // If I have children, these need to be changed, too
-                    node.Size += node.SizeChange;
-                    RecalculateNodeOffsets(node.Children, offset);
-                    node.Offset += offset;
-                    offset += node.SizeChange;
-                }
-                */
-                node.Size += node.SizeChange;
-                node.Offset += offset;
-                RecalculateNodeOffsets(node.Children, offset);
-                offset += node.SizeChange;
-                var prevNode = node.GetPreviousNode();
-                if (prevNode != null)
-                    Debug.Assert(prevNode.Offset + prevNode.Size <= node.Offset);
-            }
         }
 
         private byte[] BuildHeader(List<Lz4Chunk> chunks)
@@ -353,7 +315,7 @@ namespace CyberCAT.Core.Classes
             return result;
         }
 
-        private byte[] BuildFooterWithoutLastEightBytes()
+        private byte[] BuildFooterWithoutLastEightBytes(List<NodeInfo> nodeInfos)
         {
             byte[] result;
             using (var stream = new MemoryStream())
@@ -361,8 +323,8 @@ namespace CyberCAT.Core.Classes
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.NODE_INFORMATION_START));
-                    writer.WriteBit6(FlatNodes.Count);
-                    foreach (var node in FlatNodes)
+                    writer.WriteBit6(nodeInfos.Count);
+                    foreach (var node in nodeInfos)
                     {
                         ParserUtils.WriteString(writer, node.Name);
                         writer.Write(node.NextId);
@@ -515,6 +477,15 @@ namespace CyberCAT.Core.Classes
                     }
                 }
             }
+        }
+
+        public class NodeInfo
+        {
+            public string Name { get; set; }
+            public int NextId { get; set; }
+            public int ChildId { get; set; }
+            public int Offset { get; set; }
+            public int Size { get; set; }
         }
     }
 }
