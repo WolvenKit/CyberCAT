@@ -1,0 +1,110 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CyberCAT.Wpf"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280" >
+    <Grid>
+        <Menu HorizontalAlignment="Stretch" Height="30" Margin="0"   VerticalAlignment="Top" >
+            <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Open-->
+                <MenuItem.Header>
+                    <TextBlock Text="OPEN" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+
+                </MenuItem.Header>
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Text="OPEN PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Text="OPEN PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                    </MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Save-->
+                <MenuItem.Header>
+                    <TextBlock Text="SAVE" Margin="0" Height="20" Padding="0" TextAlignment="Center" />
+                </MenuItem.Header>
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Text="SAVE PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Text="SAVE PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                    </MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--About-->
+                <MenuItem.Header>
+                    <TextBlock Text="ABOUT" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                </MenuItem.Header>
+                <StackPanel IsEnabled="False">
+                    <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
+                    <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
+                    <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
+                    <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
+                </StackPanel>
+            </MenuItem>
+        </Menu>
+        <TabControl Margin="1,30,1,1">
+            <TabItem Header="Simple">
+                <Grid >
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" />
+                    <TabControl  TabStripPlacement="Left">
+
+                        <TabItem Header="Items" >
+                            <Grid>
+                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
+                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Item Editor Here" FontSize="36"/>
+                                </Border>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Appearance" >
+                            <Grid>
+                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
+                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Appearance Editor Here" FontSize="36"/>
+                                </Border>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Attributes" >
+                            <Grid>
+                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
+                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Attributes Editor Here" FontSize="36"/>
+                                </Border>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Quest Facts" >
+                            <Grid>
+                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
+                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quest Facts Editor Here" FontSize="36"/>
+                                </Border>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Quick Actions" >
+                <Grid>
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
+                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quick Actions here" FontSize="36"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Advanced" >
+                <Grid>
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
+                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Advanced GUI here" FontSize="36"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
