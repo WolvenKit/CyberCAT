@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using CyberCAT.Core.Annotations;
 using Newtonsoft.Json;
 
@@ -207,7 +209,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             private TweakDbId _tdbId1;
             private uint _unknown2;
-            private uint _unknown3;
+            private float _unknown3;
             private ItemModData _rootNode;
 
             public TweakDbId TdbId1
@@ -245,7 +247,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 }
             }
 
-            public uint Unknown3
+            public float Unknown3
             {
                 get => _unknown3;
                 set
@@ -317,7 +319,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             private uint _unknown2;
             private TweakDbId _tdbId2;
             private uint _unknown3;
-            private uint _unknown4;
+            private float _unknown4;
 
             public TweakDbId ItemTdbId
             {
@@ -452,7 +454,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 }
             }
 
-            public uint Unknown4
+            public float Unknown4
             {
                 get => _unknown4;
                 set
@@ -469,6 +471,26 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                     return $" {AttachmentSlotName} [empty]";
                 }
                 return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
+            }
+
+            public ItemModData Clone()
+            {
+                var clone = new ItemModData
+                {
+                    ItemTdbId = _itemTdbId.Clone(),
+                    AttachmentSlotTdbId = _attachmentSlotTdbId.Clone(),
+                    Header = _header.Clone(),
+                    TdbId2 = _tdbId2.Clone(),
+                    Unknown2 = _unknown2,
+                    Unknown3 = _unknown3,
+                    Unknown4 = _unknown4,
+                    UnknownString = (string)_unknownString.Clone()
+                };
+                foreach (var child in Children)
+                {
+                    clone.Children.Add(child.Clone());
+                }
+                return clone;
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
@@ -497,16 +519,16 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         [JsonObject]
         public class HeaderThing : INotifyPropertyChanged
         {
-            private uint _itemId;
+            private uint _seed;
             private byte _unknownByte1;
             private ushort _unknownBytes2;
 
-            public uint ItemId
+            public uint Seed
             {
-                get => _itemId;
+                get => _seed;
                 set
                 {
-                    _itemId = value;
+                    _seed = value;
                     OnPropertyChanged();
                 }
             }
@@ -541,13 +563,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                         return 1;
                     if (UnknownByte1 == 3)
                         return 0;
-                    return (byte)(ItemId != 2 ? 2 : 1);
+                    return (byte)(Seed != 2 ? 2 : 1);
                 }
             }
 
             public override string ToString()
             {
-                return $"Type: {Kind} | {ItemId:X8}";
+                return $"Type: {Kind} | {Seed:X8}";
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
@@ -560,7 +582,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             protected bool Equals(HeaderThing other)
             {
-                return _itemId == other._itemId && _unknownByte1 == other._unknownByte1 && _unknownBytes2 == other._unknownBytes2;
+                return _seed == other._seed && _unknownByte1 == other._unknownByte1 && _unknownBytes2 == other._unknownBytes2;
             }
 
             public override bool Equals(object obj)
@@ -575,11 +597,16 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 unchecked
                 {
-                    var hashCode = (int) _itemId;
+                    var hashCode = (int) _seed;
                     hashCode = (hashCode * 397) ^ _unknownByte1.GetHashCode();
                     hashCode = (hashCode * 397) ^ _unknownBytes2.GetHashCode();
                     return hashCode;
                 }
+            }
+
+            public HeaderThing Clone()
+            {
+                return new HeaderThing {Seed = _seed, UnknownByte1 = _unknownByte1, UnknownBytes2 = _unknownBytes2};
             }
         }
 

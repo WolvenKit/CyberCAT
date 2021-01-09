@@ -40,6 +40,10 @@ namespace CyberCAT.Forms.Editor
             this.lblQuantity = new System.Windows.Forms.Label();
             this.statsSelect = new System.Windows.Forms.ComboBox();
             this.editPanel = new System.Windows.Forms.Panel();
+            this.btnAddMod = new System.Windows.Forms.Button();
+            this.cbMod = new System.Windows.Forms.ComboBox();
+            this.cbAttachmentSlot = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,7 +64,7 @@ namespace CyberCAT.Forms.Editor
             this.partListBox.FormattingEnabled = true;
             this.partListBox.Location = new System.Drawing.Point(6, 117);
             this.partListBox.Name = "partListBox";
-            this.partListBox.Size = new System.Drawing.Size(245, 290);
+            this.partListBox.Size = new System.Drawing.Size(245, 186);
             this.partListBox.TabIndex = 1;
             this.partListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -69,19 +73,19 @@ namespace CyberCAT.Forms.Editor
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 99);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.Size = new System.Drawing.Size(33, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Parts";
+            this.label1.Text = "Mods";
             // 
             // addStatButton
             // 
             this.addStatButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.addStatButton.Enabled = false;
-            this.addStatButton.Location = new System.Drawing.Point(444, 383);
+            this.addStatButton.Location = new System.Drawing.Point(444, 374);
             this.addStatButton.Name = "addStatButton";
             this.addStatButton.Size = new System.Drawing.Size(77, 23);
             this.addStatButton.TabIndex = 4;
-            this.addStatButton.Text = "Add";
+            this.addStatButton.Text = "Add Stat";
             this.addStatButton.UseVisualStyleBackColor = true;
             this.addStatButton.Click += new System.EventHandler(this.addStatButton_Click);
             // 
@@ -170,13 +174,60 @@ namespace CyberCAT.Forms.Editor
             | System.Windows.Forms.AnchorStyles.Right)));
             this.editPanel.Location = new System.Drawing.Point(257, 144);
             this.editPanel.Name = "editPanel";
-            this.editPanel.Size = new System.Drawing.Size(264, 236);
+            this.editPanel.Size = new System.Drawing.Size(264, 224);
             this.editPanel.TabIndex = 11;
+            // 
+            // btnAddMod
+            // 
+            this.btnAddMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAddMod.Location = new System.Drawing.Point(6, 374);
+            this.btnAddMod.Name = "btnAddMod";
+            this.btnAddMod.Size = new System.Drawing.Size(75, 23);
+            this.btnAddMod.TabIndex = 12;
+            this.btnAddMod.Text = "Add Mod";
+            this.btnAddMod.UseVisualStyleBackColor = true;
+            this.btnAddMod.Click += new System.EventHandler(this.btnAddMod_Click);
+            // 
+            // cbMod
+            // 
+            this.cbMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMod.Enabled = false;
+            this.cbMod.FormattingEnabled = true;
+            this.cbMod.Location = new System.Drawing.Point(6, 320);
+            this.cbMod.Name = "cbMod";
+            this.cbMod.Size = new System.Drawing.Size(245, 21);
+            this.cbMod.TabIndex = 13;
+            // 
+            // cbAttachmentSlot
+            // 
+            this.cbAttachmentSlot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbAttachmentSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAttachmentSlot.Enabled = false;
+            this.cbAttachmentSlot.FormattingEnabled = true;
+            this.cbAttachmentSlot.Location = new System.Drawing.Point(56, 347);
+            this.cbAttachmentSlot.Name = "cbAttachmentSlot";
+            this.cbAttachmentSlot.Size = new System.Drawing.Size(195, 21);
+            this.cbAttachmentSlot.TabIndex = 14;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 350);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "into Slot";
             // 
             // ItemEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbAttachmentSlot);
+            this.Controls.Add(this.cbMod);
+            this.Controls.Add(this.btnAddMod);
             this.Controls.Add(this.editPanel);
             this.Controls.Add(this.statsSelect);
             this.Controls.Add(this.lblQuantity);
@@ -189,7 +240,7 @@ namespace CyberCAT.Forms.Editor
             this.Controls.Add(this.partListBox);
             this.Controls.Add(this.lblItemName);
             this.Name = "ItemEditorControl";
-            this.Size = new System.Drawing.Size(524, 427);
+            this.Size = new System.Drawing.Size(524, 400);
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -209,5 +260,9 @@ namespace CyberCAT.Forms.Editor
         private System.Windows.Forms.Label lblQuantity;
         private System.Windows.Forms.ComboBox statsSelect;
         private System.Windows.Forms.Panel editPanel;
+        private System.Windows.Forms.Button btnAddMod;
+        private System.Windows.Forms.ComboBox cbMod;
+        private System.Windows.Forms.ComboBox cbAttachmentSlot;
+        private System.Windows.Forms.Label label2;
     }
 }
