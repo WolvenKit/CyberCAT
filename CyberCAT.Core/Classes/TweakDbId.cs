@@ -138,9 +138,15 @@ namespace CyberCAT.Core.Classes
 
         /// <summary>
         /// Returns the TweakDbId representing None (Id 00000000:00).
-        /// This object can be modified afterwards as always a new object is returned.
+        /// This object can be modified afterwards as a new object is returned.
         /// </summary>
         public static TweakDbId None => new TweakDbId {Raw64 = 0};
+
+        /// <summary>
+        /// Returns the TweakDbId representing the AttachmentSlots.GenericItemRoot (Id 3D817C71:1F).
+        /// This object can be modified afterwards as a new object is returned.
+        /// </summary>
+        public static TweakDbId AttachmentSlotsGenericItemRoot => new TweakDbId {Id = 0x3D817C71, Length = 0x1F};
 
         public TweakDbId Clone()
         {

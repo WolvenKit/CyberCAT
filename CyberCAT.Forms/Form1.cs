@@ -45,6 +45,7 @@ namespace CyberCAT.Forms
                 Directory.CreateDirectory(Constants.FileStructure.OUTPUT_FOLDER_NAME);
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
+            tsmiImport.Click += ImportBinaryClick;
             NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
             FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(FACTS_FILE_NAME)));
             //Make rightclick select node. Better usability of context menu
@@ -81,12 +82,7 @@ namespace CyberCAT.Forms
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
-            if (data.Node.Value is DefaultRepresentation)
-            {
-                return;
-            }
 
             byte[] bytes;
             var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
@@ -98,6 +94,58 @@ namespace CyberCAT.Forms
                 }
 
                 bytes = stream.ToArray();
+            }
+
+            var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
+
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(saveDialog.FileName, bytes);
+            }
+        }
+
+        private void ImportBinaryClick(object sender, EventArgs e)
+        {
+            var data = (NodeEntryTreeNode)EditorTree.SelectedNode;
+
+            var fd = new OpenFileDialog { Multiselect = false, InitialDirectory = Environment.CurrentDirectory };
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var fileName = fd.FileName;
+
+            try
+            {
+                var bytes = File.ReadAllBytes(fileName);
+                var parsers = _parserConfig.Where(p => p.Enabled).Select(p => p.Parser).ToList();
+                var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == data.Node.Name) ?? throw new Exception("No parser for this node!");
+                using (var stream = new MemoryStream(bytes))
+                {
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        var newObject = parser.Read(data.Node, reader, parsers);
+                        data.Node.Value = newObject;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
+            }
+
+            EditorTree.Nodes.Clear();
+            txtEditorFilter.Text = "";
+
+            foreach (var node in _activeSaveFile.Nodes)
+            {
+                var treeNode = new NodeEntryTreeNode(node);
+                BuildVisualSubTree(treeNode, null);
+                EditorTree.Nodes.Add(treeNode);
             }
         }
 

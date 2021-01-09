@@ -54,7 +54,9 @@
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsTabPage = new System.Windows.Forms.TabPage();
+            this.cbStartInSaves = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.label6 = new System.Windows.Forms.Label();
             this.saveSettingsButton = new System.Windows.Forms.Button();
@@ -68,7 +70,6 @@
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.footerLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cbStartInSaves = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.compressionTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -326,23 +327,24 @@
             this.editorTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportToolStripMenuItem,
             this.exportAllToolStripMenuItem,
-            this.exportJSONToolStripMenuItem});
+            this.exportJSONToolStripMenuItem,
+            this.tsmiImport});
             this.editorTreeContextMenu.Name = "editorTreeContextMenu";
-            this.editorTreeContextMenu.Size = new System.Drawing.Size(140, 70);
+            this.editorTreeContextMenu.Size = new System.Drawing.Size(162, 92);
             this.editorTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.editorTreeContextMenu_Opening);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Enabled = false;
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-            this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.exportToolStripMenuItem.Text = "Export binary";
             // 
             // exportAllToolStripMenuItem
             // 
             this.exportAllToolStripMenuItem.Name = "exportAllToolStripMenuItem";
-            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-            this.exportAllToolStripMenuItem.Text = "Export All";
+            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.exportAllToolStripMenuItem.Text = "Export All binary";
             this.exportAllToolStripMenuItem.Click += new System.EventHandler(this.exportAllToolStripMenuItem_Click);
             // 
             // exportJSONToolStripMenuItem
@@ -351,6 +353,12 @@
             this.exportJSONToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.exportJSONToolStripMenuItem.Text = "Export JSON";
             this.exportJSONToolStripMenuItem.Click += new System.EventHandler(this.exportJSONToolStripMenuItem_Click);
+            // 
+            // tsmiImport
+            // 
+            this.tsmiImport.Name = "tsmiImport";
+            this.tsmiImport.Size = new System.Drawing.Size(161, 22);
+            this.tsmiImport.Text = "Import binary";
             // 
             // settingsTabPage
             // 
@@ -364,6 +372,16 @@
             this.settingsTabPage.TabIndex = 3;
             this.settingsTabPage.Text = "Settings";
             this.settingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // cbStartInSaves
+            // 
+            this.cbStartInSaves.AutoSize = true;
+            this.cbStartInSaves.Location = new System.Drawing.Point(290, 26);
+            this.cbStartInSaves.Name = "cbStartInSaves";
+            this.cbStartInSaves.Size = new System.Drawing.Size(250, 17);
+            this.cbStartInSaves.TabIndex = 5;
+            this.cbStartInSaves.Text = "Start Open/Save dialogs in CP2077 save folder";
+            this.cbStartInSaves.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
@@ -475,16 +493,6 @@
             this.footerLabel.Size = new System.Drawing.Size(88, 17);
             this.footerLabel.Text = "No save loaded";
             // 
-            // cbStartInSaves
-            // 
-            this.cbStartInSaves.AutoSize = true;
-            this.cbStartInSaves.Location = new System.Drawing.Point(290, 26);
-            this.cbStartInSaves.Name = "cbStartInSaves";
-            this.cbStartInSaves.Size = new System.Drawing.Size(250, 17);
-            this.cbStartInSaves.TabIndex = 5;
-            this.cbStartInSaves.Text = "Start Open/Save dialogs in CP2077 save folder";
-            this.cbStartInSaves.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -566,6 +574,7 @@
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbStartInSaves;
+        private System.Windows.Forms.ToolStripMenuItem tsmiImport;
     }
 }
 

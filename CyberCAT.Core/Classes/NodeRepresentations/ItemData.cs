@@ -96,7 +96,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public NextItemEntry()
             {
-                _itemTdbId = new TweakDbId();
+                _itemTdbId = TweakDbId.None;
                 _header = new HeaderThing();
             }
         }
@@ -286,7 +286,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public ModableItemData()
             {
-                _tdbId1 = new TweakDbId();
+                _tdbId1 = TweakDbId.None;
                 _rootNode = new ItemModData();
             }
         }
@@ -502,11 +502,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public ItemModData()
             {
-                _itemTdbId = new TweakDbId();
+                _itemTdbId = TweakDbId.None;
                 _header = new HeaderThing();
                 _unknownString = "";
-                _attachmentSlotTdbId = new TweakDbId();
-                _tdbId2 = new TweakDbId();
+                _attachmentSlotTdbId = TweakDbId.None;
+                _tdbId2 = TweakDbId.None;
                 _children = new NotifyingObservableCollection<ItemModData>();
                 _children.CollectionChanged += (sender, args) =>
                 {
@@ -722,9 +722,54 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public ItemData()
         {
-            _itemTdbId = new TweakDbId();
+            _itemTdbId = TweakDbId.None;
             _header = new HeaderThing();
             _flags = new ItemFlags(0);
+        }
+
+        /// <summary>
+        /// Creates a simple item with quantity 1.
+        /// The TweakDbId used will be 0 (None)
+        /// </summary>
+        /// <returns></returns>
+        public ItemData CreateSimpleItem()
+        {
+            var sid = new SimpleItemData {Quantity = 1};
+            var item = new ItemData
+            {
+                Header = {Seed = 2},
+                Data = sid
+            };
+
+            return item;
+        }
+
+        /// <summary>
+        /// Creates a modable item with a generic item root.
+        /// The TweakDbId used will be 0 (None)
+        /// </summary>
+        /// <returns></returns>
+        public ItemData CreateModableItem()
+        {
+            var rootNode = new ItemModData
+            {
+                ItemTdbId = TweakDbId.AttachmentSlotsGenericItemRoot,
+                Header = {Seed = 2},
+                UnknownString = "None",
+                Unknown4 = float.MaxValue
+            };
+            var mid = new ModableItemData
+            {
+                RootNode = rootNode,
+                Unknown3 = float.MaxValue
+            };
+            var item = new ItemData
+            {
+                Header = {Seed = 2},
+                Data = mid
+            };
+
+            return item;
         }
     }
 }
