@@ -75,7 +75,12 @@
     <None Include="saves\ps4\ps4sav6.dat" />
     <None Include="saves\ps4\ps4sav7.dat" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj">
+      <Project>{a83180d6-83f6-4a67-810c-48a2d16646ad}</Project>
+      <Name>CyberCAT.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
