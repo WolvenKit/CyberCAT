@@ -157,14 +157,33 @@ namespace CyberCAT.Forms
                 var subinventories = inv.SubInventories.Select(_ => (NodeEntry)new VirtualNodeEntry() {Value = _}).ToList();
                 foreach (var subinventory in subinventories)
                 {
-                    var real = subinventory as VirtualNodeEntry;
+                    var real = subinventory as VirtualNodeEntry ?? throw new Exception("subinventory is not a VirtualNodeEntry, wtf?!");
                     var data = real.Value as Inventory.SubInventory;
+                    var simpleItems = new VirtualNodeEntry { Value = "Simple items" };
+                    var modableItems = new VirtualNodeEntry { Value = "Modable Items" };
                     foreach (var itemNode in treeNode.Node.Children)
                     {
                         if (data.Items.Contains(itemNode.Value) && (filter == null || itemNode.ToString().ToLowerInvariant().Contains(filter)))
                         {
-                            subinventory.Children.Add(itemNode);
+                            var item = ((ItemData) itemNode.Value).Data;
+                            if (item is ItemData.SimpleItemData sid)
+                            {
+                                simpleItems.Children.Add(itemNode);
+                            }
+                            else
+                            {
+                                modableItems.Children.Add(itemNode);
+                            }
                         }
+                    }
+
+                    if (simpleItems.Children.Count > 0)
+                    {
+                        subinventory.Children.Add(simpleItems);
+                    }
+                    if (modableItems.Children.Count > 0)
+                    {
+                        subinventory.Children.Add(modableItems);
                     }
                 }
                 treeNode.Nodes.AddRange(NodeEntryTreeNode.FromList(subinventories.Where(_ => filter == null || _.Children.Count > 0).ToList()).ToArray());

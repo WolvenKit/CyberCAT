@@ -20,27 +20,20 @@ namespace CyberCAT.Forms.Editor
         Handle<GameStatModifierData>[] _gameStatModifierData;
         GameStatsStateMapStructure _mapStructure;
 
+        private uint SelectedPartSeed { get; set; }
+        private TweakDbId SelectedPartTweakDbId { get; set; }
+
         public ItemEditorControl(object data, SaveFile saveFile)
         {
             if (!(data is ItemData))
             {
-                throw new Exception("Unexected data type");
+                throw new Exception("Unexpected data type");
             }
             InitializeComponent();
 
             _saveFile = saveFile;
             var parts = new List<ItemData.ItemModData>();
             _itemData = (ItemData)data;
-            if(_itemData.Data is ItemData.ModableItemData itemData)
-            {
-                parts.Add(itemData.RootNode);
-                foreach(var part in itemData.RootNode.Children)
-                {
-                    parts.Add(part);
-                }
-                partListBox.Items.AddRange(parts.ToArray());
-                FillStatsList();
-            }
 
             lblGameName.Text = NameResolver.GetGameName(_itemData.ItemTdbId);
             lblItemName.Text = NameResolver.GetName(_itemData.ItemTdbId);
@@ -58,65 +51,103 @@ namespace CyberCAT.Forms.Editor
                 nudQuantity.Enabled = true;
                 nudQuantity.Value = miwqd.Quantity;
             }
+
+            if (_itemData.Data is ItemData.ModableItemData mid)
+            {
+                partListBox.Enabled = true;
+                statsSelect.Enabled = true;
+                addStatButton.Enabled = true;
+                
+                parts.Add(mid.RootNode);
+                foreach (var part in mid.RootNode.Children)
+                {
+                    parts.Add(part);
+                }
+
+                partListBox.Items.Add("<Item>");
+                partListBox.Items.AddRange(parts.ToArray());
+
+                SelectedPartSeed = _itemData.Header.ItemId;
+                SelectedPartTweakDbId = _itemData.ItemTdbId;
+
+                FillStatsList();
+            }
+        }
+
+        private class HandleWrapper
+        {
+            public Handle<GameStatModifierData> Handle { get; }
+            public HandleWrapper(Handle<GameStatModifierData> handle)
+            {
+                Handle = handle;
+            }
+
+            public override string ToString()
+            {
+                var value = "";
+                if (Handle.Value is GameConstantStatModifierData co)
+                {
+                    value = $"{co.Value}";
+                }
+                else if (Handle.Value is GameCurveStatModifierData cu)
+                {
+                    value = $"{cu.CurveStat} {cu.CurveName}";
+                }
+                else if (Handle.Value is GameCombinedStatModifierData com)
+                {
+                    value = $"{com.Value} {com.Operation}";
+                }
+                return $"{Handle.Value.ModifierType} {value} {Handle.Value.StatType}";
+            }
         }
 
         private void FillStatsList()
         {
             var statsNode = _saveFile.Nodes.FirstOrDefault(n => n.Name == Constants.NodeNames.STATS_SYSTEM);
+            statsSelect.Items.Clear();
+            editPanel.Controls.Clear();
             if (statsNode != null)
             {
                 _rootData = (GenericUnknownStruct) statsNode.Value;
                 var mapStructure = _rootData.ClassList[0];
 
-                if (!(mapStructure is GameStatsStateMapStructure))
-                {
-                    throw new Exception("Unexpected Structure");
-                }
-                _mapStructure = (GameStatsStateMapStructure)mapStructure;
-                var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(_itemData.ItemTdbId) && v.Seed == _itemData.Header.ItemId);
-                _gameStatModifierData = statsData.FirstOrDefault()?.StatModifiers;
-                if (_gameStatModifierData != null)
-                {
-                    foreach (var modifier in _gameStatModifierData)
-                    {
-                        statsListBox.Items.Add(modifier);
-                    }
-                }
-                
+                _mapStructure = mapStructure as GameStatsStateMapStructure ?? throw new Exception("Unexpected Structure");
 
+                var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(SelectedPartTweakDbId) && v.Seed == SelectedPartSeed);
+                _gameStatModifierData = statsData.FirstOrDefault()?.StatModifiers;
+                if (_gameStatModifierData == null)
+                {
+                    return;
+                }
+
+                foreach (var modifier in _gameStatModifierData)
+                {
+                    statsSelect.Items.Add(new HandleWrapper(modifier));
+                }
+                statsSelect.SelectedIndex = 0;
             }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var part = (ItemData.ItemModData)partListBox.SelectedItem;
-            
-            
-        }
-
-        private void statsListBox_DoubleClick(object sender, EventArgs e)
-        {
-            if (statsListBox.SelectedItem != null)
+            var selected = partListBox.SelectedItem;
+            if (selected is string)
             {
-                var statsData = ((Handle<GameStatModifierData>)statsListBox.SelectedItem).Value;
-                var propEditor = new PropertyEditControl(statsData, _saveFile);
-                var editForm = new Form();
-                editForm.Controls.Add(propEditor);
-                editForm.AutoSize = true;
-                editForm.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                editForm.ShowDialog();
-
-                statsListBox.Items.Clear();
-                foreach (var modifier in _gameStatModifierData)
-                {
-                    statsListBox.Items.Add(modifier);
-                }
+                SelectedPartSeed = _itemData.Header.ItemId;
+                SelectedPartTweakDbId = _itemData.ItemTdbId;
             }
+            else if (selected is ItemData.ItemModData imd)
+            {
+                SelectedPartSeed = imd.Header.ItemId;
+                SelectedPartTweakDbId = imd.ItemTdbId;
+            }
+            FillStatsList();
         }
 
         private void addStatButton_Click(object sender, EventArgs e)
         {
-            statsListBox.Items.Clear();
+            statsSelect.Items.Clear();
+            editPanel.Controls.Clear();
             var stats = _gameStatModifierData.ToList();
             var statsData = _mapStructure.Values.Where(v => v.RecordID.Equals(_itemData.ItemTdbId)).FirstOrDefault();
 
@@ -125,8 +156,10 @@ namespace CyberCAT.Forms.Editor
             statsData.StatModifiers = _gameStatModifierData;
             foreach (var modifier in _gameStatModifierData)
             {
-                statsListBox.Items.Add(modifier);
+                statsSelect.Items.Add(new HandleWrapper(modifier));
             }
+
+            statsSelect.SelectedIndex = 0;
         }
 
         private void cbQuestItem_CheckedChanged(object sender, EventArgs e)
@@ -148,6 +181,35 @@ namespace CyberCAT.Forms.Editor
             else if (_itemData.Data is ItemData.ModableItemWithQuantityData miwqd)
             {
                 miwqd.Quantity = (uint)nudQuantity.Value;
+            }
+        }
+
+        private void statsSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (statsSelect.SelectedItem != null)
+            {
+                var wrapper = (HandleWrapper)statsSelect.SelectedItem;
+                var statsData = wrapper.Handle.Value;
+                var propEditor = new PropertyEditControl(statsData, _saveFile);
+                propEditor.AutoSize = true;
+                propEditor.Dock = DockStyle.Fill;
+                /*
+                var editForm = new Form();
+                editForm.Controls.Add(propEditor);
+                editForm.AutoSize = true;
+                editForm.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                editForm.ShowDialog();
+                */
+                editPanel.Controls.Clear();
+                editPanel.Controls.Add(propEditor);
+
+                /*
+                statsSelect.Items.Clear();
+                foreach (var modifier in _gameStatModifierData)
+                {
+                    statsSelect.Items.Add(new HandleWrapper(modifier));
+                }
+                */
             }
         }
     }

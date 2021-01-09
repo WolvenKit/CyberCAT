@@ -311,7 +311,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         {
             private TweakDbId _itemTdbId;
             private HeaderThing _header;
-            private string _unknownString;
+            private string _unknownString; // texture/color? https://discord.com/channels/717692382849663036/789565732726767636/797189862150897675
             private TweakDbId _attachmentSlotTdbId;
             private ObservableCollection<ItemModData> _children;
             private uint _unknown2;
@@ -464,6 +464,10 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
+                if (ItemTdbId.Id == 0)
+                {
+                    return $" {AttachmentSlotName} [empty]";
+                }
                 return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
             }
 

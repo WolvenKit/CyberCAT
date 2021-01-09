@@ -32,13 +32,14 @@ namespace CyberCAT.Forms.Editor
             this.lblItemName = new System.Windows.Forms.Label();
             this.partListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.statsListBox = new System.Windows.Forms.ListBox();
             this.addStatButton = new System.Windows.Forms.Button();
             this.lblGameName = new System.Windows.Forms.Label();
             this.cbQuestItem = new System.Windows.Forms.CheckBox();
             this.cbUnequippable = new System.Windows.Forms.CheckBox();
             this.nudQuantity = new System.Windows.Forms.NumericUpDown();
             this.lblQuantity = new System.Windows.Forms.Label();
+            this.statsSelect = new System.Windows.Forms.ComboBox();
+            this.editPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,10 +56,11 @@ namespace CyberCAT.Forms.Editor
             // 
             this.partListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.partListBox.Enabled = false;
             this.partListBox.FormattingEnabled = true;
             this.partListBox.Location = new System.Drawing.Point(6, 117);
             this.partListBox.Name = "partListBox";
-            this.partListBox.Size = new System.Drawing.Size(168, 186);
+            this.partListBox.Size = new System.Drawing.Size(245, 290);
             this.partListBox.TabIndex = 1;
             this.partListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -71,23 +73,13 @@ namespace CyberCAT.Forms.Editor
             this.label1.TabIndex = 2;
             this.label1.Text = "Parts";
             // 
-            // statsListBox
-            // 
-            this.statsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.statsListBox.FormattingEnabled = true;
-            this.statsListBox.Location = new System.Drawing.Point(180, 117);
-            this.statsListBox.Name = "statsListBox";
-            this.statsListBox.Size = new System.Drawing.Size(207, 160);
-            this.statsListBox.TabIndex = 3;
-            this.statsListBox.DoubleClick += new System.EventHandler(this.statsListBox_DoubleClick);
-            // 
             // addStatButton
             // 
-            this.addStatButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.addStatButton.Location = new System.Drawing.Point(313, 280);
+            this.addStatButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addStatButton.Enabled = false;
+            this.addStatButton.Location = new System.Drawing.Point(444, 383);
             this.addStatButton.Name = "addStatButton";
-            this.addStatButton.Size = new System.Drawing.Size(75, 23);
+            this.addStatButton.Size = new System.Drawing.Size(77, 23);
             this.addStatButton.TabIndex = 4;
             this.addStatButton.Text = "Add";
             this.addStatButton.UseVisualStyleBackColor = true;
@@ -158,22 +150,46 @@ namespace CyberCAT.Forms.Editor
             this.lblQuantity.TabIndex = 9;
             this.lblQuantity.Text = "Quantity";
             // 
+            // statsSelect
+            // 
+            this.statsSelect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.statsSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.statsSelect.Enabled = false;
+            this.statsSelect.FormattingEnabled = true;
+            this.statsSelect.Location = new System.Drawing.Point(257, 117);
+            this.statsSelect.Name = "statsSelect";
+            this.statsSelect.Size = new System.Drawing.Size(264, 21);
+            this.statsSelect.TabIndex = 10;
+            this.statsSelect.SelectedIndexChanged += new System.EventHandler(this.statsSelect_SelectedIndexChanged);
+            // 
+            // editPanel
+            // 
+            this.editPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.editPanel.Location = new System.Drawing.Point(257, 144);
+            this.editPanel.Name = "editPanel";
+            this.editPanel.Size = new System.Drawing.Size(264, 236);
+            this.editPanel.TabIndex = 11;
+            // 
             // ItemEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.editPanel);
+            this.Controls.Add(this.statsSelect);
             this.Controls.Add(this.lblQuantity);
             this.Controls.Add(this.nudQuantity);
             this.Controls.Add(this.cbUnequippable);
             this.Controls.Add(this.cbQuestItem);
             this.Controls.Add(this.lblGameName);
             this.Controls.Add(this.addStatButton);
-            this.Controls.Add(this.statsListBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.partListBox);
             this.Controls.Add(this.lblItemName);
             this.Name = "ItemEditorControl";
-            this.Size = new System.Drawing.Size(391, 321);
+            this.Size = new System.Drawing.Size(524, 427);
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -185,12 +201,13 @@ namespace CyberCAT.Forms.Editor
         private System.Windows.Forms.Label lblItemName;
         private System.Windows.Forms.ListBox partListBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox statsListBox;
         private System.Windows.Forms.Button addStatButton;
         private System.Windows.Forms.Label lblGameName;
         private System.Windows.Forms.CheckBox cbQuestItem;
         private System.Windows.Forms.CheckBox cbUnequippable;
         private System.Windows.Forms.NumericUpDown nudQuantity;
         private System.Windows.Forms.Label lblQuantity;
+        private System.Windows.Forms.ComboBox statsSelect;
+        private System.Windows.Forms.Panel editPanel;
     }
 }
