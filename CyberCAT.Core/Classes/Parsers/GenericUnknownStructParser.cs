@@ -629,14 +629,13 @@ namespace CyberCAT.Core.Classes.Parsers
             return ReadUnmappedFields(reader);
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer2, NodeEntry node)
         {
-            byte[] result;
             var data = (GenericUnknownStruct)node.Value;
 
-            using (var stream = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+                using (var writer = new BinaryWriter(ms))
                 {
                     GenericUnknownStruct.BaseClassEntry[] classList;
                     if (_doMapping)
@@ -743,29 +742,12 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write((int)dataListOffset);
                 }
 
-                result = stream.ToArray();
-            }
-
-            if (DEBUG)
-            {
-                File.WriteAllBytes($"C:\\Dev\\T1\\{node.Name}_new.bin", result);
-            }
-
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    writer.Write(result);
-                }
-                result = stream.ToArray();
+                writer2.Write(ms.ToArray());
             }
 
             _stringList = null;
 
             GC.Collect();
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
         }
 
         private GenericUnknownStruct.BaseClassEntry[] SetHandlesIndex(GenericUnknownStruct data)

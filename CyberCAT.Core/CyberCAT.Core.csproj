@@ -587,6 +587,7 @@
     <Compile Include="Classes\NodeRepresentations\StatsSystem.cs" />
     <Compile Include="Classes\NodeRepresentationWrappers\StatsSystemWrapper.cs" />
     <Compile Include="Classes\NodeRepresentations\NodeRepresentation.cs" />
+    <Compile Include="Classes\NodeWriter.cs" />
     <Compile Include="Classes\NotifyingObservableCollection.cs" />
     <Compile Include="Classes\Parsers\FactsDBParser.cs" />
     <Compile Include="Classes\Parsers\FactsTableParser.cs" />

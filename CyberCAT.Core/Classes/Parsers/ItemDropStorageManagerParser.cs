@@ -49,32 +49,18 @@ namespace CyberCAT.Core.Classes.Parsers
             return result;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (ItemDropStorageManager)node.Value;
-            using (var stream = new MemoryStream())
+
+            writer.Write(data.NumberOfItemDropStorages);
+
+            for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-                    writer.Write(data.NumberOfItemDropStorages);
-
-                    var parser = parsers.FirstOrDefault(p => p.ParsableNodeName == Constants.NodeNames.ITEM_DROP_STORAGE);
-                    Debug.Assert(parser != null);
-
-                    for (var i = 0; i < data.NumberOfItemDropStorages; ++i)
-                    {
-                        writer.Write(parser.Write(node.Children[i], parsers));
-                    }
-
-                    writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
+                writer.Write(node.Children[i]);
             }
 
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
+            writer.Write(data.TrailingBytes);
         }
     }
 }

@@ -138,42 +138,28 @@ namespace CyberCAT.Core.Classes.Parsers
             return nextItemEntry;
         }
 
-        public byte[] Write(NodeEntry node, List<INodeParser> parsers)
+        public void Write(NodeWriter writer, NodeEntry node)
         {
-            byte[] result;
             var data = (ItemData)node.Value;
-            using (var stream = new MemoryStream())
+
+            writer.Write(data.ItemTdbId);
+            WriteHeaderThing(writer, data.Header);
+
+            writer.Write(data.Flags.Raw);
+            writer.Write(data.CreationTime);
+
+            switch (data.Header.Kind)
             {
-                using (var writer = new BinaryWriter(stream, Encoding.ASCII))
-                {
-                    writer.Write(node.Id);
-
-                    writer.Write(data.ItemTdbId);
-                    WriteHeaderThing(writer, data.Header);
-
-                    writer.Write(data.Flags.Raw);
-                    writer.Write(data.CreationTime);
-
-                    switch (data.Header.Kind)
-                    {
-                        case 0:
-                            WriteModableItemWithQuantityData(writer, data.Data as ItemData.ModableItemWithQuantityData);
-                            break;
-                        case 1:
-                            WriteSimpleItemData(writer, data.Data as ItemData.SimpleItemData);
-                            break;
-                        case 2:
-                            WriteModableItemData(writer, data.Data as ItemData.ModableItemData);
-                            break;
-                    }
-
-                    //writer.Write(data.TrailingBytes);
-                }
-                result = stream.ToArray();
+                case 0:
+                    WriteModableItemWithQuantityData(writer, data.Data as ItemData.ModableItemWithQuantityData);
+                    break;
+                case 1:
+                    WriteSimpleItemData(writer, data.Data as ItemData.SimpleItemData);
+                    break;
+                case 2:
+                    WriteModableItemData(writer, data.Data as ItemData.ModableItemData);
+                    break;
             }
-
-            ParserUtils.UpdateNodeSize(node, result.Length);
-            return result;
         }
 
         public static void WriteHeaderThing(BinaryWriter writer, ItemData.HeaderThing data)
