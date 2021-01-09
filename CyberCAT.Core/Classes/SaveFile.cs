@@ -185,7 +185,6 @@ namespace CyberCAT.Core.Classes
                 }
                 Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
                 CalculateTrueSizes(Nodes, dataEnd);
-                ConnectNodeEvents(Nodes);
                 ParserUtils.ParseChildren(Nodes, reader, _parsers);
             }
         }
@@ -413,36 +412,6 @@ namespace CyberCAT.Core.Classes
                         currentNode.GetParent().TrailingSize = blobSize;
                     }
                 }
-            }
-        }
-
-        private void ConnectNodeEvents(List<NodeEntry> nodes)
-        {
-            foreach (var node in nodes)
-            {
-                // Register myself at the previous node
-                var prev = node.GetPreviousNode();
-                if (prev != null)
-                {
-                    prev.NodeSizeChanged += node.OnPreviousNodeSizeChanged;
-                    prev.NodeOffsetChanged += node.OnPreviousNodeOffsetChanged;
-                }
-
-                // I need to now if my parent offset changed, but only if I'm the first child
-                var parent = node.GetParent();
-                if (parent != null && node.IsFirstChild)
-                {
-                    parent.NodeOffsetChanged += node.OnParentNodeOffsetChanged;
-                }
-
-                // If I'm a child, I need to notify my parent if my size changes
-                if (parent != null)
-                {
-                    node.ChildSizeChanged += parent.OnChildSizeChanged;
-                }
-
-                // Do the same for my children
-                ConnectNodeEvents(node.Children);
             }
         }
 

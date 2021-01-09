@@ -75,5 +75,17 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 OnPropertyChanged(nameof(SubInventories));
             };
         }
+
+        /// <summary>
+        /// This method will add the specified item to the first inventory (the player inventory)
+        /// </summary>
+        /// <param name="item">The item that should be added</param>
+        public void AddItem(ItemData item)
+        {
+            SubInventories[0].Items.Add(item);
+            var node = new NodeEntry {Name = "itemData", Value = item};
+            Node.Children.Add(node);
+            item.Node = node;
+        }
     }
 }

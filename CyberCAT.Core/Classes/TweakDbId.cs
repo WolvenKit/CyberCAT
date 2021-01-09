@@ -125,11 +125,21 @@ namespace CyberCAT.Core.Classes
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Create a TweakDbId object based on a TweakDb name.
+        /// The NameResolver needs to be filled for this to work.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static TweakDbId FromName(string name)
         {
             return new TweakDbId {Raw64 = NameResolver.GetHash(name)};
         }
 
+        /// <summary>
+        /// Returns the TweakDbId representing None (Id 00000000:00).
+        /// This object can be modified afterwards as always a new object is returned.
+        /// </summary>
         public static TweakDbId None => new TweakDbId {Raw64 = 0};
 
         public TweakDbId Clone()

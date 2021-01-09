@@ -46,6 +46,7 @@ namespace CyberCAT.Core.Classes.Parsers
             Debug.Assert(readSize >= 0);
             result.TrailingBytes = reader.ReadBytes(readSize);
 
+            result.Node = node;
             return result;
         }
 

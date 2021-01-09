@@ -35,6 +35,7 @@ namespace CyberCAT.Core.Classes.Parsers
             result.HeaderBytes = reader.ReadBytes(25);
             result.Inventory = InventoryParser.ReadSubInventory(node, 0, reader, parsers);
 
+            result.Node = node;
             return result;
         }
 
@@ -44,7 +45,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             ParserUtils.WriteString(writer, data.UnknownString);
             writer.Write(data.HeaderBytes);
-            InventoryParser.WriteSubInventory(node, 0, writer, data.Inventory);
+            InventoryParser.WriteSubInventory(writer, data.Inventory);
         }
     }
 }
