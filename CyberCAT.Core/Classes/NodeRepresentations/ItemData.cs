@@ -347,6 +347,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
             public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
+            public string ItemGameNameDescription => string.IsNullOrEmpty(ItemGameName) ? ItemName : $"{ItemGameName} - {ItemGameDescription}";
+
             public HeaderThing Header
             {
                 get => _header;
@@ -635,6 +637,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public string ItemName => NameResolver.GetName(ItemTdbId);
         public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
         public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
+        public string ItemGameNameDescription => $"{ItemGameName} - {ItemGameDescription}";
 
         public HeaderThing Header
         {

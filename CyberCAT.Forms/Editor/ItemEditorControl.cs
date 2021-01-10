@@ -26,7 +26,7 @@ namespace CyberCAT.Forms.Editor
 
         private static readonly Random Random = new Random();
 
-        private static readonly List<TweakDbId> AttachmentSlots = new List<TweakDbId>
+        private static readonly List<TweakDbId> ClothingAttachmentSlots = new List<TweakDbId>
         {
             TweakDbId.FromName("AttachmentSlots.OuterChestFabricEnhancer1"),
             TweakDbId.FromName("AttachmentSlots.OuterChestFabricEnhancer2"),
@@ -54,7 +54,47 @@ namespace CyberCAT.Forms.Editor
             TweakDbId.FromName("AttachmentSlots.HeadFabricEnhancer4"),
         };
 
-        private static readonly List<ItemData.ItemModData> AddableMods = new List<ItemData.ItemModData>
+        private static readonly List<TweakDbId> WeaponAttachmentSlots = new List<TweakDbId>
+        {
+            TweakDbId.FromName("AttachmentSlots.Magazine"),
+            TweakDbId.FromName("AttachmentSlots.MagazineEmpty"),
+            TweakDbId.FromName("AttachmentSlots.Barrel"),
+            TweakDbId.FromName("AttachmentSlots.Receiver"),
+            TweakDbId.FromName("AttachmentSlots.IconicWeaponModLegendary"),
+            TweakDbId.FromName("AttachmentSlots.GenericWeaponMod1"),
+            TweakDbId.FromName("AttachmentSlots.GenericWeaponMod2"),
+            TweakDbId.FromName("AttachmentSlots.GenericWeaponMod3"),
+            TweakDbId.FromName("AttachmentSlots.GenericWeaponMod4"),
+
+            TweakDbId.FromName("AttachmentSlots.MeleeWeaponMod1"),
+            TweakDbId.FromName("AttachmentSlots.MeleeWeaponMod2"),
+            TweakDbId.FromName("AttachmentSlots.MeleeWeaponMod3"),
+            TweakDbId.FromName("AttachmentSlots.IconicMeleeWeaponMod1"),
+
+            TweakDbId.FromName("AttachmentSlots.TechWeaponMod1"),
+            TweakDbId.FromName("AttachmentSlots.TechWeaponMod2"),
+            TweakDbId.FromName("AttachmentSlots.TechWeaponMod3"),
+            TweakDbId.FromName("AttachmentSlots.TechWeaponModRare"),
+            TweakDbId.FromName("AttachmentSlots.TechWeaponModEpic"),
+            TweakDbId.FromName("AttachmentSlots.TechWeaponModLegendary"),
+
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponMod1"),
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponMod2"),
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponMod3"),
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponModRare"),
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponModEpic"),
+            TweakDbId.FromName("AttachmentSlots.PowerWeaponModLegendary"),
+
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponMod1"),
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponMod2"),
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponMod3"),
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponModRare"),
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponModEpic"),
+            TweakDbId.FromName("AttachmentSlots.SmartWeaponModLegendary"),
+
+        };
+
+        private static readonly List<ItemData.ItemModData> ClothingMods = new List<ItemData.ItemModData>
         {
             new ItemData.ItemModData // Armadilo
             {
@@ -173,6 +213,82 @@ namespace CyberCAT.Forms.Editor
                 Unknown4 = 2139095039,
                 UnknownString = "None",
             },
+            new ItemData.ItemModData // Coolit
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer01"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Antivenom
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer02"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Panacea
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer03"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // SuperInsulator
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer04"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Soft-Sole
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer05"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Cut-It-Out
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer06"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Predator
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer07"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Dead-Eye
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerfulFabricEnhancer08"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+        };
+
+        private static readonly List<ItemData.ItemModData> WeaponMods = new List<ItemData.ItemModData>
+        {
             new ItemData.ItemModData // Crunch
             {
                 ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod01"),
@@ -209,6 +325,105 @@ namespace CyberCAT.Forms.Editor
                 Unknown4 = 2139095039,
                 UnknownString = "None",
             },
+            new ItemData.ItemModData // Countermass
+            {
+                ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod11"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Pulverize
+            {
+                ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod12"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Weaken
+            {
+                ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod13"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Autoloader
+            {
+                ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod16"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Pax
+            {
+                ItemTdbId = TweakDbId.FromName("Items.SimpleWeaponMod17"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Knockdown
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod01"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Pulpify
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod02"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Focus
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod03"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Overpenetrate
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod04"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Stabilizer
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod05"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
+            new ItemData.ItemModData // Subsonic
+            {
+                ItemTdbId = TweakDbId.FromName("Items.PowerWeaponMod06"),
+                TdbId2 = TweakDbId.None,
+                Unknown2 = 0,
+                Unknown3 = 0,
+                Unknown4 = 2139095039,
+                UnknownString = "None",
+            },
         };
 
         public ItemEditorControl(object data, SaveFile saveFile)
@@ -219,8 +434,8 @@ namespace CyberCAT.Forms.Editor
             }
             InitializeComponent();
 
-            cbAttachmentSlot.DisplayMember = "Name";
-            cbMod.DisplayMember = "ItemGameName";
+            cbAttachmentSlot.DisplayMember = "NameWithoutGroup";
+            cbMod.DisplayMember = "ItemGameNameDescription";
 
             _saveFile = saveFile;
             _itemData = (ItemData)data;
@@ -250,11 +465,8 @@ namespace CyberCAT.Forms.Editor
                 btnDeleteMod.Enabled = true;
                 btnAddMod.Enabled = true;
                 cbAttachmentSlot.Enabled = true;
-                cbAttachmentSlot.Items.AddRange(AttachmentSlots.ToArray());
-                cbAttachmentSlot.SelectedItem = 0;
+                cbModListSelect.Enabled = true;
                 cbMod.Enabled = true;
-                cbMod.Items.AddRange(AddableMods.ToArray());
-                cbMod.SelectedIndex = 0;
 
                 FillPartsList(mid);
 
@@ -413,8 +625,12 @@ namespace CyberCAT.Forms.Editor
 
         private void btnAddMod_Click(object sender, EventArgs e)
         {
+            if (cbMod.SelectedItem == null || cbAttachmentSlot.SelectedItem == null)
+            {
+                return;
+            }
             var modToAdd = ((ItemData.ItemModData) cbMod.SelectedItem).Clone();
-            var slot = (TweakDbId) cbAttachmentSlot.SelectedItem;
+            var slot = ((TweakDbId) cbAttachmentSlot.SelectedItem).Clone();
 
             modToAdd.AttachmentSlotTdbId = slot;
             var bytes = new byte[4];
@@ -425,6 +641,7 @@ namespace CyberCAT.Forms.Editor
                 seed = BitConverter.ToUInt32(bytes, 0);
                 if (seed == 2)
                 {
+                    // Do not use the "simple item" seed
                     continue;
                 }
                 // Check if seed already in use
@@ -461,6 +678,48 @@ namespace CyberCAT.Forms.Editor
             mid.RootNode.Children.Remove(selectedMod);
 
             FillPartsList(mid);
+        }
+
+        private void cbModListSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = (string)cbModListSelect.SelectedItem;
+            cbMod.Items.Clear();
+            cbAttachmentSlot.Items.Clear();
+            switch (selected)
+            {
+                case "Clothing mods":
+                    cbMod.Items.AddRange(ClothingMods.ToArray());
+                    cbAttachmentSlot.Items.AddRange(ClothingAttachmentSlots.ToArray());
+                    break;
+                case "Weapon mods":
+                    cbMod.Items.AddRange(WeaponMods.ToArray());
+                    cbAttachmentSlot.Items.AddRange(WeaponAttachmentSlots.ToArray());
+                    break;
+            }
+            AdjustComboBoxDropDownWidth(cbMod);
+            AdjustComboBoxDropDownWidth(cbAttachmentSlot);
+            cbMod.SelectedIndex = 0;
+            cbAttachmentSlot.SelectedIndex = 0;
+        }
+
+        private void AdjustComboBoxDropDownWidth(ComboBox cb)
+        {
+            var width = 0;
+            var g = cb.CreateGraphics();
+            var f = cb.Font;
+            var scrollBarWidth = cb.Items.Count > cb.MaxDropDownItems ? SystemInformation.VerticalScrollBarWidth : 0;
+            var prop = cb.DisplayMember;
+            foreach (var i in cb.Items)
+            {
+                var s = string.IsNullOrEmpty(prop) ? i.ToString() : i.GetType().GetProperty(prop)?.GetMethod.Invoke(i, new object[0]) as string;
+                var newWidth = (int)Math.Ceiling(g.MeasureString(s, f).Width + scrollBarWidth);
+                if (width < newWidth)
+                {
+                    width = newWidth;
+                }
+            }
+
+            cb.DropDownWidth = width;
         }
     }
 }

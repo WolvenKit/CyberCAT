@@ -111,6 +111,14 @@ namespace CyberCAT.Core.Classes
         }
 
         public string Name => NameResolver.GetName(this);
+        public string NameWithoutGroup
+        {
+            get
+            {
+                var split = Name.Split('.');
+                return split[split.Length - 1];
+            }
+        }
 
         public override string ToString()
         {
