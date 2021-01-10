@@ -247,6 +247,8 @@ namespace CyberCAT.Forms.Editor
                 partListBox.Enabled = true;
                 statsSelect.Enabled = true;
                 addStatButton.Enabled = true;
+                btnDeleteMod.Enabled = true;
+                btnAddMod.Enabled = true;
                 cbAttachmentSlot.Enabled = true;
                 cbAttachmentSlot.Items.AddRange(AttachmentSlots.ToArray());
                 cbAttachmentSlot.SelectedItem = 0;
@@ -435,6 +437,28 @@ namespace CyberCAT.Forms.Editor
 
             var mid = (ItemData.ModableItemData) _itemData.Data;
             mid.RootNode.Children.Add(modToAdd);
+
+            FillPartsList(mid);
+        }
+
+        private void btnDeleteMod_Click(object sender, EventArgs e)
+        {
+            var mid = (ItemData.ModableItemData)_itemData.Data;
+
+            if (!(partListBox.SelectedItem is ItemData.ItemModData))
+            {
+                return;
+            }
+
+            var selectedMod = (ItemData.ItemModData)partListBox.SelectedItem;
+
+            if (selectedMod == mid.RootNode)
+            {
+                MessageBox.Show("Root node cannot be removed!");
+                return;
+            }
+
+            mid.RootNode.Children.Remove(selectedMod);
 
             FillPartsList(mid);
         }
