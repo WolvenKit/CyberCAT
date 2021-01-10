@@ -77,6 +77,8 @@ namespace CyberCAT.Core
         public static class NodeNames
         {
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
+            public const string DYNAMIC_ENTITYID_SYSTEM = "DynamicEntityIDSystem";
+            public const string PERSISTENCY_SYSTEM = "PersistencySystem";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
             public const string ITEM_DROP_STORAGE = "ItemDropStorage";

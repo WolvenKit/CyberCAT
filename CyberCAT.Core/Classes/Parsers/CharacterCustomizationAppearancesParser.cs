@@ -95,7 +95,7 @@ namespace CyberCAT.Core.Classes.Parsers
             }
 
             // Only when SaveVersion > 171
-            var scount = ParserUtils.ReadPackedLong(reader);
+            var scount = ParserUtils.ReadPackedInt(reader);
             for (var i = 0; i < scount; ++i)
             {
                 result.Strings.Add(ParserUtils.ReadString(reader));
@@ -195,7 +195,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
 
                 // Only when SaveVersion > 171
-                ParserUtils.WritePackedLong(writer, data.Strings.Count);
+                ParserUtils.WritePackedInt(writer, data.Strings.Count);
                 foreach (var s in data.Strings)
                 {
                     ParserUtils.WriteString(writer, s);

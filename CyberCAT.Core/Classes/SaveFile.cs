@@ -130,7 +130,7 @@ namespace CyberCAT.Core.Classes
                 LastBlockOffset = reader.ReadInt32();
                 reader.BaseStream.Seek(LastBlockOffset, SeekOrigin.Begin);
                 string edonMagic = reader.ReadString(4);
-                var length = ParserUtils.ReadPackedLong(reader);
+                var length = ParserUtils.ReadPackedInt(reader);
                 for (int i = 0; i < length; i++)
                 {
                     var name = ParserUtils.ReadString(reader);

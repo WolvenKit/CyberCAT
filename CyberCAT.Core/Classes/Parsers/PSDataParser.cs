@@ -14,14 +14,14 @@ namespace CyberCAT.Core.Classes.Parsers
         public PSDataParser()
         {
             ParsableNodeName = Constants.NodeNames.PS_DATA;
-            DisplayName = "PS Data Parser";
+            DisplayName = "Persistency System Data Parser";
             Guid = Guid.Parse("{2D4A30D4-C2D9-4ED5-A0CA-2457B2DF228B}");
         }
 
         public new object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             //var result = base.ReadWithMapping(node, reader, parsers);
-            var result = base.ReadWithMapping(node, reader, parsers);
+            var result = base.Read(node, reader, parsers);
 
             return result;
         }

@@ -11,13 +11,13 @@ namespace CyberCAT.Core.Classes.Parsers
     {
         public static string ReadString(BinaryReader reader)
         {
-            var length = ReadPackedLong(reader);
-            return reader.ReadString((int)-length);
+            var length = ReadPackedInt(reader);
+            return reader.ReadString(-length);
         }
 
         public static int WriteString(BinaryWriter writer, string s)
         {
-            WritePackedLong(writer, -s.Length);
+            WritePackedInt(writer, -s.Length);
             writer.Write(Encoding.ASCII.GetBytes(s));
             return 1 + Encoding.ASCII.GetBytes(s).Length;
         }
@@ -44,10 +44,10 @@ namespace CyberCAT.Core.Classes.Parsers
         }
 
         // a 1:1 copy of PixelRicks cpp implementation, could probably be better...
-        public static long ReadPackedLong(BinaryReader reader)
+        public static int ReadPackedInt(BinaryReader reader)
         {
             var a = reader.ReadSByte();
-            long ret = a & 0x3F;
+            int ret = a & 0x3F;
             var sign = (a & 0x80) == 0x00;
 
             if ((a & 0x40) == 0x40)
@@ -77,7 +77,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return sign ? ret : -ret;
         }
 
-        public static void WritePackedLong(BinaryWriter writer, long value)
+        public static void WritePackedInt(BinaryWriter writer, int value)
         {
             var packed = new byte[5];
             var cnt = 1;
