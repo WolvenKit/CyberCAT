@@ -2,7 +2,7 @@
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
-    public class PersistencySystem
+    public class PersistencySystem : NodeRepresentation
     {
         public List<uint> Unk_HashList { get; set; }
 

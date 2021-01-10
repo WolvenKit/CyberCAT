@@ -13,6 +13,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] Unknown1 { get; set; }
         public uint Unknown2 { get; set; }
         public byte[] Unknown3 { get; set; }
+
+        // list of FNV1A64 hashes of the classes
         public ulong[] CNameHashes1 { get; set; }
         public BaseClassEntry[] ClassList { get; set; }
         public ulong[] CNameHashes2 { get; set; }

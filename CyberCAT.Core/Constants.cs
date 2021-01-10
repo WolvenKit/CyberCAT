@@ -79,6 +79,11 @@ namespace CyberCAT.Core
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
             public const string DYNAMIC_ENTITYID_SYSTEM = "DynamicEntityIDSystem";
             public const string PERSISTENCY_SYSTEM = "PersistencySystem";
+            public const string C_COVER_MANAGER = "CCoverManager";
+            public const string WORKSPOT_INSTANCES_SAVEDATA = "WorkspotInstancesSavedata";
+            public const string PLAYER_SYSTEM = "PlayerSystem";
+            public const string C_ATTITUDE_MANAGER = "CAttitudeManager";
+            public const string COMMUNITY_SYSTEM = "CommunitySystem";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
             public const string ITEM_DROP_STORAGE = "ItemDropStorage";
