@@ -182,8 +182,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
+        public interface IItemWithQuantity
+        {
+            uint Quantity { get; set; }
+        }
+
         [JsonObject]
-        public class SimpleItemData : ItemInnerData
+        public class SimpleItemData : ItemInnerData, IItemWithQuantity
         {
             private uint _quantity;
 
@@ -292,7 +297,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         }
 
         [JsonObject]
-        public class ModableItemWithQuantityData : ModableItemData
+        public class ModableItemWithQuantityData : ModableItemData, IItemWithQuantity
         {
             private uint _quantity;
 
@@ -638,6 +643,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
         public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
         public string ItemGameNameDescription => $"{ItemGameName} - {ItemGameDescription}";
+        public string ItemGameNameOrName => string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : ItemGameName;
 
         public HeaderThing Header
         {
