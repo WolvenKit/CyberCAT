@@ -14,7 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using CyberCAT.Core.Classes;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using Path = System.IO.Path;
 
 namespace CyberCAT.Wpf
@@ -22,12 +24,19 @@ namespace CyberCAT.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         private SaveFile LoadedSaveFile { get; set; }
+
+        private const string NAMES_FILE_NAME = "Names.json";
         public MainWindow()
         {
             InitializeComponent();
+
+            if (File.Exists(NAMES_FILE_NAME))
+            {
+                NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+            }
         }
 
         private static string OpenSaveFileDialog(bool startInSaveFolder)
@@ -86,7 +95,10 @@ namespace CyberCAT.Wpf
             catch (Exception exception)
             {
                 MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
             }
+
+            InitializeEditors();
         }
 
         private void OpenPs4OnClick(object sender, RoutedEventArgs e)
@@ -109,7 +121,10 @@ namespace CyberCAT.Wpf
             catch (Exception exception)
             {
                 MessageBox.Show($"Error reading file: {exception.Message}");
+                return;
             }
+
+            InitializeEditors();
         }
 
         private void SavePcOnClick(object sender, RoutedEventArgs e)
@@ -130,6 +145,11 @@ namespace CyberCAT.Wpf
             {
                 File.WriteAllBytes(fileName, LoadedSaveFile.SaveToPS4SaveFile());
             }
+        }
+
+        private void InitializeEditors()
+        {
+            SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
         }
     }
 }

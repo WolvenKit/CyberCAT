@@ -1,4 +1,4 @@
-﻿<Window
+﻿<mah:MetroWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CyberCAT.Wpf"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280" >
+        Title="CyberCAT" Height="720" Width="1280" >
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -64,14 +64,7 @@
                 <Grid >
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" />
                     <TabControl  TabStripPlacement="Left">
-
-                        <TabItem Header="Items" >
-                            <Grid>
-                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
-                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Item Editor Here" FontSize="36"/>
-                                </Border>
-                            </Grid>
-                        </TabItem>
+                        <TabItem Header="Items" Name="SimpleItemsTab" />
                         <TabItem Header="Appearance" >
                             <Grid>
                                 <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
@@ -94,7 +87,6 @@
                             </Grid>
                         </TabItem>
                     </TabControl>
-
                 </Grid>
             </TabItem>
             <TabItem Header="Quick Actions" >
@@ -114,4 +106,4 @@
         </TabControl>
         <Label Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"/>
     </Grid>
-</Window>
+</mah:MetroWindow>
