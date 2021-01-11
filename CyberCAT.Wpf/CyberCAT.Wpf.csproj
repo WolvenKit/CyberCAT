@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Licenses\Be.Windows.Forms.HexBox.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

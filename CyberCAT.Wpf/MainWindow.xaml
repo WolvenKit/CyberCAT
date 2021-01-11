@@ -7,35 +7,41 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" >
-    <Grid>
-        <Menu HorizontalAlignment="Stretch" Height="30" Margin="0"   VerticalAlignment="Top" >
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Menu HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Grid.Row="0">
             <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Open-->
                 <MenuItem.Header>
                     <TextBlock Text="OPEN" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
-
                 </MenuItem.Header>
-                <MenuItem>
+                <MenuItem Click="OpenPcOnClick">
                     <MenuItem.Header>
                         <TextBlock Text="OPEN PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem Click="OpenPs4OnClick">
                     <MenuItem.Header>
                         <TextBlock Text="OPEN PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
             </MenuItem>
-
             <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Save-->
                 <MenuItem.Header>
                     <TextBlock Text="SAVE" Margin="0" Height="20" Padding="0" TextAlignment="Center" />
                 </MenuItem.Header>
-                <MenuItem>
+                <MenuItem Click="SavePcOnClick">
                     <MenuItem.Header>
                         <TextBlock Text="SAVE PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem Click="SavePs4OnClick">
                     <MenuItem.Header>
                         <TextBlock Text="SAVE PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
@@ -53,7 +59,7 @@
                 </StackPanel>
             </MenuItem>
         </Menu>
-        <TabControl Margin="1,30,1,1">
+        <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1">
             <TabItem Header="Simple">
                 <Grid >
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" />
@@ -106,5 +112,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Label Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"/>
     </Grid>
 </Window>
