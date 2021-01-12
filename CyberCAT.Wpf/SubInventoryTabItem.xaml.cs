@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using MahApps.Metro.Controls;
 
@@ -20,8 +21,10 @@ namespace CyberCAT.Wpf
     /// </summary>
     public partial class SubInventoryTabItem : MetroTabItem
     {
-        public SubInventoryTabItem(Inventory.SubInventory subInventory)
+        public SaveFile SaveFile { get; }
+        public SubInventoryTabItem(Inventory.SubInventory subInventory, SaveFile saveFile)
         {
+            SaveFile = saveFile;
             InitializeComponent();
             Header = $"{subInventory.InventoryId:X}";
             Items.ItemsSource = subInventory.Items;

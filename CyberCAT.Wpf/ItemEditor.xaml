@@ -8,13 +8,14 @@
              x:Name="This"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
-        <Binding ElementName="This"></Binding>
+        <Binding ElementName="This" />
     </UserControl.DataContext>
     <Grid>
         <Grid Margin="10,0,10,0" Visibility="{Binding ControlVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="45" />
                 <RowDefinition Height="30" />
+                <RowDefinition Height="55" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -51,6 +52,53 @@
                     <Label Content="Is Not Unequippable" Target="{Binding ElementName=NotUnequippableCheckBox}" />
                 </StackPanel>
             </StackPanel>
+            <Grid Name="ModableItemActions" Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsModableItem}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="110" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Mods"/>
+                    <Border Grid.Row="1" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Padding="5"  Margin="0,0,0,5">
+                        <ListBox Name="ModsListBox" ItemsSource="{Binding Path=ModableItem.RootNode.Children}" DisplayMemberPath="ItemGameNameDescription" />
+                    </Border>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35" />
+                            <RowDefinition Height="35" />
+                            <RowDefinition Height="35" />
+                        </Grid.RowDefinitions>
+                        <ComboBox Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Name="ModCategory" ItemsSource="{Binding Path=ModCategories}" SelectionChanged="OnModCategoryChanged" Margin="2.55" />
+                        <ComboBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Name="ModToAdd" ItemsSource="{Binding Path=AddableMods}" DisplayMemberPath="ItemGameNameDescription" Margin="2.5" />
+                        <Label Grid.Column="0" Grid.Row="1" Content="Insert into slot" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                        <ComboBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Name="IntoAttachmentSlot" ItemsSource="{Binding Path=AttachmentSlots}" DisplayMemberPath="NameWithoutGroup" Margin="2.5" />
+                        <Button Grid.Column="0" Grid.Row="2" Margin="2.5" Click="OnAddModClicked" Content="Add mod" />
+                        <Button Grid.Column="1" Grid.Row="2" Margin="2.5" Click="OnDeleteModClicked" Content="Delete selected mod" />
+                    </Grid>
+                </Grid>
+            </Grid>
         </Grid>
         <Label Content="Select an item" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding SelectTextVisibility}" />
     </Grid>

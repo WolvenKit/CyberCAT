@@ -19,8 +19,10 @@ namespace CyberCAT.Wpf
 {
     public partial class InventoryViewer : UserControl
     {
+        public SaveFile SaveFile { get; set; }
         public InventoryViewer(SaveFile saveFile)
         {
+            SaveFile = saveFile;
             InitializeComponent();
 
             var inventoryNode = saveFile.Nodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.INVENTORY);
@@ -39,7 +41,7 @@ namespace CyberCAT.Wpf
 
         private void CreateSubInventoryTabPage(Inventory.SubInventory subInventory)
         {
-            InventoryTabControl.Items.Add(new SubInventoryTabItem(subInventory));
+            InventoryTabControl.Items.Add(new SubInventoryTabItem(subInventory, SaveFile));
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -13,8 +15,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CyberCAT.Core;
 using CyberCAT.Core.Annotations;
+using CyberCAT.Core.Classes;
+using CyberCAT.Core.Classes.DumpedClasses;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Wpf.Classes;
+using Microsoft.Xaml.Behaviors.Core;
 
 namespace CyberCAT.Wpf
 {
@@ -25,12 +32,31 @@ namespace CyberCAT.Wpf
     {
         private ItemData _item;
 
+        public SaveFile SaveFile
+        {
+            get => (SaveFile)GetValue(SaveFileProperty);
+            set => SetValue(SaveFileProperty, value);
+        }
+        public static readonly DependencyProperty SaveFileProperty = DependencyProperty.Register("SaveFile", typeof(SaveFile), typeof(ItemEditor), new PropertyMetadata(null));
+
         public ItemData Item
         {
             get => _item;
             set
             {
                 _item = value;
+                if (_item != null && SaveFile != null)
+                {
+                    var statsNode = SaveFile.Nodes.FirstOrDefault(n => n.Name == Constants.NodeNames.STATS_SYSTEM);
+                    if (statsNode == null)
+                    {
+                        _mapStructure = null;
+                        return;
+                    }
+                    var rootData = (GenericUnknownStruct)statsNode.Value;
+                    var mapStructure = rootData.ClassList[0];
+                    _mapStructure = mapStructure as GameStatsStateMapStructure ?? throw new Exception("Unexpected Structure");
+                }
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ControlVisibility));
                 OnPropertyChanged(nameof(SelectTextVisibility));
@@ -56,6 +82,9 @@ namespace CyberCAT.Wpf
         public ItemEditor()
         {
             InitializeComponent();
+            ModCategory.SelectedIndex = 0;
+            ModToAdd.SelectedIndex = 0;
+            IntoAttachmentSlot.SelectedIndex = 0;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -65,5 +94,88 @@ namespace CyberCAT.Wpf
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #region "Item mod handling"
+        public ObservableCollection<string> ModCategories { get; } = new ObservableCollection<string>
+        {
+            "Clothing mods",
+            "Weapon mods",
+        };
+
+        public List<ItemData.ItemModData> AddableMods { get; set; } = TweakDb.ClothingMods;
+        public List<TweakDbId> AttachmentSlots { get; set; } = TweakDb.ClothingAttachmentSlots;
+
+        private static readonly Random Random = new Random();
+
+        private GameStatsStateMapStructure _mapStructure;
+
+        public void OnModCategoryChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = (string)ModCategory.SelectedItem;
+            AddableMods = selected switch
+            {
+                "Clothing mods" => TweakDb.ClothingMods,
+                "Weapon mods" => TweakDb.WeaponMods,
+                _ => AddableMods
+            };
+            AttachmentSlots = selected switch
+            {
+                "Clothing mods" => TweakDb.ClothingAttachmentSlots,
+                "Weapon mods" => TweakDb.WeaponAttachmentSlots,
+                _ => AttachmentSlots
+            };
+            OnPropertyChanged(nameof(AddableMods));
+            OnPropertyChanged(nameof(AttachmentSlots));
+            ModToAdd.SelectedIndex = 0;
+            IntoAttachmentSlot.SelectedIndex = 0;
+        }
+
+        public void OnAddModClicked(object sender, RoutedEventArgs e)
+        {
+            if (!IsModableItem)
+            {
+                // Not a modable item, there should not even be a button.
+                return;
+            }
+
+            if (ModToAdd.SelectedItem == null || IntoAttachmentSlot.SelectedItem == null)
+            {
+                return;
+            }
+            var modToAdd = ((ItemData.ItemModData)ModToAdd.SelectedItem).Clone();
+            var slot = ((TweakDbId)IntoAttachmentSlot.SelectedItem).Clone();
+
+            modToAdd.AttachmentSlotTdbId = slot;
+            var bytes = new byte[4];
+            uint seed;
+            while (true)
+            {
+                Random.NextBytes(bytes);
+                seed = BitConverter.ToUInt32(bytes, 0);
+                if (seed == 2)
+                {
+                    // Do not use the "simple item" seed
+                    continue;
+                }
+                // Check if seed already in use
+                if (_mapStructure.Values.FirstOrDefault(_ => _.Seed == seed) == null)
+                {
+                    break;
+                }
+            }
+            modToAdd.Header.Seed = seed;
+
+            ModableItem.RootNode.Children.Add(modToAdd);
+        }
+
+        public void OnDeleteModClicked(object sender, RoutedEventArgs e)
+        {
+            if (!IsModableItem)
+            {
+                // Not a modable item, there should not even be a button.
+                return;
+            }
+        }
+        #endregion
     }
 }
