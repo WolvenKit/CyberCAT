@@ -89,6 +89,14 @@ namespace CyberCAT.Core
             public const string CONTAINER_MANAGER_LOOT_SLOT_AVAILABILITY = "ContainerManager_LootSlotAvailability";
             public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER2 = "ContainerManager_NPCLootBags_Ver2";
             public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER3_LOOTED_IDS = "ContainerManager_NPCLootBags_Ver3_LootedIDs";
+            public const string DEVICE_SYSTEM = "DeviceSystem";
+            public const string DS_DYNAMIC_CONNECTIONS = "DS_DynamicConnections";
+            public const string GAME_AUDIO = "GameAudio";
+            public const string QUEST_MUSIC_HISTORY = "QuestMusicHistory";
+            public const string MUSIC_SYSTEM = "MusicSystem";
+            public const string DIRECTOR_SYSTEM = "DirectorSystem";
+            public const string RADIO_SYSTEM = "RadioSystem";
+            public const string UNIQUE_ITEM_COUNTER = "UniqueItemCounter";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
             public const string JOURNAL_MANAGER = "JournalManager";
@@ -106,6 +114,8 @@ namespace CyberCAT.Core
             public const string RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM = "RenderGameplayEffectsManagerSystem";
             public const string PS_DATA = "PSData";
             public const string SCANNING_CONTROLLER = "scanningController";
+
+            public const string QUEST_DEBUG_LOG_MANAGER = "questDebugLogManager";
         }
         public static class Numbers
         {

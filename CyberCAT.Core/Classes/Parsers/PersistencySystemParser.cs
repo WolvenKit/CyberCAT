@@ -48,7 +48,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 writer.Write(id);
             }
 
-            writer.Write(node.Children[0]);
+            foreach (var child in node.Children)
+            {
+                writer.Write(child);
+            }
         }
     }
 }
