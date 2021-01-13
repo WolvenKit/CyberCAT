@@ -18,6 +18,7 @@ using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Path = System.IO.Path;
+using CyberCAT.Wpf.Classes;
 
 namespace CyberCAT.Wpf
 {
@@ -150,6 +151,13 @@ namespace CyberCAT.Wpf
         private void InitializeEditors()
         {
             SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
+            foreach (var file in Directory.GetFiles("QuickActions", "*.json"))
+            {
+                var action = JsonConvert.DeserializeObject<QuickAction>(File.ReadAllText(file));
+                action.CompileScript(LoadedSaveFile);
+                var scriptTile = new ScriptTile(action, LoadedSaveFile);
+                quickActionWrapPanel.Children.Add(scriptTile);
+            }
         }
     }
 }

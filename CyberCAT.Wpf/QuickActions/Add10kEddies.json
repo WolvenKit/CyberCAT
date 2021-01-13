@@ -1,0 +1,6 @@
+{
+  "Script": "using CyberCAT.Core; using CyberCAT.Core.Classes; using CyberCAT.Core.Classes.NodeRepresentations; using System.Linq; using static CyberCAT.Core.Classes.NodeRepresentations.ItemData; class Add10KMoney { public void Execute(SaveFile saveFile) { var inventoryNode = saveFile.Nodes.Where(n => n.Name == Constants.NodeNames.INVENTORY).FirstOrDefault(); var inventory = (Inventory)inventoryNode.Value; var eddieData = (SimpleItemData)inventory.SubInventories.Where(si => si.InventoryId == 1).FirstOrDefault().Items.Where(i => i.ItemTdbId.Name == \"Items.money\").FirstOrDefault().Data; eddieData.Quantity += 10000; } }",
+  "DisplayName": "Add10K Eddies",
+  "ClassName": "Add10KMoney",
+  "Icon": "Icon"
+}

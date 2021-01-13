@@ -92,7 +92,7 @@
             <TabItem Header="Quick Actions" >
                 <Grid>
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quick Actions here" FontSize="36"/>
+                        <WrapPanel Name="quickActionWrapPanel" />
                     </Border>
                 </Grid>
             </TabItem>
