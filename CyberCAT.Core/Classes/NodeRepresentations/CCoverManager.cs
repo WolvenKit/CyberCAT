@@ -4,11 +4,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class CCoverManager : NodeRepresentation
     {
-        public List<CCoverManagerEntry> CCoverManagerEntries { get; set; }
+        public List<CCoverManagerEntry> Entries { get; set; }
 
         public CCoverManager()
         {
-            CCoverManagerEntries = new List<CCoverManagerEntry>();
+            Entries = new List<CCoverManagerEntry>();
         }
 
         public class CCoverManagerEntry

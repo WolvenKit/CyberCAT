@@ -34,8 +34,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 entry.Unk_EntityHash = reader.ReadUInt64();
                 entry.Unknown3 = reader.ReadByte();
 
-                result.CCoverManagerEntries.Add(entry);
+                result.Entries.Add(entry);
             }
+
+            result.Node = node;
 
             return result;
         }
@@ -44,8 +46,8 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (CCoverManager)node.Value;
 
-            writer.Write(data.CCoverManagerEntries.Count);
-            foreach (var entry in data.CCoverManagerEntries)
+            writer.Write(data.Entries.Count);
+            foreach (var entry in data.Entries)
             {
                 writer.Write(entry.Unk_Hash1);
                 writer.Write(entry.Unk_EntityHash);

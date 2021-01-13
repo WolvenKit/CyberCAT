@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    public class CommunitySystemParser : INodeParser
+    public class ContainerManagerParser : INodeParser
     {
         public string ParsableNodeName { get; }
 
@@ -15,27 +14,30 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public Guid Guid { get; }
 
-        public CommunitySystemParser()
+        public ContainerManagerParser()
         {
-            ParsableNodeName = Constants.NodeNames.COMMUNITY_SYSTEM;
-            DisplayName = "Community System Parser";
-            Guid = Guid.Parse("{03503150-83D2-46E0-B8FD-F5C3DAA031E1}");
+            ParsableNodeName = Constants.NodeNames.CONTAINER_MANAGER;
+            DisplayName = "Container Manager Parser";
+            Guid = Guid.Parse("{57857253-87D6-43E1-A80B-75C2A18E0717}");
         }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            var result = new CommunitySystem();
+            var result = new ContainerManager();
 
             reader.Skip(4); // Skip Id
             var entryCount = reader.ReadUInt32();
             for (int i = 0; i < entryCount; i++)
             {
-                result.Unk_HashList.Add(reader.ReadUInt64());
+                var entry = new ContainerManager.Entry();
+
+                entry.CNameHash = reader.ReadUInt64();
+                entry.Unknown1 = reader.ReadUInt16();
+
+                result.Entries.Add(entry);
             }
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            Debug.Assert(readSize > 0);
-            result.TrailingBytes = reader.ReadBytes(readSize);
 
             result.Node = node;
 
@@ -44,14 +46,14 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public void Write(NodeWriter writer, NodeEntry node)
         {
-            var data = (CommunitySystem)node.Value;
+            var data = (ContainerManager)node.Value;
 
-            writer.Write(data.Unk_HashList.Count);
-            foreach (var entry in data.Unk_HashList)
+            writer.Write(data.Entries.Count);
+            foreach (var entry in data.Entries)
             {
-                writer.Write(entry);
+                writer.Write(entry.CNameHash);
+                writer.Write(entry.Unknown1);
             }
-            writer.Write(data.TrailingBytes);
         }
     }
 }

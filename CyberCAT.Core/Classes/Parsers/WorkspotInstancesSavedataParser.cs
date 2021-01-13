@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public WorkspotInstancesSavedataParser()
         {
             ParsableNodeName = Constants.NodeNames.WORKSPOT_INSTANCES_SAVEDATA;
-            DisplayName = "Workspot Instances Savedata";
+            DisplayName = "Workspot Instances Savedata Parser";
             Guid = Guid.Parse("{32DEE625-83AE-443B-9DD5-780F336054AF}");
         }
 
@@ -34,8 +34,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 entry.Unk_EntityHash = reader.ReadUInt64();
                 entry.Unknown3 = reader.ReadByte();
 
-                result.WorkspotInstancesSavedataEntries.Add(entry);
+                result.Entries.Add(entry);
             }
+
+            result.Node = node;
 
             return result;
         }
@@ -44,8 +46,8 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (WorkspotInstancesSavedata)node.Value;
 
-            writer.Write(data.WorkspotInstancesSavedataEntries.Count);
-            foreach (var entry in data.WorkspotInstancesSavedataEntries)
+            writer.Write(data.Entries.Count);
+            foreach (var entry in data.Entries)
             {
                 writer.Write(entry.Unk_Hash1);
                 writer.Write(entry.Unk_EntityHash);

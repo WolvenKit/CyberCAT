@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Parsers
 {
-    public class CommunitySystemParser : INodeParser
+    public class ContainerManagerNPCLootBagsVer3LootedIDsParser : INodeParser
     {
         public string ParsableNodeName { get; }
 
@@ -15,27 +14,25 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public Guid Guid { get; }
 
-        public CommunitySystemParser()
+        public ContainerManagerNPCLootBagsVer3LootedIDsParser()
         {
-            ParsableNodeName = Constants.NodeNames.COMMUNITY_SYSTEM;
-            DisplayName = "Community System Parser";
-            Guid = Guid.Parse("{03503150-83D2-46E0-B8FD-F5C3DAA031E1}");
+            ParsableNodeName = Constants.NodeNames.CONTAINER_MANAGER_NPC_LOOT_BAGS_VER3_LOOTED_IDS;
+            DisplayName = "Containe rManager NPC Loot Bags Ver3 Looted IDs Parser";
+            Guid = Guid.Parse("{4F842300-F184-4F50-986A-47D1CCE074D3}");
         }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
-            var result = new CommunitySystem();
+            var result = new ContainerManagerNPCLootBagsVer3LootedIDs();
 
             reader.Skip(4); // Skip Id
-            var entryCount = reader.ReadUInt32();
+            var entryCount = ParserUtils.ReadPackedInt(reader);
             for (int i = 0; i < entryCount; i++)
             {
-                result.Unk_HashList.Add(reader.ReadUInt64());
+                result.EntityIds.Add(reader.ReadUInt64());
             }
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
-            Debug.Assert(readSize > 0);
-            result.TrailingBytes = reader.ReadBytes(readSize);
 
             result.Node = node;
 
@@ -44,14 +41,13 @@ namespace CyberCAT.Core.Classes.Parsers
 
         public void Write(NodeWriter writer, NodeEntry node)
         {
-            var data = (CommunitySystem)node.Value;
+            var data = (ContainerManagerNPCLootBagsVer3LootedIDs)node.Value;
 
-            writer.Write(data.Unk_HashList.Count);
-            foreach (var entry in data.Unk_HashList)
+            ParserUtils.WritePackedInt(writer, data.EntityIds.Count);
+            foreach (var entityId in data.EntityIds)
             {
-                writer.Write(entry);
+                writer.Write(entityId);
             }
-            writer.Write(data.TrailingBytes);
         }
     }
 }

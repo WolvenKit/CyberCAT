@@ -33,6 +33,8 @@ namespace CyberCAT.Core.Classes.Parsers
 
             ParserUtils.ParseChildren(node.Children, reader, parsers);
 
+            result.Node = node;
+
             return result;
         }
 

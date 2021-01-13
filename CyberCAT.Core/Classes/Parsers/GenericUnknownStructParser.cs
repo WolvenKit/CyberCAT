@@ -191,6 +191,8 @@ namespace CyberCAT.Core.Classes.Parsers
 
             _stringList = null;
 
+            result.Node = node;
+
             return result;
         }
 

@@ -2,11 +2,11 @@
 
 namespace CyberCAT.Core.Classes.NodeRepresentations
 {
-    public class ContainerManager : NodeRepresentation
+    public class ContainerManagerLootSlotAvailability : NodeRepresentation
     {
         public List<Entry> Entries { get; set; }
 
-        public ContainerManager()
+        public ContainerManagerLootSlotAvailability()
         {
             Entries = new List<Entry>();
         }
@@ -14,7 +14,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public class Entry
         {
             public ulong CNameHash { get; set; }
-            public ushort Unknown1 { get; set; }
+            public byte Unknown1 { get; set; }
         }
     }
 }

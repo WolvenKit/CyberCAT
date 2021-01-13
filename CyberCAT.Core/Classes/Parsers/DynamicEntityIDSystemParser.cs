@@ -36,6 +36,8 @@ namespace CyberCAT.Core.Classes.Parsers
 
             result.Unk_NextListId = reader.ReadUInt32();
 
+            result.Node = node;
+
             return result;
         }
 

@@ -4,12 +4,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class CAttitudeManager : NodeRepresentation
     {
-        public List<CAttitudeManagerEntry> CAttitudeManagerEntries { get; set; }
+        public List<CAttitudeManagerEntry> Entries { get; set; }
         public byte[] Unknown2 { get; set; }
 
         public CAttitudeManager()
         {
-            CAttitudeManagerEntries = new List<CAttitudeManagerEntry>();
+            Entries = new List<CAttitudeManagerEntry>();
         }
 
         public class CAttitudeManagerEntry

@@ -4,11 +4,11 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 {
     public class WorkspotInstancesSavedata : NodeRepresentation
     {
-        public List<WorkspotInstancesSavedataEntry> WorkspotInstancesSavedataEntries { get; set; }
+        public List<WorkspotInstancesSavedataEntry> Entries { get; set; }
 
         public WorkspotInstancesSavedata()
         {
-            WorkspotInstancesSavedataEntries = new List<WorkspotInstancesSavedataEntry>();
+            Entries = new List<WorkspotInstancesSavedataEntry>();
         }
 
         public class WorkspotInstancesSavedataEntry

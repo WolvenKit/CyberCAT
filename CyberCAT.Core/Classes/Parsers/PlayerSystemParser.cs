@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public PlayerSystemParser()
         {
             ParsableNodeName = Constants.NodeNames.PLAYER_SYSTEM;
-            DisplayName = "Player System";
+            DisplayName = "Player System Parser";
             Guid = Guid.Parse("{00ACE071-51A0-44AC-B41D-44813780E5EE}");
         }
 
@@ -28,6 +28,8 @@ namespace CyberCAT.Core.Classes.Parsers
             reader.Skip(4); // Skip Id
             result.Unk_Hash = reader.ReadUInt64();
             result.Unk_Id = reader.ReadTweakDbId();
+
+            result.Node = node;
 
             return result;
         }

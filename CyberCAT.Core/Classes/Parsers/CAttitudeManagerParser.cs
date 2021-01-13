@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public CAttitudeManagerParser()
         {
             ParsableNodeName = Constants.NodeNames.C_ATTITUDE_MANAGER;
-            DisplayName = "C Attitude Manager";
+            DisplayName = "C Attitude Manager Parser";
             Guid = Guid.Parse("{A2E2A62F-E0A8-4B8F-B7D2-EDF47FAACF14}");
         }
 
@@ -33,9 +33,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 entry.Unk_Hash1 = reader.ReadUInt64();
                 entry.Unknown2 = reader.ReadUInt32();
 
-                result.CAttitudeManagerEntries.Add(entry);
+                result.Entries.Add(entry);
             }
             result.Unknown2 = reader.ReadBytes(18);
+
+            result.Node = node;
 
             return result;
         }
@@ -44,8 +46,8 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (CAttitudeManager)node.Value;
 
-            writer.Write(data.CAttitudeManagerEntries.Count);
-            foreach (var entry in data.CAttitudeManagerEntries)
+            writer.Write(data.Entries.Count);
+            foreach (var entry in data.Entries)
             {
                 writer.Write(entry.Unk_Hash1);
                 writer.Write(entry.Unknown2);

@@ -84,8 +84,14 @@ namespace CyberCAT.Core
             public const string PLAYER_SYSTEM = "PlayerSystem";
             public const string C_ATTITUDE_MANAGER = "CAttitudeManager";
             public const string COMMUNITY_SYSTEM = "CommunitySystem";
+            public const string CONTAINER_MANAGER = "ContainerManager";
+            public const string CONTAINER_MANAGER_INJECTED_LOOT = "ContainerManager_InjectedLoot";
+            public const string CONTAINER_MANAGER_LOOT_SLOT_AVAILABILITY = "ContainerManager_LootSlotAvailability";
+            public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER2 = "ContainerManager_NPCLootBags_Ver2";
+            public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER3_LOOTED_IDS = "ContainerManager_NPCLootBags_Ver3_LootedIDs";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
+            public const string JOURNAL_MANAGER = "JournalManager";
             public const string ITEM_DROP_STORAGE = "ItemDropStorage";
             public const string ITEM_DROP_STORAGE_MANAGER = "ItemDropStorageManager";
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
