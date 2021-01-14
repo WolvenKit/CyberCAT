@@ -22,11 +22,19 @@ namespace CyberCAT.Wpf
     public partial class SubInventoryTabItem : MetroTabItem
     {
         public SaveFile SaveFile { get; }
+
+        private static Dictionary<ulong, string> InventoryNames = new Dictionary<ulong, string>
+        {
+            { 0x1, "V's Bag" },
+            { 0xF4240, "Car Stash" },
+            { 0xE5F556FCBB62A706, "V's Stash" }
+        };
+
         public SubInventoryTabItem(Inventory.SubInventory subInventory, SaveFile saveFile)
         {
             SaveFile = saveFile;
             InitializeComponent();
-            Header = $"{subInventory.InventoryId:X}";
+            Header = InventoryNames.TryGetValue(subInventory.InventoryId, out var name) ? name : $"{subInventory.InventoryId:X}";
             Items.ItemsSource = subInventory.Items;
             var itemsView = CollectionViewSource.GetDefaultView(Items.ItemsSource);
             Items.DisplayMemberPath = "ItemGameNameOrName";
