@@ -1,0 +1,6 @@
+{
+  "DisplayName": "Add 10k Eddies",
+  "Icon": null,
+  "ScriptPath": "Add10kEddies\\script.py",
+  "Description": "Adds 10.000 Eddies"
+}

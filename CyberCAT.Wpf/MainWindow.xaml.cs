@@ -33,7 +33,6 @@ namespace CyberCAT.Wpf
         public MainWindow()
         {
             InitializeComponent();
-
             if (File.Exists(NAMES_FILE_NAME))
             {
                 NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
@@ -151,13 +150,16 @@ namespace CyberCAT.Wpf
         private void InitializeEditors()
         {
             SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
-            foreach (var file in Directory.GetFiles("QuickActions", "*.json"))
+            foreach(var directory in Directory.GetDirectories("QuickActions"))
             {
-                var action = JsonConvert.DeserializeObject<QuickAction>(File.ReadAllText(file));
-                action.CompileScript(LoadedSaveFile);
-                var scriptTile = new ScriptTile(action, LoadedSaveFile);
-                quickActionWrapPanel.Children.Add(scriptTile);
+                var definitionPath = Path.Combine(directory, "definition.json");
+                if (File.Exists(definitionPath))
+                {
+                    var action = JsonConvert.DeserializeObject<QuickAction>(File.ReadAllText(definitionPath));
+                    quickActionWrapPanel.Children.Add(new ScriptTile(action,LoadedSaveFile));
+                }
             }
+            
         }
     }
 }

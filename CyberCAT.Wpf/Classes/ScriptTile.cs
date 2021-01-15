@@ -1,8 +1,12 @@
-﻿using CyberCAT.Core.Classes;
+﻿using CyberCAT.Core;
+using CyberCAT.Core.Classes;
+using IronPython.Hosting;
 using MahApps.Metro.Controls;
+using Microsoft.Scripting.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace CyberCAT.Wpf.Classes
 {
@@ -16,11 +20,19 @@ namespace CyberCAT.Wpf.Classes
             _saveFile = saveFile;
             Click += ScriptTile_Click;
             Content = action.DisplayName;
+            ToolTip = action.Description;
         }
 
         private void ScriptTile_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            _action.Execute(_saveFile);
+            try
+            {
+                _action.Execute(_saveFile);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Error Executing QuickAction {_action.DisplayName}: {ex.Message}");
+            }
         }
     }
 }

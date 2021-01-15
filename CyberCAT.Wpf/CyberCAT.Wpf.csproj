@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="IronPython" Version="2.7.11" />
     <PackageReference Include="MahApps.Metro" Version="2.4.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,7 +71,10 @@
     <None Update="Names.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="QuickActions\Add10kEddies.json">
+    <None Update="QuickActions\Add10kEddies\definition.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="QuickActions\Add10kEddies\script.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
