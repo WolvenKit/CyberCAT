@@ -7,14 +7,14 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public List<Entry1> Entries { get; set; }
         public uint Unk1_TrackedQuestPath { get; set; }
         // could be wrong, strings with length 2?
-        public List<TweakDbId> Unknown2 { get; set; }
+        public List<ulong> Unknown2 { get; set; }
         public List<Entry2> Unknown3 { get; set; }
         public byte[] TrailingBytes { get; set; }
 
         public JournalManager()
         {
             Entries = new List<Entry1>();
-            Unknown2 = new List<TweakDbId>();
+            Unknown2 = new List<ulong>();
             Unknown3 = new List<Entry2>();
         }
 

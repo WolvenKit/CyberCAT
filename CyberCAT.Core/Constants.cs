@@ -116,6 +116,9 @@ namespace CyberCAT.Core
             public const string SCANNING_CONTROLLER = "scanningController";
 
             public const string QUEST_DEBUG_LOG_MANAGER = "questDebugLogManager";
+            public const string CHOICES = "choices";
+            public const string CUSTOM_ARRAY = "customArray";
+            public const string EVENT_MANAGER = "eventManager";
         }
         public static class Numbers
         {

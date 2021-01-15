@@ -44,7 +44,7 @@ namespace CyberCAT.Core.Classes.Parsers
             for (int i = 0; i < entryCount; i++)
             {
                 // could be wrong, strings with length 2?
-                result.Unknown2.Add(reader.ReadTweakDbId());
+                result.Unknown2.Add(reader.ReadUInt64());
             }
 
             entryCount = reader.ReadUInt32();
