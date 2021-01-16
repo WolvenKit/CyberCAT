@@ -37,7 +37,17 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <ListBox Name="Items" Grid.Row="1" SelectionChanged="SelectedItemChanged" />
+            <ListBox Name="Items" Grid.Row="1" SelectionChanged="SelectedItemChanged">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Name="MoveToMenu">
+                            <MenuItem.Header>
+                                <TextBlock Text="Move to ..."></TextBlock>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
         </Grid>
         <Border Grid.Column="1" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Margin="3,3,3,3">
             <local:ItemEditor x:Name="ItemEditor" SaveFile="{Binding Path=SaveFile, ElementName=This}" />
