@@ -88,7 +88,7 @@ namespace CyberCAT.Wpf
                 var bytes = File.ReadAllBytes(fileName);
                 //var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 var newSaveFile = new SaveFile();
-                newSaveFile.LoadPCSaveFile(new MemoryStream(bytes));
+                newSaveFile.Load(new MemoryStream(bytes));
                 LoadedSaveFile = newSaveFile;
                 Footer.Content = $"{LoadedSaveFile.Header} - {fileName}";
             }
@@ -114,7 +114,7 @@ namespace CyberCAT.Wpf
                 var bytes = File.ReadAllBytes(fileName);
                 //var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
                 var newSaveFile = new SaveFile();
-                newSaveFile.LoadPS4SaveFile(new MemoryStream(bytes));
+                newSaveFile.Load(new MemoryStream(bytes));
                 LoadedSaveFile = newSaveFile;
                 Footer.Content = $"{LoadedSaveFile.Header} - {fileName}";
             }
@@ -133,7 +133,7 @@ namespace CyberCAT.Wpf
 
             if (fileName != null)
             {
-                File.WriteAllBytes(fileName, LoadedSaveFile.SaveToPCSaveFile());
+                File.WriteAllBytes(fileName, LoadedSaveFile.Save());
             }
         }
 
@@ -143,7 +143,7 @@ namespace CyberCAT.Wpf
 
             if (fileName != null)
             {
-                File.WriteAllBytes(fileName, LoadedSaveFile.SaveToPS4SaveFile());
+                File.WriteAllBytes(fileName, LoadedSaveFile.Save(true));
             }
         }
 
