@@ -123,6 +123,7 @@ namespace CyberCAT.Core
         public static class Numbers
         {
             public const int DEFAULT_HEADER_SIZE = 3105;
+            public const int DEFAULT_CHUNK_SIZE = 0x00040000;
         }
     }
 }

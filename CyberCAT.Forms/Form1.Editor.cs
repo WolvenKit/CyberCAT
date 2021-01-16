@@ -65,7 +65,7 @@ namespace CyberCAT.Forms
             {
                 var bytes = File.ReadAllBytes(fileName);
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                newSaveFile.LoadPCSaveFile(new MemoryStream(bytes));
+                newSaveFile.Load(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;
                 footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
             }
@@ -104,7 +104,7 @@ namespace CyberCAT.Forms
             try
             {
                 var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                newSaveFile.LoadPS4SaveFile(new MemoryStream(bytes));
+                newSaveFile.Load(new MemoryStream(bytes));
                 _activeSaveFile = newSaveFile;
                 footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
             }
@@ -143,7 +143,7 @@ namespace CyberCAT.Forms
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.SaveToPCSaveFile());
+                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.Save());
             }
         }
 
@@ -157,7 +157,7 @@ namespace CyberCAT.Forms
             var saveDialog = new SaveFileDialog { InitialDirectory = Environment.CurrentDirectory };
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.SaveToPS4SaveFile());
+                File.WriteAllBytes(saveDialog.FileName, _activeSaveFile.Save(true));
             }
         }
 
