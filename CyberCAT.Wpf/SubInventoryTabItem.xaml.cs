@@ -28,16 +28,18 @@ namespace CyberCAT.Wpf
 
         private Inventory.SubInventory ThisInventory { get; }
 
-        private static readonly Dictionary<ulong, string> InventoryNames = new Dictionary<ulong, string>
+        private static readonly Dictionary<ulong, string> InventoryNames = new()
         {
             { 0x1, "V's Bag" },
             { 0xF4240, "Car Stash" },
             { 0x895724, "Nomad Intro Items" },
             { 0x895956, "Street Kid Intro Items" },
             { 0x8959E8, "Corpo Intro Items" },
+            { 0x38E8D0C9F9A087AE, "Panam's Stash" },
             { 0x38E8D0C9F9A087AE, "Judy's Stash" },
             { 0x7901DE03D136A5AF, "V's Wardrobe" },
-            { 0xE5F556FCBB62A706, "V's Stash" }
+            { 0xE5F556FCBB62A706, "V's Stash" },
+            { 0xEDAD8C9B086A615E, "River's Stash" },
         };
 
         public SubInventoryTabItem(Inventory.SubInventory subInventory, SaveFile saveFile)
