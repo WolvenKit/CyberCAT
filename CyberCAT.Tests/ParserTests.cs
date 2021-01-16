@@ -89,13 +89,11 @@ namespace CyberCAT.Tests
             var compressedInputStream = File.ReadAllBytes(_filename);
 
             var decompressedFile = CompressionHelper.Decompress(new MemoryStream(compressedInputStream));
-            File.WriteAllBytes("C:\\Dev\\F1.bin", decompressedFile);
 
             var newSaveFile = new SaveFile(_parsers);
             newSaveFile.Load(new MemoryStream(compressedInputStream));
 
             var uncompressedRewrite = newSaveFile.Save(false);
-            File.WriteAllBytes("C:\\Dev\\F2.bin", uncompressedRewrite);
 
             Assert.That(decompressedFile.SequenceEqual(uncompressedRewrite), Is.True);
         }
