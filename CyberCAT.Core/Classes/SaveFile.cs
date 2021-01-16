@@ -85,6 +85,7 @@ namespace CyberCAT.Core.Classes
             MappingHelper.LoadDumpedClasses();
             MappingHelper.LoadDumpedEnums();
         }
+
         public SaveFile()
         {
             _nodeInfos = new List<NodeInfo>();
@@ -114,12 +115,6 @@ namespace CyberCAT.Core.Classes
                 ReadHeader(reader);
                 ReadNodeInfos(reader);
                 dataStream = CompressionHelper.Decompress(reader);
-            }
-
-            using (var ms = new MemoryStream())
-            {
-                dataStream.CopyTo(ms);
-                File.WriteAllBytes("C:\\Dev\\B1.bin", ms.ToArray());
             }
 
             LoadFromStream(dataStream);
