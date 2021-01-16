@@ -97,11 +97,19 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Advanced" >
-                <Grid>
-                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Advanced GUI here" FontSize="36"/>
-                    </Border>
-                </Grid>
+
+                <Border Name="advancedTabBorder" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+                    <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                        <TreeView Name="advancedTabTreeView" SelectedItemChanged="advancedTabTreeView_SelectedItemChanged"></TreeView>
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                        <DockPanel Grid.Column="2" Name="propertyGridHost"></DockPanel>
+                    </Grid>
+                </Border>
             </TabItem>
         </TabControl>
         <Label Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"/>

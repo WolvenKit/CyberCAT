@@ -17,8 +17,6 @@ namespace CyberCAT.Wpf
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            // Set the application theme to Dark.Green
             ThemeManager.Current.ChangeTheme(this, "Dark.Steel");
 
         }
