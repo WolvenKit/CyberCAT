@@ -112,6 +112,6 @@
                 </Border>
             </TabItem>
         </TabControl>
-        <Label Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"/>
+        <TextBlock Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" TextAlignment="Center" />
     </Grid>
 </mah:MetroWindow>

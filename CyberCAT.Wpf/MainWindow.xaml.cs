@@ -150,7 +150,7 @@ namespace CyberCAT.Wpf
                 var newSaveFile = new SaveFile();
                 newSaveFile.Load(new MemoryStream(bytes));
                 LoadedSaveFile = newSaveFile;
-                Footer.Content = $"{LoadedSaveFile.Header} - {fileName}";
+                Footer.Text = $"{LoadedSaveFile.Header} - {fileName}";
             }
             catch (Exception exception)
             {
@@ -176,7 +176,7 @@ namespace CyberCAT.Wpf
                 var newSaveFile = new SaveFile();
                 newSaveFile.Load(new MemoryStream(bytes));
                 LoadedSaveFile = newSaveFile;
-                Footer.Content = $"{LoadedSaveFile.Header} - {fileName}";
+                Footer.Text = $"{LoadedSaveFile.Header} - {fileName}";
             }
             catch (Exception exception)
             {

@@ -69,7 +69,7 @@ namespace CyberCAT.Wpf
             Header = InventoryNames.TryGetValue(subInventory.InventoryId, out var name) ? name : $"{subInventory.InventoryId:X}";
             Items.ItemsSource = subInventory.Items;
             var itemsView = CollectionViewSource.GetDefaultView(Items.ItemsSource);
-            Items.DisplayMemberPath = "ItemGameNameOrName";
+            Items.DisplayMemberPath = "ItemTdbId.GameNameFallback";
             itemsView.Filter = FilterItems;
         }
 
