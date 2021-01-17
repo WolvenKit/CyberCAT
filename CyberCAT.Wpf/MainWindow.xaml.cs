@@ -244,6 +244,7 @@ namespace CyberCAT.Wpf
                             }
                         }
                     }
+
                     if (simpleItems.Children.Count > 0)
                     {
                         subinventory.Children.Add(simpleItems);
@@ -253,14 +254,69 @@ namespace CyberCAT.Wpf
                         subinventory.Children.Add(modableItems);
                     }
                 }
-                foreach (var item in SaveNodeTreeViewItem.FromList(subinventories.Where(_ => filter == null || _.Children.Count > 0).ToList()).ToArray())
-                { treeNode.Items.Add(item); }
+                foreach(var item in SaveNodeTreeViewItem.FromList(subinventories.Where(_ => filter == null || _.Children.Count > 0).ToList()))
+                {
+                    treeNode.Items.Add(item);
+                }
                 foreach (var child in treeNode.Items)
                 {
                     BuildVisualSubTree((SaveNodeTreeViewItem)child, filter);
                 }
 
                 return;
+            }
+
+            if (treeNode.Node.Value is CharacterCustomizationAppearances cca)
+            {
+                // For CCA we also insert virtual nodes for the three sections
+                var sections = new List<CharacterCustomizationAppearances.Section> { cca.FirstSection, cca.SecondSection, cca.ThirdSection };
+
+                foreach (var section in sections)
+                {
+                    var treeSection = new SaveNodeTreeViewItem(new VirtualNodeEntry { Value = section });
+                    foreach (var appearanceSection in section.AppearanceSections)
+                    {
+                        if (filter == null || appearanceSection.ToString().ToLowerInvariant().Contains(filter))
+                        {
+                            treeSection.Items.Add(new SaveNodeTreeViewItem(new VirtualNodeEntry { Value = appearanceSection }));
+                        }
+                    }
+
+                    if (treeSection.Items.Count > 0)
+                    {
+                        treeNode.Items.Add(treeSection);
+                    }
+                }
+
+                return;
+            }
+
+            if (treeNode.Node.Value is FactsTable ft)
+            {
+                foreach (var fe in ft.FactEntries)
+                {
+                    if (filter == null || fe.ToString().ToLowerInvariant().Contains(filter))
+                    {
+                        treeNode.Items.Add(new SaveNodeTreeViewItem(new VirtualNodeEntry { Value = fe }));
+                    }
+                }
+
+                return;
+            }
+
+            if (treeNode.Node.Children.Count > 0)
+            {
+                var nodes = new List<SaveNodeTreeViewItem>();
+                nodes.AddRange(SaveNodeTreeViewItem.FromList(treeNode.Node.Children).ToArray());
+
+                foreach (var child in nodes)
+                {
+                    BuildVisualSubTree((SaveNodeTreeViewItem)child, filter);
+                    if (filter == null || child.Header.ToString().ToLowerInvariant().Contains(filter) || child.Items.Count > 0)
+                    {
+                        treeNode.Items.Add(child);
+                    }
+                }
             }
         }
 
