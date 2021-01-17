@@ -100,5 +100,11 @@ namespace CyberCAT.Wpf
             ThisInventory.Items.Remove(item);
             targetInventory.Items.Add(item);
         }
+
+        private void OnDeleteItemClicked(object sender, RoutedEventArgs e)
+        {
+            var item = (ItemData)Items.SelectedItem;
+            ThisInventory.Items.Remove(item);
+        }
     }
 }
