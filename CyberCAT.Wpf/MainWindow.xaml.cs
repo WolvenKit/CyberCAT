@@ -135,6 +135,36 @@ namespace CyberCAT.Wpf
             return saveDialog.FileName;
         }
 
+        private void ShowOpenedFile()
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                OpenSaveText.Visibility = Visibility.Collapsed;
+                ProgressIndicator.Visibility = Visibility.Collapsed;
+                EditorTabs.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void ShowProgressIndicator()
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                OpenSaveText.Visibility = Visibility.Collapsed;
+                ProgressIndicator.Visibility = Visibility.Visible;
+                EditorTabs.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        private void ShowOpenFileText()
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                OpenSaveText.Visibility = Visibility.Visible;
+                ProgressIndicator.Visibility = Visibility.Collapsed;
+                EditorTabs.Visibility = Visibility.Collapsed;
+            });
+        }
+
         private void OpenPcOnClick(object sender, RoutedEventArgs e)
         {
             var fileName = OpenSaveFileDialog(true); // FIXME: get from settings
@@ -143,22 +173,10 @@ namespace CyberCAT.Wpf
                 return;
             }
 
-            try
+            Task.Run(() =>
             {
-                var bytes = File.ReadAllBytes(fileName);
-                //var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                var newSaveFile = new SaveFile();
-                newSaveFile.Load(new MemoryStream(bytes));
-                LoadedSaveFile = newSaveFile;
-                Footer.Text = $"{LoadedSaveFile.Header} - {fileName}";
-            }
-            catch (Exception exception)
-            {
-                System.Windows.MessageBox.Show($"Error reading file: {exception.Message}");
-                return;
-            }
-
-            InitializeEditors();
+                LoadFile(fileName);
+            });
         }
 
         private void OpenPs4OnClick(object sender, RoutedEventArgs e)
@@ -169,22 +187,39 @@ namespace CyberCAT.Wpf
                 return;
             }
 
+            Task.Run(() =>
+            {
+                LoadFile(fileName);
+            });
+        }
+
+        private void LoadFile(string fileName)
+        {
+            ShowProgressIndicator();
+            var newSaveFile = new SaveFile();
             try
             {
                 var bytes = File.ReadAllBytes(fileName);
-                //var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                var newSaveFile = new SaveFile();
                 newSaveFile.Load(new MemoryStream(bytes));
-                LoadedSaveFile = newSaveFile;
-                Footer.Text = $"{LoadedSaveFile.Header} - {fileName}";
             }
             catch (Exception exception)
             {
                 System.Windows.MessageBox.Show($"Error reading file: {exception.Message}");
-                return;
+                if (LoadedSaveFile == null)
+                {
+                    ShowOpenFileText();
+                }
+                else
+                {
+                    ShowOpenedFile();
+                }
+                throw;
             }
+            LoadedSaveFile = newSaveFile;
+            Footer.Dispatcher.InvokeAsync(() => Footer.Text = $"{LoadedSaveFile.Header} - {fileName}");
 
             InitializeEditors();
+            ShowOpenedFile();
         }
 
         private void SavePcOnClick(object sender, RoutedEventArgs e)
@@ -209,13 +244,16 @@ namespace CyberCAT.Wpf
 
         private void InitializeEditors()
         {
-            SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
-            foreach (var node in LoadedSaveFile.Nodes)
+            Dispatcher.InvokeAsync(() =>
             {
-                var treeNode = new SaveNodeTreeViewItem(node);
-                BuildVisualSubTree(treeNode, null);
-                advancedTabTreeView.Items.Add(treeNode);
-            }
+                SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
+                foreach (var node in LoadedSaveFile.Nodes)
+                {
+                    var treeNode = new SaveNodeTreeViewItem(node);
+                    BuildVisualSubTree(treeNode, null);
+                    advancedTabTreeView.Items.Add(treeNode);
+                }
+            });
         }
         private void BuildVisualSubTree(SaveNodeTreeViewItem treeNode, string filter)
         {
