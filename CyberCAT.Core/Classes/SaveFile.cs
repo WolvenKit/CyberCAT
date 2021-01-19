@@ -82,8 +82,7 @@ namespace CyberCAT.Core.Classes
             _nodeInfos = new List<NodeInfo>();
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
-            MappingHelper.LoadDumpedClasses();
-            MappingHelper.LoadDumpedEnums();
+            MappingHelper.Init();
         }
 
         public SaveFile()
@@ -99,8 +98,7 @@ namespace CyberCAT.Core.Classes
                 INodeParser instance = (INodeParser)Activator.CreateInstance(type);
                 _parsers.Add(instance);
             }
-            MappingHelper.LoadDumpedClasses();
-            MappingHelper.LoadDumpedEnums();
+            MappingHelper.Init();
         }
 
         public void Load(Stream inputStream)
