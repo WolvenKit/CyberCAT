@@ -100,7 +100,10 @@ namespace CyberCAT.Core.Classes
         {
             var resultBuffer = new byte[0];
 
-            var infoPos = stream.SeekMagicBytes(Constants.Magic.NODE_INFORMATION_START);
+            stream.Position = stream.Length - 8;
+            var infoPosBuffer = new byte[4];
+            stream.Read(infoPosBuffer, 0, infoPosBuffer.Length);
+            var infoPos = BitConverter.ToInt32(infoPosBuffer, 0);
             stream.Position = 0;
 
             var headerBuffer = new byte[Constants.Numbers.DEFAULT_HEADER_SIZE];
