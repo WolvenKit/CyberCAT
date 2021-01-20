@@ -119,6 +119,12 @@ namespace CyberCAT.Core.Classes
                 return split[split.Length - 1];
             }
         }
+        public string GameName => NameResolver.GetGameName(this);
+        public string GameNameFallback => string.IsNullOrWhiteSpace(GameName) ? Name : GameName;
+        public string GameDescription => NameResolver.GetGameDescription(this);
+
+        public string GameNameDescription => $"{GameName} - {GameDescription}";
+        public string GameNameDescriptionFallback => string.IsNullOrEmpty(GameName) ? Name : GameNameDescription;
 
         public override string ToString()
         {

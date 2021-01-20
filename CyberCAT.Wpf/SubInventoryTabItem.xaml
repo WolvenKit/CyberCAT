@@ -5,6 +5,7 @@
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
               xmlns:local="clr-namespace:CyberCAT.Wpf"
               xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
               mc:Ignorable="d" 
               x:Name="This"
               d:DesignHeight="450" d:DesignWidth="800">
@@ -37,7 +38,28 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <ListBox Name="Items" Grid.Row="1" SelectionChanged="SelectedItemChanged" />
+            <ListBox Name="Items" Grid.Row="1" SelectionChanged="SelectedItemChanged">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Name="MoveToMenu">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="FolderMove" Margin="-15,0,10,0" />
+                                    <TextBlock Text="Move to ..."></TextBlock>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Name="DeleteMenu">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Delete" Margin="-15,0,10,0" />
+                                    <TextBlock Text="Delete item"></TextBlock>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
         </Grid>
         <Border Grid.Column="1" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Margin="3,3,3,3">
             <local:ItemEditor x:Name="ItemEditor" SaveFile="{Binding Path=SaveFile, ElementName=This}" />

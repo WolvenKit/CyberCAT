@@ -67,7 +67,7 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var newSaveFile = new SaveFile(_parsers);
-            Assert.DoesNotThrow(() => { newSaveFile.LoadPCSaveFile(new MemoryStream(bytes)); });
+            Assert.DoesNotThrow(() => { newSaveFile.Load(new MemoryStream(bytes)); });
         }
 
         [Test]
@@ -76,8 +76,8 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var newSaveFile = new SaveFile(_parsers);
-            newSaveFile.LoadPCSaveFile(new MemoryStream(bytes));
-            var newBytes = newSaveFile.SaveToPCSaveFile();
+            newSaveFile.Load(new MemoryStream(bytes));
+            var newBytes = newSaveFile.Save();
 
             Assert.That(newBytes.Length, Is.EqualTo(bytes.Length));
             Assert.That(newBytes.SequenceEqual(bytes), Is.True);
@@ -88,15 +88,13 @@ namespace CyberCAT.Tests
         {
             var compressedInputStream = File.ReadAllBytes(_filename);
 
-            var sfch = new SaveFileCompressionHelper();
-            sfch.Decompress(new MemoryStream(compressedInputStream));
-            var decompressedFile = sfch.GetChunkBytes();
+            var decompressedFile = CompressionHelper.Decompress(new MemoryStream(compressedInputStream));
 
             var newSaveFile = new SaveFile(_parsers);
-            newSaveFile.LoadPCSaveFile(new MemoryStream(compressedInputStream));
+            newSaveFile.Load(new MemoryStream(compressedInputStream));
 
-            var uncompressedRewrite = newSaveFile.GetNodeData(out var nodeInfos);
-            
+            var uncompressedRewrite = newSaveFile.Save(false);
+
             Assert.That(decompressedFile.SequenceEqual(uncompressedRewrite), Is.True);
         }
 
@@ -106,7 +104,7 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var saveFile = new SaveFile(_parsers);
-            saveFile.LoadPCSaveFile(new MemoryStream(bytes));
+            saveFile.Load(new MemoryStream(bytes));
 
             var prevNodeCount = saveFile.FlatNodes.Count;
             var fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
@@ -117,12 +115,12 @@ namespace CyberCAT.Tests
             var factCount = firstTable.FactEntries.Count;
 
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
-            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.Save()); });
 
             saveFile = new SaveFile();
             using (var stream = new MemoryStream(newSave[0]))
             {
-                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+                Assert.DoesNotThrow(() => { saveFile.Load(stream); });
             }
 
             Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
@@ -142,7 +140,7 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var saveFile = new SaveFile(_parsers);
-            saveFile.LoadPCSaveFile(new MemoryStream(bytes));
+            saveFile.Load(new MemoryStream(bytes));
 
             var prevNodeCount = saveFile.FlatNodes.Count;
             var fdb = saveFile.FlatNodes.FirstOrDefault(_ => _.Name == Constants.NodeNames.FACTSDB);
@@ -153,12 +151,12 @@ namespace CyberCAT.Tests
             var factCount = firstTable.FactEntries.Count;
 
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
-            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.Save()); });
 
             saveFile = new SaveFile();
             using (var stream = new MemoryStream(newSave[0]))
             {
-                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+                Assert.DoesNotThrow(() => { saveFile.Load(stream); });
             }
 
             Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
@@ -186,7 +184,7 @@ namespace CyberCAT.Tests
             var fileStream = new MemoryStream(bytes);
 
             var saveFile = new SaveFile();
-            saveFile.LoadPCSaveFile(fileStream);
+            saveFile.Load(fileStream);
 
             var prevNodeCount = saveFile.FlatNodes.Count;
 
@@ -209,12 +207,12 @@ namespace CyberCAT.Tests
             tpp.AdditionalList.Add(new CharacterCustomizationAppearances.ValueEntry {FirstString = "eyes", SecondString = "h071"});
 
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
-            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.Save()); });
 
             saveFile = new SaveFile();
             using (var stream = new MemoryStream(newSave[0]))
             {
-                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+                Assert.DoesNotThrow(() => { saveFile.Load(stream); });
             }
 
             Assert.That(saveFile.FlatNodes.Count, Is.EqualTo(prevNodeCount));
@@ -243,7 +241,7 @@ namespace CyberCAT.Tests
             var fileStream = new MemoryStream(bytes);
 
             var saveFile = new SaveFile();
-            saveFile.LoadPCSaveFile(fileStream);
+            saveFile.Load(fileStream);
 
             var prevNodeCount = saveFile.Nodes.Count;
 
@@ -261,11 +259,11 @@ namespace CyberCAT.Tests
             moddableItem.RootNode.Children.RemoveAt(1);
 
             List<byte[]> newSave = new List<byte[]>(); // we need the array but cannot assign a variable inside the delegate
-            Assert.DoesNotThrow(() => { newSave.Add(saveFile.SaveToPCSaveFile()); });
+            Assert.DoesNotThrow(() => { newSave.Add(saveFile.Save()); });
             saveFile = new SaveFile();
             using (var stream = new MemoryStream(newSave[0]))
             {
-                Assert.DoesNotThrow(() => { saveFile.LoadPCSaveFile(stream); });
+                Assert.DoesNotThrow(() => { saveFile.Load(stream); });
             }
 
             Assert.That(saveFile.Nodes.Count, Is.EqualTo(prevNodeCount));
@@ -296,7 +294,7 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var newSaveFile = new SaveFile(_parsers);
-            Assert.DoesNotThrow(() => { newSaveFile.LoadPS4SaveFile(new MemoryStream(bytes)); });
+            Assert.DoesNotThrow(() => { newSaveFile.Load(new MemoryStream(bytes)); });
         }
 
         [Test]
@@ -305,8 +303,8 @@ namespace CyberCAT.Tests
             var bytes = File.ReadAllBytes(_filename);
 
             var newSaveFile = new SaveFile(_parsers);
-            newSaveFile.LoadPS4SaveFile(new MemoryStream(bytes));
-            var newBytes = newSaveFile.SaveToPS4SaveFile();
+            newSaveFile.Load(new MemoryStream(bytes));
+            var newBytes = newSaveFile.Save(false);
 
             Assert.That(newBytes.Length, Is.EqualTo(bytes.Length));
             Assert.That(newBytes.SequenceEqual(bytes), Is.True);

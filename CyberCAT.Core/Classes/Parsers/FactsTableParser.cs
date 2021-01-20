@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -59,6 +60,9 @@ namespace CyberCAT.Core.Classes.Parsers
             var data = (FactsTable)node.Value;
 
             ParserUtils.WritePackedInt(writer, data.FactEntries.Count);
+
+            // Sort FactEntries by their hash before writing
+            data.FactEntries = new ObservableCollection<FactsTable.FactEntry>(data.FactEntries.OrderBy(_ => _.Hash));
 
             foreach (var fact in data.FactEntries)
             {

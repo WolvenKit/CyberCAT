@@ -19,9 +19,9 @@ using CyberCAT.Core;
 using CyberCAT.Core.Annotations;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.DumpedClasses;
+using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Wpf.Classes;
-using Microsoft.Xaml.Behaviors.Core;
 
 namespace CyberCAT.Wpf
 {
@@ -66,10 +66,10 @@ namespace CyberCAT.Wpf
                 OnPropertyChanged(nameof(IsModableItem));
                 OnPropertyChanged(nameof(ItemWithQuantity));
                 OnPropertyChanged(nameof(IsItemWithQuantity));
+                OnPropertyChanged(nameof(SelectedItemStats));
             }
         }
 
-        [DependsOn(nameof(Item))]
         public Visibility ControlVisibility => _item == null ? Visibility.Hidden : Visibility.Visible;
         public Visibility SelectTextVisibility => _item != null ? Visibility.Hidden : Visibility.Visible;
         public ItemData.SimpleItemData SimpleItem => _item?.Data as ItemData.SimpleItemData;
@@ -96,7 +96,7 @@ namespace CyberCAT.Wpf
         }
 
         #region "Item mod handling"
-        public ObservableCollection<string> ModCategories { get; } = new ObservableCollection<string>
+        public ObservableCollection<string> ModCategories { get; } = new()
         {
             "Clothing mods",
             "Weapon mods",
@@ -175,7 +175,46 @@ namespace CyberCAT.Wpf
                 // Not a modable item, there should not even be a button.
                 return;
             }
+
+            var selectedItem = ((Button)sender).Tag as ItemData.ItemModData;
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            ModableItem.RootNode.Children.Remove(selectedItem);
         }
+        #endregion
+
+        #region "Item stat handling"
+
+        public class HandleWrapper
+        {
+            public Handle<GameStatModifierData> Handle { get; }
+            public HandleWrapper(Handle<GameStatModifierData> handle)
+            {
+                Handle = handle;
+            }
+
+            public IEnumerable<Core.DumpedEnums.gameStatModifierType> ModifierTypes => Enum.GetValues(typeof(Core.DumpedEnums.gameStatModifierType)).Cast<Core.DumpedEnums.gameStatModifierType>();
+            public IEnumerable<Core.DumpedEnums.gamedataStatType> StatTypes => Enum.GetValues(typeof(Core.DumpedEnums.gamedataStatType)).Cast<Core.DumpedEnums.gamedataStatType>();
+            public IEnumerable<Core.DumpedEnums.gameStatObjectsRelation> StatObjectsRelations => Enum.GetValues(typeof(Core.DumpedEnums.gameStatObjectsRelation)).Cast<Core.DumpedEnums.gameStatObjectsRelation>();
+            public IEnumerable<Core.DumpedEnums.gameCombinedStatOperation> CombinedStatOperations => Enum.GetValues(typeof(Core.DumpedEnums.gameCombinedStatOperation)).Cast<Core.DumpedEnums.gameCombinedStatOperation>();
+
+            public bool IsConstantModifier => Handle.Value is GameConstantStatModifierData;
+            public GameConstantStatModifierData ConstantStatModifier => Handle.Value as GameConstantStatModifierData;
+
+            public bool IsCurveModifier => Handle.Value is GameCurveStatModifierData;
+            public GameCurveStatModifierData CurveStatModifier => Handle.Value as GameCurveStatModifierData;
+
+            public bool IsCombinedModifier => Handle.Value is GameCombinedStatModifierData;
+            public GameCombinedStatModifierData CombinedStatModifier => Handle.Value as GameCombinedStatModifierData;
+        }
+
+        public TweakDbId SelectedPartTweakDbId => Item?.ItemTdbId;
+        public uint? SelectedPartSeed => Item?.Header.Seed;
+        public IEnumerable<HandleWrapper> SelectedItemStats => _mapStructure?.Values.FirstOrDefault(v => v.RecordID.Equals(SelectedPartTweakDbId) && SelectedPartSeed.HasValue && v.Seed == SelectedPartSeed.Value)?.StatModifiers.Select(_ => new HandleWrapper(_));
+
         #endregion
     }
 }

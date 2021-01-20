@@ -9,6 +9,46 @@ namespace CyberCAT.Core.Classes
 {
     public static class Extensions
     {
+        public static long SeekMagicBytes(this Stream stream, string identifier)
+        {
+            return stream.SeekMagicBytes(System.Text.Encoding.ASCII.GetBytes(identifier));
+        }
+
+        public static long SeekMagicBytes(this Stream stream, byte[] magicBytes)
+        {
+            long oldPostion = stream.Position;
+            long currentPosition;
+            var buffer = new byte[magicBytes.Length - 1];
+
+            stream.Position = 0;
+            while ((currentPosition = stream.Position) < stream.Length)
+            {
+                if (stream.ReadByte() != magicBytes[0])
+                {
+                    continue;
+                }
+
+                var tmpPos = stream.Position;
+                if (stream.Read(buffer, 0, buffer.Length) < buffer.Length)
+                {
+                    stream.Position = tmpPos;
+                    continue;
+                }
+
+                if (!buffer.SequenceEqual(magicBytes.Skip(1)))
+                {
+                    stream.Position = tmpPos;
+                    continue;
+                }
+
+                stream.Position -= magicBytes.Length;
+                return currentPosition;
+            }
+
+            stream.Position = oldPostion;
+            return -1;
+        }
+
         public static int ReadInt24(this BinaryReader reader)
         {
             var buffer = new byte[4];

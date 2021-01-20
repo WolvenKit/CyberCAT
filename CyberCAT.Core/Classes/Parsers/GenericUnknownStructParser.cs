@@ -251,12 +251,36 @@ namespace CyberCAT.Core.Classes.Parsers
             throw new Exception();
         }
 
+        private string GetRealName(Type type)
+        {
+            if (MappingHelper.RealNameCache.TryGetValue(type.Name, out var name))
+                return name;
+
+            throw new Exception();
+        }
+
+        private string GetRealName(PropertyInfo propertyInfo)
+        {
+            if (MappingHelper.RealNameCache.TryGetValue($"{propertyInfo.DeclaringType.Name}.{propertyInfo.Name}", out var name))
+                return name;
+
+            throw new Exception();
+        }
+
+        private RealTypeAttribute GetRealType(PropertyInfo propertyInfo)
+        {
+            if (MappingHelper.RealTypeCache.TryGetValue($"{propertyInfo.DeclaringType.Name}.{propertyInfo.Name}", out var name))
+                return name;
+
+            return null;
+        }
+
         private void SetProperty(GenericUnknownStruct.BaseClassEntry cls, string propertyName, object value)
         {
             foreach (var prop in cls.GetType().GetProperties())
             {
-                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == propertyName);
-                if (attr != null)
+                var attrName = GetRealName(prop);
+                if (attrName != null && attrName == propertyName)
                 {
                     if (prop.PropertyType.IsEnum)
                     {
@@ -330,8 +354,8 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             foreach (var prop in cls.GetType().GetProperties())
             {
-                var attr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault(a => a.Name == propertyName);
-                if (attr != null)
+                var attrName = GetRealName(prop);
+                if (attrName != null && attrName == propertyName)
                 {
                     var defaultValue = prop.GetValue(cls);
                     return CompareValues(defaultValue, value);
@@ -400,15 +424,6 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private Type GetFieldType(GenericUnknownStruct.BaseClassEntry cls, string fieldName, string fieldTypeName)
         {
-            foreach (var property in cls.GetType().GetProperties())
-            {
-                var attr = (RealNameAttribute)Attribute.GetCustomAttribute(property.PropertyType, typeof(RealNameAttribute));
-                if (attr != null && attr.Name == fieldName)
-                {
-
-                }
-            }
-
             if (fieldTypeName == "Bool")
                 return typeof(bool);
 
@@ -706,7 +721,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     {
                         if (_doMapping)
                         {
-                            var strId = _stringList.IndexOf(GetRealNameFromClass(classList[i]));
+                            var strId = _stringList.IndexOf(GetRealName(classList[i].GetType()));
                             writer.Write(strId);
                         }
                         else
@@ -782,23 +797,6 @@ namespace CyberCAT.Core.Classes.Parsers
             return newClassList.ToArray();
         }
 
-        private string GetRealNameFromClass(GenericUnknownStruct.BaseClassEntry cls)
-        {
-            var attr = (RealNameAttribute)Attribute.GetCustomAttribute(cls.GetType(), typeof(RealNameAttribute));
-            if (attr == null)
-                throw new Exception();
-
-            return attr.Name;
-        }
-
-        private string GetRealNameFromProperty(PropertyInfo prop)
-        {
-            var nameAttr = ((RealNameAttribute[])prop.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
-            if (nameAttr == null)
-                throw new Exception();
-
-            return nameAttr.Name;
-        }
 
         protected List<string> GenerateStringList(GenericUnknownStruct.BaseClassEntry[] classes)
         {
@@ -808,7 +806,7 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 if (_doMapping)
                 {
-                    result.Add(GetRealNameFromClass(classEntry));
+                    result.Add(GetRealName(classEntry.GetType()));
                     GenerateStringListFromMappedFields(classEntry, ref result);
                 }
                 else
@@ -825,27 +823,27 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             return GetTypeStringFromProperty(propInfo, propInfo.GetValue(cls));
         }
-
+        
         private (string, string) GetTypeStringFromProperty(PropertyInfo propInfo, object propValue)
         {
-            var typeAttr = ((RealTypeAttribute[])propInfo.GetCustomAttributes(typeof(RealTypeAttribute), true)).FirstOrDefault();
-            if (typeAttr != null)
+            var attr = GetRealType(propInfo);
+            if (attr != null)
             {
-                var typeStr = typeAttr.Type;
+                var typeStr = attr.Type;
 
-                if (typeAttr.IsHandle && !typeStr.StartsWith("handle:"))
+                if (attr.IsHandle && !typeStr.StartsWith("handle:"))
                     typeStr = "handle:" + typeStr;
 
-                if (typeAttr.IsArray && !typeStr.StartsWith("["))
-                    return ($"[{((IList)propValue).Count}]" + typeStr, typeAttr.Type);
+                if (attr.IsArray && !typeStr.StartsWith("["))
+                    return ($"[{((IList)propValue).Count}]" + typeStr, attr.Type);
 
-                if (typeAttr.IsStatic && !typeStr.StartsWith("static:"))
-                    return ($"static:{((IList)propValue).Count}," + typeStr, typeAttr.Type);
+                if (attr.IsStatic && !typeStr.StartsWith("static:"))
+                    return ($"static:{((IList)propValue).Count}," + typeStr, attr.Type);
 
                 if (propInfo.PropertyType.IsArray)
                     typeStr = "array:" + typeStr;
 
-                return (typeStr, typeAttr.Type);
+                return (typeStr, attr.Type);
             }
 
             if (propInfo.PropertyType.IsArray)
@@ -865,10 +863,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 if (typeof(IHandle).IsAssignableFrom(elementType))
                 {
                     var genericType = elementType.GetGenericArguments()[0];
-                    var nameAttr = ((RealNameAttribute[])genericType.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
-                    if (nameAttr != null)
+                    var attrName = GetRealName(genericType);
+                    if (attrName != null)
                     {
-                        return ("array:handle:" + nameAttr.Name, nameAttr.Name);
+                        return ("array:handle:" + attrName, attrName);
                     }
                     else
                     {
@@ -893,10 +891,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 if (typeof(IHandle).IsAssignableFrom(propInfo.PropertyType))
                 {
                     var genericType = propInfo.PropertyType.GetGenericArguments()[0];
-                    var nameAttr = ((RealNameAttribute[])genericType.GetCustomAttributes(typeof(RealNameAttribute), true)).FirstOrDefault();
-                    if (nameAttr != null)
+                    var attrName = GetRealName(genericType);
+                    if (attrName != null)
                     {
-                        return ("handle:" + nameAttr.Name, nameAttr.Name);
+                        return ("handle:" + attrName, attrName);
                     }
                     else
                     {
@@ -937,32 +935,13 @@ namespace CyberCAT.Core.Classes.Parsers
             }
         }
 
-        private Dictionary<string, bool> _ignorePropertyCache = new Dictionary<string, bool>();
-        private Dictionary<string, object> _defaultValueMap = new Dictionary<string, object>();
-
-        private object GetDefaultValue(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo)
-        {
-            var fullName = $"{cls.GetType().Name}.{propInfo.Name}";
-            if (_defaultValueMap.ContainsKey(fullName))
-                return _defaultValueMap[fullName];
-
-            var nCls = Activator.CreateInstance(cls.GetType());
-            var nVal = propInfo.GetValue(nCls);
-
-            _defaultValueMap.Add(fullName, nVal);
-            return nVal;
-        }
-
         private bool CanBeIgnored(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo, object propValue)
         {
-            var fullName = $"{cls.GetType().Name}.{propInfo.Name}";
-            if (!_ignorePropertyCache.ContainsKey(fullName))
-                _ignorePropertyCache.Add(fullName, propInfo.IsDefined(typeof(ParserIgnoreAttribute)));
-
-            if (_ignorePropertyCache[fullName])
+            var name = $"{cls.GetType().Name}.{propInfo.Name}";
+            if (MappingHelper.IgnoredCache.Contains(name))
                 return true;
 
-            var defaultVal = GetDefaultValue(cls, propInfo);
+            var defaultVal = MappingHelper.DefaultValueCache[name];
             return CompareValues(propValue, defaultVal);
         }
 
@@ -989,7 +968,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 var propValue = prop.GetValue(cls);
                 var (typeString, baseType) = GetTypeStringFromProperty(prop, propValue);
 
-                strings.Add(GetRealNameFromProperty(prop));
+                strings.Add(GetRealName(prop));
                 strings.Add(typeString);
 
                 if (prop.PropertyType.IsArray)
@@ -1108,7 +1087,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     writer.Write((ushort)props.Count);
                     foreach (var prop in props)
                     {
-                        writer.Write((ushort)_stringList.IndexOf(GetRealNameFromProperty(prop)));
+                        writer.Write((ushort)_stringList.IndexOf(GetRealName(prop)));
                         var (typeString, baseType) = GetTypeStringFromProperty(prop, cls);
                         writer.Write((ushort)_stringList.IndexOf(typeString));
                         writer.Write(new byte[4]); // offset

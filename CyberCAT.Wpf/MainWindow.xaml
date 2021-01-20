@@ -59,9 +59,9 @@
                 </StackPanel>
             </MenuItem>
         </Menu>
-        <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1">
+        <TabControl Grid.Row="1" Name="EditorTabs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed">
             <TabItem Header="Simple">
-                <Grid >
+                <Grid>
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" />
                     <TabControl  TabStripPlacement="Left">
                         <TabItem Header="Items" Name="SimpleItemsTab" />
@@ -97,13 +97,34 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Advanced" >
-                <Grid>
-                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Advanced GUI here" FontSize="36"/>
-                    </Border>
-                </Grid>
+
+                <Border Name="advancedTabBorder" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+                    <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                        <TreeView Name="advancedTabTreeView" SelectedItemChanged="advancedTabTreeView_SelectedItemChanged"></TreeView>
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                        <DockPanel Grid.Column="2" Name="propertyGridHost"></DockPanel>
+                    </Grid>
+                </Border>
             </TabItem>
         </TabControl>
-        <Label Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"/>
+        <Grid Grid.Row="1" Name="ProgressIndicator" Visibility="Collapsed">
+            <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1,0,1">
+                <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <mah:ProgressRing />
+                    <Label Content="Opening..." FontSize="36" Margin="10,0,0,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" Name="OpenSaveText">
+            <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1,0,1" >
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Open a save file" FontSize="36"/>
+            </Border>
+        </Grid>
+        <TextBlock Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" TextAlignment="Center" />
     </Grid>
 </mah:MetroWindow>
