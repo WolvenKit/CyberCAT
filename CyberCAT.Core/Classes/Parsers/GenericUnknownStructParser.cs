@@ -783,6 +783,12 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 var handles = data.Handles.OrderBy(h => h.GetId()).ToList();
 
+                var idx = (uint) newClassList.Count;
+                for (int i = 0; i < handles.Count; i++)
+                {
+                    handles[i].SetId(idx++);
+                }
+
                 var usedIds = new HashSet<uint>();
                 foreach (var handle in handles)
                 {
