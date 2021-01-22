@@ -33,22 +33,19 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             return result;
         }
 
-        public void RemoveHandle(int id)
+        public void RemoveHandle(uint id)
         {
-            for (int i = Handles.Count - 1; i >= 0; i--)
-            {
-                if (Handles[i].GetId() == id)
-                    Handles.Remove(Handles[i]);
-            }
+            Handles.RemoveAll(h => h.GetId() == id);
+        }
+
+        public void RemoveHandles(HashSet<uint> ids)
+        {
+            Handles.RemoveAll(h => ids.Contains(h.GetId()));
         }
 
         public void RemoveHandle(BaseClassEntry obj)
         {
-            for (int i = Handles.Count - 1; i >= 0; i--)
-            {
-                if (Handles[i].GetValue() == obj)
-                    Handles.Remove(Handles[i]);
-            }
+            Handles.RemoveAll(h => h.GetValue() == obj);
         }
 
         public class BaseClassEntry
