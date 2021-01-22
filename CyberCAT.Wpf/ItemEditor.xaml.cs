@@ -51,11 +51,20 @@ namespace CyberCAT.Wpf
                     if (statsNode == null)
                     {
                         _mapStructure = null;
-                        return;
                     }
-                    var rootData = (GenericUnknownStruct)statsNode.Value;
-                    var mapStructure = rootData.ClassList[0];
-                    _mapStructure = mapStructure as GameStatsStateMapStructure ?? throw new Exception("Unexpected Structure");
+                    else
+                    {
+                        if (!(statsNode.Value is GenericUnknownStruct rootData))
+                        {
+                            // No StatsSystemParser available, disable editing stats
+                            _mapStructure = null;
+                        }
+                        else
+                        {
+                            var mapStructure = rootData.ClassList[0];
+                            _mapStructure = mapStructure as GameStatsStateMapStructure ?? throw new Exception("Unexpected Structure");
+                        }
+                    }
                 }
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ControlVisibility));
