@@ -34,7 +34,10 @@ namespace CyberCAT.Wpf
                 {
                     settings.StartInSavesFolder = OpenInSavedGames.IsChecked.Value;
                 }
-
+                if (AllowQuickActions.IsChecked != null)
+                {
+                    settings.AllowQuickActions = AllowQuickActions.IsChecked.Value;
+                }
                 if (ParsersSimple.IsChecked != null && ParsersSimple.IsChecked.Value)
                 {
                     settings.EnabledParsers = SaveFile.ParserList.Simple;
@@ -57,6 +60,7 @@ namespace CyberCAT.Wpf
             _originalSettings = settings;
             InitializeComponent();
             OpenInSavedGames.IsChecked = settings.StartInSavesFolder;
+            AllowQuickActions.IsChecked = settings.AllowQuickActions;
             switch (settings.EnabledParsers)
             {
                 case SaveFile.ParserList.Simple:

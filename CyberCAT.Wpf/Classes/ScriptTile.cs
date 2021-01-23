@@ -20,18 +20,25 @@ namespace CyberCAT.Wpf.Classes
             _action = action;
             _saveFile = saveFile;
             _folderPath = folderPath;
-            Click += ScriptTile_Click;
             Content = action.DisplayName;
             ToolTip = action.Description;
         }
-
-        private void ScriptTile_Click(object sender, System.Windows.RoutedEventArgs e)
+        public void RunScript()
         {
+            try
+            {
                 _action.Execute(_saveFile, _folderPath);
                 _ = notificationManager.ShowAsync(
                 new NotificationContent { Title = _action.DisplayName, Message = _action.SuccessMessage, Type = NotificationType.Success, },
                 areaName: "WindowArea", TimeSpan.FromSeconds(2));
-
+            }
+            catch(Exception ex)
+            {
+                _ = notificationManager.ShowAsync(
+                new NotificationContent { Title = _action.DisplayName, Message = "Error executing action. More info in Messagebox", Type = NotificationType.Error, },
+                areaName: "WindowArea", TimeSpan.FromSeconds(4));
+                MessageBox.Show($"Error Executing Action {_action.DisplayName}: {ex.Message}");
+            }
         }
     }
 }

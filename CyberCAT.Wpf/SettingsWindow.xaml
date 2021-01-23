@@ -8,15 +8,19 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="CyberCAT Settings" Height="225" Width="425" ResizeMode="NoResize" Closed="OnClosed">
+        Title="CyberCAT Settings" Height="255" Width="425" ResizeMode="NoResize" Closed="OnClosed">
     <Grid Margin="10,10,10,10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="100" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Name="OpenInSavedGames"><Label>Open 'Open' and 'Save' dialogs inside the 'Saved Games' folder</Label></CheckBox>
-        <StackPanel Grid.Row="1" Orientation="Vertical">
+        <CheckBox Grid.Row="1" Name="AllowQuickActions">
+            <Label>Allow QuickActions</Label>
+        </CheckBox>
+        <StackPanel Grid.Row="2" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Enabled parsers</Label>
                 <iconPacks:PackIconMaterial Name="ParsersHelp" Kind="HelpCircleOutline" VerticalAlignment="Center" MouseEnter="OnParserTooltipMouseEnter" MouseLeave="OnParserTooltipMouseLeave">
@@ -39,7 +43,7 @@
             <RadioButton Name="ParsersEnhanced" Margin="10,0,0,5">Enhanced</RadioButton>
             <RadioButton Name="ParsersSimple" Margin="10,0,0,0">Simple</RadioButton>
         </StackPanel>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />

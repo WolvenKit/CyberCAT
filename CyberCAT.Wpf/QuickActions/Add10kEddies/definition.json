@@ -4,9 +4,5 @@
   "Description": "Adds 10.000 Eddies",
   "SuccessMessage": "Added 10K Eddies",
   "Arguments": [
-    {
-      "Name": "Name",
-      "Type": "Type"
-    }
   ]
 }
