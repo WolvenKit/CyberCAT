@@ -1,8 +1,8 @@
 ﻿using CyberCAT.Core.Classes;
-using IronPython.Hosting;
-using IronPython.Runtime;
+using CyberCAT.Core.Classes.NodeRepresentations;
+using Microsoft.ClearScript;
+using Microsoft.ClearScript.V8;
 using Microsoft.CodeAnalysis;
-using Microsoft.Scripting.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,16 +27,25 @@ namespace CyberCAT.Wpf.Classes
         }
         public void Execute(SaveFile saveFile, string folderPath)
         {
-            ScriptEngine engine = Python.CreateEngine();
-            ScriptScope scope = engine.CreateScope();
-            scope.SetVariable("saveFile", saveFile);
-            engine.Execute("import clr", scope);
-            engine.Execute("clr.AddReference(\"System.Core\")", scope);
-            engine.Execute("from System.Collections.Generic import List", scope);
-            engine.Execute("import System", scope);
-            engine.Execute("clr.ImportExtensions(System.Linq)", scope);
-            engine.Execute("reload = None", scope);
-            engine.ExecuteFile(Path.Combine(folderPath, "script.py"), scope);
+            using (var engine = new V8ScriptEngine())
+            {
+                engine.DocumentSettings.AccessFlags = DocumentAccessFlags.EnableFileLoading;
+                engine.AddHostObject("lib", new HostTypeCollection(typeof(SaveFile).Assembly));
+                engine.AddHostObject("nodes", saveFile.Nodes);
+                engine.AddHostObject("host", new HostFunctions());
+                engine.AddHostType(typeof(Enumerable));
+                engine.AddHostType(typeof(EnumerableExtensions));
+                engine.ExecuteDocument(Path.Combine(folderPath, "script.js"));
+                var eddies = engine.Script.eddies;
+                var quantity = engine.Script.quantity;
+            }
+        }
+    }
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<T> where<T>(this IEnumerable<T> source, dynamic pred)
+        {
+            return source.Where(item => Convert.ToBoolean(pred(item)));
         }
     }
 }

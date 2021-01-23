@@ -1,8 +1,6 @@
 ﻿using CyberCAT.Core;
 using CyberCAT.Core.Classes;
-using IronPython.Hosting;
 using MahApps.Metro.Controls;
-using Microsoft.Scripting.Hosting;
 using Notifications.Wpf.Core;
 using System;
 using System.Collections.Generic;
