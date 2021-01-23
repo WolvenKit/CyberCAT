@@ -1,6 +1,12 @@
 {
-  "DisplayName": "Add 10k Eddies",
+  "DisplayName": "Add 10K Eddies",
   "Icon": null,
-  "ScriptPath": "Add10kEddies\\script.py",
-  "Description": "Adds 10.000 Eddies"
+  "Description": "Adds 10.000 Eddies",
+  "SuccessMessage": "Added 10K Eddies",
+  "Arguments": [
+    {
+      "Name": "Name",
+      "Type": "Type"
+    }
+  ]
 }
