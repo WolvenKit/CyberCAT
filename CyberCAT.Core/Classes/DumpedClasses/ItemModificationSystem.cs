@@ -6,6 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ItemModificationSystem : GameScriptableSystem
     {
         [RealName("blackboard")]
-        public Handle<GameIBlackboard> Blackboard { get; set; }
+        public WHandle<GameIBlackboard> Blackboard { get; set; }
     }
 }

@@ -248,7 +248,7 @@ namespace CyberCAT.Core.Classes.Parsers
                 return (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(classType);
             }
 
-            throw new Exception();
+            throw new ClassNotFoundException(name);
         }
 
         private string GetRealName(Type type)
@@ -447,6 +447,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 return typeof(Handle<>).MakeGenericType(tmpType);
             }
 
+            if (fieldTypeName.StartsWith("whandle:"))
+            {
+                throw new UnknownTypeException(fieldTypeName);
+            }
+
             if (MappingHelper.DumpedEnums.ContainsKey(fieldTypeName))
             {
                 var enumType = MappingHelper.DumpedEnums[fieldTypeName];
@@ -508,7 +513,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             if (fieldTypeName.StartsWith("script_ref:"))
             {
-                throw new Exception();
+                throw new UnknownTypeException(fieldTypeName);
             }
 
             if (fieldTypeName.StartsWith("handle:"))
@@ -516,10 +521,21 @@ namespace CyberCAT.Core.Classes.Parsers
                 return reader.ReadUInt32();
             }
 
+            if (fieldTypeName.StartsWith("whandle:"))
+            {
+                throw new UnknownTypeException(fieldTypeName);
+            }
+
             switch (fieldTypeName)
             {
                 case "Bool":
                     return reader.ReadByte() != 0;
+
+                case "Int16":
+                    return reader.ReadInt16();
+
+                case "Uint16":
+                    return reader.ReadUInt16();
 
                 case "Int32":
                     return reader.ReadInt32();
@@ -592,7 +608,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             if (fieldType.StartsWith("script_ref:"))
             {
-                throw new Exception();
+                throw new UnknownTypeException(fieldType);
             }
 
             if (fieldType.StartsWith("handle:"))
@@ -600,10 +616,21 @@ namespace CyberCAT.Core.Classes.Parsers
                 return reader.ReadUInt32();
             }
 
+            if (fieldType.StartsWith("whandle:"))
+            {
+                throw new UnknownTypeException(fieldType);
+            }
+
             switch (fieldType)
             {
                 case "Bool":
                     return reader.ReadByte() != 0;
+
+                case "Int16":
+                    return reader.ReadInt16();
+
+                case "Uint16":
+                    return reader.ReadUInt16();
 
                 case "Int32":
                     return reader.ReadInt32();
@@ -782,6 +809,23 @@ namespace CyberCAT.Core.Classes.Parsers
             if (data.Handles.Count > 0)
             {
                 var handles = data.Handles.OrderBy(h => h.GetId()).ToList();
+
+                var lastOrgIdx = (uint) 0;
+                var idx = (uint) newClassList.Count - 1;
+                for (int i = 0; i < handles.Count; i++)
+                {
+                    var handleId = handles[i].GetId();
+
+                    if (lastOrgIdx == handleId)
+                    {
+                        handles[i].SetId(idx);
+                    }
+                    else
+                    {
+                        lastOrgIdx = handleId;
+                        handles[i].SetId(++idx);
+                    }
+                }
 
                 var usedIds = new HashSet<uint>();
                 foreach (var handle in handles)
