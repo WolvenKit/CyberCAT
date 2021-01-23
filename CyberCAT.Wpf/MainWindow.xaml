@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CyberCAT.Wpf"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        x:Class="CyberCAT.Wpf.MainWindow"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
+        xmlns:notifications="clr-namespace:Notifications.Wpf.Core.Controls;assembly=Notifications.Wpf.Core"
         mc:Ignorable="d"
         Title="CyberCAT" Height="720" Width="1280"
         MinHeight="480" MinWidth="640">
@@ -100,8 +100,9 @@
             <TabItem Header="Quick Actions" >
                 <Grid>
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quick Actions here" FontSize="36"/>
+                        <WrapPanel Name="quickActionWrapPanel" />
                     </Border>
+                    <notifications:NotificationArea x:Name="WindowArea" Position="BottomRight" MaxItems="3"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Advanced" >

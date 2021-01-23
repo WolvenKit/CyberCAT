@@ -272,7 +272,22 @@ namespace CyberCAT.Wpf
                     BuildVisualSubTree(treeNode, null);
                     advancedTabTreeView.Items.Add(treeNode);
                 }
+                LoadQuickActions();
             });
+        }
+        private void LoadQuickActions()
+        {
+            foreach (var directory in Directory.GetDirectories("QuickActions"))
+            {
+                var definitionPath = Path.Combine(directory, "definition.json");
+                if (File.Exists(definitionPath))
+                {
+                    var action = JsonConvert.DeserializeObject<QuickAction>(File.ReadAllText(definitionPath));
+                    action.Arguments.Add(new QuickActionArgument() { Name = "Name", Type = "Type" });
+                    File.WriteAllText("out.json",JsonConvert.SerializeObject(action, Formatting.Indented));
+                    quickActionWrapPanel.Children.Add(new ScriptTile(action, LoadedSaveFile,directory));
+                }
+            }
         }
         private void BuildVisualSubTree(SaveNodeTreeViewItem treeNode, string filter)
         {
