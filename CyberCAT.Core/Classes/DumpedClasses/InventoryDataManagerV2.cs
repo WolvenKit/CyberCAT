@@ -72,13 +72,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameItemIconGender? ItemIconGender { get; set; }
         
         [RealName("WeaponUIBlackboard")]
-        public Handle<GameIBlackboard> WeaponUIBlackboard { get; set; }
+        public WHandle<GameIBlackboard> WeaponUIBlackboard { get; set; }
         
         [RealName("UIBBEquipmentBlackboard")]
-        public Handle<GameIBlackboard> UIBBEquipmentBlackboard { get; set; }
+        public WHandle<GameIBlackboard> UIBBEquipmentBlackboard { get; set; }
         
         [RealName("UIBBItemModBlackbord")]
-        public Handle<GameIBlackboard> UIBBItemModBlackbord { get; set; }
+        public WHandle<GameIBlackboard> UIBBItemModBlackbord { get; set; }
         
         [RealName("UIBBEquipment")]
         public Handle<UI_EquipmentDef> UIBBEquipment { get; set; }

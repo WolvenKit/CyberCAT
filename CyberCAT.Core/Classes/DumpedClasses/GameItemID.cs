@@ -13,5 +13,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("rngSeed")]
         [RealType("Uint32")]
         public uint RngSeed { get; set; }
+
+        [RealName("uniqueCounter")]
+        [RealType("Uint16")]
+        public ushort UniqueCounter { get; set; }
     }
 }
