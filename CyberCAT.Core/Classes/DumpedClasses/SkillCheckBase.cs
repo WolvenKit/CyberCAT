@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SkillCheckBase : IScriptable
     {
         [RealName("alternativeName")]
-        [RealType("TweakDBID")]
         public TweakDbId AlternativeName { get; set; }
         
         [RealName("difficulty")]
@@ -16,19 +15,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameplayConditionContainer> AdditionalRequirements { get; set; }
         
         [RealName("duration")]
-        [RealType("Float")]
         public float Duration { get; set; }
         
         [RealName("isActive")]
-        [RealType("Bool")]
         public bool IsActive { get; set; }
         
         [RealName("wasPassed")]
-        [RealType("Bool")]
         public bool WasPassed { get; set; }
         
         [RealName("skillCheckPerformed")]
-        [RealType("Bool")]
         public bool SkillCheckPerformed { get; set; }
         
         [RealName("skillToCheck")]
@@ -38,7 +33,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameplaySkillCondition> BaseSkill { get; set; }
         
         [RealName("isDynamic")]
-        [RealType("Bool")]
         public bool IsDynamic { get; set; }
     }
 }

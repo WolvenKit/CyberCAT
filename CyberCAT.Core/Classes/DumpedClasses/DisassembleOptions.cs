@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class DisassembleOptions : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("canBeDisassembled")]
-        [RealType("Bool")]
         public bool CanBeDisassembled { get; set; }
     }
 }

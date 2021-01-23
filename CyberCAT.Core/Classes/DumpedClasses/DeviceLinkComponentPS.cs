@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DeviceLink ParentDevice { get; set; }
         
         [RealName("isConnected")]
-        [RealType("Bool")]
         public bool IsConnected { get; set; }
         
         [RealName("ownerEntityID")]

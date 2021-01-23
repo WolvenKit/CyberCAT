@@ -27,7 +27,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public Handle<T> CreateHandle<T>(T data) where T : BaseClassEntry
         {
-            var maxId = Handles.Max(h => h.GetId());
+            var maxId = Handles.Max(h => h.Id);
             var result = new Handle<T>(maxId + 1, data);
             Handles.Add(result);
             return result;
@@ -35,12 +35,12 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public void RemoveHandle(uint id)
         {
-            Handles.RemoveAll(h => h.GetId() == id);
+            Handles.RemoveAll(h => h.Id == id);
         }
 
         public void RemoveHandles(HashSet<uint> ids)
         {
-            Handles.RemoveAll(h => ids.Contains(h.GetId()));
+            Handles.RemoveAll(h => ids.Contains(h.Id));
         }
 
         public void RemoveHandle(BaseClassEntry obj)

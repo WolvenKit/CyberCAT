@@ -7,8 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class STransformAnimationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("animationName")]
-        [RealType("CName")]
-        public string AnimationName { get; set; }
+        public CName AnimationName { get; set; }
         
         [RealName("operationType")]
         public DumpedEnums.ETransformAnimationOperationType? OperationType { get; set; }

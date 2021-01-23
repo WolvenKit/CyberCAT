@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.Mapping
     {
         public string Type;
         public bool IsStatic;
-        public bool IsArray;
+        public bool IsFixedArray;
         public bool IsHandle;
 
         public RealTypeAttribute(string type)

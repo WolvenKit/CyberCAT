@@ -10,8 +10,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameinteractionsChoiceLookAtType? Type { get; set; }
         
         [RealName("slotName")]
-        [RealType("CName")]
-        public string SlotName { get; set; }
+        public CName SlotName { get; set; }
         
         [RealName("offset")]
         public Vector3 Offset { get; set; }

@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameItemID ItemID { get; set; }
         
         [RealName("isLocked")]
-        [RealType("Bool")]
         public bool IsLocked { get; set; }
     }
 }

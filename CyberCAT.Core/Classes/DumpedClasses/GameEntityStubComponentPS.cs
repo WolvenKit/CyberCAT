@@ -15,11 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameCommunityID SpawnerId { get; set; }
         
         [RealName("ownerCommunityEntryName")]
-        [RealType("CName")]
-        public string OwnerCommunityEntryName { get; set; }
+        public CName OwnerCommunityEntryName { get; set; }
         
         [RealName("selectedAppearanceName")]
-        [RealType("CName")]
-        public string SelectedAppearanceName { get; set; }
+        public CName SelectedAppearanceName { get; set; }
     }
 }

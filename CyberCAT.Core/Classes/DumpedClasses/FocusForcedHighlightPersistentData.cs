@@ -9,8 +9,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID SourceID { get; set; }
         
         [RealName("sourceName")]
-        [RealType("CName")]
-        public string SourceName { get; set; }
+        public CName SourceName { get; set; }
         
         [RealName("highlightType")]
         public DumpedEnums.EFocusForcedHighlightType? HighlightType { get; set; }
@@ -22,15 +21,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EPriority? Priority { get; set; }
         
         [RealName("inTransitionTime")]
-        [RealType("Float")]
         public float InTransitionTime { get; set; }
         
         [RealName("outTransitionTime")]
-        [RealType("Float")]
         public float OutTransitionTime { get; set; }
         
         [RealName("isRevealed")]
-        [RealType("Bool")]
         public bool IsRevealed { get; set; }
         
         [RealName("patternType")]

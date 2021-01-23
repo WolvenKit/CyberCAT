@@ -7,23 +7,19 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SVFXOperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("vfxName")]
-        [RealType("CName")]
-        public string VfxName { get; set; }
+        public CName VfxName { get; set; }
         
         [RealName("vfxResource")]
         public GameFxResource VfxResource { get; set; }
         
         [RealName("shouldPersist")]
-        [RealType("Bool")]
         public bool ShouldPersist { get; set; }
         
         [RealName("size")]
-        [RealType("Float")]
         public float Size { get; set; }
         
         [RealName("nodeRef")]
-        [RealType("NodeRef")]
-        public string NodeRef { get; set; }
+        public NodeRef NodeRef { get; set; }
         
         [RealName("operationType")]
         public DumpedEnums.EEffectOperationType? OperationType { get; set; }

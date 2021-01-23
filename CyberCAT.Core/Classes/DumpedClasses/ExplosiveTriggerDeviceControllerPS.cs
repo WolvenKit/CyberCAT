@@ -6,11 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ExplosiveTriggerDeviceControllerPS : ExplosiveDeviceControllerPS
     {
         [RealName("playerSafePass")]
-        [RealType("Bool")]
         public bool PlayerSafePass { get; set; }
         
         [RealName("triggerExploded")]
-        [RealType("Bool")]
         public bool TriggerExploded { get; set; }
     }
 }

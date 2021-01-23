@@ -15,8 +15,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ECLSForcedState? State { get; set; }
         
         [RealName("forcedStateSource")]
-        [RealType("CName")]
-        public string ForcedStateSource { get; set; }
+        public CName ForcedStateSource { get; set; }
         
         [RealName("forcedStatesStack")]
         public ForcedStateData[] ForcedStatesStack { get; set; }
@@ -25,19 +24,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<CLSWeatherListener> WeatherListener { get; set; }
         
         [RealName("turnOffLisenerID")]
-        [RealType("CName")]
-        public string TurnOffLisenerID { get; set; }
+        public CName TurnOffLisenerID { get; set; }
         
         [RealName("turnOnLisenerID")]
-        [RealType("CName")]
-        public string TurnOnLisenerID { get; set; }
+        public CName TurnOnLisenerID { get; set; }
         
         [RealName("resetLisenerID")]
-        [RealType("CName")]
-        public string ResetLisenerID { get; set; }
+        public CName ResetLisenerID { get; set; }
         
         [RealName("weatherCallbackId")]
-        [RealType("Uint32")]
         public uint WeatherCallbackId { get; set; }
     }
 }

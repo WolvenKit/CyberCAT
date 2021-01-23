@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<EffectTrackBase>[] Tracks { get; set; }
         
         [RealName("componentName")]
-        [RealType("CName")]
-        public string ComponentName { get; set; }
+        public CName ComponentName { get; set; }
     }
 }

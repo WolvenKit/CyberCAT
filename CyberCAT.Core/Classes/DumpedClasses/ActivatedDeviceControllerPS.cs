@@ -12,11 +12,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ActivatedDeviceSetup ActivatedDeviceSetup { get; set; }
         
         [RealName("spiderbotInteractionLocationOverride")]
-        [RealType("NodeRef")]
-        public string SpiderbotInteractionLocationOverride { get; set; }
+        public NodeRef SpiderbotInteractionLocationOverride { get; set; }
         
         [RealName("industrialArmAnimationOverride")]
-        [RealType("Int32")]
         public int IndustrialArmAnimationOverride { get; set; }
     }
 }

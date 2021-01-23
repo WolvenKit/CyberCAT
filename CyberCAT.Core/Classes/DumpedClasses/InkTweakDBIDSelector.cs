@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class InkTweakDBIDSelector : IScriptable
     {
         [RealName("baseTweakID")]
-        [RealType("TweakDBID")]
         public TweakDbId BaseTweakID { get; set; }
     }
 }

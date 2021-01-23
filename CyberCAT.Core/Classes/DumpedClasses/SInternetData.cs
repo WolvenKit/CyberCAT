@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SInternetData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("startingPage")]
-        [RealType("String")]
         public string StartingPage { get; set; }
     }
 }

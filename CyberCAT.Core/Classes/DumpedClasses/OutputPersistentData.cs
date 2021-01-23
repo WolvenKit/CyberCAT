@@ -13,7 +13,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EBreachOrigin? BreachOrigin { get; set; }
         
         [RealName("securityStateChanged")]
-        [RealType("Bool")]
         public bool SecurityStateChanged { get; set; }
         
         [RealName("lastKnownPosition")]
@@ -35,7 +34,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GamePersistentID Reporter { get; set; }
         
         [RealName("id")]
-        [RealType("Int32")]
         public int Id { get; set; }
     }
 }

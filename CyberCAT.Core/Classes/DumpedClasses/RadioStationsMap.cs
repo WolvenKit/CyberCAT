@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class RadioStationsMap : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("soundEvent")]
-        [RealType("CName")]
-        public string SoundEvent { get; set; }
+        public CName SoundEvent { get; set; }
         
         [RealName("channelName")]
-        [RealType("String")]
         public string ChannelName { get; set; }
         
         [RealName("stationID")]

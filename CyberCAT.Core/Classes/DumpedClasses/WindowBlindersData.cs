@@ -10,15 +10,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EWindowBlindersStates? WindowBlindersState { get; set; }
         
         [RealName("hasOpenInteraction")]
-        [RealType("Bool")]
         public bool HasOpenInteraction { get; set; }
         
         [RealName("hasTiltInteraction")]
-        [RealType("Bool")]
         public bool HasTiltInteraction { get; set; }
         
         [RealName("hasQuickHack")]
-        [RealType("Bool")]
         public bool HasQuickHack { get; set; }
 
         public WindowBlindersData()

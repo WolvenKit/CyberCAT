@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class FastTravelSystemLock : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("lockReason")]
-        [RealType("CName")]
-        public string LockReason { get; set; }
+        public CName LockReason { get; set; }
         
         [RealName("linkedStatusEffectID")]
-        [RealType("TweakDBID")]
         public TweakDbId LinkedStatusEffectID { get; set; }
     }
 }

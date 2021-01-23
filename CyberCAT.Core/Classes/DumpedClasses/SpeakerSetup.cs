@@ -13,15 +13,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ERadioStationList? DistractionMusic { get; set; }
         
         [RealName("range")]
-        [RealType("Float")]
         public float Range { get; set; }
         
         [RealName("glitchSFX")]
-        [RealType("CName")]
-        public string GlitchSFX { get; set; }
+        public CName GlitchSFX { get; set; }
         
         [RealName("useOnlyGlitchSFX")]
-        [RealType("Bool")]
         public bool UseOnlyGlitchSFX { get; set; }
     }
 }

@@ -10,18 +10,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.DeviceStimType? StimType { get; set; }
         
         [RealName("lifeTime")]
-        [RealType("Float")]
         public float LifeTime { get; set; }
         
         [RealName("radius")]
-        [RealType("Float")]
         public float Radius { get; set; }
         
         [RealName("operationType")]
         public DumpedEnums.EEffectOperationType? OperationType { get; set; }
         
         [RealName("nodeRef")]
-        [RealType("NodeRef")]
-        public string NodeRef { get; set; }
+        public NodeRef NodeRef { get; set; }
     }
 }

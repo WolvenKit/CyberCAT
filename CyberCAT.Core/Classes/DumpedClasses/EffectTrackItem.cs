@@ -6,11 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class EffectTrackItem : EffectBaseItem
     {
         [RealName("timeBegin")]
-        [RealType("Float")]
         public float TimeBegin { get; set; }
         
         [RealName("timeDuration")]
-        [RealType("Float")]
         public float TimeDuration { get; set; }
 
         // TODO: Check type

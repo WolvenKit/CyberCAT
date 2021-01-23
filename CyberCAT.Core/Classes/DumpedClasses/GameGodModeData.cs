@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameGodModeType? Type { get; set; }
         
         [RealName("source")]
-        [RealType("CName")]
-        public string Source { get; set; }
+        public CName Source { get; set; }
     }
 }

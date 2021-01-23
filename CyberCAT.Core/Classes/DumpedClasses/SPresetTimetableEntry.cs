@@ -10,15 +10,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SSimpleGameTime Time { get; set; }
         
         [RealName("useTime")]
-        [RealType("Bool")]
         public bool UseTime { get; set; }
         
         [RealName("arrayPosition")]
-        [RealType("Int32")]
         public int ArrayPosition { get; set; }
         
         [RealName("entryID")]
-        [RealType("Uint32")]
         public uint EntryID { get; set; }
     }
 }

@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class DropPointPackage : IScriptable
     {
         [RealName("itemID")]
-        [RealType("TweakDBID")]
         public TweakDbId ItemID { get; set; }
         
         [RealName("status")]

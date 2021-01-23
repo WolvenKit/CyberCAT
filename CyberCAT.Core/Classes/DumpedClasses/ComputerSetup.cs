@@ -9,23 +9,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EComputerMenuType? StartingMenu { get; set; }
         
         [RealName("mailsMenu")]
-        [RealType("Bool")]
         public bool MailsMenu { get; set; }
         
         [RealName("filesMenu")]
-        [RealType("Bool")]
         public bool FilesMenu { get; set; }
         
         [RealName("systemMenu")]
-        [RealType("Bool")]
         public bool SystemMenu { get; set; }
         
         [RealName("internetMenu")]
-        [RealType("Bool")]
         public bool InternetMenu { get; set; }
         
         [RealName("newsFeedMenu")]
-        [RealType("Bool")]
         public bool NewsFeedMenu { get; set; }
         
         [RealName("mailsStructure")]
@@ -38,7 +33,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SNewsFeedElementData[] NewsFeed { get; set; }
         
         [RealName("newsFeedInterval")]
-        [RealType("Float")]
         public float NewsFeedInterval { get; set; }
         
         [RealName("internetSubnet")]

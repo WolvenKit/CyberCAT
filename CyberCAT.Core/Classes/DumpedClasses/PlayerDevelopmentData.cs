@@ -36,22 +36,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ItemRecipe[] KnownRecipes { get; set; }
         
         [RealName("highestCompletedMinigameLevel")]
-        [RealType("Int32")]
         public int HighestCompletedMinigameLevel { get; set; }
         
         [RealName("startingLevel")]
-        [RealType("Int32")]
         public int StartingLevel { get; set; }
         
         [RealName("startingExperience")]
-        [RealType("Int32")]
         public int StartingExperience { get; set; }
         
         [RealName("lifePath")]
         public DumpedEnums.gamedataLifePath? LifePath { get; set; }
         
         [RealName("displayActivityLog")]
-        [RealType("Bool")]
         public bool DisplayActivityLog { get; set; }
     }
 }

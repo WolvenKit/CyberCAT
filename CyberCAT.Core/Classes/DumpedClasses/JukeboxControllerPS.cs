@@ -12,11 +12,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public RadioStationsMap[] Stations { get; set; }
         
         [RealName("activeStation")]
-        [RealType("Int32")]
         public int ActiveStation { get; set; }
         
         [RealName("isPlaying")]
-        [RealType("Bool")]
         public bool IsPlaying { get; set; }
     }
 }

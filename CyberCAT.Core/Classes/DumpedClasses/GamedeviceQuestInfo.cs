@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamedeviceQuestInfo : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("isHighlighted")]
-        [RealType("Bool")]
         public bool IsHighlighted { get; set; }
         
         [RealName("factName")]
-        [RealType("CName")]
-        public string FactName { get; set; }
+        public CName FactName { get; set; }
     }
 }

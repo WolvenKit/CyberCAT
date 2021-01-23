@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameAttitudeAgentPS : GameComponentPS
     {
         [RealName("currentAttitudeGroup")]
-        [RealType("CName")]
-        public string CurrentAttitudeGroup { get; set; }
+        public CName CurrentAttitudeGroup { get; set; }
     }
 }

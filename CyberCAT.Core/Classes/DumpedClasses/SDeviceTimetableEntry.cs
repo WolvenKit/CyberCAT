@@ -13,7 +13,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EDeviceStatus? State { get; set; }
         
         [RealName("entryID")]
-        [RealType("Uint32")]
         public uint EntryID { get; set; }
     }
 }

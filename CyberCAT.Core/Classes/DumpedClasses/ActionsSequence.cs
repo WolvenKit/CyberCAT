@@ -10,11 +10,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID SequenceInitiator { get; set; }
         
         [RealName("maxActionsInSequence")]
-        [RealType("Int32")]
         public int MaxActionsInSequence { get; set; }
         
         [RealName("actionsTriggeredCount")]
-        [RealType("Int32")]
         public int ActionsTriggeredCount { get; set; }
         
         [RealName("delayIDs")]

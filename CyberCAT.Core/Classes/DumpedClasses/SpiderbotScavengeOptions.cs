@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SpiderbotScavengeOptions : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("scavengableBySpiderbot")]
-        [RealType("Bool")]
         public bool ScavengableBySpiderbot { get; set; }
     }
 }

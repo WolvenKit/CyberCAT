@@ -12,14 +12,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<AIPatrolPathParameters> AlertedPathParams { get; set; }
         
         [RealName("alertedRadius")]
-        [RealType("Float")]
         public float AlertedRadius { get; set; }
         
         [RealName("alertedSpots")]
         public Handle<AIbehaviorWorkspotList> AlertedSpots { get; set; }
         
         [RealName("forceAlerted")]
-        [RealType("Bool")]
         public bool ForceAlerted { get; set; }
     }
 }

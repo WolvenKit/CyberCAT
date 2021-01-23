@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class RetractableAdControllerPS : BaseAnimatedDeviceControllerPS
     {
         [RealName("isControlled")]
-        [RealType("Bool")]
         public bool IsControlled { get; set; }
     }
 }

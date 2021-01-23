@@ -9,11 +9,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SSubCharacter[] UniqueSubCharacters { get; set; }
         
         [RealName("scriptSpawnedFlathead")]
-        [RealType("Bool")]
         public bool ScriptSpawnedFlathead { get; set; }
         
         [RealName("isDespawningFlathead")]
-        [RealType("Bool")]
         public bool IsDespawningFlathead { get; set; }
     }
 }

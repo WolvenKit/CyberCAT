@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public VehicleGarageVehicleID VehicleID { get; set; }
         
         [RealName("health")]
-        [RealType("Float")]
         public float Health { get; set; }
 
         public VehicleUnlockedVehicle()

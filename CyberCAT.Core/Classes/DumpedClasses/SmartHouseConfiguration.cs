@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SmartHouseConfiguration : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("enableInteraction")]
-        [RealType("Bool")]
         public bool EnableInteraction { get; set; }
         
         [RealName("factName")]
-        [RealType("CName")]
-        public string FactName { get; set; }
+        public CName FactName { get; set; }
     }
 }

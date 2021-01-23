@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameinteractionsOrbID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("id")]
-        [RealType("Uint32")]
         public uint Id { get; set; }
     }
 }

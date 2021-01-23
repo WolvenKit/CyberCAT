@@ -10,11 +10,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataStatType? AttributeName { get; set; }
         
         [RealName("value")]
-        [RealType("Int32")]
         public int Value { get; set; }
         
         [RealName("id")]
-        [RealType("TweakDBID")]
         public TweakDbId Id { get; set; }
     }
 }

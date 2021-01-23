@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class CooldownStorageID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("ID")]
-        [RealType("Uint32")]
         public uint ID { get; set; }
         
         [RealName("isValid")]

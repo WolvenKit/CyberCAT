@@ -10,14 +10,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ECLSForcedState? State { get; set; }
         
         [RealName("sourceName")]
-        [RealType("CName")]
-        public string SourceName { get; set; }
+        public CName SourceName { get; set; }
         
         [RealName("priority")]
         public DumpedEnums.EPriority? Priority { get; set; }
         
         [RealName("savable")]
-        [RealType("Bool")]
         public bool Savable { get; set; }
     }
 }

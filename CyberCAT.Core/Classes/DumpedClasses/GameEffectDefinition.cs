@@ -7,8 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameEffectDefinition : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("tag")]
-        [RealType("CName")]
-        public string Tag { get; set; }
+        public CName Tag { get; set; }
         
         [RealName("objectProviders")]
         public Handle<GameEffectObjectProvider>[] ObjectProviders { get; set; }

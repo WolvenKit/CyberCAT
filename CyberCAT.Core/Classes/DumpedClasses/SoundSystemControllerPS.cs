@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SoundSystemControllerPS : MasterControllerPS
     {
         [RealName("defaultAction")]
-        [RealType("Int32")]
         public int DefaultAction { get; set; }
         
         [RealName("soundSystemSettings")]

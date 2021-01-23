@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SDocumentAdress : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("folderID")]
-        [RealType("Int32")]
         public int FolderID { get; set; }
         
         [RealName("documentID")]
-        [RealType("Int32")]
         public int DocumentID { get; set; }
     }
 }

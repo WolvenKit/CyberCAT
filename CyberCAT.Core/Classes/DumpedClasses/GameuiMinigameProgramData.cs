@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameuiMinigameProgramData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("actionID")]
-        [RealType("TweakDBID")]
         public TweakDbId ActionID { get; set; }
         
         [RealName("programName")]
-        [RealType("CName")]
-        public string ProgramName { get; set; }
+        public CName ProgramName { get; set; }
     }
 }

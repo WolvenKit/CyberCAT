@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class DeviceSystemBaseControllerPS : MasterControllerPS
     {
         [RealName("quickHacksEnabled")]
-        [RealType("Bool")]
         public bool QuickHacksEnabled { get; set; }
     }
 }

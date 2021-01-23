@@ -6,8 +6,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class PreventionAgents : IScriptable
     {
         [RealName("groupName")]
-        [RealType("CName")]
-        public string GroupName { get; set; }
+        public CName GroupName { get; set; }
         
         [RealName("requsteredAgents")]
         public SPreventionAgentData[] RequsteredAgents { get; set; }

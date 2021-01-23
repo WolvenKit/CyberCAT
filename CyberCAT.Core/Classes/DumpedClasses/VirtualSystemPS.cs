@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameDeviceComponentPS>[] Slaves { get; set; }
         
         [RealName("slavesCached")]
-        [RealType("Bool")]
         public bool SlavesCached { get; set; }
     }
 }

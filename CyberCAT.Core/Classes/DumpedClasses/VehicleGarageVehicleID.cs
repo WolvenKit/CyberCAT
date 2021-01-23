@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class VehicleGarageVehicleID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("recordID")]
-        [RealType("TweakDBID")]
         public TweakDbId RecordID { get; set; }
         
         [RealName("name")]
-        [RealType("CName")]
-        public string Name { get; set; }
+        public CName Name { get; set; }
     }
 }

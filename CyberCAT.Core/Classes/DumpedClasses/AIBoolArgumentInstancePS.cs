@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AIBoolArgumentInstancePS : AIArgumentInstancePS
     {
         [RealName("value")]
-        [RealType("Bool")]
         public bool Value { get; set; }
     }
 }

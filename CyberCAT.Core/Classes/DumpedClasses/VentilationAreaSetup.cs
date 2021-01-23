@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ETrapEffects? AreaEffect { get; set; }
         
         [RealName("actionName")]
-        [RealType("CName")]
-        public string ActionName { get; set; }
+        public CName ActionName { get; set; }
     }
 }

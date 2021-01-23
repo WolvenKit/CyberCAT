@@ -7,8 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameSquadMemberDataEntry : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("squadName")]
-        [RealType("CName")]
-        public string SquadName { get; set; }
+        public CName SquadName { get; set; }
         
         [RealName("squadType")]
         public DumpedEnums.AISquadType? SquadType { get; set; }

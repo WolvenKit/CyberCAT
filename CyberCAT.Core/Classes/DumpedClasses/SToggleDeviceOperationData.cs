@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SToggleDeviceOperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("operationName")]
-        [RealType("CName")]
-        public string OperationName { get; set; }
+        public CName OperationName { get; set; }
         
         [RealName("enable")]
-        [RealType("Bool")]
         public bool Enable { get; set; }
     }
 }

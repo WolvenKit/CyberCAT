@@ -9,11 +9,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<EngineeringContainer> FuseBoxSkillChecks { get; set; }
         
         [RealName("isGenerator")]
-        [RealType("Bool")]
         public bool IsGenerator { get; set; }
         
         [RealName("isOverloaded")]
-        [RealType("Bool")]
         public bool IsOverloaded { get; set; }
     }
 }

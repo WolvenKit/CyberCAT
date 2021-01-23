@@ -12,11 +12,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.BlacklistReason? EntryReason { get; set; }
         
         [RealName("warningsCount")]
-        [RealType("Int32")]
         public int WarningsCount { get; set; }
         
         [RealName("reprimandID")]
-        [RealType("Int32")]
         public int ReprimandID { get; set; }
     }
 }

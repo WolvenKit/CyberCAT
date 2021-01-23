@@ -1,11 +1,12 @@
-﻿using CyberCAT.Core.Classes.Interfaces;
+﻿using System;
+using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
 namespace CyberCAT.Core.Classes.Mapping
 {
     public class Handle<T> : IHandle where T : GenericUnknownStruct.BaseClassEntry
     {
-        public uint Id { get; private set; }
+        public uint Id { get; set; }
 
         public T Value { get; private set; }
 
@@ -30,11 +31,13 @@ namespace CyberCAT.Core.Classes.Mapping
             Value = value;
         }
 
+        [Obsolete("This method is obsolete. Use Id instead.", false)]
         public uint GetId()
         {
             return Id;
         }
 
+        [Obsolete("This method is obsolete. Use Id instead.", false)]
         public void SetId(uint handleId)
         {
             Id = handleId;

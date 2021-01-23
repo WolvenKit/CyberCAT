@@ -15,11 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameDelayedFunctionsScheduler> DelayedFunctionsNoTd { get; set; }
         
         [RealName("isPlayerControlled")]
-        [RealType("Bool")]
         public bool IsPlayerControlled { get; set; }
         
         [RealName("tickComponent")]
-        [RealType("Bool")]
         public bool TickComponent { get; set; }
     }
 }

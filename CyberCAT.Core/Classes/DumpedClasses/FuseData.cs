@@ -13,7 +13,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SDeviceTimetableEntry[] TimeTable { get; set; }
         
         [RealName("lights")]
-        [RealType("Int32")]
         public int Lights { get; set; }
     }
 }

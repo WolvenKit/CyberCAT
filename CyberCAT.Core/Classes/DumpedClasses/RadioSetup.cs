@@ -10,11 +10,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ERadioStationList? StartingStation { get; set; }
         
         [RealName("isInteractive")]
-        [RealType("Bool")]
         public bool IsInteractive { get; set; }
         
         [RealName("glitchSFX")]
-        [RealType("CName")]
-        public string GlitchSFX { get; set; }
+        public CName GlitchSFX { get; set; }
     }
 }

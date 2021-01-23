@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GamePersistentID Id { get; set; }
         
         [RealName("className")]
-        [RealType("CName")]
-        public string ClassName { get; set; }
+        public CName ClassName { get; set; }
     }
 }

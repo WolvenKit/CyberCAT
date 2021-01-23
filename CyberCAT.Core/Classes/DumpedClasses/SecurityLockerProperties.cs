@@ -10,15 +10,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ESecurityAccessLevel? SecurityLevelAccessGranted { get; set; }
         
         [RealName("disableCyberware")]
-        [RealType("Bool")]
         public bool DisableCyberware { get; set; }
         
         [RealName("storeWeaponSFX")]
-        [RealType("CName")]
-        public string StoreWeaponSFX { get; set; }
+        public CName StoreWeaponSFX { get; set; }
         
         [RealName("pickUpWeaponSFX")]
-        [RealType("CName")]
-        public string PickUpWeaponSFX { get; set; }
+        public CName PickUpWeaponSFX { get; set; }
     }
 }

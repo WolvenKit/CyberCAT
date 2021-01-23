@@ -7,15 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameInventoryItemAbility : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("IconPath")]
-        [RealType("CName")]
-        public string IconPath { get; set; }
+        public CName IconPath { get; set; }
         
         [RealName("Title")]
-        [RealType("String")]
         public string Title { get; set; }
         
         [RealName("Description")]
-        [RealType("String")]
         public string Description { get; set; }
         
         [RealName("LocalizationDataPackage")]

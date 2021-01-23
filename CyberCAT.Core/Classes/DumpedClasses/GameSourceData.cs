@@ -6,11 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameSourceData : ISerializable
     {
         [RealName("name")]
-        [RealType("CName")]
-        public string Name { get; set; }
+        public CName Name { get; set; }
         
         [RealName("savable")]
-        [RealType("Bool")]
         public bool Savable { get; set; }
     }
 }

@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class CraftingSystem : GameScriptableSystem
     {
         [RealName("lastActionStatus")]
-        [RealType("Bool")]
         public bool LastActionStatus { get; set; }
         
         [RealName("playerCraftBook")]

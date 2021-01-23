@@ -9,11 +9,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ElevatorFloorSetup ElevatorFloorSetup { get; set; }
         
         [RealName("hasDirectInteration")]
-        [RealType("Bool")]
         public bool HasDirectInteration { get; set; }
         
         [RealName("isElevatorAtThisFloor")]
-        [RealType("Bool")]
         public bool IsElevatorAtThisFloor { get; set; }
     }
 }

@@ -6,15 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamedeviceAction : RedEvent
     {
         [RealName("actionName")]
-        [RealType("CName")]
-        public string ActionName { get; set; }
+        public CName ActionName { get; set; }
         
         [RealName("clearanceLevel")]
-        [RealType("Int32")]
         public int ClearanceLevel { get; set; }
         
         [RealName("localizedObjectName")]
-        [RealType("String")]
         public string LocalizedObjectName { get; set; }
     }
 }

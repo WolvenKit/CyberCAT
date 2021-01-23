@@ -10,11 +10,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataDevelopmentPointType? Type { get; set; }
         
         [RealName("spent")]
-        [RealType("Int32")]
         public int Spent { get; set; }
         
         [RealName("unspent")]
-        [RealType("Int32")]
         public int Unspent { get; set; }
     }
 }

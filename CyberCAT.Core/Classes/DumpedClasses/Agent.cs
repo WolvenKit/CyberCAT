@@ -22,7 +22,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EFilterType? IncomingFilter { get; set; }
         
         [RealName("cachedDelayDuration")]
-        [RealType("Float")]
         public float CachedDelayDuration { get; set; }
     }
 }

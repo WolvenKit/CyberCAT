@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameItemID ItemID { get; set; }
         
         [RealName("slotIndex")]
-        [RealType("Int32")]
         public int SlotIndex { get; set; }
     }
 }

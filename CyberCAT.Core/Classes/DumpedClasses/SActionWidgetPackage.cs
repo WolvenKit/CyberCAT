@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GamedeviceAction> Action { get; set; }
         
         [RealName("wasInitalized")]
-        [RealType("Bool")]
         public bool WasInitalized { get; set; }
         
         [RealName("dependendActions")]

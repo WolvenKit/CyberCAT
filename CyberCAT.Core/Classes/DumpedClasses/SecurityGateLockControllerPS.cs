@@ -12,11 +12,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID EntranceToken { get; set; }
         
         [RealName("isLeaving")]
-        [RealType("Bool")]
         public bool IsLeaving { get; set; }
         
         [RealName("isLocked")]
-        [RealType("Bool")]
         public bool IsLocked { get; set; }
     }
 }

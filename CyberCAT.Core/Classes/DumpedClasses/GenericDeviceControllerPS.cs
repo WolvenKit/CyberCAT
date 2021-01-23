@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GenericDeviceControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("isRecognizableBySenses")]
-        [RealType("Bool")]
         public bool IsRecognizableBySenses { get; set; }
         
         [RealName("genericDeviceActionsSetup")]
@@ -16,16 +15,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GenericContainer> GenericDeviceSkillChecks { get; set; }
         
         [RealName("deviceWidgetRecord")]
-        [RealType("TweakDBID")]
         public TweakDbId DeviceWidgetRecord { get; set; }
         
         [RealName("thumbnailWidgetRecord")]
-        [RealType("TweakDBID")]
         public TweakDbId ThumbnailWidgetRecord { get; set; }
         
         [RealName("performedCustomActionsIDs")]
-        [RealType("CName")]
-        public string[] PerformedCustomActionsIDs { get; set; }
+        public CName[] PerformedCustomActionsIDs { get; set; }
 
         public GenericDeviceControllerPS()
         {

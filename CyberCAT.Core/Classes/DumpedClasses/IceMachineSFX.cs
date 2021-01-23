@@ -6,11 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class IceMachineSFX : VendingMachineSFX
     {
         [RealName("iceFalls")]
-        [RealType("CName")]
-        public string IceFalls { get; set; }
+        public CName IceFalls { get; set; }
         
         [RealName("processing")]
-        [RealType("CName")]
-        public string Processing { get; set; }
+        public CName Processing { get; set; }
     }
 }

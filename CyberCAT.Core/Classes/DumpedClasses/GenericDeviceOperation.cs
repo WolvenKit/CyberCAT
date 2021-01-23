@@ -39,8 +39,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public STeleportOperationData Teleport { get; set; }
         
         [RealName("meshesAppearence")]
-        [RealType("CName")]
-        public string MeshesAppearence { get; set; }
+        public CName MeshesAppearence { get; set; }
         
         [RealName("playerWorkspot")]
         public SWorkspotData PlayerWorkspot { get; set; }

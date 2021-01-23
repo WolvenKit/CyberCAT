@@ -6,15 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class LcdScreenControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("messageRecordID")]
-        [RealType("TweakDBID")]
         public TweakDbId MessageRecordID { get; set; }
         
         [RealName("replaceTextWithCustomNumber")]
-        [RealType("Bool")]
         public bool ReplaceTextWithCustomNumber { get; set; }
         
         [RealName("customNumber")]
-        [RealType("Int32")]
         public int CustomNumber { get; set; }
         
         [RealName("messageRecordSelector")]

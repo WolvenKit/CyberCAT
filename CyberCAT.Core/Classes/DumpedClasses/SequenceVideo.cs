@@ -10,11 +10,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public RedResourceReferenceScriptToken VideoPath { get; set; }
         
         [RealName("audioEvent")]
-        [RealType("CName")]
-        public string AudioEvent { get; set; }
+        public CName AudioEvent { get; set; }
         
         [RealName("looped")]
-        [RealType("Bool")]
         public bool Looped { get; set; }
     }
 }

@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ForkliftSetup ForkliftSetup { get; set; }
         
         [RealName("isUp")]
-        [RealType("Bool")]
         public bool IsUp { get; set; }
     }
 }

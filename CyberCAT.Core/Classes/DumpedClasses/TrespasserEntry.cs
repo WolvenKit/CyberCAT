@@ -7,23 +7,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class TrespasserEntry : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("isScanned")]
-        [RealType("Bool")]
         public bool IsScanned { get; set; }
         
         [RealName("isInsideA")]
-        [RealType("Bool")]
         public bool IsInsideA { get; set; }
         
         [RealName("isInsideB")]
-        [RealType("Bool")]
         public bool IsInsideB { get; set; }
         
         [RealName("isInsideScanner")]
-        [RealType("Bool")]
         public bool IsInsideScanner { get; set; }
         
         [RealName("areaStack")]
-        [RealType("CName")]
-        public string[] AreaStack { get; set; }
+        public CName[] AreaStack { get; set; }
     }
 }

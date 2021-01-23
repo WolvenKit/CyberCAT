@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataStatType? StatType { get; set; }
         
         [RealName("requiredValue")]
-        [RealType("Float")]
         public float RequiredValue { get; set; }
     }
 }

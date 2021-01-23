@@ -6,16 +6,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class WorldEffect : ResStreamedResource
     {
         [RealName("name")]
-        [RealType("CName")]
-        public string Name { get; set; }
+        public CName Name { get; set; }
         
         [RealName("length")]
-        [RealType("Float")]
         public float Length { get; set; }
         
         [RealName("inputParameterNames")]
-        [RealType("CName")]
-        public string[] InputParameterNames { get; set; }
+        public CName[] InputParameterNames { get; set; }
         
         [RealName("trackRoot")]
         public Handle<EffectTrackGroup> TrackRoot { get; set; }

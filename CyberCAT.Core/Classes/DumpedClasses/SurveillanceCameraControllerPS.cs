@@ -15,11 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ESurveillanceCameraStatus? CameraState { get; set; }
         
         [RealName("shouldStream")]
-        [RealType("Bool")]
         public bool ShouldStream { get; set; }
         
         [RealName("isDetecting")]
-        [RealType("Bool")]
         public bool IsDetecting { get; set; }
         
         [RealName("feedReceivers")]
@@ -29,18 +27,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID MostRecentRequester { get; set; }
         
         [RealName("virtualComponentName")]
-        [RealType("CName")]
-        public string VirtualComponentName { get; set; }
+        public CName VirtualComponentName { get; set; }
         
         [RealName("isFeedReplacedWithBink")]
-        [RealType("Bool")]
         public bool IsFeedReplacedWithBink { get; set; }
         
         [RealName("binkVideoPath")]
         public RedResourceReferenceScriptToken BinkVideoPath { get; set; }
         
         [RealName("shouldRevealEnemies")]
-        [RealType("Bool")]
         public bool ShouldRevealEnemies { get; set; }
         
         [RealName("cameraSkillChecks")]

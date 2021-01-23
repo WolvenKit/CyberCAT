@@ -13,7 +13,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameSEquipSlot[] EquipSlots { get; set; }
         
         [RealName("activeIndex")]
-        [RealType("Int32")]
         public int ActiveIndex { get; set; }
     }
 }

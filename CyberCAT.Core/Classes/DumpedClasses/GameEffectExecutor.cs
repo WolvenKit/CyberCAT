@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameEffectExecutor : GameEffectNode
     {
         [RealName("usesHitCooldown")]
-        [RealType("Bool")]
         public bool UsesHitCooldown { get; set; }
     }
 }

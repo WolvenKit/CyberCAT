@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class STeleportOperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("nodeRef")]
-        [RealType("NodeRef")]
-        public string NodeRef { get; set; }
+        public NodeRef NodeRef { get; set; }
     }
 }

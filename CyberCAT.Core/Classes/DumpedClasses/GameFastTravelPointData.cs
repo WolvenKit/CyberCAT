@@ -6,12 +6,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameFastTravelPointData : IScriptable
     {
         [RealName("pointRecord")]
-        [RealType("TweakDBID")]
         public TweakDbId PointRecord { get; set; }
         
         [RealName("markerRef")]
-        [RealType("NodeRef")]
-        public string MarkerRef { get; set; }
+        public NodeRef MarkerRef { get; set; }
         
         [RealName("requesterID")]
         public EntEntityID RequesterID { get; set; }

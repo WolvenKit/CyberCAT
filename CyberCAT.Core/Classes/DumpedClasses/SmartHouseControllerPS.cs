@@ -18,7 +18,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SmartHouseConfiguration SmartHouseCustomization { get; set; }
         
         [RealName("callbackID")]
-        [RealType("Uint32")]
         public uint CallbackID { get; set; }
     }
 }

@@ -24,11 +24,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SDocumentAdress OpenedFileAdress { get; set; }
         
         [RealName("quickhackPerformed")]
-        [RealType("Bool")]
         public bool QuickhackPerformed { get; set; }
         
         [RealName("isInSleepMode")]
-        [RealType("Bool")]
         public bool IsInSleepMode { get; set; }
 
         public ComputerControllerPS()

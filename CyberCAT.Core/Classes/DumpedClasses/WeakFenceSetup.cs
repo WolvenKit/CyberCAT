@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class WeakFenceSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("hasGenericInteraction")]
-        [RealType("Bool")]
         public bool HasGenericInteraction { get; set; }
     }
 }

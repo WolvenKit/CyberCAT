@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class VendingMachineSFX : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("glitchingStart")]
-        [RealType("CName")]
-        public string GlitchingStart { get; set; }
+        public CName GlitchingStart { get; set; }
         
         [RealName("glitchingStop")]
-        [RealType("CName")]
-        public string GlitchingStop { get; set; }
+        public CName GlitchingStop { get; set; }
     }
 }

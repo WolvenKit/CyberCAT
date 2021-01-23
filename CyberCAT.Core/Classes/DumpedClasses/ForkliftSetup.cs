@@ -7,15 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ForkliftSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("actionActivateName")]
-        [RealType("CName")]
-        public string ActionActivateName { get; set; }
+        public CName ActionActivateName { get; set; }
         
         [RealName("liftingAnimationTime")]
-        [RealType("Float")]
         public float LiftingAnimationTime { get; set; }
         
         [RealName("hasDistractionQuickhack")]
-        [RealType("Bool")]
         public bool HasDistractionQuickhack { get; set; }
     }
 }
