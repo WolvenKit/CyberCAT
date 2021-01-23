@@ -531,6 +531,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 case "Bool":
                     return reader.ReadByte() != 0;
 
+                case "Int16":
+                    return reader.ReadInt16();
+
+                case "Uint16":
+                    return reader.ReadUInt16();
+
                 case "Int32":
                     return reader.ReadInt32();
 
@@ -619,6 +625,12 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 case "Bool":
                     return reader.ReadByte() != 0;
+
+                case "Int16":
+                    return reader.ReadInt16();
+
+                case "Uint16":
+                    return reader.ReadUInt16();
 
                 case "Int32":
                     return reader.ReadInt32();
