@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CyberCAT.Wpf"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        x:Class="CyberCAT.Wpf.MainWindow"
         mc:Ignorable="d"
-        Title="CyberCAT" Height="720" Width="1280" >
+        Title="CyberCAT" Height="720" Width="1280"
+        MinHeight="480" MinWidth="640">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -58,6 +60,12 @@
                     <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
                 </StackPanel>
             </MenuItem>
+            <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center" Click="OnSettingsClick">
+                <!-- Settings -->
+                <MenuItem.Header>
+                    <TextBlock Text="SETTINGS" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                </MenuItem.Header>
+            </MenuItem>
         </Menu>
         <TabControl Grid.Row="1" Name="EditorTabs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed">
             <TabItem Header="Simple">
@@ -97,14 +105,13 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Advanced" >
-
                 <Border Name="advancedTabBorder" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
                     <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TreeView Name="advancedTabTreeView" SelectedItemChanged="advancedTabTreeView_SelectedItemChanged"></TreeView>
                         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
                         <DockPanel Grid.Column="2" Name="propertyGridHost"></DockPanel>

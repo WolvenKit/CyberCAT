@@ -70,6 +70,14 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> FlatNodes; //flat structure
         public Guid Guid { get; }
         List<INodeParser> _parsers;
+
+        public enum ParserList
+        {
+            Simple,
+            Enhanced,
+            All
+        }
+
         /// <summary>
         /// Creates a new Instance of Save File which will utilize given parsers
         /// </summary>
@@ -78,6 +86,42 @@ namespace CyberCAT.Core.Classes
         {
             _parsers = new List<INodeParser>();
             _parsers.AddRange(parsers);
+            Guid = Guid.NewGuid();
+            _nodeInfos = new List<NodeInfo>();
+            FlatNodes = new List<NodeEntry>();
+            Nodes = new List<NodeEntry>();
+            MappingHelper.Init();
+        }
+
+        public SaveFile(ParserList parsers)
+        {
+            _parsers = new List<INodeParser>();
+            switch (parsers)
+            {
+                case ParserList.All:
+                    var interfaceType = typeof(INodeParser);
+                    var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
+                    foreach (var type in types)
+                    {
+                        INodeParser instance = (INodeParser) Activator.CreateInstance(type);
+                        _parsers.Add(instance);
+                    }
+
+                    break;
+                case ParserList.Enhanced:
+                    _parsers.Add(new StatsSystemParser());
+                    _parsers.Add(new StatPoolSystemParser());
+                    goto case ParserList.Simple;
+                case ParserList.Simple:
+                    _parsers.Add(new ItemDataParser());
+                    _parsers.Add(new InventoryParser());
+                    _parsers.Add(new ItemDropStorageManagerParser());
+                    _parsers.Add(new ItemDropStorageParser());
+                    _parsers.Add(new CharacterCustomizationAppearancesParser());
+                    _parsers.Add(new FactsDBParser());
+                    _parsers.Add(new FactsTableParser());
+                    break;
+            }
             Guid = Guid.NewGuid();
             _nodeInfos = new List<NodeInfo>();
             FlatNodes = new List<NodeEntry>();
