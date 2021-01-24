@@ -1,6 +1,6 @@
 ﻿using CyberCAT.Core.Classes.NodeRepresentations;
 
-namespace CyberCAT.Core.Classes.Interfaces
+namespace CyberCAT.Core.Classes.Mapping
 {
     public interface IHandle
     {

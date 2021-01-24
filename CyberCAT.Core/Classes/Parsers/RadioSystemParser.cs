@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new RadioSystem();
 
             reader.Skip(4);
-            result.Unknown = ParserUtils.ReadString(reader);
+            result.Unknown = reader.ReadPackedString();
 
             result.Node = node;
 
@@ -37,7 +37,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (RadioSystem)node.Value;
 
-            ParserUtils.WriteString(writer, data.Unknown);
+            writer.WritePackedString(data.Unknown);
         }
     }
 }

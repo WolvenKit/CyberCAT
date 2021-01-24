@@ -32,7 +32,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); //skip Id
 
-            var count = ParserUtils.ReadPackedInt(reader);
+            var count = reader.ReadPackedInt();
 
             var tmpFactList = new uint[count];
             for (int i = 0; i < count; i++)
@@ -59,7 +59,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (FactsTable)node.Value;
 
-            ParserUtils.WritePackedInt(writer, data.FactEntries.Count);
+            writer.WritePackedInt(data.FactEntries.Count);
 
             // Sort FactEntries by their hash before writing
             data.FactEntries = new ObservableCollection<FactsTable.FactEntry>(data.FactEntries.OrderBy(_ => _.Hash));

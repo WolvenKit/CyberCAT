@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new DSDynamicConnections();
 
             reader.Skip(4); // Skip Id
-            var entryCount = ParserUtils.ReadPackedInt(reader);
+            var entryCount = reader.ReadPackedInt();
             for (int i = 0; i < entryCount; i++)
             {
                 var entry = new DSDynamicConnections.Entry();
@@ -38,22 +38,22 @@ namespace CyberCAT.Core.Classes.Parsers
 
             foreach (var entry in result.Entries)
             {
-                entry.Unknown2 = ParserUtils.ReadString(reader);
+                entry.Unknown2 = reader.ReadPackedString();
 
-                var subCount = ParserUtils.ReadPackedInt(reader);
+                var subCount = reader.ReadPackedInt();
                 for (int i = 0; i < subCount; i++)
                 {
                     entry.Unknown3.Add(reader.ReadUInt64());
                 }
 
-                subCount = ParserUtils.ReadPackedInt(reader);
+                subCount = reader.ReadPackedInt();
                 for (int i = 0; i < subCount; i++)
                 {
                     entry.Unknown4.Add(reader.ReadUInt64());
                 }
 
                 entry.Unknown5 = reader.ReadBytes(12);
-                entry.Unknown6 = ParserUtils.ReadString(reader);
+                entry.Unknown6 = reader.ReadPackedString();
             }
 
             int readSize = node.Size - ((int)reader.BaseStream.Position - node.Offset);
@@ -67,7 +67,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (DSDynamicConnections)node.Value;
 
-            ParserUtils.WritePackedInt(writer, data.Entries.Count);
+            writer.WritePackedInt(data.Entries.Count);
             foreach (var entry in data.Entries)
             {
                 writer.Write(entry.Unknown1);
@@ -75,22 +75,22 @@ namespace CyberCAT.Core.Classes.Parsers
 
             foreach (var entry in data.Entries)
             {
-                ParserUtils.WriteString(writer, entry.Unknown2);
+                writer.WritePackedString(entry.Unknown2);
 
-                ParserUtils.WritePackedInt(writer, entry.Unknown3.Count);
+                writer.WritePackedInt(entry.Unknown3.Count);
                 foreach (var val in entry.Unknown3)
                 {
                     writer.Write(val);
                 }
 
-                ParserUtils.WritePackedInt(writer, entry.Unknown4.Count);
+                writer.WritePackedInt(entry.Unknown4.Count);
                 foreach (var val in entry.Unknown4)
                 {
                     writer.Write(val);
                 }
 
                 writer.Write(entry.Unknown5);
-                ParserUtils.WriteString(writer, entry.Unknown6);
+                writer.WritePackedString(entry.Unknown6);
             }
         }
     }

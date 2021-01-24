@@ -6,10 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Mapping;
-using CyberCAT.Core.Classes.NodeRepresentations;
-using Newtonsoft.Json;
 
 namespace CyberCAT.Core.Classes
 {
@@ -62,14 +59,11 @@ namespace CyberCAT.Core.Classes
             }
         }
 
-        private List<NodeInfo> _nodeInfos;
-
         public SaveFileHeader Header { get; set; }
         public List<NodeEntry> Nodes;
-        public int LastBlockOffset;
         public List<NodeEntry> FlatNodes; //flat structure
         public Guid Guid { get; }
-        List<INodeParser> _parsers;
+        private readonly List<INodeParser> _parsers;
 
         public enum ParserList
         {
@@ -78,20 +72,7 @@ namespace CyberCAT.Core.Classes
             All
         }
 
-        /// <summary>
-        /// Creates a new Instance of Save File which will utilize given parsers
-        /// </summary>
-        /// <param name="parsers">The parsers that will be used for parsing</param>
-        public SaveFile(IEnumerable<INodeParser> parsers)
-        {
-            _parsers = new List<INodeParser>();
-            _parsers.AddRange(parsers);
-            Guid = Guid.NewGuid();
-            _nodeInfos = new List<NodeInfo>();
-            FlatNodes = new List<NodeEntry>();
-            Nodes = new List<NodeEntry>();
-            MappingHelper.Init();
-        }
+        public SaveFile() : this(ParserList.All) { }
 
         public SaveFile(ParserList parsers)
         {
@@ -123,35 +104,31 @@ namespace CyberCAT.Core.Classes
                     break;
             }
             Guid = Guid.NewGuid();
-            _nodeInfos = new List<NodeInfo>();
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
             MappingHelper.Init();
         }
 
-        public SaveFile()
+        /// <summary>
+        /// Creates a new Instance of Save File which will utilize given parsers
+        /// </summary>
+        /// <param name="parsers">The parsers that will be used for parsing</param>
+        public SaveFile(IEnumerable<INodeParser> parsers)
         {
-            _nodeInfos = new List<NodeInfo>();
+            _parsers = new List<INodeParser>();
+            _parsers.AddRange(parsers);
+            Guid = Guid.NewGuid();
             FlatNodes = new List<NodeEntry>();
             Nodes = new List<NodeEntry>();
-            _parsers = new List<INodeParser>();
-            var interfaceType = typeof(INodeParser);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass && p != typeof(DefaultParser));
-            foreach (var type in types)
-            {
-                INodeParser instance = (INodeParser)Activator.CreateInstance(type);
-                _parsers.Add(instance);
-            }
             MappingHelper.Init();
         }
 
         public void Load(Stream inputStream)
         {
-            _nodeInfos.Clear();
             FlatNodes.Clear();
             Nodes.Clear();
 
-            Stream dataStream = null;
+            Stream dataStream;
             using (var reader = new BinaryReader(inputStream, Encoding.ASCII, true))
             {
                 ReadHeader(reader);
@@ -182,10 +159,10 @@ namespace CyberCAT.Core.Classes
             if (reader.ReadUInt32() != magicStartInt)
                 throw new Exception("invalid file format");
 
-            var length = ParserUtils.ReadPackedInt(reader);
+            var length = reader.ReadPackedInt();
             for (var i = 0; i < length; i++)
             {
-                var name = ParserUtils.ReadString(reader);
+                var name = reader.ReadPackedString();
                 var entry = new NodeEntry();
                 entry.NextId = reader.ReadInt32();
                 entry.ChildId = reader.ReadInt32();
@@ -193,14 +170,6 @@ namespace CyberCAT.Core.Classes
                 entry.Size = reader.ReadInt32();
                 entry.Name = name;
                 FlatNodes.Add(entry);
-
-                var info = new NodeInfo();
-                info.NextId = entry.NextId;
-                info.ChildId = entry.ChildId;
-                info.Offset = entry.Offset;
-                info.Size = entry.Size;
-                info.Name = name;
-                _nodeInfos.Add(info);
             }
 
             reader.BaseStream.Position = 0;
@@ -224,7 +193,7 @@ namespace CyberCAT.Core.Classes
                     }
                     if (node.NextId > -1)
                     {
-                        node.SetNextNode(FlatNodes.Where(n => n.Id == node.NextId).FirstOrDefault());
+                        node.SetNextNode(FlatNodes.FirstOrDefault(n => n.Id == node.NextId));
                     }
                 }
                 Nodes.AddRange(FlatNodes.Where(n => !n.IsChild));
@@ -235,7 +204,7 @@ namespace CyberCAT.Core.Classes
 
         public byte[] Save(bool compress = true)
         {
-            byte[] result = new byte[0];
+            byte[] result;
 
             using (var stream = new MemoryStream())
             {
@@ -304,10 +273,10 @@ namespace CyberCAT.Core.Classes
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
                     writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.NODE_INFORMATION_START));
-                    writer.WriteBit6(nodeInfos.Count);
+                    writer.WritePackedInt(nodeInfos.Count);
                     foreach (var node in nodeInfos)
                     {
-                        ParserUtils.WriteString(writer, node.Name);
+                        writer.WritePackedString(node.Name);
                         writer.Write(node.NextId);
                         writer.Write(node.ChildId);
                         writer.Write(node.Offset);
@@ -324,7 +293,6 @@ namespace CyberCAT.Core.Classes
             for (var i = 0; i < nodes.Count; ++i)
             {
                 var currentNode = nodes[i];
-                var prevNode = i > 0 ? nodes[i] : null;
                 var nextNode = i + 1 < nodes.Count ? nodes[i + 1] : null;
 
                 if (currentNode.Children.Count > 0)
@@ -408,10 +376,10 @@ namespace CyberCAT.Core.Classes
                 }
                 for (int i = node.ChildId; i < nextId; i++)
                 {
-                    var possibleChild = nodes.Where(n => n.Id == i).FirstOrDefault();
+                    var possibleChild = nodes.FirstOrDefault(n => n.Id == i);
                     if (possibleChild == null)
                     {
-                        Debugger.Break();
+                        throw new Exception();
                     }
                     if (possibleChild.ChildId > -1)//SubChild
                     {

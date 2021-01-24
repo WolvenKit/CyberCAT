@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new ContainerManagerLootSlotAvailability();
 
             reader.Skip(4); // Skip Id
-            var entryCount = ParserUtils.ReadPackedInt(reader);
+            var entryCount = reader.ReadPackedInt();
             for (int i = 0; i < entryCount; i++)
             {
                 var entry = new ContainerManagerLootSlotAvailability.Entry();
@@ -52,7 +52,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (ContainerManagerLootSlotAvailability)node.Value;
 
-            ParserUtils.WritePackedInt(writer, data.Entries.Count);
+            writer.WritePackedInt(data.Entries.Count);
             foreach (var entry in data.Entries)
             {
                 writer.Write(entry.CNameHash);

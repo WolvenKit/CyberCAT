@@ -31,7 +31,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); // Skip Id
 
-            result.UnknownString = ParserUtils.ReadString(reader);
+            result.UnknownString = reader.ReadPackedString();
             result.HeaderBytes = reader.ReadBytes(25);
             result.Inventory = InventoryParser.ReadSubInventory(node, 0, reader, parsers);
 
@@ -43,7 +43,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (ItemDropStorage)node.Value;
 
-            ParserUtils.WriteString(writer, data.UnknownString);
+            writer.WritePackedString(data.UnknownString);
             writer.Write(data.HeaderBytes);
             InventoryParser.WriteSubInventory(writer, data.Inventory);
         }

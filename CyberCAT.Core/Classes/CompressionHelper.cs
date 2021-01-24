@@ -98,7 +98,7 @@ namespace CyberCAT.Core.Classes
 
         public static byte[] Recompress(Stream stream)
         {
-            var resultBuffer = new byte[0];
+            byte[] resultBuffer;
 
             stream.Position = stream.Length - 8;
             var infoPosBuffer = new byte[4];
@@ -134,7 +134,7 @@ namespace CyberCAT.Core.Classes
 
         public static byte[] Decompress(Stream stream)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer;
 
             using (var reader = new BinaryReader(stream))
             {
@@ -164,10 +164,13 @@ namespace CyberCAT.Core.Classes
         {
             var result = new MemoryStream();
 
-            var infoPos = reader.BaseStream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC) + 4;
+            var infoPos = (int)reader.BaseStream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC) + 4;
             reader.BaseStream.Position = 0;
-            result.Write(reader.ReadBytes((int) infoPos));
-            result.Write(new byte[Constants.Numbers.DEFAULT_HEADER_SIZE - result.Position]);
+
+            var headerBuffer = reader.ReadBytes(infoPos);
+            result.Write(headerBuffer, 0, headerBuffer.Length);
+            var tableBuffer = new byte[Constants.Numbers.DEFAULT_HEADER_SIZE - result.Position];
+            result.Write(tableBuffer, 0, tableBuffer.Length);
 
             var compressedChunks = new List<DataChunkInfo>();
             var counter = reader.ReadInt32();
@@ -196,7 +199,7 @@ namespace CyberCAT.Core.Classes
 
                         if (reader.ReadUInt32() == magicInt)
                         {
-                            var decompressedSize = reader.ReadUInt32();
+                            reader.Skip(4); // decompressed size, again
                             var inBuffer = reader.ReadBytes(chunk.CompressedSize - 8);
                             outBuffer = new byte[chunk.DecompressedSize];
                             LZ4Codec.Decode(inBuffer, 0, inBuffer.Length, outBuffer, 0, outBuffer.Length);

@@ -27,9 +27,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4);
             result.Unknown1 = reader.ReadUInt32();
-            result.Unknown2 = ParserUtils.ReadString(reader);
+            result.Unknown2 = reader.ReadPackedString();
             result.Unknown3 = reader.ReadByte();
-            result.Unknown4 = ParserUtils.ReadString(reader);
+            result.Unknown4 = reader.ReadPackedString();
             result.Unknown5 = reader.ReadUInt32();
 
             result.Node = node;
@@ -42,9 +42,9 @@ namespace CyberCAT.Core.Classes.Parsers
             var data = (DirectorSystem)node.Value;
 
             writer.Write(data.Unknown1);
-            ParserUtils.WriteString(writer, data.Unknown2);
+            writer.WritePackedString(data.Unknown2);
             writer.Write(data.Unknown3);
-            ParserUtils.WriteString(writer, data.Unknown4);
+            writer.WritePackedString(data.Unknown4);
             writer.Write(data.Unknown5);
         }
     }

@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new ContainerManagerNPCLootBagsVer3LootedIDs();
 
             reader.Skip(4); // Skip Id
-            var entryCount = ParserUtils.ReadPackedInt(reader);
+            var entryCount = reader.ReadPackedInt();
             for (int i = 0; i < entryCount; i++)
             {
                 result.EntityIds.Add(reader.ReadUInt64());
@@ -43,7 +43,7 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (ContainerManagerNPCLootBagsVer3LootedIDs)node.Value;
 
-            ParserUtils.WritePackedInt(writer, data.EntityIds.Count);
+            writer.WritePackedInt(data.EntityIds.Count);
             foreach (var entityId in data.EntityIds)
             {
                 writer.Write(entityId);

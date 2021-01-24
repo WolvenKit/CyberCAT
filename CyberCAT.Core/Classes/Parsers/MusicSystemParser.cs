@@ -26,15 +26,15 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new MusicSystem();
 
             reader.Skip(4);
-            result.Unknown1 = ParserUtils.ReadString(reader);
+            result.Unknown1 = reader.ReadPackedString();
             if (result.Unknown1 != "None")
             {
-                result.Unknown2 = ParserUtils.ReadString(reader);
+                result.Unknown2 = reader.ReadPackedString();
                 result.Unknown3 = reader.ReadByte();
-                result.Unknown4 = ParserUtils.ReadString(reader);
-                result.Unknown5 = ParserUtils.ReadString(reader);
+                result.Unknown4 = reader.ReadPackedString();
+                result.Unknown5 = reader.ReadPackedString();
                 result.Unknown6 = reader.ReadUInt16();
-                result.Unknown7 = ParserUtils.ReadString(reader);
+                result.Unknown7 = reader.ReadPackedString();
                 result.Unknown8 = reader.ReadUInt32();
             }
 
@@ -47,15 +47,15 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (MusicSystem)node.Value;
 
-            ParserUtils.WriteString(writer, data.Unknown1);
+            writer.WritePackedString(data.Unknown1);
             if (data.Unknown1 != "None")
             {
-                ParserUtils.WriteString(writer, data.Unknown2);
+                writer.WritePackedString(data.Unknown2);
                 writer.Write(data.Unknown3);
-                ParserUtils.WriteString(writer, data.Unknown4);
-                ParserUtils.WriteString(writer, data.Unknown5);
+                writer.WritePackedString(data.Unknown4);
+                writer.WritePackedString(data.Unknown5);
                 writer.Write(data.Unknown6);
-                ParserUtils.WriteString(writer, data.Unknown7);
+                writer.WritePackedString(data.Unknown7);
                 writer.Write(data.Unknown8);
             }
         }

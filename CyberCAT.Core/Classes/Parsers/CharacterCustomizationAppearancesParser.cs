@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CyberCAT.Core.Classes.Interfaces;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
@@ -95,10 +92,10 @@ namespace CyberCAT.Core.Classes.Parsers
             }
 
             // Only when SaveVersion > 171
-            var scount = ParserUtils.ReadPackedInt(reader);
+            var scount = reader.ReadPackedInt();
             for (var i = 0; i < scount; ++i)
             {
-                result.Strings.Add(ParserUtils.ReadString(reader));
+                result.Strings.Add(reader.ReadPackedString());
             }
 
             result.Node = node;
@@ -117,7 +114,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private CharacterCustomizationAppearances.AppearanceSection ReadAppearanceSection(BinaryReader reader, List<string> expectedNames)
         {
-            var sectionName = ParserUtils.ReadString(reader);
+            var sectionName = reader.ReadPackedString();
             Debug.Assert(expectedNames.Contains(sectionName));
 
             var appearanceSection = new CharacterCustomizationAppearances.AppearanceSection {SectionName = sectionName};
@@ -146,8 +143,8 @@ namespace CyberCAT.Core.Classes.Parsers
                 // CSE is doing a version check here on ArchiveVersion < 195
                 // Unt64 only read if ArchiveVersion >= 195, otherwise: https://github.com/PixelRick/CyberpunkSaveEditor/blob/7c47c6c7ce099c714e2ba43515380f99a2422c20/Source/cserialization/cnodes/CCharacterCustomization.hpp#L74
                 entry.Hash = reader.ReadUInt64();
-                entry.FirstString = ParserUtils.ReadString(reader);
-                entry.SecondString = ParserUtils.ReadString(reader);
+                entry.FirstString = reader.ReadPackedString();
+                entry.SecondString = reader.ReadPackedString();
                 entry.TrailingBytes = reader.ReadBytes(8);
                 collection.Add(entry);
             }
@@ -158,8 +155,8 @@ namespace CyberCAT.Core.Classes.Parsers
             for (int i = 0; i < count; i++)
             {
                 var entry = new CharacterCustomizationAppearances.ValueEntry();
-                entry.FirstString = ParserUtils.ReadString(reader);
-                entry.SecondString = ParserUtils.ReadString(reader);
+                entry.FirstString = reader.ReadPackedString();
+                entry.SecondString = reader.ReadPackedString();
                 entry.TrailingBytes = reader.ReadBytes(8);
                 collection.Add(entry);
             }
@@ -168,9 +165,9 @@ namespace CyberCAT.Core.Classes.Parsers
         private CharacterCustomizationAppearances.StringTriple ReadStringTriple(BinaryReader reader)
         {
             var result = new CharacterCustomizationAppearances.StringTriple();
-            result.FirstString = ParserUtils.ReadString(reader);
-            result.SecondString = ParserUtils.ReadString(reader);
-            result.ThirdString = ParserUtils.ReadString(reader);
+            result.FirstString = reader.ReadPackedString();
+            result.SecondString = reader.ReadPackedString();
+            result.ThirdString = reader.ReadPackedString();
             return result;
         }
 
@@ -195,10 +192,10 @@ namespace CyberCAT.Core.Classes.Parsers
                 }
 
                 // Only when SaveVersion > 171
-                ParserUtils.WritePackedInt(writer, data.Strings.Count);
+                writer.WritePackedInt(data.Strings.Count);
                 foreach (var s in data.Strings)
                 {
-                    ParserUtils.WriteString(writer, s);
+                    writer.WritePackedString(s);
                 }
             }
         }
@@ -214,31 +211,31 @@ namespace CyberCAT.Core.Classes.Parsers
 
         private void WriteAppearanceSection(BinaryWriter writer, CharacterCustomizationAppearances.AppearanceSection appearanceSection)
         {
-            ParserUtils.WriteString(writer, appearanceSection.SectionName);
+            writer.WritePackedString(appearanceSection.SectionName);
 
             writer.Write(appearanceSection.MainList.Count);
             foreach (var entry in appearanceSection.MainList)
             {
                 writer.Write(entry.Hash);
-                ParserUtils.WriteString(writer, entry.FirstString);
-                ParserUtils.WriteString(writer, entry.SecondString);
+                writer.WritePackedString(entry.FirstString);
+                writer.WritePackedString(entry.SecondString);
                 writer.Write(entry.TrailingBytes);
             }
 
             writer.Write(appearanceSection.AdditionalList.Count);
             foreach (var entry in appearanceSection.AdditionalList)
             {
-                ParserUtils.WriteString(writer, entry.FirstString);
-                ParserUtils.WriteString(writer, entry.SecondString);
+                writer.WritePackedString(entry.FirstString);
+                writer.WritePackedString(entry.SecondString);
                 writer.Write(entry.TrailingBytes);
             }
         }
 
         private void WriteStringTriple(BinaryWriter writer, CharacterCustomizationAppearances.StringTriple st)
         {
-            ParserUtils.WriteString(writer, st.FirstString);
-            ParserUtils.WriteString(writer, st.SecondString);
-            ParserUtils.WriteString(writer, st.ThirdString);
+            writer.WritePackedString(st.FirstString);
+            writer.WritePackedString(st.SecondString);
+            writer.WritePackedString(st.ThirdString);
         }
 
         public override string ToString()

@@ -26,11 +26,11 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new ContainerManagerNPCLootBagsVer2();
 
             reader.Skip(4); // Skip Id
-            var entryCount = ParserUtils.ReadPackedInt(reader);
+            var entryCount = reader.ReadPackedInt();
             for (int i = 0; i < entryCount; i++)
             {
                 var entry = new ContainerManagerNPCLootBagsVer2.Entry();
-                entry.Unk_BaseClassName = ParserUtils.ReadString(reader);
+                entry.Unk_BaseClassName = reader.ReadPackedString();
                 entry.Unknown2 = reader.ReadBytes(12);
 
                 var subCount = reader.ReadByte();
@@ -62,10 +62,10 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             var data = (ContainerManagerNPCLootBagsVer2)node.Value;
 
-            ParserUtils.WritePackedInt(writer, data.Entries.Count);
+            writer.WritePackedInt(data.Entries.Count);
             foreach (var entry in data.Entries)
             {
-                ParserUtils.WriteString(writer, entry.Unk_BaseClassName);
+                writer.WritePackedString(entry.Unk_BaseClassName);
                 writer.Write(entry.Unknown2);
                 writer.Write((byte)entry.Items.Count);
                 foreach (var item in entry.Items)

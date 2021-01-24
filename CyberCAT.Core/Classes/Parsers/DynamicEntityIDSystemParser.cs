@@ -31,7 +31,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var stringCount = reader.ReadUInt32();
             for (int i = 0; i < stringCount; i++)
             {
-                result.Unknown4.Add(new KeyValuePair<string, uint>(ParserUtils.ReadString(reader), reader.ReadUInt32()));
+                result.Unknown4.Add(new KeyValuePair<string, uint>(reader.ReadPackedString(), reader.ReadUInt32()));
             }
 
             result.Unk_NextListId = reader.ReadUInt32();
@@ -51,7 +51,7 @@ namespace CyberCAT.Core.Classes.Parsers
             writer.Write(data.Unknown4.Count);
             foreach (var pair in data.Unknown4)
             {
-                ParserUtils.WriteString(writer, pair.Key);
+                writer.WritePackedString(pair.Key);
                 writer.Write(pair.Value);
             }
 

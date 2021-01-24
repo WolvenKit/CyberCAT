@@ -23,6 +23,7 @@ using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Core.Classes.Interfaces;
 using System.Windows.Forms;
 using CyberCAT.Core;
+using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Wpf.Classes;
 
 namespace CyberCAT.Wpf

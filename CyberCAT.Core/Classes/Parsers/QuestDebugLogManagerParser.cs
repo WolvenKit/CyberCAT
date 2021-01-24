@@ -26,7 +26,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var result = new QuestDebugLogManager();
 
             reader.Skip(4);
-            var text = ParserUtils.ReadString(reader);
+            var text = reader.ReadPackedString();
             result.Lines = text.Split('\n');
 
             result.Node = node;
@@ -39,7 +39,7 @@ namespace CyberCAT.Core.Classes.Parsers
             var data = (QuestDebugLogManager)node.Value;
 
             var text = string.Join("\n", data.Lines);
-            ParserUtils.WriteString(writer, text);
+            writer.WritePackedString(text);
         }
     }
 }
