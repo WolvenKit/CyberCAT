@@ -13,7 +13,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         private TweakDbId _itemTdbId;
         private HeaderThing _header;
         private ItemFlags _flags;
-        private uint _creationTime;
+        private GameTime _creationTime;
         private ItemInnerData _data;
 
         public class NextItemEntry : INotifyPropertyChanged
@@ -670,7 +670,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             OnPropertyChanged(nameof(Flags));
         }
 
-        public uint CreationTime
+        public GameTime CreationTime
         {
             get => _creationTime;
             set

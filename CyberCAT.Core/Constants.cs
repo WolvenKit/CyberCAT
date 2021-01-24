@@ -119,6 +119,7 @@ namespace CyberCAT.Core
             public const string CHOICES = "choices";
             public const string CUSTOM_ARRAY = "customArray";
             public const string EVENT_MANAGER = "eventManager";
+            public const string TIME_CORE = "\"Core\"";
         }
         public static class Numbers
         {
