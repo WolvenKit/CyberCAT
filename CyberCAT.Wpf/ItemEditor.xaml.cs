@@ -21,6 +21,7 @@ using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.DumpedClasses;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Core.DumpedEnums;
 using CyberCAT.Wpf.Classes;
 
 namespace CyberCAT.Wpf
@@ -94,6 +95,7 @@ namespace CyberCAT.Wpf
             ModCategory.SelectedIndex = 0;
             ModToAdd.SelectedIndex = 0;
             IntoAttachmentSlot.SelectedIndex = 0;
+            NewStatType.SelectedIndex = 0;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -223,6 +225,93 @@ namespace CyberCAT.Wpf
         public TweakDbId SelectedPartTweakDbId => Item?.ItemTdbId;
         public uint? SelectedPartSeed => Item?.Header.Seed;
         public IEnumerable<HandleWrapper> SelectedItemStats => _mapStructure?.Values.FirstOrDefault(v => v.RecordID.Equals(SelectedPartTweakDbId) && SelectedPartSeed.HasValue && v.Seed == SelectedPartSeed.Value)?.StatModifiers.Select(_ => new HandleWrapper(_));
+
+        public enum StatType
+        {
+            ConstantStat,
+            CurveStat,
+            CombinedStat
+        }
+
+        public static IEnumerable<StatType> StatTypes => new List<StatType> {StatType.ConstantStat, StatType.CurveStat, StatType.CombinedStat};
+
+        public void OnDeleteStatClicked(object sender, RoutedEventArgs e)
+        {
+            var stat = (sender as Button)?.Tag as HandleWrapper;
+
+            if (stat == null)
+            {
+                return;
+            }
+
+            var stats = _mapStructure?.Values?.FirstOrDefault(v =>
+                v.RecordID.Equals(SelectedPartTweakDbId) && SelectedPartSeed.HasValue &&
+                v.Seed == SelectedPartSeed.Value);
+
+            var currentStats = stats?.StatModifiers?.ToList();
+
+            if (currentStats == null)
+            {
+                return;
+            }
+
+            currentStats.Remove(stat.Handle);
+
+            stats.StatModifiers = currentStats.ToArray();
+            OnPropertyChanged(nameof(SelectedItemStats));
+        }
+
+        public void OnAddStatClicked(object sender, RoutedEventArgs e)
+        {
+            if (!IsModableItem)
+            {
+                // Not a modable item, there should not even be a button.
+                return;
+            }
+
+            if (NewStatType.SelectedItem == null)
+            {
+                return;
+            }
+
+            var statType = (StatType)NewStatType.SelectedItem;
+
+            var stats = _mapStructure?.Values?.FirstOrDefault(v =>
+                v.RecordID.Equals(SelectedPartTweakDbId) && SelectedPartSeed.HasValue &&
+                v.Seed == SelectedPartSeed.Value);
+
+            if (stats == null)
+            {
+                return;
+            }
+
+            var currentStats = stats?.StatModifiers?.ToList() ?? new List<Handle<GameStatModifierData>>();
+
+            var statsNode = SaveFile?.Nodes?.FirstOrDefault(n => n.Name == Constants.NodeNames.STATS_SYSTEM)?.Value as GenericUnknownStruct;
+
+            if (statsNode == null)
+            {
+                return;
+            }
+
+            Handle<GameStatModifierData> newHandle = null;
+            switch (statType)
+            {
+                case StatType.ConstantStat:
+                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameConstantStatModifierData { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, Value = 1 });
+                    break;
+                case StatType.CurveStat:
+                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCurveStatModifierData { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, CurveStat = gamedataStatType.ItemLevel, ColumnName = "", CurveName = ""});
+                    break;
+                case StatType.CombinedStat:
+                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCombinedStatModifierData() { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, Value = 1, Operation = gameCombinedStatOperation.Addition, RefObject = gameStatObjectsRelation.Self, RefStatType = gamedataStatType.ItemLevel});
+                    break;
+            }
+            currentStats.Add(newHandle);
+            stats.StatModifiers = currentStats.ToArray();
+
+            OnPropertyChanged(nameof(SelectedItemStats));
+        }
 
         #endregion
     }
