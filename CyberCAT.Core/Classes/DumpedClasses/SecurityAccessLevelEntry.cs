@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SecurityAccessLevelEntry : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("keycard")]
-        [RealType("TweakDBID")]
         public TweakDbId Keycard { get; set; }
         
         [RealName("password")]
-        [RealType("CName")]
-        public string Password { get; set; }
+        public CName Password { get; set; }
     }
 }

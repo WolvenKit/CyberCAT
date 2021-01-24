@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameinteractionsChoiceTypeWrapper : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("properties")]
-        [RealType("Uint32")]
         public uint Properties { get; set; }
     }
 }

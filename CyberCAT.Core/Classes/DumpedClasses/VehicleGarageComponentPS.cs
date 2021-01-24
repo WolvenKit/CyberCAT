@@ -22,7 +22,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public VehicleGarageComponentVehicleData MountedVehicleData { get; set; }
         
         [RealName("mountedVehicleStolen")]
-        [RealType("Bool")]
         public bool MountedVehicleStolen { get; set; }
     }
 }

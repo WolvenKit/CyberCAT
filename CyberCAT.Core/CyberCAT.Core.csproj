@@ -13,5 +13,4 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.ObjectModel" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

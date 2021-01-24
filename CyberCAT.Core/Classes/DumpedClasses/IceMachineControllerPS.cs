@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class IceMachineControllerPS : VendingMachineControllerPS
     {
         [RealName("vendorTweakID")]
-        [RealType("TweakDBID")]
         public TweakDbId VendorTweakID { get; set; }
         
         [RealName("iceMachineSFX")]

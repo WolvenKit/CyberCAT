@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AgentRegistry : IScriptable
     {
         [RealName("isInitialized")]
-        [RealType("Bool")]
         public bool IsInitialized { get; set; }
         
         [RealName("agents")]
@@ -16,11 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ScriptReentrantRWLock AgentsLock { get; set; }
         
         [RealName("maxReprimandsPerNPC")]
-        [RealType("Int32")]
         public int MaxReprimandsPerNPC { get; set; }
         
         [RealName("maxReprimandsPerDEVICE")]
-        [RealType("Int32")]
         public int MaxReprimandsPerDEVICE { get; set; }
     }
 }

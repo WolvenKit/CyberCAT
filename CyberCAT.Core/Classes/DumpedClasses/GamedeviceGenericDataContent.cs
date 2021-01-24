@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamedeviceGenericDataContent : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("name")]
-        [RealType("String")]
         public string Name { get; set; }
         
         [RealName("content")]

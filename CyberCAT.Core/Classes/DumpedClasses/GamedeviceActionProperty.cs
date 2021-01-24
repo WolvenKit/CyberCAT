@@ -6,12 +6,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamedeviceActionProperty : IScriptable
     {
         [RealName("name")]
-        [RealType("CName")]
-        public string Name { get; set; }
+        public CName Name { get; set; }
         
         [RealName("typeName")]
-        [RealType("CName")]
-        public string TypeName { get; set; }
+        public CName TypeName { get; set; }
 
         // TODO: Check type
         [RealName("first")]

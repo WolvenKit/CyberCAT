@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SExperiencePoints : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("amount")]
-        [RealType("Float")]
         public float Amount { get; set; }
         
         [RealName("forType")]

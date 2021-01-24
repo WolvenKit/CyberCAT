@@ -112,9 +112,9 @@ namespace CyberCAT.Core.Classes.Parsers
 
             result.ItemTdbId = reader.ReadTweakDbId();
             result.Header = ReadHeaderThing(reader);
-            result.UnknownString = ParserUtils.ReadString(reader);
+            result.UnknownString = reader.ReadPackedString();
             result.AttachmentSlotTdbId = reader.ReadTweakDbId();
-            var count = ParserUtils.ReadPackedLong(reader);
+            var count = reader.ReadPackedInt();
             for(var i = 0; i < count; ++i)
             {
                 result.Children.Add(ReadKind2DataNode(reader));
@@ -195,9 +195,9 @@ namespace CyberCAT.Core.Classes.Parsers
         {
             writer.Write(data.ItemTdbId);
             WriteHeaderThing(writer, data.Header);
-            ParserUtils.WriteString(writer, data.UnknownString);
+            writer.WritePackedString(data.UnknownString);
             writer.Write(data.AttachmentSlotTdbId);
-            ParserUtils.WritePackedLong(writer, data.ChildrenCount);
+            writer.WritePackedInt(data.ChildrenCount);
             foreach (var kind2DataNode in data.Children)
             {
                 WriteItemModData(writer, kind2DataNode);

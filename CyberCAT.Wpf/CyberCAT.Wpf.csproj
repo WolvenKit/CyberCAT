@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+
 
   <ItemGroup>
     <None Remove="Licenses\CyberCAT.LICENSE.txt" />
@@ -18,6 +20,14 @@
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.4.3" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.8.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />
+    <PackageReference Include="Microsoft.ClearScript" Version="7.1.0" />
+    <PackageReference Include="Notifications.Wpf.Core" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,13 +40,25 @@
     <None Update="Licenses\LSystem.Runtime.CompilerServices.Unsafe.ICENSE.TXT">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Licenses\MahApps.Metro.IconPacks.LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\MahApps.Metro.IconPacks.Material.LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Licenses\MahApps.Metro.LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\Microsoft.ClearScript.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Licenses\Microsoft.CSharp.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Licenses\Newtonsoft.Json.LICENSE.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\Notifications.Wpf.Core.LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Licenses\NUnit.LICENSE.txt">
@@ -61,6 +83,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Licenses\System.ObjectModel.LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Names.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="QuickActions\Add10kEddies\definition.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="QuickActions\Add10kEddies\script.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="QuickActions\EmptySample\definition.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="QuickActions\EmptySample\script.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

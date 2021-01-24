@@ -7,15 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class STransformAnimationPlayEventData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("timeScale")]
-        [RealType("Float")]
         public float TimeScale { get; set; }
         
         [RealName("looping")]
-        [RealType("Bool")]
         public bool Looping { get; set; }
         
         [RealName("timesPlayed")]
-        [RealType("Uint32")]
         public uint TimesPlayed { get; set; }
     }
 }

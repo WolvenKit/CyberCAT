@@ -10,23 +10,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameEntityReferenceType? Type { get; set; }
 
         [RealName("reference")]
-        [RealType("NodeRef")]
-        public string Reference { get; set; }
+        public NodeRef Reference { get; set; }
 
         [RealName("names")]
-        [RealType("CName")]
-        public string[] Names { get; set; }
+        public CName[] Names { get; set; }
 
         [RealName("slotName")]
-        [RealType("CName")]
-        public string SlotName { get; set; }
+        public CName SlotName { get; set; }
 
         [RealName("sceneActorContextName")]
-        [RealType("CName")]
-        public string SceneActorContextName { get; set; }
+        public CName SceneActorContextName { get; set; }
 
         [RealName("dynamicEntityUniqueName")]
-        [RealType("CName")]
-        public string DynamicEntityUniqueName { get; set; }
+        public CName DynamicEntityUniqueName { get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ComputerQuickHackData QuestFactSetup { get; set; }
         
         [RealName("isOverriden")]
-        [RealType("Bool")]
         public bool IsOverriden { get; set; }
 
         public ElectricBoxControllerPS()

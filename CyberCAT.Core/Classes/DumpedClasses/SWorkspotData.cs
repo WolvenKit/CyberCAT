@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SWorkspotData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("componentName")]
-        [RealType("CName")]
-        public string ComponentName { get; set; }
+        public CName ComponentName { get; set; }
         
         [RealName("freeCamera")]
-        [RealType("Bool")]
         public bool FreeCamera { get; set; }
         
         [RealName("operationType")]

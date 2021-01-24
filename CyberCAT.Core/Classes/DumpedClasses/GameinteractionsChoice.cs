@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameinteractionsChoice : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("caption")]
-        [RealType("String")]
         public string Caption { get; set; }
         
         [RealName("captionParts")]

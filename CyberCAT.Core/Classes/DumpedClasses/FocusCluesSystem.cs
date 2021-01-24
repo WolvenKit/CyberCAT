@@ -9,8 +9,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public LinkedFocusClueData[] LinkedClues { get; set; }
         
         [RealName("disabledGroupes")]
-        [RealType("CName")]
-        public string[] DisabledGroupes { get; set; }
+        public CName[] DisabledGroupes { get; set; }
         
         [RealName("activeLinkedClue")]
         public LinkedFocusClueData ActiveLinkedClue { get; set; }

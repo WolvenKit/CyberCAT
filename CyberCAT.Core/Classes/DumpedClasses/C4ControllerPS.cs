@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class C4ControllerPS : ExplosiveDeviceControllerPS
     {
         [RealName("itemTweakDBString")]
-        [RealType("CName")]
-        public string ItemTweakDBString { get; set; }
+        public CName ItemTweakDBString { get; set; }
     }
 }

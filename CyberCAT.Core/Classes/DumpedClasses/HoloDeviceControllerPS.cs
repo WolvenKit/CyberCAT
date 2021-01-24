@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class HoloDeviceControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("isPlaying")]
-        [RealType("Bool")]
         public bool IsPlaying { get; set; }
     }
 }

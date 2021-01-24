@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class VendingMachineSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("timeToCompletePurchase")]
-        [RealType("Float")]
         public float TimeToCompletePurchase { get; set; }
     }
 }

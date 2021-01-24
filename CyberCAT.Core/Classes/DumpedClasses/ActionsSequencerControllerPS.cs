@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ActionsSequencerControllerPS : MasterControllerPS
     {
         [RealName("sequenceDuration")]
-        [RealType("Float")]
         public float SequenceDuration { get; set; }
         
         [RealName("sequencerMode")]

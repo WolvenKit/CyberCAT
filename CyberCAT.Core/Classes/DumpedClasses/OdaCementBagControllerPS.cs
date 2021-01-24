@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class OdaCementBagControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("cementEffectCooldown")]
-        [RealType("Float")]
         public float CementEffectCooldown { get; set; }
     }
 }

@@ -15,7 +15,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public RedResourceReferenceScriptToken BroadcastGlitchVideoPath { get; set; }
         
         [RealName("globalTVInitialized")]
-        [RealType("Bool")]
         public bool GlobalTVInitialized { get; set; }
         
         [RealName("backupCustomChannels")]

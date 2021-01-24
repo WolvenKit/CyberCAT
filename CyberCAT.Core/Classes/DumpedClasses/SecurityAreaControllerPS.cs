@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public AreaEntry[] UsersInPerimeter { get; set; }
         
         [RealName("isPlayerInside")]
-        [RealType("Bool")]
         public bool IsPlayerInside { get; set; }
         
         [RealName("securityAccessLevel")]
@@ -28,22 +27,18 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public AreaTypeTransition[] AreaTransitions { get; set; }
         
         [RealName("pendingDisableRequest")]
-        [RealType("Bool")]
         public bool PendingDisableRequest { get; set; }
         
         [RealName("lastOutput")]
         public OutputPersistentData LastOutput { get; set; }
         
         [RealName("questPlayerHasTriggeredCombat")]
-        [RealType("Bool")]
         public bool QuestPlayerHasTriggeredCombat { get; set; }
         
         [RealName("hasThisAreaReceivedCombatNotification")]
-        [RealType("Bool")]
         public bool HasThisAreaReceivedCombatNotification { get; set; }
         
         [RealName("pendingNotifyPlayerAboutTransition")]
-        [RealType("Bool")]
         public bool PendingNotifyPlayerAboutTransition { get; set; }
     }
 }

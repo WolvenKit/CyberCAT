@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class DestructibleMasterDeviceControllerPS : MasterControllerPS
     {
         [RealName("isDestroyed")]
-        [RealType("Bool")]
         public bool IsDestroyed { get; set; }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "DisplayName": "Put display name here",
+  "Icon": null,
+  "Description": "Put description here",
+  "SuccessMessage": "Put message that will be displayed on success here",
+  "Arguments": [
+  ]
+}

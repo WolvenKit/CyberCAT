@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ChangeMusicAction : ActionBool
     {
         [RealName("interactionRecordName")]
-        [RealType("String")]
         public string InteractionRecordName { get; set; }
         
         [RealName("settings")]

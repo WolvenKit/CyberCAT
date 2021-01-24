@@ -6,19 +6,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamePuppetPS : GameObjectPS
     {
         [RealName("gender")]
-        [RealType("CName")]
-        public string Gender { get; set; }
+        public CName Gender { get; set; }
         
         [RealName("wasQuickHacked")]
-        [RealType("Bool")]
         public bool WasQuickHacked { get; set; }
         
         [RealName("hasAlternativeName")]
-        [RealType("Bool")]
         public bool HasAlternativeName { get; set; }
         
         [RealName("isCrouch")]
-        [RealType("Bool")]
         public bool IsCrouch { get; set; }
     }
 }

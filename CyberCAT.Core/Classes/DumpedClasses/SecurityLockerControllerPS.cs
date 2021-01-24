@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SecurityLockerProperties SecurityLockerProperties { get; set; }
         
         [RealName("isStoringPlayerEquipement")]
-        [RealType("Bool")]
         public bool IsStoringPlayerEquipement { get; set; }
     }
 }

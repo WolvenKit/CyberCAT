@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AIArgumentInstancePS : ISerializable
     {
         [RealName("name")]
-        [RealType("CName")]
-        public string Name { get; set; }
+        public CName Name { get; set; }
     }
 }

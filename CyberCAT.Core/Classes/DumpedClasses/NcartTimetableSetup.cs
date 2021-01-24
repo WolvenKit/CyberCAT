@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class NcartTimetableSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("departFrequency")]
-        [RealType("Int32")]
         public int DepartFrequency { get; set; }
         
         [RealName("uiUpdateFrequency")]
-        [RealType("Int32")]
         public int UiUpdateFrequency { get; set; }
     }
 }

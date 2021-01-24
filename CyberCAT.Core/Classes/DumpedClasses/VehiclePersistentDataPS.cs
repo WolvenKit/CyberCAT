@@ -6,15 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class VehiclePersistentDataPS : GameComponentPS
     {
         [RealName("flags")]
-        [RealType("Uint32")]
         public uint Flags { get; set; }
         
         [RealName("autopilotPos")]
-        [RealType("Float")]
         public float AutopilotPos { get; set; }
         
         [RealName("autopilotCurrentSpeed")]
-        [RealType("Float")]
         public float AutopilotCurrentSpeed { get; set; }
         
         [RealName("wheelRuntimeData")]

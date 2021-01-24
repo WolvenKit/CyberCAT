@@ -15,11 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<VirtualSystemPS>[] SpawnedSystems { get; set; }
         
         [RealName("useKeyloggerHack")]
-        [RealType("Bool")]
         public bool UseKeyloggerHack { get; set; }
         
         [RealName("shouldShowTerminalTitle")]
-        [RealType("Bool")]
         public bool ShouldShowTerminalTitle { get; set; }
         
         [RealName("defaultGlitchVideoPath")]

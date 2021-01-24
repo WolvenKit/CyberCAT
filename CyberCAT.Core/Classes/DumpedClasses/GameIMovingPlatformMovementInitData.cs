@@ -10,15 +10,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameMovingPlatformMovementInitializationType? InitType { get; set; }
         
         [RealName("initValue")]
-        [RealType("Float")]
         public float InitValue { get; set; }
         
         [RealName("startNode")]
-        [RealType("NodeRef")]
-        public string StartNode { get; set; }
+        public NodeRef StartNode { get; set; }
         
         [RealName("endNode")]
-        [RealType("NodeRef")]
-        public string EndNode { get; set; }
+        public NodeRef EndNode { get; set; }
     }
 }

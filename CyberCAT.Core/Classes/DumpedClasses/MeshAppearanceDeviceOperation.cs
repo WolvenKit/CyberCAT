@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class MeshAppearanceDeviceOperation : DeviceOperationBase
     {
         [RealName("meshesAppearence")]
-        [RealType("CName")]
-        public string MeshesAppearence { get; set; }
+        public CName MeshesAppearence { get; set; }
     }
 }

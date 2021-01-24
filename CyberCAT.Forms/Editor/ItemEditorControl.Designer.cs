@@ -44,6 +44,8 @@ namespace CyberCAT.Forms.Editor
             this.cbMod = new System.Windows.Forms.ComboBox();
             this.cbAttachmentSlot = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnDeleteMod = new System.Windows.Forms.Button();
+            this.cbModListSelect = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,7 +66,7 @@ namespace CyberCAT.Forms.Editor
             this.partListBox.FormattingEnabled = true;
             this.partListBox.Location = new System.Drawing.Point(6, 117);
             this.partListBox.Name = "partListBox";
-            this.partListBox.Size = new System.Drawing.Size(245, 186);
+            this.partListBox.Size = new System.Drawing.Size(245, 160);
             this.partListBox.TabIndex = 1;
             this.partListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -180,6 +182,7 @@ namespace CyberCAT.Forms.Editor
             // btnAddMod
             // 
             this.btnAddMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAddMod.Enabled = false;
             this.btnAddMod.Location = new System.Drawing.Point(6, 374);
             this.btnAddMod.Name = "btnAddMod";
             this.btnAddMod.Size = new System.Drawing.Size(75, 23);
@@ -220,10 +223,39 @@ namespace CyberCAT.Forms.Editor
             this.label2.TabIndex = 15;
             this.label2.Text = "into Slot";
             // 
+            // btnDeleteMod
+            // 
+            this.btnDeleteMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDeleteMod.Enabled = false;
+            this.btnDeleteMod.Location = new System.Drawing.Point(135, 374);
+            this.btnDeleteMod.Name = "btnDeleteMod";
+            this.btnDeleteMod.Size = new System.Drawing.Size(116, 23);
+            this.btnDeleteMod.TabIndex = 16;
+            this.btnDeleteMod.Text = "Delete selected mod";
+            this.btnDeleteMod.UseVisualStyleBackColor = true;
+            this.btnDeleteMod.Click += new System.EventHandler(this.btnDeleteMod_Click);
+            // 
+            // cbModListSelect
+            // 
+            this.cbModListSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbModListSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbModListSelect.Enabled = false;
+            this.cbModListSelect.FormattingEnabled = true;
+            this.cbModListSelect.Items.AddRange(new object[] {
+            "Clothing mods",
+            "Weapon mods"});
+            this.cbModListSelect.Location = new System.Drawing.Point(6, 293);
+            this.cbModListSelect.Name = "cbModListSelect";
+            this.cbModListSelect.Size = new System.Drawing.Size(245, 21);
+            this.cbModListSelect.TabIndex = 17;
+            this.cbModListSelect.SelectedIndexChanged += new System.EventHandler(this.cbModListSelect_SelectedIndexChanged);
+            // 
             // ItemEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cbModListSelect);
+            this.Controls.Add(this.btnDeleteMod);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbAttachmentSlot);
             this.Controls.Add(this.cbMod);
@@ -264,5 +296,7 @@ namespace CyberCAT.Forms.Editor
         private System.Windows.Forms.ComboBox cbMod;
         private System.Windows.Forms.ComboBox cbAttachmentSlot;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnDeleteMod;
+        private System.Windows.Forms.ComboBox cbModListSelect;
     }
 }

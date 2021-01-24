@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameStatsObjectID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("entityHash")]
-        [RealType("Uint64")]
         public ulong EntityHash { get; set; }
         
         [RealName("idType")]

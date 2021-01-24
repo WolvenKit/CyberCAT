@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameEffectSet Set { get; set; }
         
         [RealName("tag")]
-        [RealType("CName")]
-        public string Tag { get; set; }
+        public CName Tag { get; set; }
     }
 }

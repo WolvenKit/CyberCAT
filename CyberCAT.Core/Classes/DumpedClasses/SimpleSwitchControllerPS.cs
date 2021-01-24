@@ -9,11 +9,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ESwitchAction? SwitchAction { get; set; }
         
         [RealName("nameForON")]
-        [RealType("TweakDBID")]
         public TweakDbId NameForON { get; set; }
         
         [RealName("nameForOFF")]
-        [RealType("TweakDBID")]
         public TweakDbId NameForOFF { get; set; }
     }
 }

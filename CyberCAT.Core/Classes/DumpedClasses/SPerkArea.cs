@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataPerkArea? Type { get; set; }
         
         [RealName("unlocked")]
-        [RealType("Bool")]
         public bool Unlocked { get; set; }
         
         [RealName("boughtPerks")]

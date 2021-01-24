@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameMovingPlatformMovementDynamic : GameIMovingPlatformMovementPointToPoint
     {
         [RealName("curveName")]
-        [RealType("CName")]
-        public string CurveName { get; set; }
+        public CName CurveName { get; set; }
     }
 }

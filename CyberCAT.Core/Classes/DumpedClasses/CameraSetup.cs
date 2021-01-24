@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class CameraSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("canStreamVideo")]
-        [RealType("Bool")]
         public bool CanStreamVideo { get; set; }
     }
 }

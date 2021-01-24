@@ -13,7 +13,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID TargetID { get; set; }
         
         [RealName("statusEffectList")]
-        [RealType("TweakDBID")]
         public TweakDbId[] StatusEffectList { get; set; }
     }
 }

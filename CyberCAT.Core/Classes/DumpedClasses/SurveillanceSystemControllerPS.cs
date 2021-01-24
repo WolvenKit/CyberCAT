@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SurveillanceSystemControllerPS : DeviceSystemBaseControllerPS
     {
         [RealName("isRevealingEnemies")]
-        [RealType("Bool")]
         public bool IsRevealingEnemies { get; set; }
     }
 }

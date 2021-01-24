@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameuiMinigameProgramData[] AvailablePrograms { get; set; }
         
         [RealName("hasAutoReveal")]
-        [RealType("Bool")]
         public bool HasAutoReveal { get; set; }
         
         [RealName("minigameBB")]

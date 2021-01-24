@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameEffectDebugSettings : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("overrideGlobalSettings")]
-        [RealType("Bool")]
         public bool OverrideGlobalSettings { get; set; }
         
         [RealName("duration")]
-        [RealType("Float")]
         public float Duration { get; set; }
         
         [RealName("color")]

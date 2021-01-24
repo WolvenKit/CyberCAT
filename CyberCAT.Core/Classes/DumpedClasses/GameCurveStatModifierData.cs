@@ -6,12 +6,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameCurveStatModifierData : GameStatModifierData
     {
         [RealName("curveName")]
-        [RealType("CName")]
-        public string CurveName { get; set; }
+        public CName CurveName { get; set; }
         
         [RealName("columnName")]
-        [RealType("CName")]
-        public string ColumnName { get; set; }
+        public CName ColumnName { get; set; }
         
         [RealName("curveStat")]
         public DumpedEnums.gamedataStatType? CurveStat { get; set; }

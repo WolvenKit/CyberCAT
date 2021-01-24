@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<District>[] Stack { get; set; }
         
         [RealName("visitedDistricts")]
-        [RealType("TweakDBID")]
         public TweakDbId[] VisitedDistricts { get; set; }
     }
 }

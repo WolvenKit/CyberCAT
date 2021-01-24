@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameStatusEffectBase : IScriptable
     {
         [RealName("statusEffectRecordID")]
-        [RealType("TweakDBID")]
         public TweakDbId StatusEffectRecordID { get; set; }
     }
 }

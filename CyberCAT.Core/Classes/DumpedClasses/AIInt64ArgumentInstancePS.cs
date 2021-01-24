@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AIInt64ArgumentInstancePS : AIArgumentInstancePS
     {
         [RealName("value")]
-        [RealType("Int64")]
         public long Value { get; set; }
     }
 }

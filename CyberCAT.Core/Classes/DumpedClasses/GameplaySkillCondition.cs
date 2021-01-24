@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameplaySkillCondition : GameplayConditionBase
     {
         [RealName("skillToCheck")]
-        [RealType("TweakDBID")]
         public TweakDbId SkillToCheck { get; set; }
         
         [RealName("difficulty")]

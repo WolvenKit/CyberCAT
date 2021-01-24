@@ -11,15 +11,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.ESensorDeviceWakeState? InitialWakeState { get; set; }
         
         [RealName("canRotate")]
-        [RealType("Bool")]
         public bool CanRotate { get; set; }
         
         [RealName("lostTargetLookAtTime")]
-        [RealType("Float")]
         public float LostTargetLookAtTime { get; set; }
         
         [RealName("lostTargetSearchTime")]
-        [RealType("Float")]
         public float LostTargetSearchTime { get; set; }
     }
 }

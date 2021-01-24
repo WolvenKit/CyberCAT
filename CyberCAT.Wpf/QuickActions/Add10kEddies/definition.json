@@ -1,0 +1,8 @@
+{
+  "DisplayName": "Add 10K Eddies",
+  "Icon": null,
+  "Description": "Adds 10.000 Eddies",
+  "SuccessMessage": "Added 10K Eddies",
+  "Arguments": [
+  ]
+}

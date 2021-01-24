@@ -7,14 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class InventoryItemAttachments : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("SlotID")]
-        [RealType("TweakDBID")]
         public TweakDbId SlotID { get; set; }
         
         [RealName("ItemData")]
         public InventoryItemData ItemData { get; set; }
         
         [RealName("SlotName")]
-        [RealType("String")]
         public string SlotName { get; set; }
         
         [RealName("SlotType")]

@@ -12,31 +12,24 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<EngDemoContainer> DoorSkillChecks { get; set; }
         
         [RealName("isOpened")]
-        [RealType("Bool")]
         public bool IsOpened { get; set; }
         
         [RealName("isLocked")]
-        [RealType("Bool")]
         public bool IsLocked { get; set; }
         
         [RealName("isSealed")]
-        [RealType("Bool")]
         public bool IsSealed { get; set; }
         
         [RealName("alarmRaised")]
-        [RealType("Bool")]
         public bool AlarmRaised { get; set; }
         
         [RealName("isBusy")]
-        [RealType("Bool")]
         public bool IsBusy { get; set; }
         
         [RealName("isLiftDoor")]
-        [RealType("Bool")]
         public bool IsLiftDoor { get; set; }
         
         [RealName("isPlayerAuthorised")]
-        [RealType("Bool")]
         public bool IsPlayerAuthorised { get; set; }
         
         [RealName("openingTokens")]

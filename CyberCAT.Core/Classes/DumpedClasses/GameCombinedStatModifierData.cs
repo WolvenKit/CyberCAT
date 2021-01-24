@@ -15,7 +15,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameStatObjectsRelation? RefObject { get; set; }
         
         [RealName("value")]
-        [RealType("Float")]
         public float Value { get; set; }
     }
 }

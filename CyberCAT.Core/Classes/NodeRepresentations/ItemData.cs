@@ -13,7 +13,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         private TweakDbId _itemTdbId;
         private HeaderThing _header;
         private ItemFlags _flags;
-        private uint _creationTime;
+        private GameTime _creationTime;
         private ItemInnerData _data;
 
         public class NextItemEntry : INotifyPropertyChanged
@@ -44,10 +44,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 OnPropertyChanged(nameof(ItemTdbId));
             }
 
-            public string ItemName => NameResolver.GetName(ItemTdbId);
-            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
-            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
-
             public HeaderThing Header
             {
                 get => _header;
@@ -73,7 +69,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"{ItemName} ({ItemGameName})";
+                return $"{ItemTdbId.Name} ({ItemTdbId.GameName})";
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
@@ -182,8 +178,13 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             }
         }
 
+        public interface IItemWithQuantity
+        {
+            uint Quantity { get; set; }
+        }
+
         [JsonObject]
-        public class SimpleItemData : ItemInnerData
+        public class SimpleItemData : ItemInnerData, IItemWithQuantity
         {
             private uint _quantity;
 
@@ -234,8 +235,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 OnPropertyChanged(nameof(ItemTdbId));
             }
 
-            public string TdbId1Name => NameResolver.GetName(TdbId1);
-
             public uint Unknown2
             {
                 get => _unknown2;
@@ -281,7 +280,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
             public override string ToString()
             {
-                return $"{TdbId1Name}";
+                return $"{TdbId1.Name}";
             }
 
             public ModableItemData()
@@ -292,7 +291,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         }
 
         [JsonObject]
-        public class ModableItemWithQuantityData : ModableItemData
+        public class ModableItemWithQuantityData : ModableItemData, IItemWithQuantity
         {
             private uint _quantity;
 
@@ -342,10 +341,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 OnPropertyChanged(nameof(ItemTdbId));
             }
-
-            public string ItemName => NameResolver.GetName(ItemTdbId);
-            public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
-            public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
 
             public HeaderThing Header
             {
@@ -403,7 +398,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 OnPropertyChanged(nameof(AttachmentSlotTdbId));
             }
 
-            public string AttachmentSlotName => NameResolver.GetName(AttachmentSlotTdbId);
             public int ChildrenCount => Children?.Count ?? 0;
 
             public ObservableCollection<ItemModData> Children => _children;
@@ -441,8 +435,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
                 OnPropertyChanged(nameof(TdbId2));
             }
 
-            public string TdbId2Name => NameResolver.GetName(TdbId2);
-
             public uint Unknown3
             {
                 get => _unknown3;
@@ -467,9 +459,9 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             {
                 if (ItemTdbId.Id == 0)
                 {
-                    return $" {AttachmentSlotName} [empty]";
+                    return $" {AttachmentSlotTdbId.Name} [empty]";
                 }
-                return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
+                return string.IsNullOrWhiteSpace(ItemTdbId.GameName) ? ItemTdbId.Name : $"{ItemTdbId.Name} ({ItemTdbId.GameName})";
             }
 
             public ItemModData Clone()
@@ -632,10 +624,6 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             OnPropertyChanged(nameof(ItemTdbId));
         }
 
-        public string ItemName => NameResolver.GetName(ItemTdbId);
-        public string ItemGameName => NameResolver.GetGameName(ItemTdbId);
-        public string ItemGameDescription => NameResolver.GetGameDescription(ItemTdbId);
-
         public HeaderThing Header
         {
             get => _header;
@@ -682,7 +670,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
             OnPropertyChanged(nameof(Flags));
         }
 
-        public uint CreationTime
+        public GameTime CreationTime
         {
             get => _creationTime;
             set
@@ -717,7 +705,7 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public override string ToString()
         {
-            return string.IsNullOrWhiteSpace(ItemGameName) ? ItemName : $"{ItemName} ({ItemGameName})";
+            return string.IsNullOrWhiteSpace(ItemTdbId.GameName) ? ItemTdbId.Name : $"{ItemTdbId.Name} ({ItemTdbId.GameName})";
         }
 
         public ItemData()

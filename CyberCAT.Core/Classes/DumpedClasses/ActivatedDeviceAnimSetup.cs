@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ActivatedDeviceAnimSetup : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("animationTime")]
-        [RealType("Float")]
         public float AnimationTime { get; set; }
     }
 }

@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameplaySettingsListener> GameplaySettingsListener { get; set; }
         
         [RealName("wasEverJohnny")]
-        [RealType("Bool")]
         public bool WasEverJohnny { get; set; }
     }
 }

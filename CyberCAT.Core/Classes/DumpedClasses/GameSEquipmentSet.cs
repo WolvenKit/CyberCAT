@@ -10,8 +10,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameSItemInfo[] SetItems { get; set; }
         
         [RealName("setName")]
-        [RealType("CName")]
-        public string SetName { get; set; }
+        public CName SetName { get; set; }
         
         [RealName("setType")]
         public DumpedEnums.gameEquipmentSetType? SetType { get; set; }

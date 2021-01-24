@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GamebbID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("g")]
-        [RealType("CName")]
-        public string G { get; set; }
+        public CName G { get; set; }
     }
 }

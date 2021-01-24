@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public NcartTimetableSetup NcartTimetableSetup { get; set; }
         
         [RealName("currentTimeToDepart")]
-        [RealType("Int32")]
         public int CurrentTimeToDepart { get; set; }
     }
 }

@@ -6,28 +6,22 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameVisionModeComponentPS : GameComponentPS
     {
         [RealName("hideInDefaultMode")]
-        [RealType("Bool")]
         public bool HideInDefaultMode { get; set; }
         
         [RealName("hideInFocusMode")]
-        [RealType("Bool")]
         public bool HideInFocusMode { get; set; }
         
         [RealName("inactive")]
-        [RealType("Bool")]
         public bool Inactive { get; set; }
         
         [RealName("questInactive")]
-        [RealType("Bool")]
         public bool QuestInactive { get; set; }
         
         [RealName("questForcedModules")]
-        [RealType("CName")]
-        public string[] QuestForcedModules { get; set; }
+        public CName[] QuestForcedModules { get; set; }
         
         [RealName("questForcedMeshes")]
-        [RealType("CName")]
-        public string[] QuestForcedMeshes { get; set; }
+        public CName[] QuestForcedMeshes { get; set; }
         
         [RealName("storedHighlightData")]
         public Handle<FocusForcedHighlightPersistentData> StoredHighlightData { get; set; }

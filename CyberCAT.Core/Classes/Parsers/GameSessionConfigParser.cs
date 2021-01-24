@@ -32,7 +32,7 @@ namespace CyberCAT.Core.Classes.Parsers
             reader.Skip(4);//Skip the ID
             result.Hash1 = reader.ReadUInt64();
             result.Hash2 = reader.ReadUInt64();
-            result.TextValue = ParserUtils.ReadString(reader);
+            result.TextValue = reader.ReadPackedString();
             result.Hash3 = reader.ReadUInt64();
             var trailing = node.Size - (reader.BaseStream.Position - node.Offset);
             result.TrailingBytes = reader.ReadBytes((int)trailing);
@@ -47,7 +47,7 @@ namespace CyberCAT.Core.Classes.Parsers
 
             writer.Write(data.Hash1);
             writer.Write(data.Hash2);
-            ParserUtils.WriteString(writer, data.TextValue);
+            writer.WritePackedString(data.TextValue);
             writer.Write(data.Hash3);
             writer.Write(data.TrailingBytes);
         }

@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SsimpleBanerData[] Banners { get; set; }
         
         [RealName("currentBanner")]
-        [RealType("Int32")]
         public int CurrentBanner { get; set; }
     }
 }

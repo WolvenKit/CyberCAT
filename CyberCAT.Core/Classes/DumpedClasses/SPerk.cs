@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataPerkType? Type { get; set; }
         
         [RealName("currLevel")]
-        [RealType("Int32")]
         public int CurrLevel { get; set; }
     }
 }

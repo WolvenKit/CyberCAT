@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SInventoryOperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("itemName")]
-        [RealType("TweakDBID")]
         public TweakDbId ItemName { get; set; }
         
         [RealName("quantity")]
-        [RealType("Int32")]
         public int Quantity { get; set; }
         
         [RealName("operationType")]

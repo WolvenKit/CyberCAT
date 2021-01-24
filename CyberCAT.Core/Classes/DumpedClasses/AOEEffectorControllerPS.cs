@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AOEEffectorControllerPS : ActivatedDeviceControllerPS
     {
         [RealName("effectsToPlay")]
-        [RealType("CName")]
-        public string[] EffectsToPlay { get; set; }
+        public CName[] EffectsToPlay { get; set; }
     }
 }

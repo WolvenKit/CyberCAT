@@ -16,7 +16,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.vehicleELightMode? LightMode { get; set; }
         
         [RealName("isAlarmOn")]
-        [RealType("Bool")]
         public bool IsAlarmOn { get; set; }
     }
 }

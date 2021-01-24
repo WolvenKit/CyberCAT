@@ -6,15 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class ReflectorSFX : VendingMachineSFX
     {
         [RealName("distraction")]
-        [RealType("CName")]
-        public string Distraction { get; set; }
+        public CName Distraction { get; set; }
         
         [RealName("turnOn")]
-        [RealType("CName")]
-        public string TurnOn { get; set; }
+        public CName TurnOn { get; set; }
         
         [RealName("turnOff")]
-        [RealType("CName")]
-        public string TurnOff { get; set; }
+        public CName TurnOff { get; set; }
     }
 }

@@ -7,11 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameItemID : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("id")]
-        [RealType("TweakDBID")]
         public TweakDbId Id { get; set; }
         
         [RealName("rngSeed")]
-        [RealType("Uint32")]
         public uint RngSeed { get; set; }
+
+        [RealName("uniqueCounter")]
+        public ushort UniqueCounter { get; set; }
     }
 }

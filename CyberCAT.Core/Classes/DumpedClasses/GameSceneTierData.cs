@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.GameplayTier? Tier { get; set; }
         
         [RealName("emptyHands")]
-        [RealType("Bool")]
         public bool EmptyHands { get; set; }
     }
 }

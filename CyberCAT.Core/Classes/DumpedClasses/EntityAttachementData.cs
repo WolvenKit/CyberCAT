@@ -7,20 +7,16 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class EntityAttachementData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("slotName")]
-        [RealType("CName")]
-        public string SlotName { get; set; }
+        public CName SlotName { get; set; }
         
         [RealName("slotComponentName")]
-        [RealType("CName")]
-        public string SlotComponentName { get; set; }
+        public CName SlotComponentName { get; set; }
         
         [RealName("nodeRef")]
-        [RealType("NodeRef")]
-        public string NodeRef { get; set; }
+        public NodeRef NodeRef { get; set; }
         
         [RealName("attachementComponentName")]
-        [RealType("CName")]
-        public string AttachementComponentName { get; set; }
+        public CName AttachementComponentName { get; set; }
         
         [RealName("ownerID")]
         public EntEntityID OwnerID { get; set; }

@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public EntEntityID EntityID { get; set; }
         
         [RealName("calls")]
-        [RealType("Int32")]
         public int Calls { get; set; }
     }
 }

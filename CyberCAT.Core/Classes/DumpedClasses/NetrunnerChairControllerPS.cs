@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class NetrunnerChairControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("killDelay")]
-        [RealType("Float")]
         public float KillDelay { get; set; }
     }
 }

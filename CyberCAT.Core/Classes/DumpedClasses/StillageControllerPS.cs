@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class StillageControllerPS : ScriptableDeviceComponentPS
     {
         [RealName("isCleared")]
-        [RealType("Bool")]
         public bool IsCleared { get; set; }
     }
 }

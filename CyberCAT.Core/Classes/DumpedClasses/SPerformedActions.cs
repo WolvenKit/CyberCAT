@@ -7,8 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SPerformedActions : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("ID")]
-        [RealType("CName")]
-        public string ID { get; set; }
+        public CName ID { get; set; }
         
         [RealName("ActionContext")]
         public DumpedEnums.EActionContext?[] ActionContext { get; set; }

@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public RecipientData[] Recipients { get; set; }
         
         [RealName("callbackID")]
-        [RealType("Uint32")]
         public uint CallbackID { get; set; }
     }
 }

@@ -7,14 +7,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SBinkperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("componentName")]
-        [RealType("CName")]
-        public string ComponentName { get; set; }
+        public CName ComponentName { get; set; }
         
         [RealName("binkPath")]
         public RedResourceReferenceScriptToken BinkPath { get; set; }
         
         [RealName("loop")]
-        [RealType("Bool")]
         public bool Loop { get; set; }
         
         [RealName("operationType")]

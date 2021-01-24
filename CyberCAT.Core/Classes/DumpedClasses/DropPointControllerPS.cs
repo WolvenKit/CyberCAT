@@ -6,15 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class DropPointControllerPS : BasicDistractionDeviceControllerPS
     {
         [RealName("vendorRecord")]
-        [RealType("String")]
         public string VendorRecord { get; set; }
         
         [RealName("rewardsLootTable")]
-        [RealType("TweakDBID")]
         public TweakDbId[] RewardsLootTable { get; set; }
         
         [RealName("hasPlayerCollectedReward")]
-        [RealType("Bool")]
         public bool HasPlayerCollectedReward { get; set; }
     }
 }

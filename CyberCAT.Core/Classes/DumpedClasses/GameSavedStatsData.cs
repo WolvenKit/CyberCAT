@@ -13,11 +13,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataStatType?[] InactiveStats { get; set; }
         
         [RealName("recordID")]
-        [RealType("TweakDBID")]
         public TweakDbId RecordID { get; set; }
         
         [RealName("seed")]
-        [RealType("Uint32")]
         public uint Seed { get; set; }
     }
 }

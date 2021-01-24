@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameStatusEffectTDBPicker : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("statusEffect")]
-        [RealType("TweakDBID")]
         public TweakDbId StatusEffect { get; set; }
     }
 }

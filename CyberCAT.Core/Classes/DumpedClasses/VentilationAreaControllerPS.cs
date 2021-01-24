@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public VentilationAreaSetup VentilationAreaSetup { get; set; }
         
         [RealName("isActive")]
-        [RealType("Bool")]
         public bool IsActive { get; set; }
     }
 }

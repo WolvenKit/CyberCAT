@@ -15,7 +15,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EWindowBlindersStates? CachedState { get; set; }
         
         [RealName("alarmRaised")]
-        [RealType("Bool")]
         public bool AlarmRaised { get; set; }
     }
 }

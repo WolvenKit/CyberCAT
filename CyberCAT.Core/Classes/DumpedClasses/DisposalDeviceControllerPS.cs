@@ -15,19 +15,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DistractionSetup ExplosionSetup { get; set; }
         
         [RealName("isDistractionDisabled")]
-        [RealType("Bool")]
         public bool IsDistractionDisabled { get; set; }
         
         [RealName("wasActivated")]
-        [RealType("Bool")]
         public bool WasActivated { get; set; }
         
         [RealName("wasLethalTakedownPerformed")]
-        [RealType("Bool")]
         public bool WasLethalTakedownPerformed { get; set; }
         
         [RealName("isPlayerCurrentlyPerformingDisposal")]
-        [RealType("Bool")]
         public bool IsPlayerCurrentlyPerformingDisposal { get; set; }
     }
 }

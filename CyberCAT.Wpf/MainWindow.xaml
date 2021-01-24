@@ -1,41 +1,49 @@
-﻿<Window
+﻿<mah:MetroWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CyberCAT.Wpf"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="CyberCAT.Wpf.MainWindow"
+        xmlns:notifications="clr-namespace:Notifications.Wpf.Core.Controls;assembly=Notifications.Wpf.Core"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280" >
-    <Grid>
-        <Menu HorizontalAlignment="Stretch" Height="30" Margin="0"   VerticalAlignment="Top" >
+        Title="CyberCAT" Height="720" Width="1280"
+        MinHeight="480" MinWidth="640">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Menu HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Grid.Row="0">
             <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Open-->
                 <MenuItem.Header>
                     <TextBlock Text="OPEN" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
-
                 </MenuItem.Header>
-                <MenuItem>
+                <MenuItem Click="OpenPcOnClick">
                     <MenuItem.Header>
                         <TextBlock Text="OPEN PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem Click="OpenPs4OnClick">
                     <MenuItem.Header>
                         <TextBlock Text="OPEN PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
             </MenuItem>
-
             <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center"  ><!--Save-->
                 <MenuItem.Header>
                     <TextBlock Text="SAVE" Margin="0" Height="20" Padding="0" TextAlignment="Center" />
                 </MenuItem.Header>
-                <MenuItem>
+                <MenuItem Click="SavePcOnClick">
                     <MenuItem.Header>
                         <TextBlock Text="SAVE PC" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem Click="SavePs4OnClick">
                     <MenuItem.Header>
                         <TextBlock Text="SAVE PS4" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
                     </MenuItem.Header>
@@ -52,20 +60,19 @@
                     <TextBlock IsEnabled="False" Text="Credits:"></TextBlock>
                 </StackPanel>
             </MenuItem>
+            <MenuItem Width="100"  Padding="0" Margin="0" Height="30" HorizontalAlignment="Center" Click="OnSettingsClick">
+                <!-- Settings -->
+                <MenuItem.Header>
+                    <TextBlock Text="SETTINGS" Margin="0" Height="20" Padding="0" TextAlignment="Center" Width="100" />
+                </MenuItem.Header>
+            </MenuItem>
         </Menu>
-        <TabControl Margin="1,30,1,1">
+        <TabControl Grid.Row="1" Name="EditorTabs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed">
             <TabItem Header="Simple">
-                <Grid >
+                <Grid>
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" />
                     <TabControl  TabStripPlacement="Left">
-
-                        <TabItem Header="Items" >
-                            <Grid>
-                                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
-                                    <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Item Editor Here" FontSize="36"/>
-                                </Border>
-                            </Grid>
-                        </TabItem>
+                        <TabItem Header="Items" Name="SimpleItemsTab" />
                         <TabItem Header="Appearance" >
                             <Grid>
                                 <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1,0,0,0" >
@@ -88,23 +95,44 @@
                             </Grid>
                         </TabItem>
                     </TabControl>
-
                 </Grid>
             </TabItem>
             <TabItem Header="Quick Actions" >
                 <Grid>
                     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quick Actions here" FontSize="36"/>
+                        <WrapPanel Name="quickActionWrapPanel" />
                     </Border>
+                    <notifications:NotificationArea x:Name="WindowArea" Position="BottomRight" MaxItems="3"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Advanced" >
-                <Grid>
-                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" >
-                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Advanced GUI here" FontSize="36"/>
-                    </Border>
-                </Grid>
+                <Border Name="advancedTabBorder" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TreeView Name="advancedTabTreeView" SelectedItemChanged="advancedTabTreeView_SelectedItemChanged"></TreeView>
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                        <DockPanel Grid.Column="2" Name="propertyGridHost"></DockPanel>
+                    </Grid>
+                </Border>
             </TabItem>
         </TabControl>
+        <Grid Grid.Row="1" Name="ProgressIndicator" Visibility="Collapsed">
+            <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1,0,1">
+                <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <mah:ProgressRing />
+                    <Label Content="Opening..." FontSize="36" Margin="10,0,0,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" Name="OpenSaveText">
+            <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1,0,1" >
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Open a save file" FontSize="36"/>
+            </Border>
+        </Grid>
+        <TextBlock Name="Footer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" TextAlignment="Center" />
     </Grid>
-</Window>
+</mah:MetroWindow>

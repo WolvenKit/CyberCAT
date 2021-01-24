@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class KeyBindings : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("DPAD_UP")]
-        [RealType("TweakDBID")]
         public TweakDbId DPAD_UP { get; set; }
         
         [RealName("RB")]
-        [RealType("TweakDBID")]
         public TweakDbId RB { get; set; }
     }
 }

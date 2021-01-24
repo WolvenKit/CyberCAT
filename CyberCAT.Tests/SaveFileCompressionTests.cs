@@ -35,14 +35,10 @@ namespace CyberCAT.Tests
         {
             using (var compressedInputStream = File.OpenRead(_saveFile))
             {
-                var activeSaveFile = new SaveFileCompressionHelper();
-                var decompressedFile = activeSaveFile.Decompress(compressedInputStream);
-                var json = JsonConvert.SerializeObject(activeSaveFile.MetaInformation, Formatting.Indented);
+                var decompressedFile = CompressionHelper.Decompress(compressedInputStream);
 
-                _jsonPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.METAINFORMATION_SUFFIX}.{Constants.FileExtensions.JSON}";
-                File.WriteAllText(_jsonPath, json);
-
-                _binPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.{Constants.FileExtensions.DECOMPRESSED_FILE}";
+                var fileName = Path.GetFileNameWithoutExtension(_saveFile);
+                _binPath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}\\{fileName}_{Constants.FileStructure.UNCOMPRESSED_SUFFIX}.{Constants.FileExtensions.DECOMPRESSED_FILE}";
                 File.WriteAllBytes(_binPath, decompressedFile);
             }
         }
@@ -50,10 +46,15 @@ namespace CyberCAT.Tests
         [Test, Order(2)]
         public void Can_recompress_file()
         {
-            var activeSaveFile = new SaveFileCompressionHelper();
-            var recompressedFilePath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}";
-            activeSaveFile.CompressFromSingleFile(_binPath, _jsonPath, recompressedFilePath);
-            _recompressedBinPath = Path.Combine(recompressedFilePath, $"{activeSaveFile.MetaInformation.FileGuid}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"); ;
+            using (var decompressedInputStream = File.OpenRead(_binPath))
+            {
+                var compressedFile = CompressionHelper.Recompress(decompressedInputStream);
+
+                var fileName = Path.GetFileNameWithoutExtension(_binPath);
+                var recompressedFilePath = $"{Constants.FileStructure.OUTPUT_FOLDER_NAME}";
+                _recompressedBinPath = Path.Combine(recompressedFilePath, $"{fileName}_{Constants.FileStructure.RECOMPRESSED_SUFFIX}.bin"); ;
+                File.WriteAllBytes(_recompressedBinPath, compressedFile);
+            }
         }
         /// <summary>
         /// Not that it could be possible that this fails due to slight differences in compression setting but still be a valid file

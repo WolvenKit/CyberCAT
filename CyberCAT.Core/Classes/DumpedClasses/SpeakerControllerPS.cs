@@ -9,11 +9,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public SpeakerSetup SpeakerSetup { get; set; }
         
         [RealName("currentValue")]
-        [RealType("CName")]
-        public string CurrentValue { get; set; }
+        public CName CurrentValue { get; set; }
         
         [RealName("previousValue")]
-        [RealType("CName")]
-        public string PreviousValue { get; set; }
+        public CName PreviousValue { get; set; }
     }
 }

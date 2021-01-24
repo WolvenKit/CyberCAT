@@ -13,6 +13,8 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
         public byte[] Unknown1 { get; set; }
         public uint Unknown2 { get; set; }
         public byte[] Unknown3 { get; set; }
+
+        // list of FNV1A64 hashes of the classes
         public ulong[] CNameHashes1 { get; set; }
         public BaseClassEntry[] ClassList { get; set; }
         public ulong[] CNameHashes2 { get; set; }
@@ -25,28 +27,25 @@ namespace CyberCAT.Core.Classes.NodeRepresentations
 
         public Handle<T> CreateHandle<T>(T data) where T : BaseClassEntry
         {
-            var maxId = Handles.Max(h => h.GetId());
+            var maxId = Handles.Max(h => h.Id);
             var result = new Handle<T>(maxId + 1, data);
             Handles.Add(result);
             return result;
         }
 
-        public void RemoveHandle(int id)
+        public void RemoveHandle(uint id)
         {
-            for (int i = Handles.Count - 1; i >= 0; i--)
-            {
-                if (Handles[i].GetId() == id)
-                    Handles.Remove(Handles[i]);
-            }
+            Handles.RemoveAll(h => h.Id == id);
+        }
+
+        public void RemoveHandles(HashSet<uint> ids)
+        {
+            Handles.RemoveAll(h => ids.Contains(h.Id));
         }
 
         public void RemoveHandle(BaseClassEntry obj)
         {
-            for (int i = Handles.Count - 1; i >= 0; i--)
-            {
-                if (Handles[i].GetValue() == obj)
-                    Handles.Remove(Handles[i]);
-            }
+            Handles.RemoveAll(h => h.GetValue() == obj);
         }
 
         public class BaseClassEntry

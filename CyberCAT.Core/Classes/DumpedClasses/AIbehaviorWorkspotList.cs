@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AIbehaviorWorkspotList : IScriptable
     {
         [RealName("spots")]
-        [RealType("NodeRef")]
-        public string[] Spots { get; set; }
+        public NodeRef[] Spots { get; set; }
     }
 }

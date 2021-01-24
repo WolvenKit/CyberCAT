@@ -9,15 +9,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameEntityReference FollowerRef { get; set; }
 
         [RealName("attitudeGroupName")]
-        [RealType("CName")]
-        public string AttitudeGroupName { get; set; }
+        public CName AttitudeGroupName { get; set; }
 
         [RealName("followTargetSquads")]
-        [RealType("CName")]
-        public string[] FollowTargetSquads { get; set; }
+        public CName[] FollowTargetSquads { get; set; }
 
         [RealName("playerCombatListener")]
-        [RealType("Uint32")]
         public uint PlayerCombatListener { get; set; }
 
         [RealName("lastStealthLeaveTimeStamp")]
@@ -30,11 +27,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameAttachmentSlotsScriptListener> OwnerTargetSlotListener { get; set; }
 
         [RealName("isFriendMelee")]
-        [RealType("Bool")]
         public bool IsFriendMelee { get; set; }
 
         [RealName("isOwnerSniper")]
-        [RealType("Bool")]
         public bool IsOwnerSniper { get; set; }
     }
 }

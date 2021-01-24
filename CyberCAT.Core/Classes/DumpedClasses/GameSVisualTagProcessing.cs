@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gamedataEquipmentArea? AreaType { get; set; }
         
         [RealName("showItem")]
-        [RealType("Bool")]
         public bool ShowItem { get; set; }
     }
 }

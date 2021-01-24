@@ -6,14 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class CooldownPackage : IScriptable
     {
         [RealName("actionID")]
-        [RealType("TweakDBID")]
         public TweakDbId ActionID { get; set; }
         
         [RealName("addressees")]
         public PSOwnerData[] Addressees { get; set; }
         
         [RealName("initialCooldown")]
-        [RealType("Float")]
         public float InitialCooldown { get; set; }
         
         [RealName("label")]

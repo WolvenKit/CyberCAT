@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.EDeviceDurabilityType? DurabilityType { get; set; }
         
         [RealName("canBeFixed")]
-        [RealType("Bool")]
         public bool CanBeFixed { get; set; }
     }
 }

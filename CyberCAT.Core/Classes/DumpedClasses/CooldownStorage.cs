@@ -18,7 +18,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<CooldownPackage>[] Packages { get; set; }
         
         [RealName("currentID")]
-        [RealType("Uint32")]
         public uint CurrentID { get; set; }
         
         [RealName("map")]

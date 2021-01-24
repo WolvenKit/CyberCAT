@@ -24,14 +24,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameSSlotInfo[] ClothingSlotsInfo { get; set; }
         
         [RealName("isPartialVisualTagActive")]
-        [RealType("Bool")]
         public bool IsPartialVisualTagActive { get; set; }
         
         [RealName("visualTagProcessingInfo")]
         public GameSVisualTagProcessing[] VisualTagProcessingInfo { get; set; }
         
         [RealName("eventsSent")]
-        [RealType("Int32")]
         public int EventsSent { get; set; }
         
         [RealName("hotkeys")]

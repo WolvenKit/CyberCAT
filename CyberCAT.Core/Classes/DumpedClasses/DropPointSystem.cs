@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<DropPointMappinRegistrationData>[] Mappins { get; set; }
         
         [RealName("isEnabled")]
-        [RealType("Bool")]
         public bool IsEnabled { get; set; }
     }
 }

@@ -10,7 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public Handle<GameFxInstance> Fx { get; set; }
         
         [RealName("id")]
-        [RealType("CName")]
-        public string Id { get; set; }
+        public CName Id { get; set; }
     }
 }

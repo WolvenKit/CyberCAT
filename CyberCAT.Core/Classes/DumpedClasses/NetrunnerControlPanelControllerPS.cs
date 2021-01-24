@@ -9,7 +9,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public ComputerQuickHackData FactQuickHackSetup { get; set; }
         
         [RealName("quickhackPerformed")]
-        [RealType("Bool")]
         public bool QuickhackPerformed { get; set; }
     }
 }

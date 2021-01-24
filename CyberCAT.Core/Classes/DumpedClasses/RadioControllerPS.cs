@@ -12,7 +12,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public RadioStationsMap[] Stations { get; set; }
         
         [RealName("stationsInitialized")]
-        [RealType("Bool")]
         public bool StationsInitialized { get; set; }
 
         public RadioControllerPS()

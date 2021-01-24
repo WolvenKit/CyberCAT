@@ -6,7 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class GameConstantStatModifierData : GameStatModifierData
     {
         [RealName("value")]
-        [RealType("Float")]
         public float Value { get; set; }
     }
 }

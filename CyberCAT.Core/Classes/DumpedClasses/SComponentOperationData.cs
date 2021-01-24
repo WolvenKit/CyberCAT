@@ -7,8 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SComponentOperationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("componentName")]
-        [RealType("CName")]
-        public string ComponentName { get; set; }
+        public CName ComponentName { get; set; }
         
         [RealName("operationType")]
         public DumpedEnums.EComponentOperation? OperationType { get; set; }

@@ -77,8 +77,29 @@ namespace CyberCAT.Core
         public static class NodeNames
         {
             public const string GAME_SESSION_CONFIG_NODE = "game::SessionConfig";
+            public const string DYNAMIC_ENTITYID_SYSTEM = "DynamicEntityIDSystem";
+            public const string PERSISTENCY_SYSTEM = "PersistencySystem";
+            public const string C_COVER_MANAGER = "CCoverManager";
+            public const string WORKSPOT_INSTANCES_SAVEDATA = "WorkspotInstancesSavedata";
+            public const string PLAYER_SYSTEM = "PlayerSystem";
+            public const string C_ATTITUDE_MANAGER = "CAttitudeManager";
+            public const string COMMUNITY_SYSTEM = "CommunitySystem";
+            public const string CONTAINER_MANAGER = "ContainerManager";
+            public const string CONTAINER_MANAGER_INJECTED_LOOT = "ContainerManager_InjectedLoot";
+            public const string CONTAINER_MANAGER_LOOT_SLOT_AVAILABILITY = "ContainerManager_LootSlotAvailability";
+            public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER2 = "ContainerManager_NPCLootBags_Ver2";
+            public const string CONTAINER_MANAGER_NPC_LOOT_BAGS_VER3_LOOTED_IDS = "ContainerManager_NPCLootBags_Ver3_LootedIDs";
+            public const string DEVICE_SYSTEM = "DeviceSystem";
+            public const string DS_DYNAMIC_CONNECTIONS = "DS_DynamicConnections";
+            public const string GAME_AUDIO = "GameAudio";
+            public const string QUEST_MUSIC_HISTORY = "QuestMusicHistory";
+            public const string MUSIC_SYSTEM = "MusicSystem";
+            public const string DIRECTOR_SYSTEM = "DirectorSystem";
+            public const string RADIO_SYSTEM = "RadioSystem";
+            public const string UNIQUE_ITEM_COUNTER = "UniqueItemCounter";
             public const string INVENTORY = "inventory";
             public const string ITEM_DATA = "itemData";
+            public const string JOURNAL_MANAGER = "JournalManager";
             public const string ITEM_DROP_STORAGE = "ItemDropStorage";
             public const string ITEM_DROP_STORAGE_MANAGER = "ItemDropStorageManager";
             public const string CHARACTER_CUSTOMIZATION_APPEARANCES_NODE = "CharacetrCustomization_Appearances";
@@ -93,10 +114,17 @@ namespace CyberCAT.Core
             public const string RENDER_GAMEPLAY_EFFECTS_MANAGER_SYSTEM = "RenderGameplayEffectsManagerSystem";
             public const string PS_DATA = "PSData";
             public const string SCANNING_CONTROLLER = "scanningController";
+
+            public const string QUEST_DEBUG_LOG_MANAGER = "questDebugLogManager";
+            public const string CHOICES = "choices";
+            public const string CUSTOM_ARRAY = "customArray";
+            public const string EVENT_MANAGER = "eventManager";
+            public const string TIME_CORE = "\"Core\"";
         }
         public static class Numbers
         {
             public const int DEFAULT_HEADER_SIZE = 3105;
+            public const int DEFAULT_CHUNK_SIZE = 0x00040000;
         }
     }
 }

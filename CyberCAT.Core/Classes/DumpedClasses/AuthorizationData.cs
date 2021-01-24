@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class AuthorizationData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("isAuthorizationModuleOn")]
-        [RealType("Bool")]
         public bool IsAuthorizationModuleOn { get; set; }
         
         [RealName("alwaysExposeActions")]
-        [RealType("Bool")]
         public bool AlwaysExposeActions { get; set; }
         
         [RealName("authorizationDataEntry")]

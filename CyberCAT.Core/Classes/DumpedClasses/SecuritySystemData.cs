@@ -7,11 +7,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class SecuritySystemData : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("suppressIncomingEvents")]
-        [RealType("Bool")]
         public bool SuppressIncomingEvents { get; set; }
         
         [RealName("suppressOutgoingEvents")]
-        [RealType("Bool")]
         public bool SuppressOutgoingEvents { get; set; }
     }
 }
