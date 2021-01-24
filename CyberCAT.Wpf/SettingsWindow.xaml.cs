@@ -38,6 +38,14 @@ namespace CyberCAT.Wpf
                 {
                     settings.AllowQuickActions = AllowQuickActions.IsChecked.Value;
                 }
+                if (EnableQuickActionDebugging.IsChecked != null)
+                {
+                    settings.EnableQuickActionDebugging = EnableQuickActionDebugging.IsChecked.Value;
+                }
+                if (QuickActionDebuggingPort.Value.HasValue)
+                {
+                    settings.QuickActionDebuggingPort = (int)QuickActionDebuggingPort.Value;
+                }
                 if (ParsersSimple.IsChecked != null && ParsersSimple.IsChecked.Value)
                 {
                     settings.EnabledParsers = SaveFile.ParserList.Simple;
@@ -61,6 +69,8 @@ namespace CyberCAT.Wpf
             InitializeComponent();
             OpenInSavedGames.IsChecked = settings.StartInSavesFolder;
             AllowQuickActions.IsChecked = settings.AllowQuickActions;
+            EnableQuickActionDebugging.IsChecked = settings.EnableQuickActionDebugging;
+            QuickActionDebuggingPort.Value = settings.QuickActionDebuggingPort;
             switch (settings.EnabledParsers)
             {
                 case SaveFile.ParserList.Simple:
@@ -97,12 +107,14 @@ namespace CyberCAT.Wpf
         private void OnDefaultsClick(object sender, RoutedEventArgs e)
         {
             NewSettings = Settings.Default;
+            QuickAction.ResetEngine();
             Close();
         }
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
             NewSettings = CurrentSettings;
+            QuickAction.ResetEngine();
             Close();
         }
 

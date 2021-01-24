@@ -8,11 +8,12 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="CyberCAT Settings" Height="255" Width="425" ResizeMode="NoResize" Closed="OnClosed">
+        Title="CyberCAT Settings" Height="305" Width="425" ResizeMode="NoResize" Closed="OnClosed">
     <Grid Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="100" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
@@ -20,7 +21,20 @@
         <CheckBox Grid.Row="1" Name="AllowQuickActions">
             <Label>Allow QuickActions</Label>
         </CheckBox>
-        <StackPanel Grid.Row="2" Orientation="Vertical">
+        <StackPanel Grid.Row="2">
+            <CheckBox Name="EnableQuickActionDebugging">
+                <Label>Enable Quick Action Debugging</Label>
+            </CheckBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Quick Action Debugging Port:</Label>
+                <mah:NumericUpDown NumericInputMode="Numbers"  Name="QuickActionDebuggingPort" Grid.Column="1"></mah:NumericUpDown>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Enabled parsers</Label>
                 <iconPacks:PackIconMaterial Name="ParsersHelp" Kind="HelpCircleOutline" VerticalAlignment="Center" MouseEnter="OnParserTooltipMouseEnter" MouseLeave="OnParserTooltipMouseLeave">
@@ -43,7 +57,7 @@
             <RadioButton Name="ParsersEnhanced" Margin="10,0,0,5">Enhanced</RadioButton>
             <RadioButton Name="ParsersSimple" Margin="10,0,0,0">Simple</RadioButton>
         </StackPanel>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />

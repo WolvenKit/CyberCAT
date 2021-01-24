@@ -23,11 +23,11 @@ namespace CyberCAT.Wpf.Classes
             Content = action.DisplayName;
             ToolTip = action.Description;
         }
-        public void RunScript()
+        public void RunScript(bool debuggingEnabled, int debugPort)
         {
             try
             {
-                _action.Execute(_saveFile, _folderPath);
+                _action.Execute(_saveFile, _folderPath, debuggingEnabled, debugPort);
                 _ = notificationManager.ShowAsync(
                 new NotificationContent { Title = _action.DisplayName, Message = _action.SuccessMessage, Type = NotificationType.Success, },
                 areaName: "WindowArea", TimeSpan.FromSeconds(2));

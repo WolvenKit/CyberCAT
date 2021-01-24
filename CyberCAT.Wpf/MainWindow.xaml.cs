@@ -298,7 +298,7 @@ namespace CyberCAT.Wpf
         {
             if (_settings.AllowQuickActions)
             {
-                ((ScriptTile)sender).RunScript();
+                ((ScriptTile)sender).RunScript(_settings.EnableQuickActionDebugging,_settings.QuickActionDebuggingPort);
             }
             else
             {

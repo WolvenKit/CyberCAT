@@ -20,25 +20,37 @@ namespace CyberCAT.Wpf.Classes
         public string Description { get; set; }
         public string SuccessMessage { get; set; }
         public List<QuickActionArgument> Arguments {get;set;}
-
+        private static V8ScriptEngine _engine;
         public QuickAction()
         {
             Arguments = new List<QuickActionArgument>();
         }
-        public void Execute(SaveFile saveFile, string folderPath)
+        public void Execute(SaveFile saveFile, string folderPath, bool debuggingEnabled, int debuggingPort)
         {
-            using (var engine = new V8ScriptEngine())
+            V8ScriptEngineFlags flag;
+            if (debuggingEnabled)
             {
-                engine.DocumentSettings.AccessFlags = DocumentAccessFlags.EnableFileLoading;
-                engine.AddHostObject("lib", new HostTypeCollection(typeof(SaveFile).Assembly));
-                engine.AddHostObject("nodes", saveFile.Nodes);
-                engine.AddHostObject("host", new HostFunctions());
-                engine.AddHostType(typeof(Enumerable));
-                engine.AddHostType(typeof(EnumerableExtensions));
-                engine.ExecuteDocument(Path.Combine(folderPath, "script.js"));
-                var eddies = engine.Script.eddies;
-                var quantity = engine.Script.quantity;
+                flag = V8ScriptEngineFlags.EnableDebugging;
             }
+            else
+            {
+                flag = V8ScriptEngineFlags.None;
+            }
+            if (_engine == null)
+            {
+                _engine = new V8ScriptEngine(flag, debuggingPort);
+            }
+            _engine.DocumentSettings.AccessFlags = DocumentAccessFlags.EnableFileLoading;
+            _engine.AddHostObject("lib", new HostTypeCollection(typeof(SaveFile).Assembly));
+            _engine.AddHostObject("nodes", saveFile.Nodes);
+            _engine.AddHostObject("host", new HostFunctions());
+            _engine.AddHostType(typeof(Enumerable));
+            _engine.AddHostType(typeof(EnumerableExtensions));
+            _engine.ExecuteDocument(Path.Combine(folderPath, "script.js"));
+        }
+        public static void ResetEngine()
+        {
+            _engine = null;
         }
     }
     public static class EnumerableExtensions
