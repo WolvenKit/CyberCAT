@@ -21,8 +21,12 @@ var inventoryNode = nodes.where(n => n.Name == "inventory").FirstOrDefault();
 //Get the "Value" property of the node (This contains the parsed data)
 var inventory = inventoryNode.Value;
 
-//Get the subinventory where Id is "1" and get the item with name "Items.money"
-var eddies = inventory.SubInventories.where(si => si.InventoryId == 1).FirstOrDefault().Items.where(i => i.ItemTdbId.Name == "Items.money").FirstOrDefault();
+//Get the subinventory where Id is "1"
+var subInventory = inventory.SubInventories.where(si => si.InventoryId == 1).FirstOrDefault()
+
+//Get the item with name "Items.money"
+var eddies = subInventory.Items.where(i => i.ItemTdbId.Name == "Items.money").FirstOrDefault();
+
 
 //The "Data" property needs to be cast to the correct type. In this case "CyberCAT.Core.Classes.NodeRepresentations.ItemData.SimpleItemData"
 var typedEddieData = host.cast(lib.CyberCAT.Core.Classes.NodeRepresentations.ItemData.SimpleItemData, eddies.Data);
