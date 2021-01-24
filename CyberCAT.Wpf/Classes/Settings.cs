@@ -12,6 +12,7 @@ namespace CyberCAT.Wpf.Classes
 
         public SaveFile.ParserList EnabledParsers { get; set; }
         public bool StartInSavesFolder { get; set; }
+        public bool AllowQuickActions { get; set; }
         public Settings()
         {
         }

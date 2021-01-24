@@ -272,8 +272,38 @@ namespace CyberCAT.Wpf
                     BuildVisualSubTree(treeNode, null);
                     advancedTabTreeView.Items.Add(treeNode);
                 }
+                LoadQuickActions();
             });
         }
+        private void LoadQuickActions()
+        {
+            foreach (var directory in Directory.GetDirectories("QuickActions"))
+            {
+                var definitionPath = Path.Combine(directory, "definition.json");
+                if (File.Exists(definitionPath))
+                {
+                    var action = JsonConvert.DeserializeObject<QuickAction>(File.ReadAllText(definitionPath));
+                    action.Arguments.Add(new QuickActionArgument() { Name = "Name", Type = "Type" });
+                    File.WriteAllText("out.json",JsonConvert.SerializeObject(action, Formatting.Indented));
+                    var tile = new ScriptTile(action, LoadedSaveFile, directory);
+                    tile.Click += Tile_Click;
+                    quickActionWrapPanel.Children.Add(tile);
+                }
+            }
+        }
+
+        private void Tile_Click(object sender, RoutedEventArgs e)
+        {
+            if (_settings.AllowQuickActions)
+            {
+                ((ScriptTile)sender).RunScript();
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Please note that running QuickActions from untrusted sources may damage your system or files. If you are ok with that risk or trust all installed QuickActions check \"Allow QuickQctions\" in Settings Window");
+            }
+        }
+
         private void BuildVisualSubTree(SaveNodeTreeViewItem treeNode, string filter)
         {
             if (treeNode.Node.Value is Inventory inv)
