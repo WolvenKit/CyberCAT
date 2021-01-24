@@ -124,7 +124,7 @@
                         <ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Name="ModToAdd" ItemsSource="{Binding Path=AddableMods}" DisplayMemberPath="ItemTdbId.GameNameDescriptionFallback" Margin="2.5" />
                         <TextBlock Grid.Column="0" Grid.Row="1" Text="Insert into slot" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="0,0,5,0" />
                         <ComboBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Name="IntoAttachmentSlot" ItemsSource="{Binding Path=AttachmentSlots}" DisplayMemberPath="NameWithoutGroup" Margin="2.5" />
-                        <Button Grid.Column="2" Grid.Row="1" Margin="2.5" Click="OnAddModClicked" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                        <Button Grid.Column="2" Grid.Row="1" Margin="2.5" Click="OnAddModClicked" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Add Mod">
                             <iconPacks:PackIconMaterial Kind="PlusCircle" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </Button>
                     </Grid>
@@ -165,7 +165,7 @@
                                                 <ComboBox Grid.Column="0" Margin="0,2.5,2.5,2.5" ItemsSource="{Binding ModifierTypes }" SelectedItem="{Binding ConstantStatModifier.ModifierType}" ToolTip="Modifier Type" />
                                                 <ComboBox Grid.Column="1" Margin="2.5,2.5,2.5,2.5" ItemsSource="{Binding StatTypes}" SelectedItem="{Binding ConstantStatModifier.StatType}" ToolTip="Stat Type" />
                                                 <mah:NumericUpDown Grid.Column="2" Margin="2.5,2.5,2.5,2.5" Value="{Binding ConstantStatModifier.Value}" ToolTip="Value" />
-                                                <Button Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteModClicked">
+                                                <Button Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteStatClicked">
                                                     <iconPacks:PackIconMaterial Kind="Delete" Width="12" Height="12" />
                                                 </Button>
                                             </Grid>
@@ -193,7 +193,7 @@
                                                 <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,2.5,2.5,2.5" ItemsSource="{Binding ModifierTypes }" SelectedItem="{Binding CurveStatModifier.ModifierType}" ToolTip="Modifier Type" />
                                                 <ComboBox Grid.Row="0" Grid.Column="1" Margin="2.5,2.5,2.5,2.5" ItemsSource="{Binding StatTypes}" SelectedItem="{Binding CurveStatModifier.StatType}" ToolTip="Stat Type" />
                                                 <ComboBox Grid.Row="0" Grid.Column="2" Margin="2.5,2.5,2.5,2.5" ItemsSource="{Binding StatTypes}" SelectedItem="{Binding CurveStatModifier.CurveStat}" ToolTip="Curve Stat Type" />
-                                                <Button Grid.Row="0" Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteModClicked">
+                                                <Button Grid.Row="0" Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteStatClicked">
                                                     <iconPacks:PackIconMaterial Kind="Delete" Width="12" Height="12" />
                                                 </Button>
                                                 <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding CurveStatModifier.ColumnName}" ToolTip="Column Name" />
@@ -223,7 +223,7 @@
                                                 <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,2.5,2.5,2.5" ItemsSource="{Binding ModifierTypes }" SelectedItem="{Binding CombinedStatModifier.ModifierType}" ToolTip="Modifier Type" />
                                                 <ComboBox Grid.Row="0" Grid.Column="1" Margin="2.5,2.5,2.5,2.5" ItemsSource="{Binding StatTypes}" SelectedItem="{Binding CombinedStatModifier.StatType}" ToolTip="Stat Type" />
                                                 <ComboBox Grid.Row="0" Grid.Column="2" Margin="2.5,2.5,2.5,2.5" ItemsSource="{Binding StatTypes}" SelectedItem="{Binding CombinedStatModifier.RefStatType}" ToolTip="Referenced Stat Type" />
-                                                <Button Grid.Row="0" Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteModClicked">
+                                                <Button Grid.Row="0" Grid.Column="3" Margin="2.5,2.5,0,2.5" ToolTip="Delete" Tag="{Binding}" Click="OnDeleteStatClicked">
                                                     <iconPacks:PackIconMaterial Kind="Delete" Width="12" Height="12" />
                                                 </Button>
                                                 <ComboBox Grid.Row="1" Grid.Column="0" Margin="0,2.5,2.5,2.5" ItemsSource="{Binding CombinedStatOperations }" SelectedItem="{Binding CombinedStatModifier.Operation}" ToolTip="Operation" />
@@ -241,6 +241,21 @@
                             </ListBox.ItemContainerStyle>
                         </ListBox>
                     </Border>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="30" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="31" />
+                            <RowDefinition Height="31" />
+                        </Grid.RowDefinitions>
+                        <ComboBox Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Name="NewStatType" ItemsSource="{Binding Path=StatTypes}" Margin="2.5" />
+                        <Button Grid.Column="1" Grid.Row="0" Margin="2.5" Click="OnAddStatClicked" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Add Stat">
+                            <iconPacks:PackIconMaterial Kind="PlusCircle" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Button>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>
