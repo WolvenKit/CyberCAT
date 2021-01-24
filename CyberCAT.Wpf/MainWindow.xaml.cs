@@ -277,6 +277,7 @@ namespace CyberCAT.Wpf
         }
         private void LoadQuickActions()
         {
+            quickActionWrapPanel.Children.Clear();
             foreach (var directory in Directory.GetDirectories("QuickActions"))
             {
                 var definitionPath = Path.Combine(directory, "definition.json");
