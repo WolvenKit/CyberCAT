@@ -35,7 +35,7 @@ namespace CyberCAT.Wpf
     {
         private SaveFile LoadedSaveFile { get; set; }
         private System.Windows.Forms.PropertyGrid _propertyGrid;
-        private const string NAMES_FILE_NAME = "Names.json";
+        private const string GAMEDATA_FILE_NAME = "gamedata.db";
         private const string SETTINGS_FILE_NAME = "Settings.json";
         private Settings _settings;
 
@@ -50,9 +50,9 @@ namespace CyberCAT.Wpf
             host.Child = _propertyGrid;
             
             propertyGridHost.Children.Add(host);
-            if (File.Exists(NAMES_FILE_NAME))
+            if (File.Exists(GAMEDATA_FILE_NAME))
             {
-                NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+                NameResolver.TweakDbResolver = new SqliteResolver(GAMEDATA_FILE_NAME);
             }
 
             if (File.Exists(SETTINGS_FILE_NAME))
@@ -185,7 +185,7 @@ namespace CyberCAT.Wpf
             });
         }
 
-        private void OpenPcOnClick(object sender, RoutedEventArgs e)
+        private async void OpenPcOnClick(object sender, RoutedEventArgs e)
         {
             var fileName = OpenSaveFileDialog(_settings.StartInSavesFolder);
             if (fileName == null)
@@ -193,13 +193,13 @@ namespace CyberCAT.Wpf
                 return;
             }
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 LoadFile(fileName);
             });
         }
 
-        private void OpenPs4OnClick(object sender, RoutedEventArgs e)
+        private async void OpenPs4OnClick(object sender, RoutedEventArgs e)
         {
             var fileName = OpenSaveFileDialog(false);
             if (fileName == null)
@@ -207,7 +207,7 @@ namespace CyberCAT.Wpf
                 return;
             }
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 LoadFile(fileName);
             });
@@ -239,6 +239,7 @@ namespace CyberCAT.Wpf
             Footer.Dispatcher.InvokeAsync(() => Footer.Text = $"{LoadedSaveFile.Header} - {fileName}");
 
             InitializeEditors();
+
             ShowOpenedFile();
         }
 
@@ -267,12 +268,14 @@ namespace CyberCAT.Wpf
             Dispatcher.InvokeAsync(() =>
             {
                 SimpleItemsTab.Content = new InventoryViewer(LoadedSaveFile);
+
                 foreach (var node in LoadedSaveFile.Nodes)
                 {
                     var treeNode = new SaveNodeTreeViewItem(node);
                     BuildVisualSubTree(treeNode, null);
                     advancedTabTreeView.Items.Add(treeNode);
                 }
+
                 LoadQuickActions();
             });
         }
