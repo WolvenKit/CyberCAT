@@ -24,6 +24,20 @@ namespace CyberCAT.Core.Classes.Mapping
         }
     }
 
+    public class WrongDefaultValueException : Exception
+    {
+        public string ClassName { get; set; }
+        public string PropertyName { get; set; }
+        public object Value { get; set; }
+
+        public WrongDefaultValueException(string className, string propertyName, object value) : base($"property: \"{className}.{propertyName}\" has a wrong default value ({value})!")
+        {
+            ClassName = className;
+            PropertyName = propertyName;
+            Value = value;
+        }
+    }
+
     public class UnknownTypeException : Exception
     {
         public string TypeStr { get; set; }
