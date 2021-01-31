@@ -7,5 +7,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("transformAnimations")]
         public STransformAnimationData[] TransformAnimations { get; set; }
+
+        public PlayTransformAnimationDeviceOperation()
+        {
+            IsEnabled = true;
+        }
     }
 }
