@@ -345,6 +345,9 @@ namespace CyberCAT.Core.Classes.Parsers
                 var attrName = GetRealName(prop);
                 if (attrName != null && attrName == propertyName)
                 {
+                    if (MappingHelper.GetPropertyHelper(prop).IsDefault(value))
+                        throw new WrongDefaultValueException(cls.GetType().Name, propertyName, value);
+
                     MappingHelper.GetPropertyHelper(prop).Set(cls, value);
                     return;
                 }
