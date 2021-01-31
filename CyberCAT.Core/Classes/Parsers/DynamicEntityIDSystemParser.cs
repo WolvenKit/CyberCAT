@@ -26,7 +26,13 @@ namespace CyberCAT.Core.Classes.Parsers
 
             reader.Skip(4); // Skip Id
             result.Unknown1 = reader.ReadUInt32();
-            result.Unk_NextEntityHash = reader.ReadUInt64();
+            result.Unk_NextEntityHash = reader.ReadUInt32();
+
+            var unkCount = reader.ReadUInt32();
+            for (int i = 0; i < unkCount; i++)
+            {
+                result.Unknown3.Add(reader.ReadUInt32());
+            }
 
             var stringCount = reader.ReadUInt32();
             for (int i = 0; i < stringCount; i++)
@@ -47,6 +53,12 @@ namespace CyberCAT.Core.Classes.Parsers
 
             writer.Write(data.Unknown1);
             writer.Write(data.Unk_NextEntityHash);
+
+            writer.Write(data.Unknown3.Count);
+            foreach (var item in data.Unknown3)
+            {
+                writer.Write(item);
+            }
 
             writer.Write(data.Unknown4.Count);
             foreach (var pair in data.Unknown4)
