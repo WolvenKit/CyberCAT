@@ -9,13 +9,11 @@ namespace CyberCAT.Core.Classes
 {
     public class CompressionHelper
     {
-        private static void WriteChunkTable(BinaryWriter writer, List<DataChunkInfo> chunkInfos)
-        {
-            var pos = writer.BaseStream.Position;
-            writer.BaseStream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC);
-            // SeekMagicBytes jumps to the position before the magic bytes
-            writer.BaseStream.Position += 4;
+        private delegate DataChunkInfo WriteDelegate(BinaryWriter writer, byte[] data);
 
+        private static void WriteChunkTable(BinaryWriter writer, List<DataChunkInfo> chunkInfos, Settings compressionSettings)
+        {
+            writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC));
             writer.Write(chunkInfos.Count);
             foreach (var chunk in chunkInfos)
             {
@@ -23,102 +21,119 @@ namespace CyberCAT.Core.Classes
                 writer.Write(chunk.CompressedSize);
                 writer.Write(chunk.DecompressedSize);
             }
-
-            writer.BaseStream.Position = pos;
+            writer.Write(new byte[(compressionSettings.TableEntriesCount - chunkInfos.Count) * 12]);
         }
 
-        public static void WriteUncompressed(BinaryWriter writer, byte[] data)
+        public static void Write(BinaryWriter writer, byte[] data, Settings compressionSettings, bool compress)
         {
-            var chunkCount = data.Length / Constants.Numbers.DEFAULT_CHUNK_SIZE;
-            var chunkBytesLeft = data.Length % Constants.Numbers.DEFAULT_CHUNK_SIZE;
-
-            var chunks = new List<DataChunkInfo>();
-            var index = 0;
-            for (; index < chunkCount; index++)
-            {
-                chunks.Add(new DataChunkInfo
-                {
-                    Offset = index * Constants.Numbers.DEFAULT_CHUNK_SIZE + Constants.Numbers.DEFAULT_HEADER_SIZE,
-                    CompressedSize = Constants.Numbers.DEFAULT_CHUNK_SIZE,
-                    DecompressedSize = Constants.Numbers.DEFAULT_CHUNK_SIZE
-                });
-            }
-
-            chunks.Add(new DataChunkInfo
-            {
-                Offset = index * Constants.Numbers.DEFAULT_CHUNK_SIZE + Constants.Numbers.DEFAULT_HEADER_SIZE,
-                CompressedSize = chunkBytesLeft,
-                DecompressedSize = chunkBytesLeft
-            });
-
-            writer.Write(data);
-            WriteChunkTable(writer, chunks);
+            if (compress)
+                InternalWrite(writer, data, compressionSettings, WriteCompressedChunk);
+            else
+                InternalWrite(writer, data, compressionSettings, WriteUncompressedChunk);
         }
 
-        public static void WriteCompressed(BinaryWriter writer, byte[] data)
-        {
-            var chunkCount = data.Length / Constants.Numbers.DEFAULT_CHUNK_SIZE;
-            var chunkBytesLeft = data.Length % Constants.Numbers.DEFAULT_CHUNK_SIZE;
-            byte[] inBuffer;
-
-            var chunks = new List<DataChunkInfo>();
-            var index = 0;
-            for (; index < chunkCount; index++)
-            {
-                inBuffer = new byte[Constants.Numbers.DEFAULT_CHUNK_SIZE];
-                Array.Copy(data, index * Constants.Numbers.DEFAULT_CHUNK_SIZE, inBuffer, 0, inBuffer.Length);
-                chunks.Add(WriteChunk(writer, inBuffer));
-            }
-
-            inBuffer = new byte[chunkBytesLeft];
-            Array.Copy(data, index * Constants.Numbers.DEFAULT_CHUNK_SIZE, inBuffer, 0, inBuffer.Length);
-            chunks.Add(WriteChunk(writer, inBuffer));
-
-            WriteChunkTable(writer, chunks);
-        }
-
-        private static DataChunkInfo WriteChunk(BinaryWriter writer, byte[] inBuffer)
+        private static DataChunkInfo WriteCompressedChunk(BinaryWriter writer, byte[] data)
         {
             var offset = (int)writer.BaseStream.Position;
 
-            var outBuffer = new byte[LZ4Codec.MaximumOutputSize(inBuffer.Length)];
-            var compressedSize = LZ4Codec.Encode(inBuffer, 0, inBuffer.Length, outBuffer, 0, outBuffer.Length);
+            var outBuffer = new byte[LZ4Codec.MaximumOutputSize(data.Length)];
+            var compressedSize = LZ4Codec.Encode(data, 0, data.Length, outBuffer, 0, outBuffer.Length);
 
             writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.LZ4_CHUNK_MAGIC));
-            writer.Write(inBuffer.Length);
+            writer.Write(data.Length);
             writer.Write(outBuffer, 0, compressedSize);
 
             return new DataChunkInfo
             {
                 Offset = offset,
                 CompressedSize = compressedSize + 8,
-                DecompressedSize = inBuffer.Length
+                DecompressedSize = data.Length
             };
+        }
+
+        private static DataChunkInfo WriteUncompressedChunk(BinaryWriter writer, byte[] data)
+        {
+            var offset = (int)writer.BaseStream.Position;
+
+            writer.Write(data, 0, data.Length);
+
+            return new DataChunkInfo
+            {
+                Offset = offset,
+                CompressedSize = data.Length,
+                DecompressedSize = data.Length
+            };
+        }
+
+        private static void InternalWrite(BinaryWriter writer, byte[] data, Settings compressionSettings, WriteDelegate chunkWriter)
+        {
+            var startPos = (int)writer.BaseStream.Position;
+            byte[] processedData;
+
+            var chunks = new List<DataChunkInfo>();
+
+            using (var ms = new MemoryStream())
+            {
+                using (var subWriter = new BinaryWriter(ms, Encoding.ASCII, true))
+                {
+                    var chunkCount = data.Length / compressionSettings.ChunkSize;
+                    var chunkBytesLeft = data.Length % compressionSettings.ChunkSize;
+                    byte[] inBuffer;
+
+                    var index = 0;
+                    for (; index < chunkCount; index++)
+                    {
+                        inBuffer = new byte[compressionSettings.ChunkSize];
+                        Array.Copy(data, index * compressionSettings.ChunkSize, inBuffer, 0, inBuffer.Length);
+                        chunks.Add(chunkWriter(subWriter, inBuffer));
+                    }
+
+                    inBuffer = new byte[chunkBytesLeft];
+                    Array.Copy(data, index * compressionSettings.ChunkSize, inBuffer, 0, inBuffer.Length);
+                    chunks.Add(chunkWriter(subWriter, inBuffer));
+                }
+
+                processedData = ms.ToArray();
+            }
+
+            var dataOffset = startPos + 8 + (compressionSettings.TableEntriesCount * 12);
+            foreach (var chunk in chunks)
+            {
+                chunk.Offset += dataOffset;
+            }
+
+            WriteChunkTable(writer, chunks, compressionSettings);
+            writer.Write(processedData);
         }
 
         public static byte[] Recompress(Stream stream)
         {
             byte[] resultBuffer;
 
-            stream.Position = stream.Length - 8;
-            var infoPosBuffer = new byte[4];
-            stream.Read(infoPosBuffer, 0, infoPosBuffer.Length);
-            var infoPos = BitConverter.ToInt32(infoPosBuffer, 0);
-            stream.Position = 0;
+            var compressionTablePos = (int)stream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC);
 
-            var headerBuffer = new byte[Constants.Numbers.DEFAULT_HEADER_SIZE];
-            stream.Read(headerBuffer, 0, headerBuffer.Length);
-            var dataBuffer = new byte[infoPos - stream.Position];
-            stream.Read(dataBuffer, 0, dataBuffer.Length);
-            var footerBuffer = new byte[stream.Length - infoPos];
-            stream.Read(footerBuffer, 0, footerBuffer.Length);
+            stream.Position = stream.Length - 8;
+            var intBuffer = new byte[4];
+            stream.Read(intBuffer, 0, intBuffer.Length);
+            var nodeInfoPos = BitConverter.ToInt32(intBuffer, 0);
+
+            stream.Position = compressionTablePos;
+            var compressionHeader = ReadCompressionHeader(stream);
+
+            stream.Position = 0;
+            var headerBuffer = stream.Read(25);
+
+            stream.Position += 8 + compressionHeader.Settings.TableEntriesCount * 12;
+            var dataBuffer = stream.Read(nodeInfoPos - stream.Position);
+            var footerBuffer = stream.Read(stream.Length - nodeInfoPos);
 
             using (var ms = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(ms))
                 {
                     writer.Write(headerBuffer);
-                    WriteCompressed(writer, dataBuffer);
+
+                    Write(writer, dataBuffer, compressionHeader.Settings, true);
 
                     var pos = (int) writer.BaseStream.Position;
                     writer.Write(footerBuffer);
@@ -132,13 +147,43 @@ namespace CyberCAT.Core.Classes
             return resultBuffer;
         }
 
+        private static CompressionHeader ReadCompressionHeader(Stream stream)
+        {
+            return ReadCompressionHeader(new BinaryReader(stream, Encoding.ASCII, true));
+        }
+
+        private static CompressionHeader ReadCompressionHeader(BinaryReader reader)
+        {
+            var magicInt = BitConverter.ToUInt32(Encoding.ASCII.GetBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC), 0);
+            if (reader.ReadUInt32() != magicInt)
+                throw new Exception();
+
+            var result = new CompressionHeader();
+
+            var entryCount = reader.ReadInt32();
+            for (int i = 0; i < entryCount; i++)
+            {
+                result.DataChunkInfos.Add(new DataChunkInfo
+                {
+                    Offset = reader.ReadInt32(),
+                    CompressedSize = reader.ReadInt32(),
+                    DecompressedSize = reader.ReadInt32()
+                });
+            }
+
+            result.MaxEntries = (result.DataChunkInfos[0].Offset - 33) / 12;
+            reader.BaseStream.Position = result.DataChunkInfos[0].Offset;
+
+            return result;
+        }
+
         public static byte[] Decompress(Stream stream)
         {
             byte[] buffer;
 
             using (var reader = new BinaryReader(stream))
             {
-                var decompressedStream = Decompress(reader);
+                var decompressedStream = Decompress(reader, out var compressionSettings);
 
                 using (var writer = new BinaryWriter(decompressedStream, Encoding.ASCII, true))
                 {
@@ -160,38 +205,25 @@ namespace CyberCAT.Core.Classes
             return buffer;
         }
 
-        public static Stream Decompress(BinaryReader reader)
+        public static Stream Decompress(BinaryReader reader, out Settings compressionSettings)
         {
             var result = new MemoryStream();
 
-            var infoPos = (int)reader.BaseStream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC) + 4;
+            var compressionTablePos = (int)reader.BaseStream.SeekMagicBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC);
+            if (compressionTablePos == -1)
+                throw new Exception();
+
             reader.BaseStream.Position = 0;
-
-            var headerBuffer = reader.ReadBytes(infoPos);
-            result.Write(headerBuffer, 0, headerBuffer.Length);
-            var tableBuffer = new byte[Constants.Numbers.DEFAULT_HEADER_SIZE - result.Position];
-            result.Write(tableBuffer, 0, tableBuffer.Length);
-
-            var compressedChunks = new List<DataChunkInfo>();
-            var counter = reader.ReadInt32();
-            for (int i = 0; i < counter; i++)
-            {
-                compressedChunks.Add(new DataChunkInfo
-                {
-                    Offset = reader.ReadInt32(),
-                    CompressedSize = reader.ReadInt32(),
-                    DecompressedSize = reader.ReadInt32()
-                });
-            }
-
-            reader.BaseStream.Position = Constants.Numbers.DEFAULT_HEADER_SIZE;
+            result.Write(reader.ReadBytes(25));
+            var compressionHeader = ReadCompressionHeader(reader);
+            compressionSettings = compressionHeader.Settings;
 
             var magicInt = BitConverter.ToUInt32(Encoding.ASCII.GetBytes(Constants.Magic.LZ4_CHUNK_MAGIC), 0);
             using (var ms = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(ms))
                 {
-                    foreach (var chunk in compressedChunks)
+                    foreach (var chunk in compressionHeader.DataChunkInfos)
                     {
                         Debug.Assert(reader.BaseStream.Position == chunk.Offset);
 
@@ -216,7 +248,7 @@ namespace CyberCAT.Core.Classes
 
                 using (var writer = new BinaryWriter(result, Encoding.ASCII, true))
                 {
-                    WriteUncompressed(writer, ms.ToArray());
+                    Write(writer, ms.ToArray(), compressionHeader.Settings, false);
                 }
             }
 
@@ -230,6 +262,44 @@ namespace CyberCAT.Core.Classes
             public int Offset { get; set; }
             public int CompressedSize { get; set; }
             public int DecompressedSize { get; set; }
+        }
+
+        private class CompressionHeader
+        {
+            private Settings _settings;
+
+            public CompressionHeader()
+            {
+                DataChunkInfos = new List<DataChunkInfo>();
+            }
+
+            public int MaxEntries { get; set; }
+            public List<DataChunkInfo> DataChunkInfos { get; }
+
+            public Settings Settings
+            {
+                get
+                {
+                    if (_settings == null)
+                    {
+                        foreach (var settings in Constants.Compression.SETTINGS)
+                        {
+                            if (settings.TableEntriesCount == MaxEntries)
+                                return settings;
+                        }
+
+                        throw new Exception();
+                    }
+
+                    return _settings;
+                }
+            }
+        }
+
+        public class Settings
+        {
+            public int TableEntriesCount { get; set; }
+            public int ChunkSize { get; set; }
         }
     }
 }

@@ -64,6 +64,7 @@ namespace CyberCAT.Core.Classes
         public List<NodeEntry> FlatNodes; //flat structure
         public Guid Guid { get; }
         private readonly List<INodeParser> _parsers;
+        private CompressionHelper.Settings _compressionSettings;
 
         public enum ParserList
         {
@@ -133,7 +134,7 @@ namespace CyberCAT.Core.Classes
             {
                 ReadHeader(reader);
                 ReadNodeInfos(reader);
-                dataStream = CompressionHelper.Decompress(reader);
+                dataStream = CompressionHelper.Decompress(reader, out _compressionSettings);
             }
 
             LoadFromStream(dataStream);
@@ -210,19 +211,18 @@ namespace CyberCAT.Core.Classes
             {
                 using (var writer = new BinaryWriter(stream, Encoding.ASCII))
                 {
-                    WriterHeader(writer);
+                    Header.Write(writer);
 
                     var uncompressedData = GetNodeData(out var nodeInfos);
-
-                    if (compress)
-                    {
-                        CompressionHelper.WriteCompressed(writer, uncompressedData);
-                    }
-                    else
-                    {
-                        CompressionHelper.WriteUncompressed(writer, uncompressedData);
-                    }
                     
+                    var dataOffset = (int)(writer.BaseStream.Position + 8 + _compressionSettings.TableEntriesCount * 12);
+                    foreach (var nodeInfo in nodeInfos)
+                    {
+                        nodeInfo.Offset += dataOffset;
+                    }
+
+                    CompressionHelper.Write(writer, uncompressedData, _compressionSettings, compress);
+
                     var lastBlockOffset = (int)writer.BaseStream.Position;
                     var footerWithoutLast8Bytes = BuildFooterWithoutLastEightBytes(nodeInfos);
 
@@ -256,13 +256,6 @@ namespace CyberCAT.Core.Classes
             }
 
             return uncompressedData;
-        }
-
-        private void WriterHeader(BinaryWriter writer)
-        {
-            Header.Write(writer);
-            writer.Write(Encoding.ASCII.GetBytes(Constants.Magic.SECOND_FILE_HEADER_MAGIC));
-            writer.Write(new byte[Constants.Numbers.DEFAULT_HEADER_SIZE - writer.BaseStream.Position]);
         }
 
         private byte[] BuildFooterWithoutLastEightBytes(List<NodeInfo> nodeInfos)

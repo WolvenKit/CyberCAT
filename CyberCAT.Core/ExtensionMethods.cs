@@ -7,6 +7,18 @@ namespace CyberCAT.Core
 {
     internal static class ExtensionMethods
     {
+        public static byte[] Read(this Stream stream, long count)
+        {
+            var result = new byte[count];
+            stream.Read(result, 0, result.Length);
+            return result;
+        }
+
+        public static void Write(this Stream stream, byte[] data)
+        {
+            stream.Write(data, 0, data.Length);
+        }
+
         public static string ReadString(this BinaryReader reader, int count)
         {
             return new string(reader.ReadChars(count));
