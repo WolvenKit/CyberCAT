@@ -21,6 +21,15 @@ namespace CyberCAT.Core.Classes.Parsers
         private List<IHandle> _handles;
         private List<string> _stringList;
 
+        public static event EventHandler<WrongDefaultValueEventArgs> WrongDefaultValue;
+
+        internal static bool OnWrongDefaultValue(WrongDefaultValueEventArgs e)
+        {
+            WrongDefaultValue?.Invoke(null, e);
+
+            return e.Ignore;
+        }
+
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
             _doMapping = false;
@@ -346,7 +355,11 @@ namespace CyberCAT.Core.Classes.Parsers
                 if (attrName != null && attrName == propertyName)
                 {
                     if (MappingHelper.GetPropertyHelper(prop).IsDefault(value))
-                        throw new WrongDefaultValueException(cls.GetType().Name, propertyName, value);
+                    {
+                        var ignore = OnWrongDefaultValue(new WrongDefaultValueEventArgs(cls.GetType().Name, propertyName, value));
+                        if (!ignore)
+                            throw new WrongDefaultValueException(cls.GetType().Name, propertyName, value);
+                    }
 
                     MappingHelper.GetPropertyHelper(prop).Set(cls, value);
                     return;
