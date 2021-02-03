@@ -620,7 +620,23 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var pos = writer.BaseStream.Position;
 
-                    _stringList = GenerateStringList(classList);
+                    var stringList = new string[classList.Length][];
+                    Parallel.For(0, classList.Length, (index, state) =>
+                    {
+                        stringList[index] = GenerateStringList(classList[index]);
+                    });
+
+                    var tmpSringList = new HashSet<string>();
+                    foreach (var strings in stringList)
+                    {
+                        foreach (var str in strings)
+                        {
+                            tmpSringList.Add(str);
+                        }
+                    }
+
+                    _stringList = tmpSringList.ToList();
+                    //_stringList = GenerateStringList(classList);
 
                     var offset = _stringList.Count * 4;
                     foreach (var str in _stringList)
@@ -706,25 +722,22 @@ namespace CyberCAT.Core.Classes.Parsers
             GC.Collect();
         }
 
-        private List<string> GenerateStringList(GenericUnknownStruct.BaseClassEntry[] classes)
+        private string[] GenerateStringList(GenericUnknownStruct.BaseClassEntry cls)
         {
             var result = new HashSet<string>();
 
-            foreach (var classEntry in classes)
+            if (_doMapping)
             {
-                if (_doMapping)
-                {
-                    result.Add(GetRealName(classEntry.GetType()));
-                    GenerateStringListFromMappedFields(classEntry, ref result);
-                }
-                else
-                {
-                    result.Add(((GenericUnknownStruct.ClassEntry)classEntry).Name);
-                    GenerateStringListFromUnmappedFields(((GenericUnknownStruct.ClassEntry)classEntry).Fields, ref result);
-                }
+                result.Add(GetRealName(cls.GetType()));
+                GenerateStringListFromMappedFields(cls, ref result);
+            }
+            else
+            {
+                result.Add(((GenericUnknownStruct.ClassEntry)cls).Name);
+                GenerateStringListFromUnmappedFields(((GenericUnknownStruct.ClassEntry)cls).Fields, ref result);
             }
 
-            return result.ToList();
+            return result.ToArray();
         }
 
         private void WriteValue(BinaryWriter writer, object value)
