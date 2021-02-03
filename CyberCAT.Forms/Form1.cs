@@ -44,7 +44,12 @@ namespace CyberCAT.Forms
             }
             exportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
             tsmiImport.Click += ImportBinaryClick;
-            NameResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, NameResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+
+            if (File.Exists(NAMES_FILE_NAME))
+            {
+                NameResolver.TweakDbResolver = new JsonResolver(JsonConvert.DeserializeObject<Dictionary<ulong, JsonResolver.NameStruct>>(File.ReadAllText(NAMES_FILE_NAME)));
+            }
+
             FactResolver.UseDictionary(JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(FACTS_FILE_NAME)));
             //Make rightclick select node. Better usability of context menu
             EditorTree.NodeMouseClick += (sender, args) => EditorTree.SelectedNode = args.Node;
