@@ -17,7 +17,7 @@ namespace CyberCAT.Core.Classes.Parsers
         public ContainerManagerNPCLootBagsVer3LootedIDsParser()
         {
             ParsableNodeName = Constants.NodeNames.CONTAINER_MANAGER_NPC_LOOT_BAGS_VER3_LOOTED_IDS;
-            DisplayName = "Containe rManager NPC Loot Bags Ver3 Looted IDs Parser";
+            DisplayName = "Container Manager NPC Loot Bags Ver3 Looted IDs Parser";
             Guid = Guid.Parse("{4F842300-F184-4F50-986A-47D1CCE074D3}");
         }
 
