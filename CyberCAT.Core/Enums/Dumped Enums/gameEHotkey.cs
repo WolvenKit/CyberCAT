@@ -2,10 +2,10 @@
 {
     public enum gameEHotkey
     {
-        INVALID = 0,
-        DPAD_UP = 1,
-        DPAD_DOWN = 2,
-        DPAD_RIGHT = 3,
-        RB = 4,
+        INVALID = -1,
+        DPAD_UP = 0,
+        DPAD_DOWN = 1,
+        DPAD_RIGHT = 2,
+        RB = 3
     }
 }
