@@ -20,6 +20,7 @@ namespace CyberCAT.Core.Classes.Parsers
         private object _handlesLock = new object();
         private List<IHandle> _handles;
         private List<string> _stringList;
+        private readonly HashSet<DefaultValueOverrideEntry> _defaultValueOverride = new HashSet<DefaultValueOverrideEntry>();
 
         public static event EventHandler<WrongDefaultValueEventArgs> WrongDefaultValue;
 
@@ -359,6 +360,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         var ignore = OnWrongDefaultValue(new WrongDefaultValueEventArgs(cls.GetType().Name, propertyName, value));
                         if (!ignore)
                             throw new WrongDefaultValueException(cls.GetType().Name, propertyName, value);
+                        _defaultValueOverride.Add(new DefaultValueOverrideEntry(cls, prop));
                     }
 
                     MappingHelper.GetPropertyHelper(prop).Set(cls, value);
@@ -919,10 +921,13 @@ namespace CyberCAT.Core.Classes.Parsers
             return GetTypeStringFromType(propInfo.PropertyType);
         }
 
-        private bool CanBeIgnored(PropertyInfo propInfo, object propValue)
+        private bool CanBeIgnored(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo, object propValue)
         {
             if (MappingHelper.IgnoredCache.Contains(propInfo))
                 return true;
+
+            if (_defaultValueOverride.Contains(new DefaultValueOverrideEntry(cls, propInfo)))
+                return false;
 
             return MappingHelper.GetPropertyHelper(propInfo).IsDefault(propValue);
         }
@@ -965,7 +970,7 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var prop in cls.GetType().GetProperties())
             {
                 var propValue = MappingHelper.GetPropertyHelper(prop).Get(cls);
-                if (CanBeIgnored(prop, propValue))
+                if (CanBeIgnored(cls, prop, propValue))
                     continue;
 
                 props.Add(new KeyValuePair<PropertyInfo, object>(prop, propValue));
@@ -1035,7 +1040,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var prop in cls.GetType().GetProperties())
                     {
                         var propValue = MappingHelper.GetPropertyHelper(prop).Get(cls);
-                        if (CanBeIgnored(prop, propValue))
+                        if (CanBeIgnored(cls, prop, propValue))
                             continue;
 
                         props.Add(new KeyValuePair<PropertyInfo, object>(prop, propValue));
@@ -1224,6 +1229,35 @@ namespace CyberCAT.Core.Classes.Parsers
             public string Name { get; set; }
             public string Type { get; set; }
             public uint Offset { get; set; }
+        }
+
+        private class DefaultValueOverrideEntry
+        {
+            public GenericUnknownStruct.BaseClassEntry Class { get; set; }
+            public PropertyInfo PropertyInfo { get; set; }
+
+            public DefaultValueOverrideEntry(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propertyInfo)
+            {
+                Class = cls;
+                PropertyInfo = propertyInfo;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as DefaultValueOverrideEntry;
+                if (other == null)
+                    return false;
+
+                return this.Class.Equals(other.Class) && this.PropertyInfo.Equals(other.PropertyInfo);
+            }
+
+            public override int GetHashCode()
+            {
+                int hashClass = this.Class.GetHashCode();
+                int hashPropertyInfo = this.PropertyInfo.GetHashCode();
+
+                return hashClass ^ hashPropertyInfo;
+            }
         }
     }
 }
