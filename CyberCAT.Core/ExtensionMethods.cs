@@ -24,6 +24,19 @@ namespace CyberCAT.Core
             return new string(reader.ReadChars(count));
         }
 
+        public static string ReadNullTerminatedString(this BinaryReader reader)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            byte c;
+            while ((c = reader.ReadByte()) != 0)
+            {
+                builder.Append((char)c);
+            }
+
+            return builder.ToString();
+        }
+
         public static string ReadPackedString(this BinaryReader reader)
         {
             var length = reader.ReadPackedInt();
