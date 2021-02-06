@@ -97,8 +97,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var pair in stringInfoList)
                     {
                         Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pair.Key);
-                        _stringList.Add(br.ReadString(pair.Value - 1));
-                        br.Skip(1); // null terminator
+                        _stringList.Add(br.ReadNullTerminatedString());
                     }
 
                     // start of dataIndexList
@@ -644,7 +643,9 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var str in _stringList)
                     {
                         writer.WriteInt24(offset);
-                        writer.Write((byte)(str.Length + 1));
+                        // yeah, only write the first byte of the length, like CDPR did...
+                        var length = BitConverter.GetBytes(str.Length + 1);
+                        writer.Write(length[0]);
                         offset += (short)(str.Length + 1);
                     }
 
