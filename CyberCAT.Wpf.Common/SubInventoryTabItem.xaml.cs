@@ -14,14 +14,12 @@ using System.Windows.Shapes;
 using CyberCAT.Core;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.NodeRepresentations;
-using CyberCAT.Wpf.Classes;
+using CyberCAT.Wpf.Common.Classes;
 using MahApps.Metro.Controls;
 
-namespace CyberCAT.Wpf
+
+namespace CyberCAT.Wpf.Common
 {
-    /// <summary>
-    /// Interaktionslogik für SubInventoryViewer.xaml
-    /// </summary>
     public partial class SubInventoryTabItem : MetroTabItem
     {
         public SaveFile SaveFile { get; }
@@ -55,7 +53,8 @@ namespace CyberCAT.Wpf
                 {
                     continue;
                 }
-                var mi = new MenuItem {
+                var mi = new MenuItem
+                {
                     Header = new TextBlock
                     {
                         Text = InventoryNames.TryGetValue(si.InventoryId, out var siName) ? siName : $"{si.InventoryId:X}"

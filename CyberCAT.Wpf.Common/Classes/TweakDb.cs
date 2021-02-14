@@ -4,7 +4,7 @@ using System.Text;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     class TweakDb
     {

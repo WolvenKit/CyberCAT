@@ -13,10 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.Parsers;
-using CyberCAT.Wpf.Classes;
+using CyberCAT.Wpf.Common.Classes;
 using MahApps.Metro.Controls;
 
-namespace CyberCAT.Wpf
+namespace CyberCAT.Wpf.Common
 {
     public partial class SettingsWindow : MetroWindow
     {
@@ -120,12 +120,12 @@ namespace CyberCAT.Wpf
 
         private void OnParserTooltipMouseEnter(object sender, MouseEventArgs e)
         {
-            
+
         }
 
         private void OnParserTooltipMouseLeave(object sender, MouseEventArgs e)
         {
-            
+
         }
     }
 }

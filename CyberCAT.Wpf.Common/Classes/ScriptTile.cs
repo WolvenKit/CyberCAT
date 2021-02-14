@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
-    class ScriptTile : Tile
+    public class ScriptTile : Tile
     {
         static NotificationManager notificationManager = new NotificationManager();
         private QuickAction _action;

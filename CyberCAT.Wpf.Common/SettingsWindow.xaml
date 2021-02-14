@@ -1,10 +1,10 @@
 ﻿<mah:MetroWindow
-        x:Class="CyberCAT.Wpf.SettingsWindow"
+        x:Class="CyberCAT.Wpf.Common.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CyberCAT.Wpf"
+        xmlns:local="clr-namespace:CyberCAT.Wpf.Common"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
@@ -17,7 +17,9 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Name="OpenInSavedGames"><Label>Open 'Open' and 'Save' dialogs inside the 'Saved Games' folder</Label></CheckBox>
+        <CheckBox Grid.Row="0" Name="OpenInSavedGames">
+            <Label>Open 'Open' and 'Save' dialogs inside the 'Saved Games' folder</Label>
+        </CheckBox>
         <CheckBox Grid.Row="1" Name="AllowQuickActions">
             <Label>Allow QuickActions</Label>
         </CheckBox>

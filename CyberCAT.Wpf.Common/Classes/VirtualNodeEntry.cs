@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CyberCAT.Core.Classes;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public class VirtualNodeEntry : NodeEntry
     {
