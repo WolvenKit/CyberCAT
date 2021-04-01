@@ -8,8 +8,14 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("requesterID")]
         public EntEntityID RequesterID { get; set; }
         
+        [RealName("executor")]
+        public GameObject Executor { get; set; }
+        
         [RealName("objectActionID")]
         public TweakDbId ObjectActionID { get; set; }
+        
+        [RealName("objectActionRecord")]
+        public GamedataObjectAction_Record ObjectActionRecord { get; set; }
         
         [RealName("inkWidgetID")]
         public TweakDbId InkWidgetID { get; set; }

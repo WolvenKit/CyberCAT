@@ -92,6 +92,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("lastKillTimestamp")]
         public float LastKillTimestamp { get; set; }
         
+        [RealName("enemiesKilledInTimeInterval")]
+        public GameObject[] EnemiesKilledInTimeInterval { get; set; }
+        
         [RealName("timeInterval")]
         public float TimeInterval { get; set; }
         

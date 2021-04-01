@@ -5,6 +5,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("EquipmentSystemPlayerData")]
     public class EquipmentSystemPlayerData : IScriptable
     {
+        [RealName("owner")]
+        public ScriptedPuppet Owner { get; set; }
+        
         [RealName("ownerID")]
         public EntEntityID OwnerID { get; set; }
         

@@ -10,6 +10,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public GameGodModeData[] Overrides { get; set; }
         
         [RealName("base")]
-        public GameGodModeData[] Base { get; set; }
+        public GameGodModeData[] Base_ { get; set; }
     }
 }

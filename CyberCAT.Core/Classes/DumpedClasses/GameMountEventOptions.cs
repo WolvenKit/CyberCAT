@@ -5,9 +5,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gameMountEventOptions")]
     public class GameMountEventOptions : IScriptable
     {
-        [RealName("silentUnmount")]
-        public bool SilentUnmount { get; set; }
-        
         [RealName("entityID")]
         public EntEntityID EntityID { get; set; }
         
@@ -16,5 +13,8 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("occupiedByNeutral")]
         public bool OccupiedByNeutral { get; set; }
+        
+        [RealName("silentUnmount")]
+        public bool SilentUnmount { get; set; }
     }
 }
