@@ -5,20 +5,20 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gameMountEventData")]
     public class GameMountEventData : IScriptable
     {
-        [RealName("slotName")]
-        public CName SlotName { get; set; }
+        [RealName("initialTransformLS")]
+        public Transform InitialTransformLS { get; set; }
         
         [RealName("mountParentEntityId")]
         public EntEntityID MountParentEntityId { get; set; }
         
-        [RealName("isInstant")]
-        public bool IsInstant { get; set; }
+        [RealName("slotName")]
+        public CName SlotName { get; set; }
         
         [RealName("entryAnimName")]
         public CName EntryAnimName { get; set; }
         
-        [RealName("initialTransformLS")]
-        public Transform InitialTransformLS { get; set; }
+        [RealName("isInstant")]
+        public bool IsInstant { get; set; }
         
         [RealName("setEntityVisibleWhenMountFinish")]
         public bool SetEntityVisibleWhenMountFinish { get; set; }

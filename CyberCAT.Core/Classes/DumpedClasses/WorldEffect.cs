@@ -11,9 +11,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("length")]
         public float Length { get; set; }
         
-        [RealName("inputParameterNames")]
-        public CName[] InputParameterNames { get; set; }
-        
         [RealName("trackRoot")]
         public Handle<EffectTrackGroup> TrackRoot { get; set; }
         
@@ -22,5 +19,8 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("effectLoops")]
         public EffectLoopData[] EffectLoops { get; set; }
+        
+        [RealName("inputParameterNames")]
+        public CName[] InputParameterNames { get; set; }
     }
 }

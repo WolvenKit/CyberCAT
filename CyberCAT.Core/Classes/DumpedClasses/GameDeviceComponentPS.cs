@@ -23,6 +23,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("controlPanelObjectiveData")]
         public Handle<ControlPanelObjectiveData> ControlPanelObjectiveData { get; set; }
         
+        [RealName("blackboard")]
+        public GameIBlackboard Blackboard { get; set; }
+        
         [RealName("isScanned")]
         public bool IsScanned { get; set; }
         

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberCAT.Core", "CyberCAT.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberCAT.Wpf", "CyberCAT.Wpf\CyberCAT.Wpf.csproj", "{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCAT.Wpf.Common", "CyberCAT.Wpf.Common\CyberCAT.Wpf.Common.csproj", "{6BEE412E-C16E-4878-933C-2F1D8B9B2AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11C4D6E4-CD60-4520-A7E7-DA89F74EFBF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEE412E-C16E-4878-933C-2F1D8B9B2AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEE412E-C16E-4878-933C-2F1D8B9B2AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEE412E-C16E-4878-933C-2F1D8B9B2AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEE412E-C16E-4878-933C-2F1D8B9B2AF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -105,6 +105,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("IconGender")]
         public DumpedEnums.gameItemIconGender? IconGender { get; set; }
         
+        [RealName("GameItemData")]
+        public GameItemData GameItemData { get; set; }
+        
         [RealName("HasPlayerSmartGunLink")]
         public bool HasPlayerSmartGunLink { get; set; }
         

@@ -23,6 +23,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("newItems")]
         public GameItemID[] NewItems { get; set; }
         
+        [RealName("comparisionTooltipDisabled")]
+        public bool ComparisionTooltipDisabled { get; set; }
+        
+        [RealName("attachedPlayer")]
+        public PlayerPuppet AttachedPlayer { get; set; }
+        
         [RealName("inventoryListenerCallback")]
         public Handle<UIScriptableInventoryListenerCallback> InventoryListenerCallback { get; set; }
         

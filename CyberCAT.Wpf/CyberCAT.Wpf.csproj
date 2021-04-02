@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CyberCAT.Core\CyberCAT.Core.csproj" />
+    <ProjectReference Include="..\CyberCAT.Wpf.Common\CyberCAT.Wpf.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,6 +103,10 @@
     <None Update="QuickActions\EmptySample\script.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Classes\" />
   </ItemGroup>
 
 </Project>
