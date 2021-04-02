@@ -8,6 +8,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("gameInstance")]
         public ScriptGameInstance GameInstance { get; set; }
         
+        [RealName("vendorObject")]
+        public GameObject VendorObject { get; set; }
+        
         [RealName("tweakID")]
         public TweakDbId TweakID { get; set; }
         
@@ -31,6 +34,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("inventoryReinitWithPlayerStats")]
         public bool InventoryReinitWithPlayerStats { get; set; }
+        
+        [RealName("vendorRecord")]
+        public GamedataVendor_Record VendorRecord { get; set; }
 
         public Vendor()
         {

@@ -8,6 +8,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("districtManager")]
         public Handle<DistrictManager> DistrictManager { get; set; }
         
+        [RealName("player")]
+        public PlayerPuppet Player { get; set; }
+        
+        [RealName("preventionPreset")]
+        public GamedataDistrictPreventionData_Record PreventionPreset { get; set; }
+        
         [RealName("hiddenReaction")]
         public bool HiddenReaction { get; set; }
         
@@ -40,6 +46,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("hitNPC")]
         public SHitNPC[] HitNPC { get; set; }
+        
+        [RealName("spawnedAgents")]
+        public ScriptedPuppet[] SpawnedAgents { get; set; }
         
         [RealName("lastCrimePoint")]
         public Vector4 LastCrimePoint { get; set; }
@@ -80,9 +89,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("policemenSpawnDelayID")]
         public GameDelayID PolicemenSpawnDelayID { get; set; }
         
-        [RealName("spawnDelayedEvt")]
-        public Handle<PreventionDelayedSpawnRequest> SpawnDelayedEvt { get; set; }
-        
         [RealName("preventionTickDelayID")]
         public GameDelayID PreventionTickDelayID { get; set; }
         
@@ -94,6 +100,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("securityAreaResetCheck")]
         public bool SecurityAreaResetCheck { get; set; }
+        
+        [RealName("hadOngoingSpawnRequest")]
+        public bool HadOngoingSpawnRequest { get; set; }
         
         [RealName("Debug_PorcessReason")]
         public DumpedEnums.EPreventionDebugProcessReason? Debug_PorcessReason { get; set; }
@@ -116,6 +125,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("blinkReasonsStack")]
         public CName[] BlinkReasonsStack { get; set; }
         
+        [RealName("wantedBarBlackboard")]
+        public GameIBlackboard WantedBarBlackboard { get; set; }
+        
         [RealName("onPlayerChoiceCallID")]
         public uint OnPlayerChoiceCallID { get; set; }
         
@@ -132,11 +144,30 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public uint PlayerVehicleStateID { get; set; }
         
         [RealName("playerHLS")]
-        [RealType("gamePSMHighLevel")]
         public DumpedEnums.gamePSMHighLevel? PlayerHLS { get; set; }
         
         [RealName("playerVehicleState")]
-        [RealType("gamePSMVehicle")]
         public DumpedEnums.gamePSMVehicle? PlayerVehicleState { get; set; }
+        
+        [RealName("currentStageFallbackUnitSpawned")]
+        public bool CurrentStageFallbackUnitSpawned { get; set; }
+        
+        [RealName("unhandledInputsReceived")]
+        public int UnhandledInputsReceived { get; set; }
+        
+        [RealName("inputlockDelayID")]
+        public GameDelayID InputlockDelayID { get; set; }
+        
+        [RealName("preventionUnitKilledDuringLock")]
+        public bool PreventionUnitKilledDuringLock { get; set; }
+        
+        [RealName("reconDeployed")]
+        public bool ReconDeployed { get; set; }
+        
+        [RealName("vehicles")]
+        public VehicleBaseObject[] Vehicles { get; set; }
+        
+        [RealName("viewers")]
+        public GameObject[] Viewers { get; set; }
     }
 }

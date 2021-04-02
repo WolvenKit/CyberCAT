@@ -1,4 +1,4 @@
-﻿using CyberCAT.Core.Classes.Mapping;
+using CyberCAT.Core.Classes.Mapping;
 
 namespace CyberCAT.Core.Classes.DumpedClasses
 {

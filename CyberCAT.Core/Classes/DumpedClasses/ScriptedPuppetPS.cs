@@ -5,6 +5,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("ScriptedPuppetPS")]
     public class ScriptedPuppetPS : GamePuppetPS
     {
+        [RealName("deviceLink")]
+        public PuppetDeviceLinkPS DeviceLink { get; set; }
+        
         [RealName("cooldownStorage")]
         public Handle<CooldownStorage> CooldownStorage { get; set; }
         

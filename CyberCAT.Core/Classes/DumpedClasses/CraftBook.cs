@@ -7,5 +7,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("knownRecipes")]
         public ItemRecipe[] KnownRecipes { get; set; }
+        
+        [RealName("newRecipes")]
+        public TweakDbId[] NewRecipes { get; set; }
+        
+        [RealName("owner")]
+        public GameObject Owner { get; set; }
     }
 }

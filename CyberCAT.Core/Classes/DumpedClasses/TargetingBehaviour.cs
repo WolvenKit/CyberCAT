@@ -7,7 +7,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class TargetingBehaviour : GenericUnknownStruct.BaseClassEntry
     {
         [RealName("initialWakeState")]
-        [RealType("ESensorDeviceWakeState")]
         public DumpedEnums.ESensorDeviceWakeState? InitialWakeState { get; set; }
         
         [RealName("canRotate")]

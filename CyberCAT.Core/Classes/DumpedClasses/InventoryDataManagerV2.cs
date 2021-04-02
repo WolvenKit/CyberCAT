@@ -5,17 +5,23 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("InventoryDataManagerV2")]
     public class InventoryDataManagerV2 : IScriptable
     {
+        [RealName("owner")]
+        public GameuiHUDGameController Owner { get; set; }
+        
+        [RealName("Player")]
+        public PlayerPuppet Player { get; set; }
+        
         [RealName("TransactionSystem")]
-        public Handle<GameTransactionSystem> TransactionSystem { get; set; }
+        public GameTransactionSystem TransactionSystem { get; set; }
         
         [RealName("EquipmentSystem")]
-        public Handle<EquipmentSystem> EquipmentSystem { get; set; }
+        public EquipmentSystem EquipmentSystem { get; set; }
         
         [RealName("StatsSystem")]
-        public Handle<GameStatsSystem> StatsSystem { get; set; }
+        public GameStatsSystem StatsSystem { get; set; }
         
         [RealName("ItemModificationSystem")]
-        public Handle<ItemModificationSystem> ItemModificationSystem { get; set; }
+        public ItemModificationSystem ItemModificationSystem { get; set; }
         
         [RealName("LocMgr")]
         public Handle<UILocalizationMap> LocMgr { get; set; }
@@ -66,13 +72,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         public DumpedEnums.gameItemIconGender? ItemIconGender { get; set; }
         
         [RealName("WeaponUIBlackboard")]
-        public WHandle<GameIBlackboard> WeaponUIBlackboard { get; set; }
+        public GameIBlackboard WeaponUIBlackboard { get; set; }
         
         [RealName("UIBBEquipmentBlackboard")]
-        public WHandle<GameIBlackboard> UIBBEquipmentBlackboard { get; set; }
+        public GameIBlackboard UIBBEquipmentBlackboard { get; set; }
         
         [RealName("UIBBItemModBlackbord")]
-        public WHandle<GameIBlackboard> UIBBItemModBlackbord { get; set; }
+        public GameIBlackboard UIBBItemModBlackbord { get; set; }
         
         [RealName("UIBBEquipment")]
         public Handle<UI_EquipmentDef> UIBBEquipment { get; set; }

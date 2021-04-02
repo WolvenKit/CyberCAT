@@ -6,6 +6,12 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gamedeviceDataElement")]
     public class GamedeviceDataElement : GenericUnknownStruct.BaseClassEntry
     {
+        [RealName("journalPath")]
+        public Handle<GameJournalPath> JournalPath { get; set; }
+        
+        [RealName("documentName")]
+        public CName DocumentName { get; set; }
+        
         [RealName("owner")]
         public string Owner { get; set; }
         
@@ -20,12 +26,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("videoPath")]
         public RedResourceReferenceScriptToken VideoPath { get; set; }
-        
-        [RealName("journalPath")]
-        public Handle<GameJournalPath> JournalPath { get; set; }
-        
-        [RealName("documentName")]
-        public CName DocumentName { get; set; }
         
         [RealName("questInfo")]
         public GamedeviceQuestInfo QuestInfo { get; set; }

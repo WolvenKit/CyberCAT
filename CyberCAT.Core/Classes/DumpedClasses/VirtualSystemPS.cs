@@ -5,6 +5,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("VirtualSystemPS")]
     public class VirtualSystemPS : MasterControllerPS
     {
+        [RealName("owner")]
+        public MasterControllerPS Owner { get; set; }
+        
         [RealName("slaves")]
         public Handle<GameDeviceComponentPS>[] Slaves { get; set; }
         

@@ -6,6 +6,6 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     public class UIScriptableInventoryListenerCallback : GameInventoryScriptCallback
     {
         [RealName("uiScriptableSystem")]
-        public Handle<UIScriptableSystem> UiScriptableSystem { get; set; }
+        public UIScriptableSystem UiScriptableSystem { get; set; }
     }
 }

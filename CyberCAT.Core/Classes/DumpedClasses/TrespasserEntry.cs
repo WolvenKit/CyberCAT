@@ -6,6 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("TrespasserEntry")]
     public class TrespasserEntry : GenericUnknownStruct.BaseClassEntry
     {
+        [RealName("trespasser")]
+        public GameObject Trespasser { get; set; }
+        
         [RealName("isScanned")]
         public bool IsScanned { get; set; }
         

@@ -5,6 +5,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("PlayerDevelopmentData")]
     public class PlayerDevelopmentData : IScriptable
     {
+        [RealName("owner")]
+        public GameObject Owner { get; set; }
+        
         [RealName("ownerID")]
         public EntEntityID OwnerID { get; set; }
         
