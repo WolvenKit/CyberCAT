@@ -6,7 +6,7 @@ using CyberCAT.Core;
 using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.NodeRepresentations;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public static class SaveFileExtensions
     {

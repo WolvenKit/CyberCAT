@@ -1,20 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using ControlzEx.Theming;
 using CyberCAT.Core;
 using CyberCAT.Core.Annotations;
 using CyberCAT.Core.Classes;
@@ -22,9 +6,26 @@ using CyberCAT.Core.Classes.DumpedClasses;
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
 using CyberCAT.Core.DumpedEnums;
-using CyberCAT.Wpf.Classes;
+using CyberCAT.Wpf.Common.Classes;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace CyberCAT.Wpf
+namespace CyberCAT.Wpf.Common
 {
     /// <summary>
     /// Interaktionslogik für ItemEditor.xaml
@@ -92,6 +93,7 @@ namespace CyberCAT.Wpf
         public ItemEditor()
         {
             InitializeComponent();
+            ThemeManager.Current.ChangeTheme(this, "Dark.Steel");
             ModCategory.SelectedIndex = 0;
             ModToAdd.SelectedIndex = 0;
             IntoAttachmentSlot.SelectedIndex = 0;
@@ -233,7 +235,7 @@ namespace CyberCAT.Wpf
             CombinedStat
         }
 
-        public static IEnumerable<StatType> StatTypes => new List<StatType> {StatType.ConstantStat, StatType.CurveStat, StatType.CombinedStat};
+        public static IEnumerable<StatType> StatTypes => new List<StatType> { StatType.ConstantStat, StatType.CurveStat, StatType.CombinedStat };
 
         public void OnDeleteStatClicked(object sender, RoutedEventArgs e)
         {
@@ -301,10 +303,10 @@ namespace CyberCAT.Wpf
                     newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameConstantStatModifierData { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, Value = 1 });
                     break;
                 case StatType.CurveStat:
-                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCurveStatModifierData { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, CurveStat = gamedataStatType.ItemLevel, ColumnName = "", CurveName = ""});
+                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCurveStatModifierData { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, CurveStat = gamedataStatType.ItemLevel, ColumnName = "", CurveName = "" });
                     break;
                 case StatType.CombinedStat:
-                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCombinedStatModifierData() { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, Value = 1, Operation = gameCombinedStatOperation.Addition, RefObject = gameStatObjectsRelation.Self, RefStatType = gamedataStatType.ItemLevel});
+                    newHandle = statsNode.CreateHandle<GameStatModifierData>(new GameCombinedStatModifierData() { ModifierType = gameStatModifierType.Additive, StatType = gamedataStatType.ItemLevel, Value = 1, Operation = gameCombinedStatOperation.Addition, RefObject = gameStatObjectsRelation.Self, RefStatType = gamedataStatType.ItemLevel });
                     break;
             }
             currentStats.Add(newHandle);

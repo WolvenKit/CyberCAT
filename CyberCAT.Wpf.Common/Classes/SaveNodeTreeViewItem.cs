@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public class SaveNodeTreeViewItem : TreeViewItem
     {

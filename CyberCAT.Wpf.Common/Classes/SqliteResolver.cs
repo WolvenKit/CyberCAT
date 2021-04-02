@@ -9,7 +9,7 @@ using CyberCAT.Core.Classes;
 using CyberCAT.Core.Classes.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public class SqliteResolver : DbContext, ITweakDbResolver
     {

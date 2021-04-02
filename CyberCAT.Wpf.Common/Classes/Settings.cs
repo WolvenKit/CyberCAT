@@ -1,6 +1,6 @@
 ﻿using CyberCAT.Core.Classes;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public class Settings
     {

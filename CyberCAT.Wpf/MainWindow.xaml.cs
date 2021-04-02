@@ -24,7 +24,8 @@ using CyberCAT.Core.Classes.Interfaces;
 using System.Windows.Forms;
 using CyberCAT.Core;
 using CyberCAT.Core.Classes.Mapping;
-using CyberCAT.Wpf.Classes;
+using CyberCAT.Wpf.Common.Classes;
+using CyberCAT.Wpf.Common;
 
 namespace CyberCAT.Wpf
 {

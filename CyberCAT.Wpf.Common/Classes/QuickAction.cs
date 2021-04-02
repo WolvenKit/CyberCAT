@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 
-namespace CyberCAT.Wpf.Classes
+namespace CyberCAT.Wpf.Common.Classes
 {
     public class QuickAction
     {
