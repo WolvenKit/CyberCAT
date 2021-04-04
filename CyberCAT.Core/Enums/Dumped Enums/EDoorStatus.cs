@@ -1,10 +1,10 @@
-﻿namespace CyberCAT.Core.DumpedEnums
+namespace CyberCAT.Core.DumpedEnums
 {
-    public enum EDoorStatus
-    {
-        SEALED = -2,
-        LOCKED = -1,
-        CLOSED = 0,
-        OPENED = 1,
-    }
+	public enum EDoorStatus
+	{
+		CLOSED = 0,
+		OPENED = 1,
+		SEALED = -2,
+		LOCKED = -1
+	}
 }

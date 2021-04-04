@@ -1,8 +1,8 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum OutcomeMessage
-{
-	Success = 0,
-	Failure = 1
-}
+	public enum OutcomeMessage
+	{
+		Success = 0,
+		Failure = 1
+	}
 }

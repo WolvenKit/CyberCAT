@@ -1,9 +1,9 @@
-﻿namespace CyberCAT.Core.DumpedEnums
+namespace CyberCAT.Core.DumpedEnums
 {
-    public enum ESurveillanceCameraStatus
-    {
-        THREAT = -1,
-        STREAMING = 0,
-        WORKING = 1,
-    }
+	public enum ESurveillanceCameraStatus
+	{
+		STREAMING = 0,
+		WORKING = 1,
+		THREAT = -1
+	}
 }

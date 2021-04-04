@@ -1,9 +1,9 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum EActivationState
-{
-	NONE = 0,
-	ACTIVATED = 1,
-	DEACTIVATED = 2
-}
+	public enum EActivationState
+	{
+		NONE = 0,
+		ACTIVATED = 1,
+		DEACTIVATED = 2
+	}
 }

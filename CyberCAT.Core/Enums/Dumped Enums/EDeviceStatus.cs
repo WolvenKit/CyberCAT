@@ -1,11 +1,11 @@
-﻿namespace CyberCAT.Core.DumpedEnums
+namespace CyberCAT.Core.DumpedEnums
 {
-    public enum EDeviceStatus
-    {
-        DISABLED = -2,
-        UNPOWERED = -1,
-        OFF = 0,
-        ON = 1,
-        INVALID = 2,
-    }
+	public enum EDeviceStatus
+	{
+		OFF = 0,
+		ON = 1,
+		INVALID = 2,
+		DISABLED = -2,
+		UNPOWERED = -1
+	}
 }

@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum gameinteractionsELootVisualiserControlOperation
-{
-	Locked = 1
-}
+	public enum gameinteractionsELootVisualiserControlOperation
+	{
+		Locked = 1
+	}
 }

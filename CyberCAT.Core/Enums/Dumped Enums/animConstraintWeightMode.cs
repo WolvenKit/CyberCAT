@@ -1,8 +1,8 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum animConstraintWeightMode
-{
-	Static = 0,
-	FloatTrack = 1
-}
+	public enum animConstraintWeightMode
+	{
+		Static = 0,
+		FloatTrack = 1
+	}
 }

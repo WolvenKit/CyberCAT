@@ -1,8 +1,8 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum EWorkspotOperationType
-{
-	ENTER = 0,
-	LEAVE = 1
-}
+	public enum EWorkspotOperationType
+	{
+		ENTER = 0,
+		LEAVE = 1
+	}
 }

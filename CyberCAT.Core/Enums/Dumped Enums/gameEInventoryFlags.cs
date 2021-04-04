@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum gameEInventoryFlags
-{
-	MustSave = 1
-}
+	public enum gameEInventoryFlags
+	{
+		MustSave = 1
+	}
 }

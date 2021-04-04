@@ -1,8 +1,8 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum gamePSMUIState
-{
-	None = 0,
-	WeaponSelect = 1
-}
+	public enum gamePSMUIState
+	{
+		None = 0,
+		WeaponSelect = 1
+	}
 }

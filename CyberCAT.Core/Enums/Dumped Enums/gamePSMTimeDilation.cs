@@ -1,9 +1,9 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum gamePSMTimeDilation
-{
-	Any = -1,
-	Default = 0,
-	Sandevistan = 1
-}
+	public enum gamePSMTimeDilation
+	{
+		Default = 0,
+		Sandevistan = 1,
+		Any = -1
+	}
 }

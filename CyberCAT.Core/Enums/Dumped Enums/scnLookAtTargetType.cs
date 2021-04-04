@@ -1,8 +1,8 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum scnLookAtTargetType
-{
-	Actor = 0,
-	Prop = 1
-}
+	public enum scnLookAtTargetType
+	{
+		Actor = 0,
+		Prop = 1
+	}
 }

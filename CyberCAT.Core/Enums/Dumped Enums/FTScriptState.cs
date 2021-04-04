@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum FTScriptState
-{
-	ERROR = 0
-}
+	public enum FTScriptState
+	{
+		ERROR = 0
+	}
 }

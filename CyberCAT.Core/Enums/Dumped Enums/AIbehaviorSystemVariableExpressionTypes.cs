@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum AIbehaviorSystemVariableExpressionTypes
-{
-	IsFPSLow = 0
-}
+	public enum AIbehaviorSystemVariableExpressionTypes
+	{
+		IsFPSLow = 0
+	}
 }
