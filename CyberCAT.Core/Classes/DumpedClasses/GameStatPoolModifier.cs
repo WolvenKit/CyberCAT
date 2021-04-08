@@ -6,6 +6,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gameStatPoolModifier")]
     public class GameStatPoolModifier : GenericUnknownStruct.BaseClassEntry
     {
+        [RealName("enabled")]
+        public bool Enabled { get; set; }
+
         [RealName("rangeBegin")]
         public float RangeBegin { get; set; }
         
@@ -17,10 +20,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("valuePerSec")]
         public float ValuePerSec { get; set; }
-        
-        [RealName("enabled")]
-        public bool Enabled { get; set; }
-        
+
         [RealName("delayOnChange")]
         public bool DelayOnChange { get; set; }
         

@@ -461,8 +461,17 @@ namespace CyberCAT.Core.Classes.Parsers
 
             var underlyingType = Nullable.GetUnderlyingType(internalType);
             if (underlyingType != null && underlyingType.IsEnum)
-                return Enum.Parse(underlyingType, _stringList[reader.ReadUInt16()]);
-
+            {
+                try
+                {
+                    return Enum.Parse(underlyingType, _stringList[reader.ReadUInt16()]);
+                }
+                catch (ArgumentException)
+                {
+                    return null;
+                }
+            }
+            
             var subCls = (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(internalType);
             ReadMappedFields(reader, subCls);
             return subCls;
@@ -933,7 +942,7 @@ namespace CyberCAT.Core.Classes.Parsers
             return MappingHelper.GetPropertyHelper(propInfo).IsDefault(propValue);
         }
 
-        private void WriteValueFromPropValue(BinaryWriter writer, object propValue)
+        private void WriteValueFromPropValue(BinaryWriter writer, Type propType, object propValue)
         {
             if (propValue is GenericUnknownStruct.BaseClassEntry subCls)
             {
@@ -954,9 +963,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 writer.Write((ushort)valBytes.Length);
                 writer.Write(valBytes);
             }
-            else if (propValue.GetType().IsEnum)
+            else if (Nullable.GetUnderlyingType(propType) != null && Nullable.GetUnderlyingType(propType).IsEnum)
             {
-                WriteValue(writer, (ushort)_stringList.IndexOf(propValue.ToString()));
+                if (propValue == null)
+                    WriteValue(writer, (ushort)_stringList.IndexOf("None"));
+                else
+                    WriteValue(writer, (ushort)_stringList.IndexOf(propValue.ToString()));
             }
             else
             {
@@ -994,19 +1006,20 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 if (prop.PropertyType.IsArray)
                 {
+                    var eleType = prop.PropertyType.GetElementType();
                     foreach (var val in (IList)propValue)
                     {
-                        GetStringValueFromPropValue(val, baseType, ref strings);
+                        GetStringValueFromPropValue(eleType, val, baseType, ref strings);
                     }
                 }
                 else
                 {
-                    GetStringValueFromPropValue(propValue, baseType, ref strings);
+                    GetStringValueFromPropValue(prop.PropertyType, propValue, baseType, ref strings);
                 }
             }
         }
 
-        private void GetStringValueFromPropValue(object propValue, string baseType, ref HashSet<string> strings)
+        private void GetStringValueFromPropValue(Type propType, object propValue, string baseType, ref HashSet<string> strings)
         {
             if (propValue is GenericUnknownStruct.BaseClassEntry cls)
             {
@@ -1022,9 +1035,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 if (enumName != null)
                     strings.Add((string)propValue);
             }
-            else if (propValue.GetType().IsEnum)
+            else if (Nullable.GetUnderlyingType(propType) != null && Nullable.GetUnderlyingType(propType).IsEnum)
             {
-                strings.Add(propValue.ToString());
+                if (propValue == null)
+                    strings.Add("None");
+                else
+                    strings.Add(propValue.ToString());
             }
         }
 
@@ -1071,17 +1087,18 @@ namespace CyberCAT.Core.Classes.Parsers
 
                         if (props[i].Key.PropertyType.IsArray)
                         {
+                            var eleType = props[i].Key.PropertyType.GetElementType();
                             var arr = (IList)props[i].Value;
 
                             writer.Write(arr.Count);
                             foreach (var val in arr)
                             {
-                                WriteValueFromPropValue(writer, val);
+                                WriteValueFromPropValue(writer, eleType, val);
                             }
                         }
                         else
                         {
-                            WriteValueFromPropValue(writer, props[i].Value);
+                            WriteValueFromPropValue(writer, props[i].Key.PropertyType, props[i].Value);
                         }
                     }
                 }

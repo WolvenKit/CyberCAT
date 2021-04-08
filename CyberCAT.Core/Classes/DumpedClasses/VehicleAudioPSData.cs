@@ -14,5 +14,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("isPlayerVehicleSummoned")]
         public bool IsPlayerVehicleSummoned { get; set; }
+
+        public VehicleAudioPSData()
+        {
+            AcousticIsolationFactor = 2F;
+        }
     }
 }

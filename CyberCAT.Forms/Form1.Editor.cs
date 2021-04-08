@@ -61,19 +61,11 @@ namespace CyberCAT.Forms
 
             var fileName = fd.FileName;
 
-            try
-            {
-                var bytes = File.ReadAllBytes(fileName);
-                var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
-                newSaveFile.Load(new MemoryStream(bytes));
-                _activeSaveFile = newSaveFile;
-                footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show($"Error reading file: {exception.Message}");
-                return;
-            }
+            var bytes = File.ReadAllBytes(fileName);
+            var newSaveFile = new SaveFile(_parserConfig.Where(p => p.Enabled).Select(p => p.Parser));
+            newSaveFile.Load(new MemoryStream(bytes));
+            _activeSaveFile = newSaveFile;
+            footerLabel.Text = $"{_activeSaveFile.Header} - {fileName}";
 
             EditorTree.Nodes.Clear();
             txtEditorFilter.Text = "";

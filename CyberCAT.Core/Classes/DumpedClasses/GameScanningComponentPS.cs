@@ -5,6 +5,15 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gameScanningComponentPS")]
     public class GameScanningComponentPS : GameComponentPS
     {
+        [RealName("scanningState")]
+        public DumpedEnums.gameScanningState? ScanningState { get; set; }
+
+        [RealName("pctScanned")]
+        public float PctScanned { get; set; }
+
+        [RealName("isBlocked")]
+        public bool IsBlocked { get; set; }
+
         [RealName("storedClues")]
         public Handle<CluePSData>[] StoredClues { get; set; }
         
@@ -16,14 +25,5 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("objectDescriptionOverride")]
         public Handle<ObjectScanningDescription> ObjectDescriptionOverride { get; set; }
-        
-        [RealName("scanningState")]
-        public DumpedEnums.gameScanningState? ScanningState { get; set; }
-        
-        [RealName("pctScanned")]
-        public float PctScanned { get; set; }
-        
-        [RealName("isBlocked")]
-        public bool IsBlocked { get; set; }
     }
 }
