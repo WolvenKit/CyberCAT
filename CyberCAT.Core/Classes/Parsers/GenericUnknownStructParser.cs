@@ -20,6 +20,16 @@ namespace CyberCAT.Core.Classes.Parsers
         private object _handlesLock = new object();
         private List<IHandle> _handles;
         private List<string> _stringList;
+        private readonly HashSet<DefaultValueOverrideEntry> _defaultValueOverride = new HashSet<DefaultValueOverrideEntry>();
+
+        public static event EventHandler<WrongDefaultValueEventArgs> WrongDefaultValue;
+
+        internal static bool OnWrongDefaultValue(WrongDefaultValueEventArgs e)
+        {
+            WrongDefaultValue?.Invoke(null, e);
+
+            return e.Ignore;
+        }
 
         public object Read(NodeEntry node, BinaryReader reader, List<INodeParser> parsers)
         {
@@ -87,8 +97,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var pair in stringInfoList)
                     {
                         Debug.Assert(br.BaseStream.Position == stringIndexListPosition + pair.Key);
-                        _stringList.Add(br.ReadString(pair.Value - 1));
-                        br.Skip(1); // null terminator
+                        _stringList.Add(br.ReadNullTerminatedString());
                     }
 
                     // start of dataIndexList
@@ -345,6 +354,14 @@ namespace CyberCAT.Core.Classes.Parsers
                 var attrName = GetRealName(prop);
                 if (attrName != null && attrName == propertyName)
                 {
+                    if (MappingHelper.GetPropertyHelper(prop).IsDefault(value))
+                    {
+                        var ignore = OnWrongDefaultValue(new WrongDefaultValueEventArgs(cls.GetType().Name, propertyName, value));
+                        if (!ignore)
+                            throw new WrongDefaultValueException(cls.GetType().Name, propertyName, value);
+                        _defaultValueOverride.Add(new DefaultValueOverrideEntry(cls, prop));
+                    }
+
                     MappingHelper.GetPropertyHelper(prop).Set(cls, value);
                     return;
                 }
@@ -444,8 +461,17 @@ namespace CyberCAT.Core.Classes.Parsers
 
             var underlyingType = Nullable.GetUnderlyingType(internalType);
             if (underlyingType != null && underlyingType.IsEnum)
-                return Enum.Parse(underlyingType, _stringList[reader.ReadUInt16()]);
-
+            {
+                try
+                {
+                    return Enum.Parse(underlyingType, _stringList[reader.ReadUInt16()]);
+                }
+                catch (ArgumentException)
+                {
+                    return null;
+                }
+            }
+            
             var subCls = (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(internalType);
             ReadMappedFields(reader, subCls);
             return subCls;
@@ -604,13 +630,31 @@ namespace CyberCAT.Core.Classes.Parsers
 
                     var pos = writer.BaseStream.Position;
 
-                    _stringList = GenerateStringList(classList);
+                    var stringList = new string[classList.Length][];
+                    Parallel.For(0, classList.Length, (index, state) =>
+                    {
+                        stringList[index] = GenerateStringList(classList[index]);
+                    });
+
+                    var tmpSringList = new HashSet<string>();
+                    foreach (var strings in stringList)
+                    {
+                        foreach (var str in strings)
+                        {
+                            tmpSringList.Add(str);
+                        }
+                    }
+
+                    _stringList = tmpSringList.ToList();
+                    //_stringList = GenerateStringList(classList);
 
                     var offset = _stringList.Count * 4;
                     foreach (var str in _stringList)
                     {
                         writer.WriteInt24(offset);
-                        writer.Write((byte)(str.Length + 1));
+                        // yeah, only write the first byte of the length, like CDPR did...
+                        var length = BitConverter.GetBytes(str.Length + 1);
+                        writer.Write(length[0]);
                         offset += (short)(str.Length + 1);
                     }
 
@@ -690,25 +734,22 @@ namespace CyberCAT.Core.Classes.Parsers
             GC.Collect();
         }
 
-        private List<string> GenerateStringList(GenericUnknownStruct.BaseClassEntry[] classes)
+        private string[] GenerateStringList(GenericUnknownStruct.BaseClassEntry cls)
         {
             var result = new HashSet<string>();
 
-            foreach (var classEntry in classes)
+            if (_doMapping)
             {
-                if (_doMapping)
-                {
-                    result.Add(GetRealName(classEntry.GetType()));
-                    GenerateStringListFromMappedFields(classEntry, ref result);
-                }
-                else
-                {
-                    result.Add(((GenericUnknownStruct.ClassEntry)classEntry).Name);
-                    GenerateStringListFromUnmappedFields(((GenericUnknownStruct.ClassEntry)classEntry).Fields, ref result);
-                }
+                result.Add(GetRealName(cls.GetType()));
+                GenerateStringListFromMappedFields(cls, ref result);
+            }
+            else
+            {
+                result.Add(((GenericUnknownStruct.ClassEntry)cls).Name);
+                GenerateStringListFromUnmappedFields(((GenericUnknownStruct.ClassEntry)cls).Fields, ref result);
             }
 
-            return result.ToList();
+            return result.ToArray();
         }
 
         private void WriteValue(BinaryWriter writer, object value)
@@ -890,15 +931,18 @@ namespace CyberCAT.Core.Classes.Parsers
             return GetTypeStringFromType(propInfo.PropertyType);
         }
 
-        private bool CanBeIgnored(PropertyInfo propInfo, object propValue)
+        private bool CanBeIgnored(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propInfo, object propValue)
         {
             if (MappingHelper.IgnoredCache.Contains(propInfo))
                 return true;
 
+            if (_defaultValueOverride.Contains(new DefaultValueOverrideEntry(cls, propInfo)))
+                return false;
+
             return MappingHelper.GetPropertyHelper(propInfo).IsDefault(propValue);
         }
 
-        private void WriteValueFromPropValue(BinaryWriter writer, object propValue)
+        private void WriteValueFromPropValue(BinaryWriter writer, Type propType, object propValue)
         {
             if (propValue is GenericUnknownStruct.BaseClassEntry subCls)
             {
@@ -919,9 +963,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 writer.Write((ushort)valBytes.Length);
                 writer.Write(valBytes);
             }
-            else if (propValue.GetType().IsEnum)
+            else if (Nullable.GetUnderlyingType(propType) != null && Nullable.GetUnderlyingType(propType).IsEnum)
             {
-                WriteValue(writer, (ushort)_stringList.IndexOf(propValue.ToString()));
+                if (propValue == null)
+                    WriteValue(writer, (ushort)_stringList.IndexOf("None"));
+                else
+                    WriteValue(writer, (ushort)_stringList.IndexOf(propValue.ToString()));
             }
             else
             {
@@ -936,7 +983,7 @@ namespace CyberCAT.Core.Classes.Parsers
             foreach (var prop in cls.GetType().GetProperties())
             {
                 var propValue = MappingHelper.GetPropertyHelper(prop).Get(cls);
-                if (CanBeIgnored(prop, propValue))
+                if (CanBeIgnored(cls, prop, propValue))
                     continue;
 
                 props.Add(new KeyValuePair<PropertyInfo, object>(prop, propValue));
@@ -959,19 +1006,20 @@ namespace CyberCAT.Core.Classes.Parsers
 
                 if (prop.PropertyType.IsArray)
                 {
+                    var eleType = prop.PropertyType.GetElementType();
                     foreach (var val in (IList)propValue)
                     {
-                        GetStringValueFromPropValue(val, baseType, ref strings);
+                        GetStringValueFromPropValue(eleType, val, baseType, ref strings);
                     }
                 }
                 else
                 {
-                    GetStringValueFromPropValue(propValue, baseType, ref strings);
+                    GetStringValueFromPropValue(prop.PropertyType, propValue, baseType, ref strings);
                 }
             }
         }
 
-        private void GetStringValueFromPropValue(object propValue, string baseType, ref HashSet<string> strings)
+        private void GetStringValueFromPropValue(Type propType, object propValue, string baseType, ref HashSet<string> strings)
         {
             if (propValue is GenericUnknownStruct.BaseClassEntry cls)
             {
@@ -987,9 +1035,12 @@ namespace CyberCAT.Core.Classes.Parsers
                 if (enumName != null)
                     strings.Add((string)propValue);
             }
-            else if (propValue.GetType().IsEnum)
+            else if (Nullable.GetUnderlyingType(propType) != null && Nullable.GetUnderlyingType(propType).IsEnum)
             {
-                strings.Add(propValue.ToString());
+                if (propValue == null)
+                    strings.Add("None");
+                else
+                    strings.Add(propValue.ToString());
             }
         }
 
@@ -1006,7 +1057,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     foreach (var prop in cls.GetType().GetProperties())
                     {
                         var propValue = MappingHelper.GetPropertyHelper(prop).Get(cls);
-                        if (CanBeIgnored(prop, propValue))
+                        if (CanBeIgnored(cls, prop, propValue))
                             continue;
 
                         props.Add(new KeyValuePair<PropertyInfo, object>(prop, propValue));
@@ -1036,17 +1087,18 @@ namespace CyberCAT.Core.Classes.Parsers
 
                         if (props[i].Key.PropertyType.IsArray)
                         {
+                            var eleType = props[i].Key.PropertyType.GetElementType();
                             var arr = (IList)props[i].Value;
 
                             writer.Write(arr.Count);
                             foreach (var val in arr)
                             {
-                                WriteValueFromPropValue(writer, val);
+                                WriteValueFromPropValue(writer, eleType, val);
                             }
                         }
                         else
                         {
-                            WriteValueFromPropValue(writer, props[i].Value);
+                            WriteValueFromPropValue(writer, props[i].Key.PropertyType, props[i].Value);
                         }
                     }
                 }
@@ -1195,6 +1247,35 @@ namespace CyberCAT.Core.Classes.Parsers
             public string Name { get; set; }
             public string Type { get; set; }
             public uint Offset { get; set; }
+        }
+
+        private class DefaultValueOverrideEntry
+        {
+            public GenericUnknownStruct.BaseClassEntry Class { get; set; }
+            public PropertyInfo PropertyInfo { get; set; }
+
+            public DefaultValueOverrideEntry(GenericUnknownStruct.BaseClassEntry cls, PropertyInfo propertyInfo)
+            {
+                Class = cls;
+                PropertyInfo = propertyInfo;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as DefaultValueOverrideEntry;
+                if (other == null)
+                    return false;
+
+                return this.Class.Equals(other.Class) && this.PropertyInfo.Equals(other.PropertyInfo);
+            }
+
+            public override int GetHashCode()
+            {
+                int hashClass = this.Class.GetHashCode();
+                int hashPropertyInfo = this.PropertyInfo.GetHashCode();
+
+                return hashClass ^ hashPropertyInfo;
+            }
         }
     }
 }

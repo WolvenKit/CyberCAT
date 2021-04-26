@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Classes\ByteProvider.cs" />
     <Compile Include="Classes\HexEditor.cs" />
+    <Compile Include="Classes\JsonResolver.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\NodeEntryTreeNode.cs" />
     <Compile Include="Classes\ParserConfig.cs" />

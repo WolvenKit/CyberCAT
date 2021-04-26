@@ -1,0 +1,68 @@
+﻿<mah:MetroTabItem   x:Class="CyberCAT.Wpf.Common.SubInventoryTabItem"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:local="clr-namespace:CyberCAT.Wpf.Common"
+              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+              mc:Ignorable="d" 
+              x:Name="This"
+              d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Margin="3,3,3,3" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBox Name="Search" Grid.Row="0" TextChanged="ItemsSearchTextChanged" />
+            <TextBlock Grid.Row="0" IsHitTestVisible="False" Text="Filter..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7,0,0,0">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=Search}" Value="">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <ListBox Name="Items" Grid.Row="1" SelectionChanged="SelectedItemChanged">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Name="MoveToMenu">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="FolderMove" Margin="-15,0,10,0" />
+                                    <TextBlock Text="Move to ..."></TextBlock>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Name="DeleteMenu">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Delete" Margin="-15,0,10,0" />
+                                    <TextBlock Text="Delete item"></TextBlock>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
+        </Grid>
+        <Border Grid.Column="1" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Margin="3,3,3,3">
+            <local:ItemEditor x:Name="ItemEditor" SaveFile="{Binding Path=SaveFile, ElementName=This}" />
+        </Border>
+    </Grid>
+    </mah:MetroTabItem>

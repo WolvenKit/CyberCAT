@@ -15,6 +15,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("widgetTweakDBID")]
         public TweakDbId WidgetTweakDBID { get; set; }
         
+        [RealName("widget")]
+        public InkWidget Widget { get; set; }
+        
         [RealName("widgetName")]
         public string WidgetName { get; set; }
         

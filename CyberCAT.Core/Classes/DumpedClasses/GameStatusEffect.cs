@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("durationID")]
         public uint DurationID { get; set; }
-        
+
         [RealName("durationModifiers")]
         public Handle<GameStatModifierData>[] DurationModifiers { get; set; }
         
@@ -16,13 +16,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("removeAllStacksWhenDurationEndsModifiers")]
         public Handle<GameStatModifierData>[] RemoveAllStacksWhenDurationEndsModifiers { get; set; }
-        
+
         [RealName("duration")]
         public float Duration { get; set; }
-        
+
         [RealName("remainingDuration")]
         public float RemainingDuration { get; set; }
-        
+
         [RealName("maxStacks")]
         public uint MaxStacks { get; set; }
         
@@ -34,13 +34,13 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("lastApplicationTimestamp")]
         public float LastApplicationTimestamp { get; set; }
-        
+
         [RealName("ownerEntityID")]
         public EntEntityID OwnerEntityID { get; set; }
-        
+
         [RealName("instigatorRecordID")]
         public TweakDbId InstigatorRecordID { get; set; }
-        
+
         [RealName("instigatorEntityID")]
         public EntEntityID InstigatorEntityID { get; set; }
         

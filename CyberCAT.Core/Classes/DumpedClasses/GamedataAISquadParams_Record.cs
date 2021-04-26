@@ -1,0 +1,9 @@
+using CyberCAT.Core.Classes.Mapping;
+
+namespace CyberCAT.Core.Classes.DumpedClasses
+{
+    [RealName("gamedataAISquadParams_Record")]
+    public class GamedataAISquadParams_Record : GamedataTweakDBRecord
+    {
+    }
+}

@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum vehicleSummonFinishState
-{
-	Arrived = 0
-}
+	public enum vehicleSummonFinishState
+	{
+		Arrived = 0
+	}
 }

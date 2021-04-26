@@ -9,9 +9,8 @@ namespace CyberCAT.Core.Classes
 {
     public class NodeWriter : BinaryWriter
     {
-        private MemoryStream _ms;
         private List<INodeParser> _parsers;
-        
+
         private List<SaveFile.NodeInfo> _nodeInfos;
         private List<NodeMeta> _nodeMetaInfos;
         private int _currentId;
@@ -46,11 +45,6 @@ namespace CyberCAT.Core.Classes
             return parser;
         }
 
-        private int FakedPosition()
-        {
-            return (int) (BaseStream.Position + Constants.Numbers.DEFAULT_HEADER_SIZE);
-        }
-
         public void Write(NodeEntry node)
         {
             var isChild = _currentDepth > _lastDepth;
@@ -64,7 +58,7 @@ namespace CyberCAT.Core.Classes
             var nodeInfo = new SaveFile.NodeInfo
             {
                 Name = node.Name,
-                Offset = FakedPosition()
+                Offset = (int) BaseStream.Position
             };
 
             if (isChild)
@@ -80,7 +74,7 @@ namespace CyberCAT.Core.Classes
             {
                 _nodeInfos[_nodeInfos.Count - 1].ChildId = -1;
                 _nodeInfos[_nodeInfos.Count - 1].NextId = -1;
-                var lastIdSameLevel = _nodeMetaInfos.Where(n => n.Depth == _currentDepth).LastOrDefault().Id;
+                var lastIdSameLevel = _nodeMetaInfos.LastOrDefault(n => n.Depth == _currentDepth).Id;
                 _nodeInfos[lastIdSameLevel].NextId = currentId;
             }
 
@@ -91,7 +85,7 @@ namespace CyberCAT.Core.Classes
             Write(currentId);
             parser.Write(this, node);
 
-            nodeInfo.Size = FakedPosition() - nodeInfo.Offset;
+            nodeInfo.Size = (int) (BaseStream.Position - nodeInfo.Offset);
             if (node.WritesOwnTrailingSize)
                 nodeInfo.Size -= node.TrailingSize;
 

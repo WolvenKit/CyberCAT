@@ -7,7 +7,7 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("initialized")]
         public bool Initialized { get; set; }
-        
+
         [RealName("currentTime")]
         public EngineTime CurrentTime { get; set; }
         

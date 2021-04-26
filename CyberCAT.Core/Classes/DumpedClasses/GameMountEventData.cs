@@ -7,16 +7,16 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("slotName")]
         public CName SlotName { get; set; }
-        
+
         [RealName("mountParentEntityId")]
         public EntEntityID MountParentEntityId { get; set; }
-        
+
         [RealName("isInstant")]
         public bool IsInstant { get; set; }
-        
+
         [RealName("entryAnimName")]
         public CName EntryAnimName { get; set; }
-        
+
         [RealName("initialTransformLS")]
         public Transform InitialTransformLS { get; set; }
         

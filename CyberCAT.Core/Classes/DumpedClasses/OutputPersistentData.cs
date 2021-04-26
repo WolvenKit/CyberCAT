@@ -1,5 +1,6 @@
 using CyberCAT.Core.Classes.Mapping;
 using CyberCAT.Core.Classes.NodeRepresentations;
+using CyberCAT.Core.DumpedEnums;
 
 namespace CyberCAT.Core.Classes.DumpedClasses
 {
@@ -35,5 +36,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("id")]
         public int Id { get; set; }
+
+        public OutputPersistentData()
+        {
+            CurrentSecurityState = ESecuritySystemState.UNINITIALIZED;
+        }
     }
 }

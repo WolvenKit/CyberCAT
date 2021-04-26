@@ -8,10 +8,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("realPath")]
         public string RealPath { get; set; }
         
-        [RealName("fileEntryIndex")]
-        public int FileEntryIndex { get; set; }
-        
         [RealName("className")]
         public CName ClassName { get; set; }
+        
+        [RealName("fileEntryIndex")]
+        public int FileEntryIndex { get; set; }
     }
 }

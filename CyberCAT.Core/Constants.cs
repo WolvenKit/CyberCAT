@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CyberCAT.Core.Classes;
+using K4os.Compression.LZ4;
 
 namespace CyberCAT.Core
 {
@@ -121,10 +123,14 @@ namespace CyberCAT.Core
             public const string EVENT_MANAGER = "eventManager";
             public const string TIME_CORE = "\"Core\"";
         }
-        public static class Numbers
+
+        public static class Compression
         {
-            public const int DEFAULT_HEADER_SIZE = 3105;
-            public const int DEFAULT_CHUNK_SIZE = 0x00040000;
+            public static readonly CompressionHelper.Settings[] SETTINGS =
+            {
+                new CompressionHelper.Settings {TableEntriesCount = 0x100, ChunkSize = 0x00040000},
+                new CompressionHelper.Settings {TableEntriesCount = 0x400, ChunkSize = 0x00080000}
+            };
         }
     }
 }

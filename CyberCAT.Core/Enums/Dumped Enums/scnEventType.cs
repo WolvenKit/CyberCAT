@@ -1,6 +1,6 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum scnEventType
-{
-}
+	public enum scnEventType
+	{
+	}
 }

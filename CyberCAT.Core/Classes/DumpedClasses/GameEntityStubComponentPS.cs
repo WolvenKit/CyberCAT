@@ -7,10 +7,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     {
         [RealName("entityLocalPosition")]
         public Vector3 EntityLocalPosition { get; set; }
-        
+
         [RealName("entityLocalRotation")]
         public Quaternion EntityLocalRotation { get; set; }
-        
+
         [RealName("spawnerId")]
         public GameCommunityID SpawnerId { get; set; }
         

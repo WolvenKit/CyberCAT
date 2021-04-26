@@ -5,6 +5,9 @@ namespace CyberCAT.Core.Classes.DumpedClasses
     [RealName("gameFastTravelPointData")]
     public class GameFastTravelPointData : IScriptable
     {
+        [RealName("mappinID")]
+        public GameNewMappinID MappinID { get; set; }
+        
         [RealName("pointRecord")]
         public TweakDbId PointRecord { get; set; }
         
@@ -13,8 +16,5 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("requesterID")]
         public EntEntityID RequesterID { get; set; }
-        
-        [RealName("mappinID")]
-        public GameNewMappinID MappinID { get; set; }
     }
 }

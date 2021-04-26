@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum NavGenAgentSize
-{
-	Human = 0
-}
+	public enum NavGenAgentSize
+	{
+		Human = 0
+	}
 }

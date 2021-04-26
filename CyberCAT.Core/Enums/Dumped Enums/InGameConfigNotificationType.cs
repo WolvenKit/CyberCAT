@@ -1,16 +1,19 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum InGameConfigNotificationType
-{
-	RestartRequiredConfirmed = 0,
-	ChangesApplied = 1,
-	ChangesRejected = 2,
-	ChangesLoadLastCheckpointApplied = 3,
-	Saved = 4,
-	ErrorSaving = 5,
-	RequiresRestart = 6,
-	Loaded = 7,
-	LoadCanceled = 8,
-	Refresh = 10
-}
+	public enum InGameConfigNotificationType
+	{
+		RestartRequiredConfirmed = 0,
+		RestartRequiredRejected = 1,
+		ChangesApplied = 2,
+		ChangesRejected = 3,
+		ChangesLoadLastCheckpointApplied = 4,
+		ChangesLoadLastCheckpointRejected = 5,
+		Saved = 6,
+		ErrorSaving = 7,
+		Loaded = 8,
+		LoadCanceled = 9,
+		LoadInternalError = 10,
+		Refresh = 11,
+		LanguagePackInstalled = 12
+	}
 }

@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum ESecurityTurretType
-{
-	SIMPLE = 0
-}
+	public enum ESecurityTurretType
+	{
+		SIMPLE = 0
+	}
 }

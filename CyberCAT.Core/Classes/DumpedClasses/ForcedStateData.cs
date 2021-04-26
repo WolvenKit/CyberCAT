@@ -17,5 +17,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("savable")]
         public bool Savable { get; set; }
+
+        public ForcedStateData()
+        {
+            Savable = true;
+        }
     }
 }

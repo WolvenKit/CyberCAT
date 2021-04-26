@@ -1,7 +1,7 @@
 namespace CyberCAT.Core.DumpedEnums
 {
-public enum gameEEquipmentManagerState
-{
-	InfiniteAmmo = 1
-}
+	public enum gameEEquipmentManagerState
+	{
+		InfiniteAmmo = 1
+	}
 }
