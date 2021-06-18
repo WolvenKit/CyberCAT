@@ -29,8 +29,8 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         [RealName("stimPriority")]
         public DumpedEnums.gamedataStimPriority? StimPriority { get; set; }
         
-        [RealName("stimData")]
-        public Handle<SenseStimuliData> StimData { get; set; }
+        [RealName("stimRecord")]
+        public Handle<GamedataStim_Record> StimRecord { get; set; }
         
         [RealName("stimInvestigateData")]
         public StimInvestigateData StimInvestigateData { get; set; }

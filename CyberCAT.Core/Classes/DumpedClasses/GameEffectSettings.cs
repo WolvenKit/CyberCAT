@@ -17,5 +17,11 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("tempExecuteOnlyOnce")]
         public bool TempExecuteOnlyOnce { get; set; }
+
+        [RealName("tickRate")]
+        public float TickRate { get; set; }
+
+        [RealName("useSimTimeForTick")]
+        public bool UseSimTimeForTick { get; set; }
     }
 }

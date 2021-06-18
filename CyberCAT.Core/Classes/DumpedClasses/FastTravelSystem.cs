@@ -13,7 +13,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("fastTravelPointsTotal")]
         public int FastTravelPointsTotal { get; set; }
-        
+
+        [RealName("lastUpdatedAchievementCount")]
+        public int LastUpdatedAchievementCount { get; set; }
+
         [RealName("fastTravelLocks")]
         public FastTravelSystemLock[] FastTravelLocks { get; set; }
         
@@ -22,5 +25,14 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("requestAutoSafeAfterLoadingScreen")]
         public bool RequestAutoSafeAfterLoadingScreen { get; set; }
+
+        [RealName("lockLisenerID")]
+        public CName LockLisenerID { get; set; }
+
+        [RealName("unlockLisenerID")]
+        public CName UnlockLisenerID { get; set; }
+
+        [RealName("removeAllLocksLisenerID")]
+        public CName RemoveAllLocksLisenerID { get; set; }
     }
 }

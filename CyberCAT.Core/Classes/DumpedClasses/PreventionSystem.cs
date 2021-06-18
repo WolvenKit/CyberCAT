@@ -52,7 +52,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("lastCrimePoint")]
         public Vector4 LastCrimePoint { get; set; }
-        
+
+        [RealName("lastBodyPosition")]
+        public Vector4 LastBodyPosition { get; set; }
+
         [RealName("DEBUG_lastCrimeDistance")]
         public float DEBUG_lastCrimeDistance { get; set; }
         

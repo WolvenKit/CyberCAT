@@ -10,5 +10,8 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("triggerType")]
         public DumpedEnums.EFastTravelTriggerType? TriggerType { get; set; }
+
+        [RealName("fastTravelDeviceType")]
+        public DumpedEnums.EFastTravelDeviceType? FastTravelDeviceType { get; set; }
     }
 }

@@ -18,7 +18,10 @@ namespace CyberCAT.Core.DumpedEnums
 		CP77_Patch_1_1 = 1100,
 		CP77_Patch_1_1_Hotfix1 = 1110,
 		CP77_Patch_1_2 = 1200,
-		Current = 1200,
-		CP77_Patch_1_3 = 1300
+        CP77_Patch_1_2_Hotfix1 = 1210,
+        CP77_Patch_1_2_Hotfix2 = 1220,
+        CP77_Patch_1_2_Hotfix3 = 1230,
+        Current = 1230,
+        CP77_Patch_1_3 = 1300
 	}
 }
