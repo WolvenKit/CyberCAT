@@ -164,7 +164,7 @@ namespace CyberCAT.Core.Classes.Parsers
                         }
                     });
 
-                    if (_doMapping) 
+                    if (_doMapping)
                         SetHandlesValue(result);
                     _handles = null;
 
@@ -379,6 +379,10 @@ namespace CyberCAT.Core.Classes.Parsers
             {
                 reader.BaseStream.Position = startPos + fieldInfos[i].Offset;
 
+                if (fieldInfos[i].Type == "DataBuffer") {
+                    continue;
+                };
+
                 var internalType = GetInternalType(fieldInfos[i].Type);
                 var ret = ReadMappedFieldValue(reader, internalType);
 
@@ -471,7 +475,7 @@ namespace CyberCAT.Core.Classes.Parsers
                     return null;
                 }
             }
-            
+
             var subCls = (GenericUnknownStruct.BaseClassEntry)Activator.CreateInstance(internalType);
             ReadMappedFields(reader, subCls);
             return subCls;
@@ -1241,7 +1245,7 @@ namespace CyberCAT.Core.Classes.Parsers
         }
 
         #endregion
-        
+
         private class FieldInfo
         {
             public string Name { get; set; }
