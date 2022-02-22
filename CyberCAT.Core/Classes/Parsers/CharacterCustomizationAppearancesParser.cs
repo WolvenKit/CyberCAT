@@ -26,7 +26,11 @@ namespace CyberCAT.Core.Classes.Parsers
             Constants.Parsing.TPP_SECTION_NAME,
             Constants.Parsing.FPP_SECTION_NAME,
             Constants.Parsing.HAIRS_SECTION_NAME,
-            Constants.Parsing.CHARACTER_CUSTOMIZATION_SECTION_NAME
+            Constants.Parsing.CHARACTER_CUSTOMIZATION_SECTION_NAME,
+            Constants.Parsing.TPP_PROXY_SECTION_NAME,
+            Constants.Parsing.FPP_PROXY_SECTION_NAME,
+            Constants.Parsing.FPP_HAIRS_SECTION_NAME,
+            Constants.Parsing.TPP_PHOTOMODE_SECTION_NAME
         };
 
         private static List<string> ExpectedSecondSectionNames = new List<string>

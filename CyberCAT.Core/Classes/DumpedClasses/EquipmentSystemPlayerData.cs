@@ -25,7 +25,10 @@ namespace CyberCAT.Core.Classes.DumpedClasses
         
         [RealName("clothingSlotsInfo")]
         public GameSSlotInfo[] ClothingSlotsInfo { get; set; }
-        
+
+        [RealName("clothingVisualsInfo")]
+        public SSlotVisualInfo[] ClothingVisualsInfo { get; set; }
+
         [RealName("isPartialVisualTagActive")]
         public bool IsPartialVisualTagActive { get; set; }
         
