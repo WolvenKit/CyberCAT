@@ -75,6 +75,10 @@ namespace CyberCAT.Core
             public const string BREAST_SECTION_NAME = "breast";
             public const string LIFTED_FEET_SECTION_NAME = "lifted_feet";
             public const string FLAT_FEET_SECTION_NAME = "flat_feet";
+            public const string TPP_PROXY_SECTION_NAME = "TPP_proxy";
+            public const string FPP_PROXY_SECTION_NAME = "FPP_proxy";
+            public const string FPP_HAIRS_SECTION_NAME = "FPP_hairs";
+            public const string TPP_PHOTOMODE_SECTION_NAME = "TPP_photomode";
         }
         public static class NodeNames
         {
